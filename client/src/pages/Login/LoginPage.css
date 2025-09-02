@@ -1,0 +1,29 @@
+/* Full-screen center */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff, #dfe0e0);
+  padding: 20px;
+}
+
+/* Card */
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  background: #fff;
+  border-radius: 1.5rem;
+}
+
+/* Input focus */
+.login-card .form-control:focus {
+  box-shadow: none;
+  border-color: #6c63ff;
+}
+
+/* Input group styling */
+.input-group-text {
+  border-radius: 1rem 0 0 1rem !important;
+}
+
+.form-control {
+  border-radius: 0 1rem 1rem 0 !important;
+}
