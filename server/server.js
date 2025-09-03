@@ -4,10 +4,8 @@ import cors from "cors";
 import compression from "compression";
 import path from "path";
 import { fileURLToPath } from "url";
-
 import connectDatabase from "./src/database/connectDatabase.js";
 import errorHandler from "./src/middlewares/errorHandler.middleware.js";
-
 import testRoutes from "./src/routes/test.routes.js";
 
 // Get the current file 
