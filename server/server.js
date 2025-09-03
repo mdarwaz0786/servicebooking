@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import connectDatabase from "./src/database/connectDatabase.js";
 import errorHandler from "./src/middlewares/errorHandler.middleware.js";
 import testRoutes from "./src/routes/test.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
 
 // Get the current file 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ app.use(cors());
 
 // API Routes
 app.use("/api/v1", testRoutes);
+app.use("/api/v1/user", userRoutes);
 
 // Serve static files for client
 app.use(express.static(path.join(__dirname, "../client", "dist")));
