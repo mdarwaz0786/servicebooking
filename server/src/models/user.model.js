@@ -23,6 +23,8 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
+      unique: true,
+      trim: true,
       required: [true, "Mobile number is required"],
       validate: {
         validator: (value) => /^\d{10}$/.test(value),
@@ -46,7 +48,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-//  Hash password before saving
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {

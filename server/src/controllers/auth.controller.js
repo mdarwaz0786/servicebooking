@@ -33,16 +33,16 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { mobile, password } = req.body;
 
-  const user = await UserModel.findOne({ email });
+  const user = await UserModel.findOne({ mobile });
   if (!user) {
-    throw new ApiError(401, "Invalid email or password");
+    throw new ApiError(401, "Invalid mobile or password");
   };
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new ApiError(401, "Invalid email or password");
+    throw new ApiError(401, "Invalid mobile or password");
   };
 
   return res.status(200).json({
