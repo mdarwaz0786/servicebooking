@@ -1,19 +1,19 @@
-import { Link } from "react-router-dom";
 import CategoryCard from "../../components/Category/CategoryCard";
+
 const categoriesData = [
   {
     id: "1",
     name: "Women's Salon & Spa",
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: [] // add subcategories if needed
+    subCategory: [],
   },
   {
     id: "2",
     name: "Men's Salon & Massage",
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
+    subCategory: [],
   },
   {
     id: "3",
@@ -21,7 +21,6 @@ const categoriesData = [
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     subCategory: [
-      // Sub-categories examples (optional)
       {
         id: "3-1",
         name: "AC Service & Repair",
@@ -29,47 +28,47 @@ const categoriesData = [
         image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
         subSubCategory: [
           { id: "3-1-1", name: "Gas Refill", icon: "", image: "" },
-          { id: "3-1-2", name: "Foam-jet Service", icon: "", image: "" }
-        ]
+          { id: "3-1-2", name: "Foam-jet Service", icon: "", image: "" },
+        ],
       },
       {
         id: "3-2",
         name: "Washing Machine Repair",
-        icon: "", image: "", subSubCategory: []
-      }
-    ]
+        icon: "",
+        image: "",
+        subSubCategory: [],
+      },
+    ],
   },
   {
     id: "4",
     name: "Cleaning & Pest Control",
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
+    subCategory: [],
   },
   {
     id: "5",
     name: "Electrician, Plumber & Carpenter",
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
+    subCategory: [],
   },
   {
     id: "6",
     name: "Native Water Purifier",
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
+    subCategory: [],
   },
   {
     id: "7",
     name: "Painting & Waterproofing",
     icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
     image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
-  }
+    subCategory: [],
+  },
 ];
-
-
 
 const Categories = () => {
   return (
@@ -80,68 +79,49 @@ const Categories = () => {
             <div className="col-lg-12 col-md-6">
               <div className="mb-3 pb-3 border-bottom">
                 <label className="form-label">Search By Keyword</label>
-                <input type="text" className="form-control" placeholder="What are you looking for?" />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="What are you looking for?"
+                />
               </div>
             </div>
 
             {categoriesData.map((cat) => (
-              <>
+              <div key={cat.id} className="col-lg-12">
                 {cat.subCategory && cat.subCategory.length > 0 ? (
                   <>
-                    <div className="col-lg-12 col-md-6">
-                      <h2 class="breadcrumb-title mb-2 text-center">{cat.name}</h2>
-                    </div>
-                    {cat.subCategory.map((subCat) => (
-                      <>
-                        {subCat.subSubCategory && subCat.subSubCategory.length > 0 ? (
-<<<<<<< HEAD
-                          <>
-                            <div className="col-lg-12 col-md-6">
-                              <h6 class="breadcrumb-title mb-2 text-center">{subCat.name}</h6>
-                            </div>
-                            {subCat.subSubCategory.map((subSubCat) => (
-                              <CategoryCard value={subSubCat} />
-                            ))}
-                          </>
-                        ) : (
-                          <>
-=======
-                            <>
-                              <div className="col-lg-12 col-md-6">
-                                <h6 class="breadcrumb-title mb-2 text-center">{subCat.name}</h6>
-                              </div>
-                              {subCat.subSubCategory.map((subSubCat) => (
-                                <CategoryCard value={subSubCat} />
-                              ))}
-                            </>
-                        ) : (
-                          <> 
->>>>>>> 3b3bdd40175d71129bdafa60573b79152d406b95
-                            {cat.subCategory.map((subCat) => (
-                              <CategoryCard value={subCat} />
-                            ))}
-                          </>
-<<<<<<< HEAD
-                        )}
-                      </>
+                    <h2 className="breadcrumb-title mb-2 text-center">
+                      {cat.name}
+                    </h2>
 
-=======
-                        )}    
-                      </>
-                      
->>>>>>> 3b3bdd40175d71129bdafa60573b79152d406b95
+                    {cat.subCategory.map((subCat) => (
+                      <div key={subCat.id} className="col-lg-12">
+                        {subCat.subSubCategory &&
+                          subCat.subSubCategory.length > 0 ? (
+                          <>
+                            <h6 className="breadcrumb-title mb-2 text-center">
+                              {subCat.name}
+                            </h6>
+                            <div className="row">
+                              {subCat.subSubCategory.map((subSubCat) => (
+                                <CategoryCard
+                                  key={subSubCat.id}
+                                  value={subSubCat}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <CategoryCard key={subCat.id} value={subCat} />
+                        )}
+                      </div>
                     ))}
                   </>
                 ) : (
                   <CategoryCard value={cat} />
-<<<<<<< HEAD
                 )}
-=======
-                )}               
-
-                
->>>>>>> 3b3bdd40175d71129bdafa60573b79152d406b95
-              </>
+              </div>
             ))}
           </div>
         </div>
