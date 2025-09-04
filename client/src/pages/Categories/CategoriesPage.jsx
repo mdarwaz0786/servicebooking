@@ -1,4 +1,4 @@
-import BreadCrumb from "./BreadCrumb";
+import BreadCrumb from "../BreadCrumb/BreadCrumb";
 import Categories from "./Categories";
 
 const CategoriesPage = () => {
