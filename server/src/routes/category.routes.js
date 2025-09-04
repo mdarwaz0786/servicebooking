@@ -14,7 +14,7 @@ const router = express.Router();
 
 // Create category
 router.post(
-  "/",
+  "/create-category",
   isLoggedIn,
   upload.single("image"),
   validateFileSize,
@@ -29,7 +29,7 @@ router.get("/:id", getCategoryById);
 
 // Update category
 router.patch(
-  "/:id",
+  "/update-category/:id",
   isLoggedIn,
   upload.single("image"),
   validateFileSize,
@@ -37,6 +37,6 @@ router.patch(
 );
 
 // Delete category
-router.delete("/:id", isLoggedIn, deleteCategory);
+router.delete("/delete-category/:id", isLoggedIn, deleteCategory);
 
 export default router;

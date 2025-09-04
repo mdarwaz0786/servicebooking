@@ -1,109 +1,75 @@
 import { Link } from "react-router-dom";
-
+import CategoryCard from "../../components/Category/CategoryCard";
 const categoriesData = [
   {
     id: "1",
-    name: "Electrical",
-    icon: "assets/img/icons/category-05.svg",
-    image: "assets/img/services/service-29.jpg",
+    name: "Women's Salon & Spa",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: [] // add subcategories if needed
   },
   {
     id: "2",
-    name: "Removal",
-    icon: "assets/img/icons/category-02.svg",
-    image: "assets/img/services/service-28.jpg",
+    name: "Men's Salon & Massage",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
   },
   {
     id: "3",
-    name: "Construction",
-    icon: "assets/img/icons/category-01.svg",
-    image: "assets/img/services/service-26.jpg",
+    name: "AC & Appliance Repair",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: [
+      // Sub-categories examples (optional)
+      {
+        id: "3-1",
+        name: "AC Service & Repair",
+        icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+        image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+        subSubCategory: [
+          { id: "3-1-1", name: "Gas Refill", icon: "", image: "" },
+          { id: "3-1-2", name: "Foam-jet Service", icon: "", image: "" }
+        ]
+      },
+      {
+        id: "3-2",
+        name: "Washing Machine Repair",
+        icon: "", image: "", subSubCategory: []
+      }
+    ]
   },
   {
     id: "4",
-    name: "Furniture Assembly",
-    icon: "assets/img/icons/category-03.svg",
-    image: "assets/img/services/service-30.jpg",
+    name: "Cleaning & Pest Control",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
   },
   {
     id: "5",
-    name: "Mobile Barbers",
-    icon: "assets/img/icons/category-08.svg",
-    image: "assets/img/services/service-31.jpg",
+    name: "Electrician, Plumber & Carpenter",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
   },
   {
     id: "6",
-    name: "Deliveries",
-    icon: "assets/img/icons/category-07.svg",
-    image: "assets/img/services/service-01.jpg",
+    name: "Native Water Purifier",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
   },
   {
     id: "7",
-    name: "Cleaning",
-    icon: "assets/img/icons/category-14.svg",
-    image: "assets/img/services/service-33.jpg",
-  },
-  {
-    id: "8",
-    name: "Man and Van",
-    icon: "assets/img/icons/category-06.svg",
-    image: "assets/img/services/service-34.jpg",
-  },
-  {
-    id: "9",
-    name: "Nail Technicians",
-    icon: "assets/img/icons/category-11.svg",
-    image: "assets/img/services/service-35.jpg",
-  },
-  {
-    id: "10",
-    name: "Shop & Deliver",
-    icon: "assets/img/icons/category-13.svg",
-    image: "assets/img/services/service-32.jpg",
-  },
-  {
-    id: "11",
-    name: "Car Transport",
-    icon: "assets/img/icons/category-15.svg",
-    image: "assets/img/services/service-37.jpg",
-  },
-  {
-    id: "12",
-    name: "Hairdressers",
-    icon: "assets/img/icons/category-12.svg",
-    image: "assets/img/services/service-38.jpg",
-  },
-  {
-    id: "13",
-    name: "Computer Service",
-    icon: "assets/img/icons/category-04.svg",
-    image: "assets/img/services/service-39.jpg",
-  },
-  {
-    id: "14",
-    name: "Plumbing",
-    icon: "assets/img/icons/category-10.svg",
-    image: "assets/img/services/service-40.jpg",
-  },
-  {
-    id: "15",
-    name: "Carpentry",
-    icon: "assets/img/icons/category-16.svg",
-    image: "assets/img/services/service-41.jpg",
-  },
-  {
-    id: "16",
-    name: "Interior",
-    icon: "assets/img/icons/category-09.svg",
-    image: "assets/img/services/service-42.jpg",
-  },
-  {
-    id: "17",
-    name: "Car Wash",
-    icon: "assets/img/icons/category-17.svg",
-    image: "assets/img/services/service-43.jpg",
-  },
+    name: "Painting & Waterproofing",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
+  }
 ];
+
+
 
 const Categories = () => {
   return (
@@ -111,24 +77,46 @@ const Categories = () => {
       <div className="content content-two">
         <div className="container">
           <div className="row justify-content-center align-items-center">
-            {categoriesData.map((cat) => (
-              <div key={cat.id} className="col-lg-3 col-md-6">
-                <div className="category card wow fadeInUp" data-wow-delay="0.3s">
-                  <div className="card-body">
-                    <div className="feature-icon d-flex justify-content-center align-items-center mb-2">
-                      <span className="rounded-pill d-flex justify-content-center align-items-center p-3">
-                        <img src={cat.icon} className="img-fluid" alt={cat.name} />
-                      </span>
-                    </div>
-                    <h5 className="text-center">
-                      <Link to={`/sub-categories/${cat?.name}/${cat.id}`}>{cat.name}</Link>
-                    </h5>
-                    <div className="overlay">
-                      <img src={cat.image} className="img-fluid" alt={cat.name} />
-                    </div>
-                  </div>
-                </div>
+            <div className="col-lg-12 col-md-6">
+              <div className="mb-3 pb-3 border-bottom">
+                <label className="form-label">Search By Keyword</label>
+                <input type="text" className="form-control" placeholder="What are you looking for?" />
               </div>
+            </div>
+
+            {categoriesData.map((cat) => (
+              <>
+                {cat.subCategory && cat.subCategory.length > 0 ? (
+                  <>
+                    <div className="col-lg-12 col-md-6">
+                      <h2 class="breadcrumb-title mb-2 text-center">{cat.name}</h2>
+                    </div>
+                    {cat.subCategory.map((subCat) => (
+                      <>
+                        {subCat.subSubCategory && subCat.subSubCategory.length > 0 ? (
+                          <>
+                            <div className="col-lg-12 col-md-6">
+                              <h6 class="breadcrumb-title mb-2 text-center">{subCat.name}</h6>
+                            </div>
+                            {subCat.subSubCategory.map((subSubCat) => (
+                              <CategoryCard value={subSubCat} />
+                            ))}
+                          </>
+                        ) : (
+                          <>
+                            {cat.subCategory.map((subCat) => (
+                              <CategoryCard value={subCat} />
+                            ))}
+                          </>
+                        )}
+                      </>
+
+                    ))}
+                  </>
+                ) : (
+                  <CategoryCard value={cat} />
+                )}
+              </>
             ))}
           </div>
         </div>

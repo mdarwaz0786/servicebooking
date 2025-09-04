@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema({
+const subCategorySchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Category name is required"],
+    required: [true, "Subcategory name is required"],
     trim: true,
     unique: true,
-    maxlength: [100, "Category name must not exceed 100 characters"],
+    maxlength: [100, "Subcategory name must not exceed 100 characters"],
   },
   slug: {
     type: String,
@@ -15,7 +15,6 @@ const categorySchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: false,
     trim: true,
   },
   shortDescription: {
@@ -26,12 +25,17 @@ const categorySchema = new mongoose.Schema({
   },
   fullDescription: {
     type: String,
-    required: false,
     trim: true,
   },
   status: {
     type: Boolean,
     default: true,
+  },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: [true, "Category ID is required"],
+    index: true,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -45,15 +49,23 @@ const categorySchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-categorySchema.index({ name: 1 });
+subCategorySchema.index({ name: 1 });
+subCategorySchema.index({ categoryId: 1 });
 
-categorySchema.virtual("subcategories", {
-  ref: "SubCategory",
-  localField: "_id",
-  foreignField: "categoryId",
-  justOne: false,
+subCategorySchema.virtual("category", {
+  ref: "Category",
+  localField: "categoryId",
+  foreignField: "_id",
+  justOne: true
 });
 
-const CategoryModel = mongoose.model("Category", categorySchema);
+subCategorySchema.virtual("subSubCategories", {
+  ref: "SubSubCategory",
+  localField: "_id",
+  foreignField: "subCategoryId",
+  justOne: false
+});
 
-export default CategoryModel;
+const SubCategoryModel = mongoose.model("SubCategory", subCategorySchema);
+
+export default SubCategoryModel;
