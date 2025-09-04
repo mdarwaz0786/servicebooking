@@ -14,6 +14,7 @@ const OurCategories = () => {
           </div>
         </div>
         <div className="row g-4 row-cols-xxl-6 row-cols-xl-6 row-cols-md-4 row-cols-sm-2 row-cols-1 justify-content-center">
+          
           <div className="col d-flex">
             <div className="category-item text-center flex-fill wow fadeInUp" data-wow-delay="0.2s">
               <div className="mx-auto mb-3">
@@ -24,6 +25,7 @@ const OurCategories = () => {
               <Link to="/categories" className="link-primary text-decoration-underline fs-14">View All</Link>
             </div>
           </div>
+
           <div className="col d-flex">
             <div className="category-item text-center flex-fill wow fadeInUp" data-wow-delay="0.2s">
               <div className="mx-auto mb-3">

@@ -16371,13 +16371,13 @@ fieldset#first-availability {
 .service-cont {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  /* display: flex; */
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
   margin-right: auto;
   text-align: left;
-  flex: 0 0 calc(100% - 315px);
+  /* flex: 0 0 calc(100% - 315px); */
   overflow: hidden;
 }
 
@@ -36009,5 +36009,19 @@ span.select2-container.select2-container--default.select2-container--open {
   position: absolute;
   right: 0;
 }
+
+.cart-item-btn {
+  font-size: 15px;
+  padding: 0px 10px;
+}
+
+.cart-item-name {
+    font-size: 12px;
+}
+.cart-item-price {
+    font-size: 12px;
+}
+
+
 
 /*# sourceMappingURL=style.css.map */

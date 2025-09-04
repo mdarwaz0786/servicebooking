@@ -20,6 +20,8 @@ import UserFavouritesPage from "./pages/UserPanel/Favourites/UserFavouritesPage"
 import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
 import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
 import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
+import Checkoutpage from "./pages/Checkout/Checkoutpage";
+
 
 const App = () => {
   return (
@@ -36,6 +38,7 @@ const App = () => {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/providers" element={<ProvidersPage />} />
         <Route path="/provider-details" element={<ProviderDetailsPage />} />
+        <Route path="/Checkout" element={<Checkoutpage />} />
       </Route>
 
       <Route element={<UserLayout />}>
