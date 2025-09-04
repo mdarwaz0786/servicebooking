@@ -3812,7 +3812,7 @@ h6,
 
 .text-linear-primary {
   background: linear-gradient(90deg, #FD2692 0%, #0A67F2 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -9708,6 +9708,7 @@ html.menu-opened body {
   border: none;
   color: #203066;
   -webkit-appearance: none;
+  appearance: none;
   background: none;
 }
 
@@ -13501,12 +13502,14 @@ footer .footer-top .footer-widget .footer-menu li a {
 footer .footer-top .footer-widget .footer-menu li a:hover {
   background: linear-gradient(90deg, #FD2692 0%, #0A67F2 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 footer .footer-top .footer-widget .footer-menu li a:hover::before {
   background: linear-gradient(90deg, #FD2692 0%, #0A67F2 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -15864,6 +15867,7 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -16402,6 +16406,7 @@ fieldset#first-availability {
   font-size: 20px;
   margin-bottom: 10px;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -17444,7 +17449,6 @@ input[type=password]::-ms-clear {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 16px;
-  float: right;
 }
 
 .user-sidebar .submenu .menu-arrow::before {
@@ -21370,6 +21374,7 @@ fieldset.booking-content#first-field {
   font-weight: 500;
   margin-bottom: 15px;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 .grid-blog .blog-content p {
@@ -23076,7 +23081,6 @@ fieldset.booking-content#first-field {
 
 .item-img {
   display: inline-block;
-  float: right;
 }
 
 .item-img img {
@@ -23380,6 +23384,7 @@ fieldset.booking-content#first-field {
   margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.4;
@@ -24958,6 +24963,7 @@ fieldset.booking-content#first-field {
   margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -25249,12 +25255,14 @@ fieldset.booking-content#first-field {
 
 .blog.blog-new .blog-content .blog-title {
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   margin-bottom: 12px;
 }
 
 .blog.blog-new .blog-content p {
   margin-bottom: 0;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -28794,6 +28802,7 @@ fieldset.booking-content#first-field {
   text-align: center;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -29280,6 +29289,7 @@ fieldset.booking-content#first-field {
   margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -31482,6 +31492,7 @@ p.total-client-content {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -31492,6 +31503,7 @@ p.total-client-content {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -36016,10 +36028,11 @@ span.select2-container.select2-container--default.select2-container--open {
 }
 
 .cart-item-name {
-    font-size: 12px;
+  font-size: 12px;
 }
+
 .cart-item-price {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 

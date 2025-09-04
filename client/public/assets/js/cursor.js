@@ -1,46 +1,46 @@
-;(function ($) {
+; (function ($) {
   "use strict";
 
 
-    window.App = {};
-    App.config = {
-      headroom: {
-        enabled: true,
-        options: {
-          classes : {
-            initial : "headroom",
-            pinned : "is-pinned",
-            unpinned : "is-unpinned",
-            top : "is-top",
-            notTop : "is-not-top",
-            bottom : "is-bottom",
-            notBottom : "is-not-bottom",
-            frozen: "is-frozen",
-          },
-        }
-      },
-      ajax: {
-        enabled: true,
-      },
-      cursorFollower: {
-        enabled: true,
-        disableBreakpoint: '992',
-      },
-    }
-
-    App.html = document.querySelector('html');
-    App.body = document.querySelector('body');
-
-    window.onload = function () {
-
-      if (App.config.cursorFollower.enabled) {
-        Cursor.init();
+  window.App = {};
+  App.config = {
+    headroom: {
+      enabled: true,
+      options: {
+        classes: {
+          initial: "headroom",
+          pinned: "is-pinned",
+          unpinned: "is-unpinned",
+          top: "is-top",
+          notTop: "is-not-top",
+          bottom: "is-bottom",
+          notBottom: "is-not-bottom",
+          frozen: "is-frozen",
+        },
       }
-      
+    },
+    ajax: {
+      enabled: true,
+    },
+    cursorFollower: {
+      enabled: true,
+      disableBreakpoint: '992',
+    },
+  }
 
+  App.html = document.querySelector('html');
+  App.body = document.querySelector('body');
+
+  window.onload = function () {
+
+    if (App.config.cursorFollower.enabled) {
+      Cursor.init();
     }
 
-    const Cursor = (function() {
+
+  }
+
+  const Cursor = (function () {
 
     const cursor = document.querySelector(".tx-js-cursor");
     let follower;
@@ -119,7 +119,7 @@
       }
 
     }
-    
+
     function leaveHandler({ target }) {
 
       App.body.classList.remove('is-cursor-active');
@@ -147,7 +147,7 @@
         ".tx-swiper-arrow",
         ".invite-navigation .tp-bullet"
       ]);
-      
+
       cursorTriggers.forEach(el => {
         el.addEventListener("mouseenter", enterHandler);
         el.addEventListener("mouseleave", leaveHandler);
@@ -158,7 +158,7 @@
     function clear() {
 
       if (!cursor) return;
-      
+
       cursorTriggers.forEach(el => {
         el.removeEventListener("mouseenter", enterHandler);
         el.removeEventListener("mouseleave", leaveHandler);
