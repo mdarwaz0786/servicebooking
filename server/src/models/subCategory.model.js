@@ -47,7 +47,7 @@ const subCategorySchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 subCategorySchema.index({ name: 1 });
 subCategorySchema.index({ categoryId: 1 });

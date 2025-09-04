@@ -39,7 +39,7 @@ Template Name: Truelysell - Bootstrap Template
 		$('html').toggleClass('menu-opened');
 		return false;
 	});
-	
+
 
 	$(document).on('click', '#mobile_btn', function () {
 		$wrapper.toggleClass('slide-nav');
@@ -390,7 +390,7 @@ $(document).ready(function () {
 			asNavFor: '.client-img.slider-nav'
 		});
 	}
-	
+
 	if ($('.client-img.slider-nav').length > 0) {
 		$('.client-img.slider-nav').slick({
 			slidesToShow: 3,
@@ -1196,7 +1196,7 @@ $(document).ready(function () {
 		}
 	});
 
-	
+
 	// Service slider
 	if ($('.owl-carousel.customer-review-slider').length > 0) {
 		$('.owl-carousel.customer-review-slider').owlCarousel({
@@ -1387,7 +1387,7 @@ $(document).ready(function () {
 			nav: false,
 			dots: false,
 			smartSpeed: 2000,
-			autoplay:true,
+			autoplay: true,
 			responsive: {
 				0: {
 					items: 1
@@ -1518,7 +1518,7 @@ if ($('.datepic').length > 0) {
 	$('.datepic').datetimepicker({
 		format: 'DD-MM-YYYY',
 		keepOpen: true, inline: true,
-		inline:true,
+		inline: true,
 		icons: {
 			up: "fas fa-angle-up",
 			down: "fas fa-angle-down",
@@ -2472,20 +2472,20 @@ if ($('#calendar-book').length > 0) {
 			eventClick: function (event, calEvent, jsEvent, view) {
 				// Using event delegation for dynamically added content
 				$(document).ready(function () {
-			// Bind event handlers globally to handle clicks
-			$(document).on('click', '.fc-event-title', function () {
-				$('.toggle-sidebar').addClass('sidebar-popup');
-				$('.sidebar-overlay').addClass('opened');
-			});
+					// Bind event handlers globally to handle clicks
+					$(document).on('click', '.fc-event-title', function () {
+						$('.toggle-sidebar').addClass('sidebar-popup');
+						$('.sidebar-overlay').addClass('opened');
+					});
 
-			$(document).on('click', '.sidebar-close', function () {
-				$('.toggle-sidebar').removeClass('sidebar-popup');
-				$('.sidebar-overlay').removeClass('opened');
-			});
-			$(document).on('click', '.sidebar-overlay', function () {
-				$('.toggle-sidebar').removeClass('sidebar-popup');
-			});
-		});
+					$(document).on('click', '.sidebar-close', function () {
+						$('.toggle-sidebar').removeClass('sidebar-popup');
+						$('.sidebar-overlay').removeClass('opened');
+					});
+					$(document).on('click', '.sidebar-overlay', function () {
+						$('.toggle-sidebar').removeClass('sidebar-popup');
+					});
+				});
 			}
 		});
 
@@ -2720,16 +2720,16 @@ if ($('.owl-carousel.customer-review-slider').length > 0) {
 		}
 	})
 }
-$('.user-sidebar a').on('click', function(e) {
-	if($(this).parent().hasClass('submenu')) {
+$('.user-sidebar a').on('click', function (e) {
+	if ($(this).parent().hasClass('submenu')) {
 		e.preventDefault();
 	}
-	if(!$(this).hasClass('subdrop')) {
+	if (!$(this).hasClass('subdrop')) {
 		$('ul', $(this).parents('ul:first')).hide(350);
 		$('a', $(this).parents('ul:first')).removeClass('subdrop');
 		$(this).next('ul').show(350);
 		$(this).addClass('subdrop');
-	} else if($(this).hasClass('subdrop')) {
+	} else if ($(this).hasClass('subdrop')) {
 		$(this).removeClass('subdrop');
 		$(this).next('ul').hide(350);
 	}
@@ -2737,15 +2737,15 @@ $('.user-sidebar a').on('click', function(e) {
 $('.user-sidebar ul li.submenu a.active').parents('li:last').children('a:first').addClass('active').trigger('click');
 
 if ($('.typed').length > 0) {
-	
-document.addEventListener('DOMContentLoaded', function () {
-	ityped.init(document.querySelector(".typed"), {
-	  strings: ['Carpenders', 'Stylist', 'Builders'],
-	  typeSpeed: 150,  // Speed of typing
-	  backSpeed: 80,   // Speed of backspacing
-	  loop: true       // Loops the animation
+
+	document.addEventListener('DOMContentLoaded', function () {
+		ityped.init(document.querySelector(".typed"), {
+			strings: ['Carpenders', 'Stylist', 'Builders'],
+			typeSpeed: 150,  // Speed of typing
+			backSpeed: 80,   // Speed of backspacing
+			loop: true       // Loops the animation
+		});
 	});
-  });
 }
 
 // Installer Wizard
@@ -2753,7 +2753,7 @@ document.addEventListener('DOMContentLoaded', function () {
 $(document).ready(function () {
 	let progressVal = 0;
 	let businessType = 0;
-	
+
 	$(".next_btns").on('click', function () {
 		$(this).parent().parent().parent().next().fadeIn('slow');
 		$(this).parent().parent().parent().css({
@@ -2768,7 +2768,7 @@ $(document).ready(function () {
 			'display': 'none'
 		});
 		progressVal = progressVal - 1;
-		$('.progress-active').removeClass('progress-active').prev().removeClass('progress-activated').addClass('progress-active'); 
+		$('.progress-active').removeClass('progress-active').prev().removeClass('progress-activated').addClass('progress-active');
 	});
 });
 //Increment Decrement Numberes

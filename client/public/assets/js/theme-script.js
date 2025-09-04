@@ -1,5 +1,5 @@
 // Immediately apply the theme based on localStorage
-(function() {
+(function () {
     const darkMode = localStorage.getItem('darkMode');
     const themeClass = darkMode === 'enabled' ? 'dark' : 'light';
 
