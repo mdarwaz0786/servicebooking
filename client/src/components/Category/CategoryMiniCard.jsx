@@ -4,7 +4,7 @@ const CategoryMiniCard = ({ value = [] }) => {
   return (
     
     <>    
-        <div className="col d-flex">
+        <div className="col d-flex mb-3">
             <div className="category-item text-center flex-fill wow fadeInUp" data-wow-delay="0.2s">
               <div className="mx-auto mb-3">
                 <img src="assets/img/icons/category-01.svg" className="img-fluid" alt="img" />

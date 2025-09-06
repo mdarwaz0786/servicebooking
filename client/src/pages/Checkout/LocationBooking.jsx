@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
 
 const LocationBooking = () => {
+
+  const { steps,toggleStep } = useContext(AppContext);
+
   return (
-    <fieldset className="booking-content wizard-fieldset" id="first-field">
+    <fieldset className={`booking-content wizard-fieldset ${steps.location ? "d-flex" : "d-none"}`} id="first-field">
+      
       <div className="book-card">
         {/* Header */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">

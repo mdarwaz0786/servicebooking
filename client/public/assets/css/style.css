@@ -15617,6 +15617,7 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
   background: url("../img/bg/category-bg.svg") no-repeat;
   background-size: cover;
   background-position: top center;
+  cursor: pointer;
 }
 
 .category-item:hover a {
@@ -36035,6 +36036,16 @@ span.select2-container.select2-container--default.select2-container--open {
   font-size: 12px;
 }
 
+.modal.show {
+  display: block;
+}
+.modal.show:before {
+  content: "0";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
 
 
 /*# sourceMappingURL=style.css.map */

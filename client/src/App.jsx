@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { AppProvider } from "./context/AppContext"; // 👈 import kiya
 import "./App.css";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";
@@ -22,36 +23,37 @@ import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
 import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
 import Checkoutpage from "./pages/Checkout/Checkoutpage";
 
-
 const App = () => {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutUsPage />} />
-        <Route path="/contact" element={<ContactUsPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/service-details" element={<ServicesDetailsPage />} />
-        <Route path="/booking" element={<BookingPage />} />
-        <Route path="/categories" element={<CategoriesPage />} />
-        <Route path="/sub-categories/:name/:id" element={<SubCategoriesPage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/providers" element={<ProvidersPage />} />
-        <Route path="/provider-details" element={<ProviderDetailsPage />} />
-        <Route path="/Checkout" element={<Checkoutpage />} />
-      </Route>
+    <AppProvider>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/contact" element={<ContactUsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/service-details" element={<ServicesDetailsPage />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/sub-categories/:name/:id" element={<SubCategoriesPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/providers" element={<ProvidersPage />} />
+          <Route path="/provider-details" element={<ProviderDetailsPage />} />
+          <Route path="/Checkout" element={<Checkoutpage />} />
+        </Route>
 
-      <Route element={<UserLayout />}>
-        <Route path="/user-dashboard" element={<UserDashboard />} />
-        <Route path="/user-booking" element={<UserBookingPage />} />
-        <Route path="/user-favourites" element={<UserFavouritesPage />} />
-        <Route path="/user-wallet" element={<UserWalletPage />} />
-        <Route path="/user-reviews" element={<UserReviewsPage />} />
-      </Route>
+        <Route element={<UserLayout />}>
+          <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/user-booking" element={<UserBookingPage />} />
+          <Route path="/user-favourites" element={<UserFavouritesPage />} />
+          <Route path="/user-wallet" element={<UserWalletPage />} />
+          <Route path="/user-reviews" element={<UserReviewsPage />} />
+        </Route>
 
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-    </Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </AppProvider>
   );
 };
 

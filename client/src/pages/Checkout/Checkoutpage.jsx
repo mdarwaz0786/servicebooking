@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import BookingSidebar from "./BookingSidebar";
 import LocationBooking from "./LocationBooking";
 import AdditionalServices from "./AdditionalServices";
@@ -10,6 +10,10 @@ import Confirmation from "./Confirmation";
 
 
 const Checkoutpage = () => {
+
+
+
+
   return (
     <div className="page-wrapper">
 		<div className="content">

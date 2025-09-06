@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CartItem from "./CartItem";
+import { Link } from "react-router-dom";
 const CartSidebar = () => {
   const [quantity, setQuantity] = useState(1);
 
@@ -18,10 +19,10 @@ const CartSidebar = () => {
       
 
       {/* View Cart Button */}
-      <button className="btn btn-primary w-100 mb-4">
+      <Link to={`../checkout`} className="btn btn-primary w-100 mb-4">
         ₹998 <span className="text-decoration-line-through small ms-2">₹1,198</span> 
         <span className="ms-2">View Cart</span>
-      </button>
+      </Link>
 
       {/* Offer Section */}
       <div className="p-3 border rounded mb-3">

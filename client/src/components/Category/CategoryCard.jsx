@@ -13,7 +13,7 @@ const CategoryCard = ({ value = [] }) => {
                     </span>
                 </div>
                 <h5 className="text-center">
-                    <Link to={`/sub-categories/${value?.name}/${value.id}`}>
+                    <Link to={`/services`}>
                     {value.name}
                     </Link>
                 </h5>

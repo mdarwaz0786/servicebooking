@@ -1,4 +1,61 @@
 import { Link } from "react-router-dom";
+import CategoryCard from "../../components/Category/CategoryCard";
+import CategoryMiniCard3 from "../../components/Category/CategoryMiniCard3";
+
+
+
+const categoriesData = [
+  {
+    id: "1",
+    name: "Women's Salon & Spa",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: [] // add subcategories if needed
+  },
+  {
+    id: "2",
+    name: "Men's Salon & Massage",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
+  },
+  {
+    id: "3",
+    name: "AC & Appliance Repair",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+  },
+  {
+    id: "4",
+    name: "Cleaning & Pest Control",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
+  },
+  {
+    id: "5",
+    name: "Electrician, Plumber & Carpenter",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
+  },
+  {
+    id: "6",
+    name: "Native Water Purifier",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
+  },
+  {
+    id: "7",
+    name: "Painting & Waterproofing",
+    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
+    subCategory: []
+  }
+];
+
+
 
 const HeroSection = () => {
   return (
@@ -9,8 +66,7 @@ const HeroSection = () => {
             <div className="col-lg-6">
               <div className="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".25s">
                 <h1 className="mb-2">Connect with Nearby Top-rated Professional <span className="typed" data-type-text="Carpenters" /></h1>
-                <p className="mb-3 sub-title">We can connect you to the right Service, first time and every
-                  time.</p>
+
                 <div className="banner-form bg-white border mb-3">
                   <form action="#">
                     <div className="d-md-flex align-items-center">
@@ -32,13 +88,16 @@ const HeroSection = () => {
                   </form>
                   <img src="assets/img/bg/bg-06.svg" alt="img" className="shape-06 round-animate" />
                 </div>
-                <div className="d-flex align-items-center flex-wrap">
-                  <h6 className="mb-2 me-2 fw-medium">Popular Searches</h6>
-                  <Link to="/search" className="badge badge-dark-transparent fs-14 fw-normal mb-2 me-2">Plumber</Link>
-                  <Link to="/search" className="badge badge-dark-transparent fs-14 fw-normal mb-2 me-2">Interior</Link>
-                  <Link to="/search" className="badge badge-dark-transparent fs-14 fw-normal mb-2 me-2">Nail
-                    Technicians</Link>
+                <div className="card card-body">
+                  <div className="row">
+                    {categoriesData.map((value) => (
+                      <>
+                        <CategoryMiniCard3 value={value} />
+                      </>
+                    ))}
+                  </div>
                 </div>
+               
                 <div className="d-flex align-items-center flex-wrap banner-info">
                   <div className="d-flex align-items-center me-4 mt-4">
                     <img src="assets/img/icons/success-01.svg" alt="icon" />
