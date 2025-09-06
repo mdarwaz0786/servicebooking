@@ -1,63 +1,7 @@
 import { Link } from "react-router-dom";
-import CategoryCard from "../../components/Category/CategoryCard";
 import CategoryMiniCard3 from "../../components/Category/CategoryMiniCard3";
 
-
-
-const categoriesData = [
-  {
-    id: "1",
-    name: "Women's Salon & Spa",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: [] // add subcategories if needed
-  },
-  {
-    id: "2",
-    name: "Men's Salon & Massage",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
-  },
-  {
-    id: "3",
-    name: "AC & Appliance Repair",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-  },
-  {
-    id: "4",
-    name: "Cleaning & Pest Control",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
-  },
-  {
-    id: "5",
-    name: "Electrician, Plumber & Carpenter",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
-  },
-  {
-    id: "6",
-    name: "Native Water Purifier",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
-  },
-  {
-    id: "7",
-    name: "Painting & Waterproofing",
-    icon: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    image: "https://res.cloudinary.com/urbanclap/image/upload/t_high_res_category/w_56,dpr_1,fl_progressive:steep,q_auto:low,f_auto,c_limit/images/supply/customer-app-supply/1678864013225-bfc1de.jpeg",
-    subCategory: []
-  }
-];
-
-
-
-const HeroSection = () => {
+const HeroSection = ({categoryData, handleSubCategory}) => {
   return (
     <section className="hero-section" id="home">
       <div className="hero-content position-relative overflow-hidden">
@@ -90,11 +34,9 @@ const HeroSection = () => {
                 </div>
                 <div className="card card-body">
                   <div className="row">
-                    {categoriesData.map((value) => (
                       <>
-                        <CategoryMiniCard3 value={value} />
-                      </>
-                    ))}
+                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} />
+                      </>                    
                   </div>
                 </div>
                

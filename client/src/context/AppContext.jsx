@@ -1,13 +1,10 @@
 import { createContext, useState } from "react";
+import { apiUrl, postData, storage, getDeviceInfo, responseCheck, showSuccessMessage, convertToBase64 } from "../components/api";
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // ✅ Global state yahan banao
-  const [user, setUser] = useState(null);
-  const [cart, setCart] = useState([]);
-  const [theme, setTheme] = useState("light");
-
+  const Urls = apiUrl();
   
 
   const [modals, setModals] = useState({
@@ -39,7 +36,9 @@ export const AppProvider = ({ children }) => {
       toggleModal,
       modals,
       toggleStep,
-      steps
+      steps,
+      Urls,
+      postData
     }}>
       {children}
     </AppContext.Provider>

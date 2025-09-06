@@ -10,25 +10,25 @@ const Categories = ({categoryData = []}) => {
             
                 {categoryData.map((cat) => (
                     <>
-                    {cat.subCategory && cat.subCategory.length > 0 ? (
+                    {cat.subcategories && cat.subcategories.length > 0 ? (
                         <>
                         <div className="col-lg-12 col-md-6">
                             <h2 class="breadcrumb-title mb-2 text-center">{cat.name}</h2>
                         </div>
-                        {cat.subCategory.map((subCat) => (
+                        {cat.subcategories.map((subCat) => (
                             <>
-                            {subCat.subSubCategory && subCat.subSubCategory.length > 0 ? (
+                            {subCat.subsubcategories && subCat.subsubcategories.length > 0 ? (
                                 <>
                                 <div className="col-lg-12 col-md-6">
                                     <h6 class="breadcrumb-title mb-2 text-center">{subCat.name}</h6>
                                 </div>
-                                {subCat.subSubCategory.map((subSubCat) => (
+                                {subCat.subsubcategories.map((subSubCat) => (
                                     <CategoryCard value={subSubCat} />
                                 ))}
                                 </>
                             ) : (
                                 <>
-                                {cat.subCategory.map((subCat) => (
+                                {cat.subcategories.map((subCat) => (
                                     <CategoryCard value={subCat} />
                                 ))}
                                 </>
