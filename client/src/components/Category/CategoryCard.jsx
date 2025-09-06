@@ -13,7 +13,7 @@ const CategoryCard = ({ value = [] }) => {
                     </span>
                 </div>
                 <h5 className="text-center">
-                    <Link to={`/services`}>
+                    <Link to={`/services/${value.slug}`}>
                     {value.name}
                     </Link>
                 </h5>

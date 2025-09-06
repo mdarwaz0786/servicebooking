@@ -91,7 +91,6 @@ const Categories = () => {
               <div key={cat.id} className="col-lg-12">
                 {cat.subCategory && cat.subCategory.length > 0 ? (
                   <>
-<<<<<<< HEAD
                     <div className="col-lg-12 col-md-6">
                       <h2 class="breadcrumb-title mb-2 text-center">{cat.name}</h2>
                     </div>
@@ -115,43 +114,12 @@ const Categories = () => {
                         )}
                       </>
 
-=======
-                    <h2 className="breadcrumb-title mb-2 text-center">
-                      {cat.name}
-                    </h2>
-
-                    {cat.subCategory.map((subCat) => (
-                      <div key={subCat.id} className="col-lg-12">
-                        {subCat.subSubCategory &&
-                          subCat.subSubCategory.length > 0 ? (
-                          <>
-                            <h6 className="breadcrumb-title mb-2 text-center">
-                              {subCat.name}
-                            </h6>
-                            <div className="row">
-                              {subCat.subSubCategory.map((subSubCat) => (
-                                <CategoryCard
-                                  key={subSubCat.id}
-                                  value={subSubCat}
-                                />
-                              ))}
-                            </div>
-                          </>
-                        ) : (
-                          <CategoryCard key={subCat.id} value={subCat} />
-                        )}
-                      </div>
->>>>>>> ef7b9369fa3ed4ae9a0ef0f297190e2a0f336439
                     ))}
                   </>
                 ) : (
                   <CategoryCard value={cat} />
                 )}
-<<<<<<< HEAD
-              </>
-=======
               </div>
->>>>>>> ef7b9369fa3ed4ae9a0ef0f297190e2a0f336439
             ))}
           </div>
         </div>
