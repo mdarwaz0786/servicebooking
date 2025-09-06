@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { AppProvider } from "./context/AppContext"; // 👈 import kiya
+import { AppProvider } from "./context/AppContext";
 import "./App.css";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";

@@ -61,7 +61,7 @@ export const createSubSubCategory = asyncHandler(async (req, res) => {
 
 // Get all sub sub category
 export const getSubSubCategories = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10 } = req.query;
+  let { search, status, sort = "-createdAt", page = 1, limit = 10, subCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -71,9 +71,20 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
 
+  if (subCategoryId) {
+    filters.subCategoryId = subCategoryId;
+  };
+
   const subSubCategories = await SubSubCategoryModel
     .find(filters)
     .populate("category subCategory createdBy updatedBy")
+    .populate("category subCategory createdBy updatedBy")
+    .populate({
+      path: "subSubSubCategories",
+      match: { status: true },
+      options: { sort: { createdAt: -1 } },
+      strictPopulate: false,
+    })
     .sort(sort)
     .skip(skip)
     .limit(limit);

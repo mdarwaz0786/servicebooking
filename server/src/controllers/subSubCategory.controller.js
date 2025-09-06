@@ -74,6 +74,12 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
   const subSubCategories = await SubSubCategoryModel
     .find(filters)
     .populate("category subCategory createdBy updatedBy")
+    .populate({
+      path: "subSubSubCategories",
+      match: { status: true },
+      options: { sort: { createdAt: -1 } },
+      strictPopulate: false,
+    })
     .sort(sort)
     .skip(skip)
     .limit(limit);
