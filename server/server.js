@@ -7,14 +7,16 @@ import { fileURLToPath } from "url";
 import connectDatabase from "./src/database/connectDatabase.js";
 import errorHandler from "./src/middlewares/errorHandler.middleware.js";
 import testRoutes from "./src/routes/test.routes.js";
-import userRoutes from "./src/routes/user.routes.js";
-import categoryRoutes from "./src/routes/category.routes.js";
-import subCategoryRoutes from "./src/routes/subCategory.routes.js";
-import subSubCategoryRoutes from "./src/routes/subSubCategory.routes.js";
-import subSubSubCategoryRoutes from "./src/routes/subSubSubCategory.routes.js";
-import serviceRoutes from "./src/routes/service.route.js";
-import cartRoutes from "./src/routes/cart.routes.js";
-import addressRoutes from "./src/routes/address.route.js";
+import commonRoutes from "./src/routes/common/common.routes.js";
+// import userRoutes from "./src/routes/user.routes.js";
+// import categoryRoutes from "./src/routes/category.routes.js";
+// import subCategoryRoutes from "./src/routes/subCategory.routes.js";
+// import subSubCategoryRoutes from "./src/routes/subSubCategory.routes.js";
+// import subSubSubCategoryRoutes from "./src/routes/subSubSubCategory.routes.js";
+// import serviceRoutes from "./src/routes/service.route.js";
+// import cartRoutes from "./src/routes/cart.routes.js";
+// import addressRoutes from "./src/routes/address.route.js";
+
 
 // Get the current file 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,14 +43,16 @@ app.use(cors());
 
 // API Routes
 app.use("/api/v1", testRoutes);
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/category", categoryRoutes);
-app.use("/api/v1/sub-category", subCategoryRoutes);
-app.use("/api/v1/sub-sub-category", subSubCategoryRoutes);
-app.use("/api/v1/sub-sub-sub-category", subSubSubCategoryRoutes);
-app.use("/api/v1/service", serviceRoutes);
-app.use("/api/v1/cart", cartRoutes);
-app.use("/api/v1/address", addressRoutes);
+app.use("/api/v1/common", commonRoutes);
+
+
+// app.use("/api/v1/category", categoryRoutes);
+// app.use("/api/v1/sub-category", subCategoryRoutes);
+// app.use("/api/v1/sub-sub-category", subSubCategoryRoutes);
+// app.use("/api/v1/sub-sub-sub-category", subSubSubCategoryRoutes);
+// app.use("/api/v1/service", serviceRoutes);
+// app.use("/api/v1/cart", cartRoutes);
+// app.use("/api/v1/address", addressRoutes);
 
 // Serve static files for client
 app.use(express.static(path.join(__dirname, "../client", "dist")));
