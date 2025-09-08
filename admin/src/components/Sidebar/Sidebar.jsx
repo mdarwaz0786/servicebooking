@@ -8,7 +8,7 @@ const Sidebar = () => {
     $("#sidebar-menu a").on("click", function (e) {
       if ($(this).parent().hasClass("submenu")) {
         e.preventDefault();
-      }
+      };
       if (!$(this).hasClass("subdrop")) {
         $("ul", $(this).parents("ul:first")).slideUp(350);
         $("a", $(this).parents("ul:first")).removeClass("subdrop");
@@ -17,43 +17,9 @@ const Sidebar = () => {
       } else if ($(this).hasClass("subdrop")) {
         $(this).removeClass("subdrop");
         $(this).next("ul").slideUp(350);
-      }
+      };
     });
   }, []);
-
-  // useEffect(() => {
-  //   // initialize slimScroll after render
-  //   const $slimScrolls = $(".slimscroll");
-
-  //   if ($slimScrolls.length > 0) {
-  //     $slimScrolls.slimScroll({
-  //       height: "auto",
-  //       width: "100%",
-  //       position: "right",
-  //       size: "7px",
-  //       color: "#ccc",
-  //       allowPageScroll: false,
-  //       wheelStep: 10,
-  //       touchScrollStep: 100,
-  //     });
-
-  //     const resizeHandler = () => {
-  //       const newHeight = $(window).height() - 60;
-  //       $slimScrolls.height(newHeight);
-  //       $(".sidebar .slimScrollDiv").height(newHeight);
-  //     };
-
-  //     // set initial height
-  //     resizeHandler();
-  //     // update on resize
-  //     $(window).on("resize", resizeHandler);
-
-  //     // cleanup on unmount
-  //     return () => {
-  //       $(window).off("resize", resizeHandler);
-  //     };
-  //   }
-  // }, []);
 
   return (
     <div className="sidebar" id="sidebar">
@@ -97,9 +63,6 @@ const Sidebar = () => {
                 <li>
                   <Link to="/services">Services</Link>
                 </li>
-                <li>
-                  <Link to="/service-settings">Service Settings</Link>
-                </li>
               </ul>
             </li>
             <li>
@@ -128,7 +91,7 @@ const Sidebar = () => {
               <h6>Booking</h6>
             </li>
             <li>
-              <Link to="/booking"><i className="fe fe-smartphone" /> <span> Bookings</span></Link>
+              <Link to="/bookings"><i className="fe fe-smartphone" /> <span> Bookings</span></Link>
             </li>
             <li className="menu-title">
               <h6>Finance &amp; Accounts</h6>

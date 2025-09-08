@@ -3,3 +3,8 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.toastBody {
+  font-family: "Atlas Grotesk Web", Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+}

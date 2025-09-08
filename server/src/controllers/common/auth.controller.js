@@ -57,3 +57,18 @@ export const loginUser = asyncHandler(async (req, res) => {
     token: generateToken(user?._id),
   });
 });
+
+// Get logged in user
+export const loggedInUser = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Not authorized",
+    });
+  };
+
+  return res.status(200).json({
+    success: true,
+    data: req.user,
+  });
+});

@@ -11,7 +11,7 @@ const Navbar = () => {
           <img src="assets/img/logo.png" alt="Logo" width={30} height={30} />
         </Link>
       </div>
-      <Link className="mobile_btn" id="mobile_btn" to="/javascript:void(0);">
+      <Link className="mobile_btn" id="mobile_btn" to="#">
         <i className="fas fa-align-left" />
       </Link>
       <div className="header-split">
@@ -22,42 +22,14 @@ const Navbar = () => {
           </div>
         </div>
         <ul className="nav user-menu">
-          {/* Notifications */}
           <li className="nav-item">
             <Link to="/" className="viewsite"><i className="fe fe-globe me-2" />View Site</Link>
           </li>
-          <li className="nav-item dropdown has-arrow dropdown-heads flag-nav">
-            <Link className="nav-link" data-bs-toggle="dropdown" to="/javascript:void(0);" role="button">
-              <img src="assets/img/flags/us1.png" alt="Flag" height={20} />
-            </Link>
-            <div className="dropdown-menu dropdown-menu-right">
-              <Link to="/javascript:void(0);" className="dropdown-item">
-                <img src="assets/img/flags/us.png" className="me-2" alt="Flag" height={16} /> English
-              </Link>
-              <Link to="/javascript:void(0);" className="dropdown-item">
-                <img src="assets/img/flags/fr.png" className="me-2" alt="Flag" height={16} /> French
-              </Link>
-              <Link to="/javascript:void(0);" className="dropdown-item">
-                <img src="assets/img/flags/es.png" className="me-2" alt="Flag" height={16} /> Spanish
-              </Link>
-              <Link to="/javascript:void(0);" className="dropdown-item">
-                <img src="assets/img/flags/de.png" className="me-2" alt="Flag" height={16} /> German
-              </Link>
-            </div>
-          </li>
-          <li className="nav-item  has-arrow dropdown-heads ">
-            <Link to="/javascript:void(0);" className="toggle-switch">
-              <i className="fe fe-moon" />
-            </Link>
-          </li>
           <li className="nav-item dropdown has-arrow dropdown-heads ">
-            <Link to="/javascript:void(0);" data-bs-toggle="dropdown">
-              <i className="fe fe-bell" />
-            </Link>
             <div className="dropdown-menu notifications">
               <div className="topnav-dropdown-header">
                 <span className="notification-title">Notifications</span>
-                <Link to="/javascript:void(0)" className="clear-noti"> Clear All </Link>
+                <Link to="#" className="clear-noti"> Clear All </Link>
               </div>
               <div className="noti-content">
                 <ul className="notification-list">
@@ -187,14 +159,9 @@ const Navbar = () => {
               </div>
             </div>
           </li>
-          <li className="nav-item  has-arrow dropdown-heads ">
-            <Link to="/javascript:void(0);" className="win-maximize">
-              <i className="fe fe-maximize" />
-            </Link>
-          </li>
           {/* User Menu */}
           <li className="nav-item dropdown">
-            <Link to="/javascript:void(0)" className="user-link  nav-link" data-bs-toggle="dropdown">
+            <Link to="#" className="user-link  nav-link" data-bs-toggle="dropdown">
               <span className="user-img">
                 <img className="rounded-circle" src="assets/img/user.jpg" width={40} alt="Admin" />
                 <span className="animate-circle" />

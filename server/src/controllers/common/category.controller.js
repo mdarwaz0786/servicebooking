@@ -49,7 +49,7 @@ export const getCategories = asyncHandler(async (req, res) => {
   let {
     search,
     status,
-    sort = "-createdAt",
+    sort = "desc",
     page,
     limit,
   } = req.query;
@@ -67,6 +67,15 @@ export const getCategories = asyncHandler(async (req, res) => {
 
   if (status !== undefined) {
     filters.status = status === "true";
+  };
+
+  let sortOption = {};
+  if (sort === "asc") {
+    sortOption = { createdAt: 1 };
+  } else if (sort === "desc") {
+    sortOption = { createdAt: -1 };
+  } else {
+    sortOption = sort;
   };
 
   let categories = await CategoryModel
@@ -90,7 +99,7 @@ export const getCategories = asyncHandler(async (req, res) => {
         }
       }
     })
-    .sort(sort)
+    .sort(sortOption)
     .skip(skip)
     .limit(limit)
     .lean();
