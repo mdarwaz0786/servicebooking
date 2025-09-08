@@ -25,7 +25,5 @@ export const generateUniqueSlug = async (text, collectionName, documentId, pageN
     pageName,
   });
 
-  console.log(slug)
-
   return slug;
 };
