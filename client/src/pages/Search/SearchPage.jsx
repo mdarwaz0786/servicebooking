@@ -1,4 +1,5 @@
-import BreadCrumb from "./BreadCrumb";
+
+import BreadCrumb from "../BreadCrumb/BreadCrumb";
 import Search from "./Search";
 
 const SearchPage = () => {

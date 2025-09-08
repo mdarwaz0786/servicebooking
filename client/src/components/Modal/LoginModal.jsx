@@ -4,14 +4,15 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 import Categories from "../Category/Categories";
+import LoginForm from "../../pages/Login/LoginForm";
 
-const CategoryModal = () => {
+const LoginModal = () => {
 
-  const { modals,toggleModal, categoryModalListData, categoryModalItemData } = useContext(AppContext);
+  const { modals,toggleModal } = useContext(AppContext);
 
   return (
     <div
-        className={`modal fade ${modals.homeCategoryModal ? "show" : ""}`}
+        className={`modal fade ${modals.loginModal ? "show" : ""}`}
         id="provider"
     >
 
@@ -19,19 +20,19 @@ const CategoryModal = () => {
         <div className="modal-content">
           {/* Modal Header */}
           <div className="modal-header d-flex align-items-center justify-content-between">
-            <h5>{categoryModalItemData.name}</h5>
+            <h5></h5>
             <a
               data-bs-dismiss="modal"
               aria-label="Close"
-              onClick={() => toggleModal("homeCategoryModal",false)}
+              onClick={() => toggleModal("loginModal",false)}
             >
               <i className="ti ti-circle-x-filled fs-20"></i>
             </a>
           </div>
 
-          <div className="wizard-fieldset">
+          <div className="wizard-fieldset p-4">
             
-            <Categories categoryData={categoryModalListData} />
+            <LoginForm />
             
           </div>
         </div>
@@ -40,4 +41,4 @@ const CategoryModal = () => {
   );
 };
 
-export default CategoryModal;
+export default LoginModal;

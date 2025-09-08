@@ -1,10 +1,15 @@
 import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { useContext, useEffect, useState } from "react";
 
 const CategoryCard = ({ value = [] }) => {
+
+    const { Urls, postData, toggleModal, handleCategoryClick } = useContext(AppContext);
+
   return (
     
     <>    
-        <div key={value.id} className="col-lg-3 col-md-6">
+        <div key={value.id} className="col-lg-3 col-md-6" onClick={() => handleCategoryClick(value)}>
             <div className="category card wow fadeInUp" data-wow-delay="0.3s">
                 <div className="card-body">
                 <div className="feature-icon d-flex justify-content-center align-items-center mb-2">
@@ -13,9 +18,7 @@ const CategoryCard = ({ value = [] }) => {
                     </span>
                 </div>
                 <h5 className="text-center">
-                    <Link to={`/services/${value.slug}`}>
-                    {value.name}
-                    </Link>
+                    <Link key={value.id}>{value.name}</Link>
                 </h5>
                 <div className="overlay">
                     <img src={value.image} className="img-fluid" alt={value.name} />

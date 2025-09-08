@@ -23,37 +23,32 @@ import { useContext, useEffect, useState } from "react";
 const HomePage = () => {
 
 
-  const { Urls, postData, toggleModal } = useContext(AppContext);
-  const [categoryData, setcategoryData] = useState([]);
-  const [subcategoryData, setsubcategoryData] = useState([]);
+  const { Urls, postData, toggleModal, categoryItemData, categoryListData, subcategoryItemData, setcategoryListData, subcategoryListData } = useContext(AppContext);
+
 
   const handleCategory = async () => {
     try {
       const response = await postData({}, Urls.categoryList, "GET",1, 1);
       if (response?.data.length > 0) {
-        setcategoryData(response.data);
+        setcategoryListData(response.data);
       }
     } catch (error) {
       console.error("Cart API Error:", error);
     }
   }
 
-  const handleSubCategory = async (id) => {
-
-    // setsubcategoryData(categoryData);
-    // toggleModal("homeCategoryModal",true)
-    // console.log(categoryData[id].subcategories);
-
-    try {
-      const response = await postData({id:id}, Urls.subCategoryList, "GET");
-      if (response?.data.length > 0) {
-        setsubcategoryData(response.data);
-      }
-      toggleModal("homeCategoryModal",true)
-    } catch (error) {
-      console.error("Cart API Error:", error);
-    }
-  }
+  // const handleSubCategory = async (item) => {
+  //   setcategoryItemData(item)
+  //   try {
+  //     const response = await postData({id:item._id}, Urls.subCategoryList, "GET");
+  //     if (response?.data.length > 0) {
+  //       setsubcategoryData(response.data);
+  //     }
+  //     toggleModal("homeCategoryModal",true)
+  //   } catch (error) {
+  //     console.error("Cart API Error:", error);
+  //   }
+  // }
 
 useEffect(() => {
   toggleModal("homeCategoryModal", false); 
@@ -62,7 +57,7 @@ useEffect(() => {
 
   return ( 
     <>
-      <HeroSection categoryData={categoryData} handleSubCategory={handleSubCategory} />
+      <HeroSection categoryData={categoryListData}  />
       <OurCategories />
       <FeaturedServices />
       <PopularServices />
@@ -75,7 +70,7 @@ useEffect(() => {
       <RecentBlog />
       <Business />
       <Links />
-      <CategoryModal categoryData={subcategoryData} />
+      <CategoryModal />
     </>
   );
 };

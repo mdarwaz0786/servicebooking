@@ -1,27 +1,9 @@
+import BreadCrumb from "../BreadCrumb/BreadCrumb";
+
 const ContactUsPage = () => {
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="breadcrumb-bar text-center">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 col-12">
-              <h2 className="breadcrumb-title mb-2">Contact Us</h2>
-              <nav aria-label="breadcrumb">
-                <ol className="breadcrumb justify-content-center mb-0">
-                  <li className="breadcrumb-item">Home</li>
-                  <li className="breadcrumb-item active" aria-current="page">Contact Us</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-          <div className="breadcrumb-bg">
-            <img src="assets/img/bg/breadcrumb-bg-01.png" className="breadcrumb-bg-1" alt="Img" />
-            <img src="assets/img/bg/breadcrumb-bg-02.png" className="breadcrumb-bg-2" alt="Img" />
-          </div>
-        </div>
-      </div>
-      {/* /Breadcrumb */}
+      <BreadCrumb />
       {/* Page Wrapper */}
       <div className="page-wrapper">
         <div className="content">

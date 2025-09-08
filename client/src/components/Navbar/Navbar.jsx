@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 const Navbar = () => {
+  const { modals, toggleModal } = useContext(AppContext);
   return (
     <header className="header header-new">
-      <div className="container-fluid">
+      <div className="container-fluid"> 
         <nav className="navbar navbar-expand-lg header-nav">
           <div className="navbar-header">
             {/* Mobile button can stay as anchor if it’s only for toggling */}
@@ -17,17 +20,17 @@ const Navbar = () => {
 
             {/* Brand logos */}
             <Link to="/" className="navbar-brand logo">
-              <img src="assets/img/logo.png" className="img-fluid" alt="Logo" />
+              <img src="/assets/img/logo.png" className="img-fluid" alt="Logo" />
             </Link>
             <Link to="/" className="navbar-brand logo-small">
-              <img src="assets/img/logo.png" className="img-fluid" alt="Logo" />
+              <img src="/assets/img/logo.png" className="img-fluid" alt="Logo" />
             </Link>
           </div>
 
           <div className="main-menu-wrapper">
             <div className="menu-header">
               <Link to="/" className="menu-logo">
-                <img src="assets/img/logo.png" className="img-fluid" alt="Logo" />
+                <img src="/assets/img/logo.png" className="img-fluid" alt="Logo" />
               </Link>
               <a id="menu_close" className="menu-close" href="javascript:void(0);">
                 <i className="fas fa-times" />
@@ -64,15 +67,11 @@ const Navbar = () => {
 
           <ul className="nav header-navbar-rht">
             <li className="nav-item pe-1">
-              <Link to="/login" className="nav-link btn btn-light">
+              <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
                 <i className="ti ti-lock me-2" />Sign In
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/register" className="nav-link btn btn-linear-primary">
-                <i className="ti ti-user-filled me-2" />Join Us
-              </Link>
-            </li>
+            
           </ul>
         </nav>
       </div>

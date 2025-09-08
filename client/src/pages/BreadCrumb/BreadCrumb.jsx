@@ -14,8 +14,8 @@ const BreadCrumb = () => {
             </div>
           </div>
           <div className="breadcrumb-bg">
-            <img src="assets/img/bg/breadcrumb-bg-01.png" className="breadcrumb-bg-1" alt="Img" />
-            <img src="assets/img/bg/breadcrumb-bg-02.png" className="breadcrumb-bg-2" alt="Img" />
+            <img src="/assets/img/bg/breadcrumb-bg-01.png" className="breadcrumb-bg-1" alt="Img" />
+            <img src="/assets/img/bg/breadcrumb-bg-02.png" className="breadcrumb-bg-2" alt="Img" />
           </div>
         </div>
       </div>

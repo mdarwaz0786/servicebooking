@@ -64,14 +64,28 @@ export const createService = asyncHandler(async (req, res) => {
 export const getServices = asyncHandler(async (req, res) => {
   let { search, status, sort = "-createdAt", page = 1, limit = 10 } = req.query;
 
+  const {
+    slug
+  } = req.query;
+
+  
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
 
+  const slugData = await SlugModel.findOne({slug:slug});
+  console.log(slugData);
+  
+  
+  
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
-
+  if(slugData)
+  {
+    
+  }
+  
   const services = await ServiceModel
     .find(filters)
     .populate("createdBy updatedBy")
@@ -106,6 +120,7 @@ export const getServices = asyncHandler(async (req, res) => {
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
+    slug: slug,
     data: services,
   });
 });
