@@ -36,6 +36,9 @@ app.use(cors());
 app.use("/api/v1", testRoutes);
 app.use("/api/v1/common", commonRoutes);
 
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Serve static file for client
 app.use(express.static(path.join(__dirname, "../client", "dist")));
 
