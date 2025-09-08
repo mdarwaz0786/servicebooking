@@ -53,7 +53,7 @@ export const createSubCategory = asyncHandler(async (req, res) => {
 
 // Get all sub category
 export const getSubCategories = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10, categoryId } = req.query;
+  let { search, status, sort = "-createdAt", page, limit, categoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -72,7 +72,8 @@ export const getSubCategories = asyncHandler(async (req, res) => {
     filters.status = status === "true";
   };
 
-  const subCategories = await SubCategoryModel
+
+  let subCategories = await SubCategoryModel
     .find(filters)
     .populate("category createdBy updatedBy")
     .populate({
@@ -91,6 +92,20 @@ export const getSubCategories = asyncHandler(async (req, res) => {
     .skip(skip)
     .limit(limit)
     .lean();
+
+  subCategories = subCategories.map((sub) => {
+    const subSubCategoryCount = sub.subSubCategories?.length || 0;
+
+    const subSubSubCategoryCount = sub.subSubCategories?.reduce((acc, subsub) => {
+      return acc + (subsub.subSubSubCategories?.length || 0);
+    }, 0) || 0;
+
+    return {
+      ...sub,
+      subSubCategoryCount,
+      subSubSubCategoryCount
+    };
+  });
 
   const total = await SubCategoryModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -112,6 +127,18 @@ export const getSubCategoryById = asyncHandler(async (req, res) => {
   const subCategory = await SubCategoryModel
     .findById(req.params.id)
     .populate("category createdBy updatedBy")
+    .populate({
+      path: "subSubCategories",
+      match: { status: true },
+      options: { sort: { createdAt: -1 } },
+      strictPopulate: false,
+      populate: {
+        path: "subSubSubCategories",
+        match: { status: true },
+        options: { sort: { createdAt: -1 } },
+        strictPopulate: false,
+      }
+    });
 
   if (!subCategory) {
     throw new ApiError(404, "Subcategory not found");

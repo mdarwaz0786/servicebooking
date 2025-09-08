@@ -61,7 +61,7 @@ export const createSubSubCategory = asyncHandler(async (req, res) => {
 
 // Get all sub sub category
 export const getSubSubCategories = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10, subCategoryId } = req.query;
+  let { search, status, sort = "-createdAt", page, limit, categoryId, subCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -75,9 +75,12 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
     filters.subCategoryId = subCategoryId;
   };
 
-  const subSubCategories = await SubSubCategoryModel
+  if (categoryId) {
+    filters.categoryId = categoryId;
+  };
+
+  let subSubCategories = await SubSubCategoryModel
     .find(filters)
-    .populate("category subCategory createdBy updatedBy")
     .populate("category subCategory createdBy updatedBy")
     .populate({
       path: "subSubSubCategories",
@@ -87,7 +90,17 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
     })
     .sort(sort)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .lean();
+
+  subSubCategories = subSubCategories.map((subsub) => {
+    const subSubSubCategoryCount = subsub.subSubSubCategories?.length || 0;
+
+    return {
+      ...subsub,
+      subSubSubCategoryCount
+    };
+  });
 
   const total = await SubSubCategoryModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -108,7 +121,13 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
 export const getSubSubCategoryById = asyncHandler(async (req, res) => {
   const subSubCategory = await SubSubCategoryModel
     .findById(req.params.id)
-    .populate("category subCategory createdBy updatedBy");
+    .populate("category subCategory createdBy updatedBy")
+    .populate({
+      path: "subSubSubCategories",
+      match: { status: true },
+      options: { sort: { createdAt: -1 } },
+      strictPopulate: false,
+    });
 
   if (!subSubCategory) throw new ApiError(404, "Sub sub category not found");
 

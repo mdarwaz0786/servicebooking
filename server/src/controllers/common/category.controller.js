@@ -50,8 +50,8 @@ export const getCategories = asyncHandler(async (req, res) => {
     search,
     status,
     sort = "-createdAt",
-    page = 1,
-    limit = 10
+    page,
+    limit,
   } = req.query;
 
   page = parseInt(page, 10);
@@ -69,7 +69,7 @@ export const getCategories = asyncHandler(async (req, res) => {
     filters.status = status === "true";
   };
 
-  const categories = await CategoryModel
+  let categories = await CategoryModel
     .find(filters)
     .populate("createdBy updatedBy")
     .populate({
@@ -92,7 +92,29 @@ export const getCategories = asyncHandler(async (req, res) => {
     })
     .sort(sort)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .lean();
+
+  categories = categories.map((cat) => {
+    const subCategoryCount = cat.subcategories?.length || 0;
+
+    const subSubCategoryCount = cat.subcategories?.reduce((acc, sub) => {
+      return acc + (sub.subSubCategories?.length || 0);
+    }, 0) || 0;
+
+    const subSubSubCategoryCount = cat.subcategories?.reduce((acc1, sub) => {
+      return acc1 + (sub.subSubCategories?.reduce((acc2, subsub) => {
+        return acc2 + (subsub.subSubSubCategories?.length || 0);
+      }, 0));
+    }, 0) || 0;
+
+    return {
+      ...cat,
+      subCategoryCount,
+      subSubCategoryCount,
+      subSubSubCategoryCount
+    };
+  });
 
   const total = await CategoryModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -131,7 +153,7 @@ export const getCategoryById = asyncHandler(async (req, res) => {
           strictPopulate: false,
         }
       }
-    })
+    });
 
   if (!category) {
     throw new ApiError(404, "Category not found");
