@@ -72,8 +72,11 @@ export const getServices = asyncHandler(async (req, res) => {
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
 
+  
+
   if (slug) {
     const slugData = await SlugModel.findOne({ slug });
+    
     if (!slugData) {
       return res.status(404).json({
         success: false,
