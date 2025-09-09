@@ -2,17 +2,18 @@ import UserModel from "../../models/user.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
+import OtpModel from "../../models/otp.model.js";
 
 // Register user
 export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, mobile, password, role } = req.body;
+  const { name, email, mobile, role } = req.body;
 
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
     throw new ApiError(400, "User already exists with this email");
   };
 
-  const user = await UserModel.create({ name, email, mobile, password, role });
+  const user = await UserModel.create({ name, email, mobile, role });
 
   if (!user) {
     throw new ApiError(400, "Invalid user data");
@@ -31,30 +32,56 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 });
 
+const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
+
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {
-  const { mobile, password } = req.body;
+  const { mobile } = req.body;
 
   const user = await UserModel.findOne({ mobile });
-  if (!user) {
-    throw new ApiError(401, "Invalid mobile or password");
-  };
+  if (!user) throw new ApiError(401, "Invalid mobile number");
 
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    throw new ApiError(401, "Invalid mobile or password");
-  };
+  const otp = generateOtp();
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+  await OtpModel.findOneAndUpdate(
+    { mobile },
+    { otp: 1234, expiresAt },
+    { upsert: true, new: true }
+  );
 
   return res.status(200).json({
     success: true,
+    message: "OTP sent to mobile number",
+  });
+});
+
+// Verify OTP
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const { mobile, otp } = req.body;
+
+  const otpRecord = await OtpModel.findOne({ mobile });
+  if (!otpRecord) throw new ApiError(400, "OTP not found. Please login again");
+
+  if (otpRecord.otp !== otp) throw new ApiError(400, "Invalid OTP");
+  if (otpRecord.expiresAt < new Date()) throw new ApiError(400, "OTP expired");
+
+  const user = await UserModel.findOne({ mobile });
+  if (!user) throw new ApiError(404, "User not found");
+
+  await OtpModel.deleteOne({ mobile });
+
+  return res.status(200).json({
+    success: true,
+    message: "Login successful",
     user: {
-      id: user?._id,
-      name: user?.name,
-      email: user?.email,
-      mobile: user?.mobile,
-      role: user?.role,
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      mobile: user.mobile,
+      role: user.role,
     },
-    token: generateToken(user?._id),
+    token: generateToken(user._id),
   });
 });
 
