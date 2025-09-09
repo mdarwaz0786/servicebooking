@@ -8,9 +8,14 @@ import OtpModel from "../../models/otp.model.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, mobile, role } = req.body;
 
-  const existingUser = await UserModel.findOne({ email });
-  if (existingUser) {
-    throw new ApiError(400, "User already exists with this email");
+  const existingUserByEmail = await UserModel.findOne({ email });
+  if (existingUserByEmail) {
+    throw new ApiError(400, "User already exists with this email id");
+  };
+
+  const existingUserByMobile = await UserModel.findOne({ mobile });
+  if (existingUserByMobile) {
+    throw new ApiError(400, "User already exists with this mobile number");
   };
 
   const user = await UserModel.create({ name, email, mobile, role });
@@ -38,9 +43,6 @@ const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 export const loginUser = asyncHandler(async (req, res) => {
   const { mobile } = req.body;
 
-  const user = await UserModel.findOne({ mobile });
-  if (!user) throw new ApiError(401, "Invalid mobile number");
-
   const otp = generateOtp();
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
@@ -63,21 +65,24 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   const otpRecord = await OtpModel.findOne({ mobile });
   if (!otpRecord) throw new ApiError(400, "OTP not found. Please login again");
 
-  if (otpRecord.otp !== otp) throw new ApiError(400, "Invalid OTP");
+  if (otpRecord.otp !== Number(otp)) throw new ApiError(400, "Invalid OTP");
   if (otpRecord.expiresAt < new Date()) throw new ApiError(400, "OTP expired");
 
-  const user = await UserModel.findOne({ mobile });
-  if (!user) throw new ApiError(404, "User not found");
-
   await OtpModel.deleteOne({ mobile });
+
+  const user = await UserModel.findOne({ mobile });
+
+  console.log(user);
+
+  if (!user) {
+    await UserModel.create({ mobile });
+  };
 
   return res.status(200).json({
     success: true,
     message: "Login successful",
     user: {
       id: user._id,
-      name: user.name,
-      email: user.email,
       mobile: user.mobile,
       role: user.role,
     },
