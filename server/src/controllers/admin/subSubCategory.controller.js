@@ -30,10 +30,15 @@ export const createSubSubCategory = asyncHandler(async (req, res) => {
   };
 
   let imagePath = null;
+  let iconPath = null;
 
   try {
-    if (req.file) {
-      imagePath = await compressImage(req.file.buffer, "subSubCategory");
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "subSubCategory");
+    };
+
+    if (req.files?.icon?.[0]) {
+      iconPath = await compressImage(req.files.icon[0].buffer, "subSubCategory");
     };
 
     const subSubCategory = await SubSubCategoryModel.create({
@@ -44,6 +49,7 @@ export const createSubSubCategory = asyncHandler(async (req, res) => {
       subCategoryId,
       createdBy: req.user?._id,
       image: imagePath,
+      icon: iconPath,
     });
 
     const slug = await generateUniqueSlug(name, "SubSubCategory", subSubCategory._id, "sub-sub-categories");
@@ -54,6 +60,9 @@ export const createSubSubCategory = asyncHandler(async (req, res) => {
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
+    };
+    if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
+      fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
     throw new ApiError(500, error.message || "Something went wrong");
   };
@@ -141,11 +150,18 @@ export const updateSubSubCategory = asyncHandler(async (req, res) => {
   const subSubCategory = await SubSubCategoryModel.findById(req.params.id);
   if (!subSubCategory) throw new ApiError(404, "Sub sub category not found");
 
-  if (req.file) {
+  if (req.files?.image?.[0]) {
     if (subSubCategory.image && fs.existsSync(path.join(process.cwd(), subSubCategory.image))) {
       fs.unlinkSync(path.join(process.cwd(), subSubCategory.image));
     };
-    subSubCategory.image = await compressImage(req.file.buffer, "subSubCategory");
+    subSubCategory.image = await compressImage(req.files.image[0].buffer, "subSubCategory");
+  };
+
+  if (req.files?.icon?.[0]) {
+    if (subSubCategory.icon && fs.existsSync(path.join(process.cwd(), subSubCategory.icon))) {
+      fs.unlinkSync(path.join(process.cwd(), subSubCategory.icon));
+    };
+    subSubCategory.icon = await compressImage(req.files.icon[0].buffer, "subSubCategory");
   };
 
   if (name && name !== subSubCategory.name) {
@@ -174,6 +190,10 @@ export const deleteSubSubCategory = asyncHandler(async (req, res) => {
 
   if (subSubCategory.image && fs.existsSync(path.join(process.cwd(), subSubCategory.image))) {
     fs.unlinkSync(path.join(process.cwd(), subSubCategory.image));
+  };
+
+  if (subSubCategory.icon && fs.existsSync(path.join(process.cwd(), subSubCategory.icon))) {
+    fs.unlinkSync(path.join(process.cwd(), subSubCategory.icon));
   };
 
   await SlugModel.deleteOne({ collectionName: "SubSubCategory", documentId: subSubCategory?._id });

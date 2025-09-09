@@ -14,6 +14,12 @@ const serviceSchema = new mongoose.Schema({
   },
   image: {
     type: String,
+    required: false,
+    trim: true,
+  },
+  icon: {
+    type: String,
+    required: false,
     trim: true,
   },
   mrpPrice: {

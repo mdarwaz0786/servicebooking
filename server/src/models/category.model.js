@@ -18,6 +18,11 @@ const categorySchema = new mongoose.Schema({
     required: false,
     trim: true,
   },
+  icon: {
+    type: String,
+    required: false,
+    trim: true,
+  },
   shortDescription: {
     type: String,
     required: [true, "Short description is required"],

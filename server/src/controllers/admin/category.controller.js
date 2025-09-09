@@ -16,10 +16,15 @@ export const createCategory = asyncHandler(async (req, res) => {
   };
 
   let imagePath = null;
+  let iconPath = null;
 
   try {
-    if (req.file) {
-      imagePath = await compressImage(req.file.buffer, "category");
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "category");
+    };
+
+    if (req.files?.icon?.[0]) {
+      iconPath = await compressImage(req.files.icon[0].buffer, "category");
     };
 
     const category = await CategoryModel.create({
@@ -28,6 +33,7 @@ export const createCategory = asyncHandler(async (req, res) => {
       fullDescription,
       createdBy: req.user?._id,
       image: imagePath,
+      icon: iconPath,
     });
 
     const slug = await generateUniqueSlug(name, "Category", category._id, "categories");
@@ -39,6 +45,9 @@ export const createCategory = asyncHandler(async (req, res) => {
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
+    };
+    if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
+      fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
     throw new ApiError(500, error.message || "Something went wrong");
   };
@@ -180,11 +189,18 @@ export const updateCategory = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Category not found");
   };
 
-  if (req.file) {
+  if (req.files?.image?.[0]) {
     if (category.image && fs.existsSync(path.join(process.cwd(), category.image))) {
       fs.unlinkSync(path.join(process.cwd(), category.image));
     };
-    category.image = await compressImage(req.file.buffer, "category");
+    category.image = await compressImage(req.files.image[0].buffer, "category");
+  };
+
+  if (req.files?.icon?.[0]) {
+    if (category.icon && fs.existsSync(path.join(process.cwd(), category.icon))) {
+      fs.unlinkSync(path.join(process.cwd(), category.icon));
+    };
+    category.icon = await compressImage(req.files.icon[0].buffer, "category");
   };
 
   if (name && name !== category.name) {
@@ -217,6 +233,10 @@ export const deleteCategory = asyncHandler(async (req, res) => {
 
   if (category.image && fs.existsSync(path.join(process.cwd(), category.image))) {
     fs.unlinkSync(path.join(process.cwd(), category.image));
+  };
+
+  if (category.icon && fs.existsSync(path.join(process.cwd(), category.icon))) {
+    fs.unlinkSync(path.join(process.cwd(), category.icon));
   };
 
   await SlugModel.deleteOne({

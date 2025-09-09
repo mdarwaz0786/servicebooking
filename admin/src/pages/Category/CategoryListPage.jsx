@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -8,30 +8,26 @@ import apis, { BASE_URL } from "../../apis/apis";
 
 const CategoryListPage = () => {
   const { validToken } = useAuth();
-
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // pagination, search, sorting
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("desc"); // asc | desc
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 10;
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort") || "desc";
+
+  const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
-  // Debounce effect
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500); // delay 500ms
+      setDebouncedSearch(searchInput);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [search]);
-
-  // ✅ Fetch Categories
   const fetchCategories = async () => {
     try {
       setLoading(true);
@@ -46,17 +42,27 @@ const CategoryListPage = () => {
       });
 
       if (response?.data?.success) {
-        setCategories(response.data.data || []);
-        setTotalPages(response.data.totalPages || 1);
-      }
+        setCategories(response?.data?.data || []);
+        setTotalPages(response?.data?.totalPages || 1);
+      };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch categories");
     } finally {
       setLoading(false);
-    }
+    };
   };
 
-  // ✅ Toggle Status
+  const updateParams = (newParams) => {
+    const params = {
+      page,
+      limit,
+      search: debouncedSearch,
+      sort,
+      ...newParams,
+    };
+    setSearchParams(params);
+  };
+
   const toggleStatus = async (id, currentStatus) => {
     try {
       const response = await axios.patch(
@@ -73,7 +79,6 @@ const CategoryListPage = () => {
     };
   };
 
-  // ✅ Delete Category
   const deleteCategory = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
 
@@ -85,10 +90,10 @@ const CategoryListPage = () => {
       if (response?.data?.success) {
         toast.success("Category deleted successfully");
         fetchCategories();
-      }
+      };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to delete category");
-    }
+    };
   };
 
   useEffect(() => {
@@ -108,10 +113,10 @@ const CategoryListPage = () => {
               placeholder="Search..."
               className="form-control form-control-sm toolbar-input"
               style={{ width: "200px" }}
-              value={search}
+              value={searchInput}
               onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
+                setSearchInput(e.target.value);
+                updateParams({ page: 1, search: e.target.value });
               }}
             />
 
@@ -119,7 +124,7 @@ const CategoryListPage = () => {
             <select
               className="form-select form-select-sm"
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              onChange={(e) => updateParams({ sort: e.target.value, page: 1 })}
             >
               <option value="desc">DESC</option>
               <option value="asc">ASC</option>
@@ -129,14 +134,12 @@ const CategoryListPage = () => {
             <select
               className="form-select form-select-sm"
               value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(1);
-              }}
+              onChange={(e) => updateParams({ limit: Number(e.target.value), page: 1 })}
             >
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="5">5</option>
+              <option value="10">10</option>
             </select>
 
             <div>
@@ -150,7 +153,7 @@ const CategoryListPage = () => {
           </div>
         </div>
 
-
+        {/* Table */}
         <div className="row">
           <div className="col-12">
             <div className="table-responsive table-div">
@@ -225,16 +228,15 @@ const CategoryListPage = () => {
               </table>
             </div>
 
-            {/* ✅ Modern Pagination Controls */}
+            {/* ✅ Pagination */}
             <nav aria-label="Page navigation" className="mt-4">
               <ul className="pagination justify-content-center align-items-center">
-
-                {/* Previous Button */}
+                {/* Prev */}
                 <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
                     style={{ width: "40px", height: "40px" }}
-                    onClick={() => setPage(page - 1)}
+                    onClick={() => updateParams({ page: page - 1 })}
                   >
                     <i className="fa fa-chevron-left"></i>
                   </button>
@@ -247,9 +249,8 @@ const CategoryListPage = () => {
                     className={`page-item mx-1 ${page === i + 1 ? "active" : ""}`}
                   >
                     <button
-                      className={`page-link rounded-circle shadow-sm ${page === i + 1 ? "bg-primary text-white border-primary" : ""
-                        }`}
-                      onClick={() => setPage(i + 1)}
+                      className={`page-link rounded-circle shadow-sm ${page === i + 1 ? "bg-primary text-white border-primary" : ""}`}
+                      onClick={() => updateParams({ page: i + 1 })}
                       style={{ width: "40px", height: "40px" }}
                     >
                       {i + 1}
@@ -257,20 +258,18 @@ const CategoryListPage = () => {
                   </li>
                 ))}
 
-                {/* Next Button */}
+                {/* Next */}
                 <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
                   <button
                     className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
                     style={{ width: "40px", height: "40px" }}
-                    onClick={() => setPage(page + 1)}
+                    onClick={() => updateParams({ page: page + 1 })}
                   >
                     <i className="fa fa-chevron-right"></i>
                   </button>
                 </li>
               </ul>
             </nav>
-
-
           </div>
         </div>
       </div>
