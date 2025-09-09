@@ -1,6 +1,5 @@
 import ServiceModel from "../../models/service.model.js";
 import CategoryModel from "../../models/category.model.js";
-import CartModel from "../../models/cart.model.js";
 import SubCategoryModel from "../../models/subCategory.model.js";
 import SubSubCategoryModel from "../../models/subSubCategory.model.js";
 import SubSubSubCategoryModel from "../../models/subSubSubCategory.model.js";
@@ -9,7 +8,6 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
-import CartModel from "../../models/cart.model.js";
 import fs from "fs";
 import path from "path";
 
@@ -32,10 +30,15 @@ export const createService = asyncHandler(async (req, res) => {
   if (!categoryId) throw new ApiError(400, "Category is required");
 
   let imagePath = null;
+  let iconPath = null;
 
   try {
-    if (req.file) {
-      imagePath = await compressImage(req.file.buffer, "service");
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "service");
+    };
+
+    if (req.files?.icon?.[0]) {
+      iconPath = await compressImage(req.files.icon[0].buffer, "service");
     };
 
     const service = await ServiceModel.create({
@@ -51,6 +54,7 @@ export const createService = asyncHandler(async (req, res) => {
       subSubSubCategoryId,
       createdBy: req.user?._id,
       image: imagePath,
+      icon: iconPath,
     });
 
     const slug = await generateUniqueSlug(name, "Service", service._id, "services");
@@ -62,13 +66,16 @@ export const createService = asyncHandler(async (req, res) => {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
     };
+    if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
+      fs.unlinkSync(path.join(process.cwd(), iconPath));
+    };
     throw new ApiError(500, error.message || "Something went wrong");
   };
 });
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug, userId = "" } = req.query;
+  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -77,7 +84,9 @@ export const getServices = asyncHandler(async (req, res) => {
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
+
   let data, name, categoryList;
+
   if (slug) {
     const slugData = await SlugModel.findOne({ slug });
 
@@ -118,21 +127,7 @@ export const getServices = asyncHandler(async (req, res) => {
     .find(filters)
     .sort(sort)
     .skip(skip)
-    .limit(limit)
-    .lean();
-
-  let cartItems = [];
-  if (userId) {
-    cartItems = await CartModel.find({ userId }).lean();
-  };
-
-  const servicesWithQty = services.map((service) => {
-    const cartItem = cartItems.find((item) => item.serviceId.toString() === service._id.toString());
-    return {
-      ...service,
-      quantity: cartItem ? cartItem.quantity : 0,
-    };
-  });
+    .limit(limit);
 
   const total = await ServiceModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -148,7 +143,7 @@ export const getServices = asyncHandler(async (req, res) => {
     slug,
     name,
     categoryList: categoryList,
-    data: servicesWithQty,
+    data: services,
   });
 });
 
@@ -178,11 +173,18 @@ export const updateService = asyncHandler(async (req, res) => {
   const service = await ServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
 
-  if (req.file) {
+  if (req.files?.image?.[0]) {
     if (service.image && fs.existsSync(path.join(process.cwd(), service.image))) {
       fs.unlinkSync(path.join(process.cwd(), service.image));
     };
-    service.image = await compressImage(req.file.buffer, "service");
+    service.image = await compressImage(req.files.image[0].buffer, "service");
+  };
+
+  if (req.files?.icon?.[0]) {
+    if (service.icon && fs.existsSync(path.join(process.cwd(), service.icon))) {
+      fs.unlinkSync(path.join(process.cwd(), service.icon));
+    };
+    service.icon = await compressImage(req.files.icon[0].buffer, "service");
   };
 
   if (name && name !== service.name) {
@@ -215,6 +217,10 @@ export const deleteService = asyncHandler(async (req, res) => {
 
   if (service.image && fs.existsSync(path.join(process.cwd(), service.image))) {
     fs.unlinkSync(path.join(process.cwd(), service.image));
+  };
+
+  if (service.icon && fs.existsSync(path.join(process.cwd(), service.icon))) {
+    fs.unlinkSync(path.join(process.cwd(), service.icon));
   };
 
   await SlugModel.deleteOne({ collectionName: "Service", documentId: service._id });
