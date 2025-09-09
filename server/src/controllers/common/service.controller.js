@@ -75,7 +75,7 @@ export const getServices = asyncHandler(async (req, res) => {
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
-  let data, name;
+  let data, name, categoryList;
   if (slug) {
     const slugData = await SlugModel.findOne({ slug });
     
@@ -89,14 +89,17 @@ export const getServices = asyncHandler(async (req, res) => {
     if (slugData.collectionName === "Category") {
       filters.categoryId = slugData.documentId;
       data = await CategoryModel.findById(slugData.documentId);
+      categoryList = await SubCategoryModel.find({categoryId:data._id});
       name = data.name;
     } else if (slugData.collectionName === "SubCategory") {
       filters.subCategoryId = slugData.documentId;
       data = await SubCategoryModel.findById(slugData.documentId);
+      categoryList = await SubSubCategoryModel.find({subCategoryId:data._id});
       name = data.name;
     } else if (slugData.collectionName === "SubSubCategory") {
       filters.subSubCategoryId = slugData.documentId;
       data = await SubSubCategoryModel.findById(slugData.documentId);
+      categoryList = await SubSubSubCategoryModel.find({subSubCategoryId:data._id});
       name = data.name;
     } else if (slugData.collectionName === "SubSubSubCategory") {
       filters.subSubSubCategoryId = slugData.documentId;
@@ -128,6 +131,7 @@ export const getServices = asyncHandler(async (req, res) => {
     hasNextPage: page < totalPages,
     slug,
     name,
+    categoryList: categoryList,
     data: services,
   });
 });

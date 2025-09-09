@@ -70,12 +70,11 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   await OtpModel.deleteOne({ mobile });
 
-  const user = await UserModel.findOne({ mobile });
+  let user = await UserModel.findOne({ mobile });
 
-  console.log(user);
-
+  
   if (!user) {
-    await UserModel.create({ mobile });
+    user = await UserModel.create({ mobile });
   };
 
   return res.status(200).json({
