@@ -81,17 +81,6 @@ const Login = () => {
               </button>
             </div>
           </form>
-
-          {/* Extra Links */}
-          <div className="text-center mt-4">
-            <Link to="/forgot-password" className="text-decoration-none">Forgot Password?</Link>
-            <p className="mt-2">
-              Don’t have an account?{" "}
-              <Link to="/register" className="fw-semibold text-primary text-decoration-none">
-                Sign Up
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ import { useAuth } from "../../context/auth.context";
 
 const UpdateCategoryPage = () => {
   const { validToken } = useAuth();
-  const { id } = useParams(); // ✅ get categoryId from route
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [image, setImage] = useState(null);
@@ -21,7 +21,6 @@ const UpdateCategoryPage = () => {
     fullDescription: "",
   });
 
-  // ✅ Fetch category details
   const fetchCategory = async () => {
     try {
       setLoading(true);
@@ -32,19 +31,19 @@ const UpdateCategoryPage = () => {
       if (response?.data?.success) {
         const data = response.data.data;
         setFormData({
-          name: data.name || "",
-          shortDescription: data.shortDescription || "",
-          fullDescription: data.fullDescription || "",
+          name: data?.name || "",
+          shortDescription: data?.shortDescription || "",
+          fullDescription: data?.fullDescription || "",
         });
-        if (data.image) {
-          setPreview(`${BASE_URL}/${data.image}`);
-        }
-      }
+        if (data?.image) {
+          setPreview(`${BASE_URL}/${data?.image}`);
+        };
+      };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch category");
     } finally {
       setLoading(false);
-    }
+    };
   };
 
   useEffect(() => {
@@ -61,7 +60,7 @@ const UpdateCategoryPage = () => {
     if (file) {
       setImage(file);
       setPreview(URL.createObjectURL(file));
-    }
+    };
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -70,14 +69,13 @@ const UpdateCategoryPage = () => {
     multiple: false,
   });
 
-  // ✅ Update category
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
       toast.error("Category name is required");
       return;
-    }
+    };
 
     try {
       setLoading(true);
@@ -93,18 +91,18 @@ const UpdateCategoryPage = () => {
             "Content-Type": "multipart/form-data",
             Authorization: validToken,
           },
-        }
+        },
       );
 
       if (response?.data?.success) {
         toast.success("Category updated successfully");
-        navigate("/categories"); // ✅ redirect to categories list
-      }
+        navigate("/categories");
+      };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to update category");
     } finally {
       setLoading(false);
-    }
+    };
   };
 
   return (

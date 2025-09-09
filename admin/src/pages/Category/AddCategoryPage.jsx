@@ -4,9 +4,11 @@ import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
+import { useNavigate } from "react-router-dom";
 
 const AddCategoryPage = () => {
   const { validToken } = useAuth();
+  const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -65,6 +67,7 @@ const AddCategoryPage = () => {
         setFormData({ name: "", shortDescription: "", fullDescription: "" });
         setImage(null);
         setPreview(null);
+        navigate("/categories")
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
