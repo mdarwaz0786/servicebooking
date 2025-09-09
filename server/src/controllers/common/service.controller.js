@@ -1,4 +1,8 @@
 import ServiceModel from "../../models/service.model.js";
+import CategoryModel from "../../models/category.model.js";
+import SubCategoryModel from "../../models/subCategory.model.js";
+import SubSubCategoryModel from "../../models/subSubCategory.model.js";
+import SubSubSubCategoryModel from "../../models/subSubSubCategory.model.js";
 import SlugModel from "../../models/slug.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -72,6 +76,8 @@ export const getServices = asyncHandler(async (req, res) => {
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
 
+  let data, name;
+
   if (slug) {
     const slugData = await SlugModel.findOne({ slug });
     if (!slugData) {
@@ -83,36 +89,29 @@ export const getServices = asyncHandler(async (req, res) => {
 
     if (slugData.collectionName === "Category") {
       filters.categoryId = slugData.documentId;
+      data = await CategoryModel.findById(slugData.documentId);
+      name = data.name;
     } else if (slugData.collectionName === "SubCategory") {
       filters.subCategoryId = slugData.documentId;
+      data = await SubCategoryModel.findById(slugData.documentId);
+      name = data.name;
     } else if (slugData.collectionName === "SubSubCategory") {
       filters.subSubCategoryId = slugData.documentId;
+      data = await SubSubCategoryModel.findById(slugData.documentId);
+      name = data.name;
     } else if (slugData.collectionName === "SubSubSubCategory") {
       filters.subSubSubCategoryId = slugData.documentId;
+      data = await SubSubSubCategoryModel.findById(slugData.documentId);
+      name = data.name;
     } else if (slugData.collectionName === "Service") {
       filters._id = slugData.documentId;
+      data = await ServiceModel.findById(slugData.documentId);
+      name = data.name;
     };
   };
 
   const services = await ServiceModel
     .find(filters)
-    .populate("createdBy updatedBy")
-    .populate({
-      path: "categoryId",
-      options: { strictPopulate: false },
-      populate: {
-        path: "subcategories",
-        options: { strictPopulate: false },
-        populate: {
-          path: "subSubCategories",
-          options: { strictPopulate: false },
-          populate: {
-            path: "subSubSubCategories",
-            options: { strictPopulate: false },
-          },
-        },
-      },
-    })
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -128,32 +127,15 @@ export const getServices = asyncHandler(async (req, res) => {
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    slug: slug,
+    slug,
+    name,
     data: services,
   });
 });
 
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await ServiceModel.findById(req.params.id)
-    .populate("createdBy updatedBy")
-    .populate({
-      path: "categoryId",
-      options: { strictPopulate: false },
-      populate: {
-        path: "subcategories",
-        options: { strictPopulate: false },
-        populate: {
-          path: "subSubCategories",
-          options: { strictPopulate: false },
-          populate: {
-            path: "subSubSubCategories",
-            options: { strictPopulate: false },
-          },
-        },
-      },
-    });
-
+  const service = await ServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
   return res.status(200).json({ success: true, data: service });
 });
