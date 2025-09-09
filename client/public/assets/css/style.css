@@ -36024,8 +36024,9 @@ span.select2-container.select2-container--default.select2-container--open {
 }
 
 .cart-item-btn {
-  font-size: 15px;
-  padding: 0px 10px;
+  font-size: 15px !important;
+  padding: 0px 10px !important;
+  margin: 0 !important;
 }
 
 .cart-item-name {

@@ -8,6 +8,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
+import CartModel from "../../models/cart.model.js";
 import fs from "fs";
 import path from "path";
 
@@ -66,8 +67,8 @@ export const createService = asyncHandler(async (req, res) => {
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug } = req.query;
-  
+  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug, userId = "" } = req.query;
+
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
@@ -78,7 +79,7 @@ export const getServices = asyncHandler(async (req, res) => {
   let data, name, categoryList;
   if (slug) {
     const slugData = await SlugModel.findOne({ slug });
-    
+
     if (!slugData) {
       return res.status(404).json({
         success: false,
@@ -89,17 +90,17 @@ export const getServices = asyncHandler(async (req, res) => {
     if (slugData.collectionName === "Category") {
       filters.categoryId = slugData.documentId;
       data = await CategoryModel.findById(slugData.documentId);
-      categoryList = await SubCategoryModel.find({categoryId:data._id});
+      categoryList = await SubCategoryModel.find({ categoryId: data._id });
       name = data.name;
     } else if (slugData.collectionName === "SubCategory") {
       filters.subCategoryId = slugData.documentId;
       data = await SubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubCategoryModel.find({subCategoryId:data._id});
+      categoryList = await SubSubCategoryModel.find({ subCategoryId: data._id });
       name = data.name;
     } else if (slugData.collectionName === "SubSubCategory") {
       filters.subSubCategoryId = slugData.documentId;
       data = await SubSubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubSubCategoryModel.find({subSubCategoryId:data._id});
+      categoryList = await SubSubSubCategoryModel.find({ subSubCategoryId: data._id });
       name = data.name;
     } else if (slugData.collectionName === "SubSubSubCategory") {
       filters.subSubSubCategoryId = slugData.documentId;
@@ -116,7 +117,21 @@ export const getServices = asyncHandler(async (req, res) => {
     .find(filters)
     .sort(sort)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .lean();
+
+  let cartItems = [];
+  if (userId) {
+    cartItems = await CartModel.find({ userId }).lean();
+  };
+
+  const servicesWithQty = services.map((service) => {
+    const cartItem = cartItems.find((item) => item.serviceId.toString() === service._id.toString());
+    return {
+      ...service,
+      quantity: cartItem ? cartItem.quantity : 0,
+    };
+  });
 
   const total = await ServiceModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -132,7 +147,7 @@ export const getServices = asyncHandler(async (req, res) => {
     slug,
     name,
     categoryList: categoryList,
-    data: services,
+    data: servicesWithQty,
   });
 });
 

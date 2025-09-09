@@ -37,19 +37,6 @@ const HomePage = () => {
     }
   }
 
-  // const handleSubCategory = async (item) => {
-  //   setcategoryItemData(item)
-  //   try {
-  //     const response = await postData({id:item._id}, Urls.subCategoryList, "GET");
-  //     if (response?.data.length > 0) {
-  //       setsubcategoryData(response.data);
-  //     }
-  //     toggleModal("homeCategoryModal",true)
-  //   } catch (error) {
-  //     console.error("Cart API Error:", error);
-  //   }
-  // }
-
 useEffect(() => {
   toggleModal("homeCategoryModal", false); 
   handleCategory();

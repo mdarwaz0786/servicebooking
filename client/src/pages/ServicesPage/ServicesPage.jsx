@@ -2,7 +2,36 @@
 import BreadCrumb from "../BreadCrumb/BreadCrumb";
 import Services from "./Services";
 
-const ServicesPage = () => {
+import { AppContext } from "../../context/AppContext";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+const ServicesPage = () => {    
+ const { slug } = useParams();
+  const { Urls, postData, setserviceListData, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
+  const fetchData = async () => {
+    try { 
+
+      let userId = generateUniqueId();
+
+      const response = await postData({slug:slug,userId:userId}, Urls.serviceList, "GET");
+      if (response?.data.length > 0) {
+        setserviceListData(response.data);
+        setservicePageCategoryData(response.categoryList);
+        setservicePageName(response.name);
+      } 
+    } catch (error) { 
+      console.error("Cart API Error:", error);
+    }
+  }
+
+ 
+useEffect(() => {  
+  fetchData(); 
+}, []);  
+
+
+
   return (
     <>
       <BreadCrumb />

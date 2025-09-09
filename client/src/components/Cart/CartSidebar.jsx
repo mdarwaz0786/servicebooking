@@ -1,26 +1,28 @@
-import React, { useState } from "react";
+
 import CartItem from "./CartItem";
 import { Link } from "react-router-dom";
+
+import { AppContext } from "../../context/AppContext";
+import { useContext, useEffect, useState } from "react";
+
 const CartSidebar = () => {
-  const [quantity, setQuantity] = useState(1);
+  const { cartAmount, PriceFormat } = useContext(AppContext);
 
-  const increase = () => setQuantity(quantity + 1);
-  const decrease = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
-
+  
   return (
     <div className="cart-sidebar p-3 shadow rounded bg-white">
       {/* Cart Section */}
       <h5 className="fw-bold mb-3">Cart</h5>
       
-    <CartItem />
-    <CartItem />
+      <CartItem />
+    
       
 
       
 
       {/* View Cart Button */}
       <Link to={`../checkout`} className="btn btn-primary w-100 mb-4">
-        ₹998 <span className="text-decoration-line-through small ms-2">₹1,198</span> 
+        {PriceFormat(cartAmount.amount)}
         <span className="ms-2">View Cart</span>
       </Link>
 

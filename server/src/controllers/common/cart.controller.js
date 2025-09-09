@@ -3,37 +3,67 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Create or Add to Cart
-export const addToCart = asyncHandler(async (req, res) => {
-  const { serviceId, quantity = 1 } = req.body;
+export const addToCart = asyncHandler(async (req, res) => { 
+  const { serviceId, quantity = 1, userId = "" } = req.body;
 
   if (!serviceId) {
     throw new ApiError(400, "Service ID is required");
   };
 
-  let cartItem = await CartModel.findOne({ serviceId, userId: req.user?._id });
+  let cartItem = await CartModel.findOne({ 
+    serviceId, 
+    userId: req.user?._id ? req.user?._id : userId 
+  });
 
   if (cartItem) {
-    cartItem.quantity += quantity;
-    cartItem.updatedBy = req.user?._id;
-    await cartItem.save();
+    if (quantity == 0) {
+      await cartItem.deleteOne();
+    } else {
+      cartItem.quantity = quantity;
+      await cartItem.save();
+    }
   } else {
     cartItem = await CartModel.create({
       serviceId,
-      userId: req.user?._id,
+      userId: req.user?._id ? req.user?._id : userId,
       quantity,
-      createdBy: req.user?._id,
     });
   };
 
+  // populate for response
   cartItem = await cartItem.populate("serviceId");
 
-  return res.status(201).json({ success: true, data: cartItem });
+  let cartItems = await CartModel
+    .find({ userId: req.user?._id ? req.user?._id : userId })
+    .populate("serviceId")
+    .lean();
+
+  // flatten serviceId fields but keep serviceId _id
+  cartItems = cartItems.map(item => ({
+    ...item,
+    serviceId: item.serviceId?._id, // keep only the ObjectId
+    ...item.serviceId,              // merge service details at top level
+  }));
+
+  let rData = {
+    cartProducts: cartItems,
+    amountData: {
+      amount: 100,
+      gst: 10,
+      payableAmount: 100,
+    }
+  };
+
+  return res.status(201).json({ success: true, data: rData });
 });
+
+
 
 // Get cart items
 export const getCartItems = asyncHandler(async (req, res) => {
+  let { userId='' } = req.query;
   const cartItems = await CartModel
-    .find({ userId: req.user?._id })
+    .find({ userId: req.user?._id?req.user?._id:userId })
     .populate({
       path: "serviceId",
       populate: {

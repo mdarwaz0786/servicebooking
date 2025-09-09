@@ -5,7 +5,7 @@ const LoginForm = () => {
 
      
     const { Urls } = useContext(AppContext);
-    console.log(Urls)
+    
     
   const [mobile, setmobile] = useState("");
   const [password, setPassword] = useState("");

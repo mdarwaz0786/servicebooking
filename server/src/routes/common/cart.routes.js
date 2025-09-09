@@ -6,23 +6,22 @@ import {
   removeCartItem,
   clearCart
 } from "../../controllers/common/cart.controller.js";
-import isLoggedIn from "../../middlewares/common/auth.middleware.js";
 
 const router = express.Router();
 
 // Add a service to cart
-router.post("/create-cart", isLoggedIn, addToCart);
+router.post("/create-cart", addToCart);
 
 // Get all cart items of loggedin user
-router.get("/", isLoggedIn, getCartItems);
+router.get("/", getCartItems);
 
 // Update quantity of a specific cart item
-router.put("/update-cart/:id", isLoggedIn, updateCartItem);
+router.put("/update-cart/:id", updateCartItem);
 
 // Remove a specific cart item
-router.delete("/delete-cart/:id", isLoggedIn, removeCartItem);
+router.delete("/delete-cart/:id", removeCartItem);
 
 // Clear all cart items
-router.delete("/clear", isLoggedIn, clearCart);
+router.delete("/clear", clearCart);
 
 export default router;

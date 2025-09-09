@@ -27,6 +27,16 @@ export const AppProvider = ({ children }) => {
   const [subsubsubcategoryListData, setsubsubsubcategoryListData] = useState([]);
   const [subsubsubcategoryItemData, setsubsubsubcategoryItemData] = useState([]);
 
+  const [serviceListData, setserviceListData] = useState([]);
+  const [serviceItemData, setserviceItemData] = useState([]);
+
+  const [servicePageCategoryData, setservicePageCategoryData] = useState([]);
+  const [servicePageName, setservicePageName] = useState([]);
+
+  const [cartItems, setcartItems] = useState([]);
+  const [cartAmount, setcartAmount] = useState([]);
+  
+
 
 
 
@@ -59,6 +69,9 @@ export const AppProvider = ({ children }) => {
       subCategoryList: `${commurl}sub-category`,
       subSubCategoryList: `${commurl}sub-sub-category`,
       subSubSubCategoryList: `${commurl}sub-sub-sub-category`,
+      serviceList: `${commurl}service`,
+
+      addRemoveCart: `${commurl}cart/create-cart`,
       
 
       
@@ -111,7 +124,6 @@ export const AppProvider = ({ children }) => {
     }
 
     if (!loaderShowHide) setbodyLoaderShow(true);
-
     try {
       const response = await fetch(url, {
         method,
@@ -134,7 +146,7 @@ export const AppProvider = ({ children }) => {
   const responseCheck = async (response, extraData, messageAlert) => {
     try {
       let result = [];
-      if ([200, 400, 401, 204].includes(response.status)) {
+      if ([200, 400, 401, 204, 201].includes(response.status)) {
         result = await response.json();
       } else {
         result = response;
@@ -184,6 +196,33 @@ export const AppProvider = ({ children }) => {
   };
 
 
+  const PriceFormat = (value) => {
+    const formatted = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 2, // optional: 2 decimal places
+    }).format(value);
+    return formatted;
+  };
+
+  const generateUniqueId = () => {
+    // Pehle check karo LocalStorage me already id hai ya nahi
+    let uniqueId = localStorage.getItem("uniqueId");
+
+    if (!uniqueId) {
+      // Agar nahi hai to nayi generate karo
+      uniqueId =
+        Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+
+      // Save karo LocalStorage me
+      localStorage.setItem("uniqueId", uniqueId);
+    }
+
+    return uniqueId;
+  };
+
+
+
 
 
 
@@ -214,6 +253,37 @@ export const AppProvider = ({ children }) => {
       [stepName]: isOpen, // sirf us modal ka state update hoga
     }));
   };
+
+
+
+  
+   const handleCartAddRemove = async (item, type) => {    
+      let quantity = item?.quantity;
+      let serviceId = item._id;
+      if(item.serviceId) serviceId = item.serviceId;
+      if(type==1)
+      {
+        quantity += 1;
+      }
+      else{
+        quantity = quantity > 0 ? quantity - 1 : 0;
+      }
+      try {
+        const response = await postData({serviceId:serviceId,quantity:quantity,userId:generateUniqueId()}, Urls.addRemoveCart, "POST");
+        item.quantity = quantity;
+
+        setcartItems(response.data.cartProducts);
+        setcartAmount(response.data.amountData);
+
+        // if (response?.data.length > 0) {
+          
+        // }
+      } catch (error) {
+        console.error("Cart API Error:", error);
+      }
+  }
+
+
 
   const handleCategoryClick = async (item) => {
     if(item.subCategoryCount)
@@ -260,6 +330,19 @@ export const AppProvider = ({ children }) => {
     }
   }
 
+  const addRemoveCart = async () => {
+    try { 
+      const response = await postData({slug:slug}, Urls.serviceList, "GET");
+      if (response?.data.length > 0) {
+        setserviceListData(response.data);
+        setservicePageCategoryData(response.categoryList);
+        setservicePageName(response.name);
+      } 
+    } catch (error) { 
+      console.error("Cart API Error:", error);
+    }
+  }
+
   const Urls = apiUrl();
   return (
     <AppContext.Provider value={{
@@ -270,6 +353,8 @@ export const AppProvider = ({ children }) => {
       Urls,
       postData,
       handleCategoryClick,
+
+      handleCartAddRemove,
 
       categoryModalListData,
       setcategoryModalListData,
@@ -297,10 +382,31 @@ export const AppProvider = ({ children }) => {
       subsubsubcategoryItemData,
       setsubsubsubcategoryItemData,
 
+      serviceListData,
+      setserviceListData,
+      serviceItemData,
+      setserviceItemData,
+
+      servicePageCategoryData,
+      setservicePageCategoryData,
+      
+      servicePageName,
+      setservicePageName,
+
+      cartItems,
+      setcartItems,
+
+      cartAmount,
+      setcartAmount,
+
       navigate,
 
       bodyLoaderShow,
       setbodyLoaderShow,
+      PriceFormat,
+      generateUniqueId,
+
+      addRemoveCart,
       
     }}>
       {children}

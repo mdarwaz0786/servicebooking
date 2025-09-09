@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 const Pagination = ({ value = [] }) => {
-  console.log(value)
+  
   return (
 
     <nav aria-label="Page navigation">
