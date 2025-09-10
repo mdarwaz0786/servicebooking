@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Routes, Route } from "react-router-dom";
+import "./App.css";
 import Layout from "./components/Layout/Layout";
 import PrivateRoute from "./routes/PrivateRoute";
 import routesConfig from "./routes/routesConfig";

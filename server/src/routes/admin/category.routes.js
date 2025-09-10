@@ -34,7 +34,10 @@ router.get("/:id", getCategoryById);
 router.patch(
   "/update-category/:id",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "icon", maxCount: 1 },
+  ]),
   validateFileSize,
   updateCategory
 );

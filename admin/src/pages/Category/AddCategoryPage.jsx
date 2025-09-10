@@ -9,8 +9,11 @@ import { useNavigate } from "react-router-dom";
 const AddCategoryPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+
   const [image, setImage] = useState(null);
+  const [icon, setIcon] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [iconPreview, setIconPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -23,7 +26,7 @@ const AddCategoryPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDropImage = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
       setImage(file);
@@ -31,8 +34,30 @@ const AddCategoryPage = () => {
     };
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+  const {
+    getRootProps: getImageRootProps,
+    getInputProps: getImageInputProps,
+    isDragActive: isImageActive
+  } = useDropzone({
+    onDrop: onDropImage,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
+  const onDropIcon = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setIcon(file);
+      setIconPreview(URL.createObjectURL(file));
+    };
+  }, []);
+
+  const {
+    getRootProps: getIconRootProps,
+    getInputProps: getIconInputProps,
+    isDragActive: isIconActive
+  } = useDropzone({
+    onDrop: onDropIcon,
     accept: { "image/*": [] },
     multiple: false,
   });
@@ -50,24 +75,18 @@ const AddCategoryPage = () => {
       const data = new FormData();
       Object.keys(formData).forEach((key) => data.append(key, formData[key]));
       if (image) data.append("image", image);
+      if (icon) data.append("icon", icon);
 
-      const response = await axios.post(
-        apis.category.create,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: validToken,
-          },
-        }
-      );
+      const response = await axios.post(apis.category.create, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: validToken,
+        },
+      });
 
       if (response?.data?.success) {
         toast.success("Category created successfully");
-        setFormData({ name: "", shortDescription: "", fullDescription: "" });
-        setImage(null);
-        setPreview(null);
-        navigate("/categories")
+        navigate(-1);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
@@ -82,12 +101,21 @@ const AddCategoryPage = () => {
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
             <h5 className="mb-0">Add Category</h5>
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => navigate(-1)}
+            >
+              ← Back
+            </button>
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               {/* Category Name */}
               <div className="mb-3">
-                <label className="form-label">Category Name <span style={{ color: "red" }}>*</span></label>
+                <label className="form-label">
+                  Name <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -124,31 +152,38 @@ const AddCategoryPage = () => {
                 ></textarea>
               </div>
 
-              {/* Drag & Drop Image */}
+              {/* Category Image */}
               <div className="mb-3">
-                <label className="form-label">Category Image</label>
+                <label className="form-label">Image</label>
                 <div
-                  {...getRootProps()}
-                  className={`border p-4 text-center rounded ${isDragActive ? "bg-light" : ""}`}
+                  {...getImageRootProps()}
+                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
                   style={{ cursor: "pointer" }}
                 >
-                  <input {...getInputProps()} />
-                  {isDragActive ? (
-                    <p>Drop the image here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop image here, or <span className="text-primary">browse</span>
-                    </p>
-                  )}
+                  <input {...getImageInputProps()} />
+                  {isImageActive ? <p>Drop the image here...</p> : <p>Drag & drop image here, or <span className="text-primary">browse</span></p>}
                 </div>
-                {/* Image Preview */}
                 {preview && (
                   <div className="mt-3 text-center">
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
-                    />
+                    <img src={preview} alt="Preview" style={{ maxWidth: "200px", borderRadius: "8px" }} />
+                  </div>
+                )}
+              </div>
+
+              {/* Category Icon */}
+              <div className="mb-3">
+                <label className="form-label">Icon</label>
+                <div
+                  {...getIconRootProps()}
+                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""}`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input {...getIconInputProps()} />
+                  {isIconActive ? <p>Drop the icon here...</p> : <p>Drag & drop icon here, or <span className="text-primary">browse</span></p>}
+                </div>
+                {iconPreview && (
+                  <div className="mt-3 text-center">
+                    <img src={iconPreview} alt="Icon Preview" style={{ maxWidth: "100px", borderRadius: "8px" }} />
                   </div>
                 )}
               </div>
@@ -162,6 +197,8 @@ const AddCategoryPage = () => {
                     setFormData({ name: "", shortDescription: "", fullDescription: "" });
                     setImage(null);
                     setPreview(null);
+                    setIcon(null);
+                    setIconPreview(null);
                   }}
                 >
                   Cancel

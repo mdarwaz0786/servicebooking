@@ -75,7 +75,7 @@ export const createService = asyncHandler(async (req, res) => {
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug } = req.query;
+  let { search, status, sort = "desc", page = 1, limit = 10, slug } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -84,6 +84,15 @@ export const getServices = asyncHandler(async (req, res) => {
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
+
+  let sortOption = {};
+  if (sort === "asc") {
+    sortOption = { createdAt: 1 };
+  } else if (sort === "desc") {
+    sortOption = { createdAt: -1 };
+  } else {
+    sortOption = sort;
+  };
 
   let data, name, categoryList;
 
@@ -125,7 +134,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
   const services = await ServiceModel
     .find(filters)
-    .sort(sort)
+    .sort(sortOption)
     .skip(skip)
     .limit(limit);
 

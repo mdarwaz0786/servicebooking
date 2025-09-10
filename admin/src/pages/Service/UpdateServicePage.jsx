@@ -2,13 +2,14 @@ import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddServicePage = () => {
+const UpdateServicePage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -35,6 +36,37 @@ const AddServicePage = () => {
   });
 
   useEffect(() => {
+    const fetchService = async () => {
+      try {
+        const res = await axios.get(`${apis.service.get}/${id}`, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success) {
+          const service = res.data.data;
+          setFormData({
+            categoryId: service.categoryId || "",
+            subCategoryId: service.subCategoryId || "",
+            subSubCategoryId: service.subSubCategoryId || "",
+            subSubSubCategoryId: service.subSubSubCategoryId || "",
+            name: service.name || "",
+            mrpPrice: service.mrpPrice || "",
+            salePrice: service.salePrice || "",
+            timeTaking: service.timeTaking || "",
+            shortDescription: service.shortDescription || "",
+            fullDescription: service.fullDescription || "",
+          });
+          if (service?.image) setPreview(`${BASE_URL}/${service?.image}`);
+          if (service?.icon) setIconPreview(`${BASE_URL}/${service?.icon}`);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to load service");
+      };
+    };
+    fetchService();
+  }, [id, validToken]);
+
+  useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(apis.category.get, {
@@ -42,7 +74,7 @@ const AddServicePage = () => {
         });
         if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
         toast.error("Failed to load categories");
       };
     };
@@ -58,8 +90,7 @@ const AddServicePage = () => {
           { headers: { Authorization: validToken } }
         );
         if (res?.data?.success) setSubCategories(res?.data?.data || []);
-      } catch (error) {
-        console.log(error);
+      } catch {
         toast.error("Failed to load sub categories");
       };
     };
@@ -75,8 +106,7 @@ const AddServicePage = () => {
           { headers: { Authorization: validToken } }
         );
         if (res?.data?.success) setSubSubCategories(res?.data?.data || []);
-      } catch (error) {
-        console.log(error);
+      } catch {
         toast.error("Failed to load sub sub categories");
       };
     };
@@ -92,8 +122,7 @@ const AddServicePage = () => {
           { headers: { Authorization: validToken } }
         );
         if (res?.data?.success) setSubSubSubCategories(res?.data?.data || []);
-      } catch (error) {
-        console.log(error);
+      } catch {
         toast.error("Failed to load sub sub sub categories");
       };
     };
@@ -131,7 +160,8 @@ const AddServicePage = () => {
     };
   }, []);
 
-  const { getRootProps: getIconRootProps,
+  const {
+    getRootProps: getIconRootProps,
     getInputProps: getIconInputProps,
     isDragActive: isIconActive
   } = useDropzone({
@@ -142,7 +172,6 @@ const AddServicePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.categoryId) return toast.error("Please select a category");
     if (!formData.name.trim()) return toast.error("Name is required");
 
@@ -153,7 +182,7 @@ const AddServicePage = () => {
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
 
-      const response = await axios.post(apis.service.create, data, {
+      const response = await axios.patch(`${apis.service.update}/${id}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: validToken,
@@ -161,13 +190,11 @@ const AddServicePage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Service created successfully");
+        toast.success("Service updated successfully");
         navigate(-1);
       };
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || error.message || "Something Went Wrong"
-      );
+      toast.error(error?.response?.data?.message || "Failed to update service");
     } finally {
       setLoading(false);
     };
@@ -178,7 +205,7 @@ const AddServicePage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Service</h5>
+            <h5 className="mb-0">Update Service</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -459,4 +486,4 @@ const AddServicePage = () => {
   );
 };
 
-export default AddServicePage;
+export default UpdateServicePage;

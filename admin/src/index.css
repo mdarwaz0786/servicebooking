@@ -8,3 +8,8 @@
   font-family: "Atlas Grotesk Web", Arial, Helvetica, sans-serif;
   font-size: 1rem;
 }
+
+.table-div {
+  min-height: 400px;
+  min-height: 70vh;
+}

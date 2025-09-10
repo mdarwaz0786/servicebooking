@@ -16,7 +16,10 @@ const router = express.Router();
 router.post(
   "/create-sub-sub-category",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "icon", maxCount: 1 },
+  ]),
   validateFileSize,
   createSubSubCategory
 );
@@ -31,7 +34,10 @@ router.get("/:id", getSubSubCategoryById);
 router.patch(
   "/update-sub-sub-category/:id",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "icon", maxCount: 1 },
+  ]),
   validateFileSize,
   updateSubSubCategory
 );

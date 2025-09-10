@@ -1,342 +1,282 @@
-import { Link } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/auth.context";
+import apis, { BASE_URL } from "../../apis/apis";
 
 const ServiceListPage = () => {
+  const { validToken } = useAuth();
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasPrevPage, setHasPrevPage] = useState();
+  const [hasNextPage, setHasNexrPage] = useState();
+  const [total, setTotal] = useState();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 10;
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort") || "desc";
+
+  const [searchInput, setSearchInput] = useState(search);
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(apis.service.get, {
+        headers: { Authorization: validToken },
+        params: {
+          page,
+          limit,
+          search: debouncedSearch,
+          sort,
+        },
+      });
+
+      if (response?.data?.success) {
+        setServices(response?.data?.data || []);
+        setTotalPages(response?.data?.totalPages || 1);
+        setTotal(response?.data?.total || 1);
+        setHasNexrPage(response?.data?.hasNextPage);
+        setHasPrevPage(response?.data?.hasPrevPage);
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to fetch services");
+    } finally {
+      setLoading(false);
+    };
+  };
+
+  const updateParams = (newParams) => {
+    const params = {
+      page,
+      limit,
+      search: debouncedSearch,
+      sort,
+      ...newParams,
+    };
+    setSearchParams(params);
+  };
+
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await axios.patch(
+        `${apis.service.update}/${id}`,
+        { status: !currentStatus },
+        { headers: { Authorization: validToken } }
+      );
+
+      if (response?.data?.success) {
+        fetchServices();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    };
+  };
+
+  const deleteservice = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this service?")) return;
+
+    try {
+      const response = await axios.delete(`${apis.service.delete}/${id}`, {
+        headers: { Authorization: validToken },
+      });
+
+      if (response?.data?.success) {
+        toast.success("service deleted successfully");
+        fetchServices();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to delete service");
+    };
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, [page, limit, debouncedSearch, sort]);
+
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
-        <div className="content-page-header content-page-headersplit">
-          <h5>All Services</h5>
-          <div className="list-btn">
-            <ul>
-              <li>
-                <div className="filter-sorting">
-                  <ul>
-                    <li>
-                      <Link to="/javascript:void(0);" className="filter-sets"><i className="fe fe-filter me-2" />Filter</Link>
-                    </li>
-                    <li>
-                      <span><img src="assets/img/icons/sort.svg" className="me-2" alt="img" /></span>
-                      <div className="review-sort">
-                        <select className="select">
-                          <option>A -&gt; Z</option>
-                          <option>Z -&gt; A</option>
-                        </select>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li>
-                <Link className="btn btn-primary" to="/add-service"><i className="fa fa-plus me-2" />Create Service </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12">
-            <div className="tab-sets">
-              <div className="tab-contents-sets">
-                <ul>
-                  <li>
-                    <Link to="/services" className="active">All Services</Link>
-                  </li>
-                  <li>
-                    <Link to="/active-services">Active</Link>
-                  </li>
-                  <li>
-                    <Link to="/pending-services">Pending </Link>
-                  </li>
-                  <li>
-                    <Link to="/inactive-services">Inactive </Link>
-                  </li>
-                  <li>
-                    <Link to="/deleted-services">Deleted </Link>
-                  </li>
-                </ul>
-              </div>
-              <div className="tab-contents-count">
-                <h6>Showing 8-10 of 84 results</h6>
-              </div>
+        <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
+          <h5>Services {services?.length}</h5>
+
+          <div className="d-flex gap-2 align-items-center">
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Search..."
+              className="form-control form-control-sm toolbar-input"
+              style={{ width: "200px" }}
+              value={searchInput}
+              onChange={(e) => {
+                setSearchInput(e.target.value);
+                updateParams({ page: 1, search: e.target.value });
+              }}
+            />
+
+            {/* Sort */}
+            <select
+              className="form-select form-select-sm"
+              value={sort}
+              onChange={(e) => updateParams({ sort: e.target.value, page: 1 })}
+            >
+              <option value="desc">DESC</option>
+              <option value="asc">ASC</option>
+            </select>
+
+            {/* Limit */}
+            <select
+              className="form-select form-select-sm"
+              value={limit}
+              onChange={(e) => updateParams({ limit: Number(e.target.value), page: 1 })}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value={total}>All</option>
+            </select>
+            <div>
+              <Link to="/add-service">
+                <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                  <i className="fa fa-plus me-2"></i>
+                  <span>Add</span>
+                </button>
+              </Link>
             </div>
           </div>
         </div>
+
+        {/* Table */}
         <div className="row">
           <div className="col-12">
-            <div className="table-resposnive table-div">
+            <div className="table-responsive table-div">
               <table className="table datatable">
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Service</th>
-                    <th>Category</th>
-                    <th>Sub Category</th>
-                    <th>Price</th>
-                    <th>Duration</th>
+                    <th>Image</th>
+                    <th>Name</th>
                     <th>Status</th>
-                    <th>Created By</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-03.jpg" className="me-2" alt="img" />
-                          <span>Computer Repair</span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Computer</td>
-                    <td>Other</td>
-                    <td>$80</td>
-                    <td>10:00</td>
-                    <td><h6 className="badge-pending">Pending</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-01.jpg" className="me-2" alt="img" />
-                        <span>John Smith</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-02.jpg" className="me-2" alt="img" />
-                          <span>Car Repair Services</span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Automobile</td>
-                    <td>Other</td>
-                    <td>$50</td>
-                    <td>12:45</td>
-                    <td><h6 className="badge-active">Active</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-02.jpg" className="me-2" alt="img" />
-                        <span>Sharon</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-04.jpg" className="me-2" alt="img" />
-                          <span>Steam Car Wash</span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Car Wash</td>
-                    <td>Other</td>
-                    <td>$14</td>
-                    <td>04:45</td>
-                    <td><h6 className="badge-inactive">Inactive</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-03.jpg" className="me-2" alt="img" />
-                        <span>Amanda</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-09.jpg" className="me-2" alt="img" />
-                          <span>House Cleaning </span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Cleaning</td>
-                    <td>Other</td>
-                    <td>$100</td>
-                    <td>08:32</td>
-                    <td><h6 className="badge-delete">Delete</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-04.jpg" className="me-2" alt="img" />
-                        <span>Sharonda</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-08.jpg" className="me-2" alt="img" />
-                          <span>Building Construction</span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Cleaning</td>
-                    <td>Other</td>
-                    <td>$100</td>
-                    <td>06:34</td>
-                    <td><h6 className="badge-delete">Delete</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-01.jpg" className="me-2" alt="img" />
-                        <span>John Smith</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>6</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-07.jpg" className="me-2" alt="img" />
-                          <span>Interior Designing</span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Interior</td>
-                    <td>Other</td>
-                    <td>$100</td>
-                    <td>07:21</td>
-                    <td><h6 className="badge-pending">Pending</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-03.jpg" className="me-2" alt="img" />
-                        <span>Amanda</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>7</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-09.jpg" className="me-2" alt="img" />
-                          <span>Commercial Painting </span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Painting</td>
-                    <td>Other</td>
-                    <td>$500</td>
-                    <td>05:33</td>
-                    <td><h6 className="badge-inactive">Inactive</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-02.jpg" className="me-2" alt="img" />
-                        <span>Sharon</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>8</td>
-                    <td>
-                      <div className="table-imgname">
-                        <Link to="/view-service">
-                          <img src="assets/img/services/service-12.jpg" className="me-2" alt="img" />
-                          <span>Plumbing Services</span>
-                        </Link>
-                      </div>
-                    </td>
-                    <td>Plumbing</td>
-                    <td>Other</td>
-                    <td>$150</td>
-                    <td>02:45</td>
-                    <td><h6 className="badge-delete">Delete</h6></td>
-                    <td>
-                      <Link to="/javascript:void(0);" className="table-profileimage">
-                        <img src="assets/img/customer/user-01.jpg" className="me-2" alt="img" />
-                        <span>John Smith</span>
-                      </Link>
-                    </td>
-                    <td>
-                      <div className="action-language">
-                        <Link className="table-edit" to="/edit-service">
-                          <i className="fa-regular fa-pen-to-square" /><span>Edit</span>
-                        </Link>
-                        <Link className="table-delete" to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete-item">
-                          <i className="fa-solid fa-trash-can" /><span>Delete</span>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="6" className="text-center">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : services?.length > 0 ? (
+                    services?.map((d, index) => (
+                      <tr key={d?._id}>
+                        <td>{(page - 1) * limit + index + 1}</td>
+                        <td>
+                          <img
+                            src={d?.image ? `${BASE_URL}/${d.image}` : "https://via.placeholder.com/50"}
+                            className="me-2"
+                            alt="image"
+                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                          />
+                        </td>
+                        <td>{d?.name}</td>
+                        <td>
+                          <div className="active-switch">
+                            <label className="switch">
+                              <input
+                                type="checkbox"
+                                checked={d?.status}
+                                onChange={() => toggleStatus(d?._id, d?.status)}
+                              />
+                              <span className="sliders round" />
+                            </label>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="d-flex">
+                            <Link to={`/update-service/${d?._id}`}>
+                              <button className="btn delete-table me-2" type="button">
+                                <i className="fe fe-edit" />
+                              </button>
+                            </Link>
+                            <button
+                              className="btn delete-table"
+                              type="button"
+                              onClick={() => deleteservice(d?._id)}
+                            >
+                              <i className="fe fe-trash-2" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center">
+                        No services found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination */}
+            <nav aria-label="Page navigation" className="mt-4">
+              <ul className="pagination justify-content-center align-items-center">
+                {/* Prev */}
+                <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                  <button
+                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
+                    style={{ width: "40px", height: "40px" }}
+                    onClick={() => updateParams({ page: page - 1 })}
+                    disabled={!hasPrevPage}
+                  >
+                    <i className="fa fa-chevron-left"></i>
+                  </button>
+                </li>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <li
+                    key={i}
+                    className={`page-item mx-1 ${page === i + 1 ? "active" : ""}`}
+                  >
+                    <button
+                      className={`page-link rounded-circle shadow-sm ${page === i + 1 ? "bg-primary text-white border-primary" : ""}`}
+                      onClick={() => updateParams({ page: i + 1 })}
+                      style={{ width: "40px", height: "40px" }}
+                    >
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+
+                {/* Next */}
+                <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                  <button
+                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
+                    style={{ width: "40px", height: "40px" }}
+                    onClick={() => updateParams({ page: page + 1 })}
+                    disabled={!hasNextPage}
+                  >
+                    <i className="fa fa-chevron-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>

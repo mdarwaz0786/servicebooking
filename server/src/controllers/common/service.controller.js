@@ -9,7 +9,6 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
-import CartModel from "../../models/cart.model.js";
 import fs from "fs";
 import path from "path";
 

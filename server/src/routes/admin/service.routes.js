@@ -16,7 +16,10 @@ const router = express.Router();
 router.post(
   "/create-service",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "icon", maxCount: 1 },
+  ]),
   validateFileSize,
   createService
 );
@@ -31,7 +34,10 @@ router.get("/:id", getServiceById);
 router.patch(
   "/update-service/:id",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "icon", maxCount: 1 },
+  ]),
   validateFileSize,
   updateService
 );

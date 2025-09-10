@@ -78,7 +78,7 @@ export const createSubSubSubCategory = asyncHandler(async (req, res) => {
 
 // Get all sub sub sub category
 export const getSubSubSubCategories = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page, limit, categoryId, subCategoryId, subSubCategoryId } = req.query;
+  let { search, status, sort = "desc", page, limit, categoryId, subCategoryId, subSubCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -103,6 +103,15 @@ export const getSubSubSubCategories = asyncHandler(async (req, res) => {
 
   if (subSubCategoryId) {
     filters.subSubCategoryId = subSubCategoryId;
+  };
+
+  let sortOption = {};
+  if (sort === "asc") {
+    sortOption = { createdAt: 1 };
+  } else if (sort === "desc") {
+    sortOption = { createdAt: -1 };
+  } else {
+    sortOption = sort;
   };
 
   const categories = await SubSubSubCategoryModel

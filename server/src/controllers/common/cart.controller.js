@@ -3,16 +3,16 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Create or Add to Cart
-export const addToCart = asyncHandler(async (req, res) => { 
+export const addToCart = asyncHandler(async (req, res) => {
   const { serviceId, quantity = 1, userId = "" } = req.body;
 
   if (!serviceId) {
     throw new ApiError(400, "Service ID is required");
   };
 
-  let cartItem = await CartModel.findOne({ 
-    serviceId, 
-    userId: req.user?._id ? req.user?._id : userId 
+  let cartItem = await CartModel.findOne({
+    serviceId,
+    userId: req.user?._id ? req.user?._id : userId
   });
 
   if (cartItem) {
@@ -61,9 +61,9 @@ export const addToCart = asyncHandler(async (req, res) => {
 
 // Get cart items
 export const getCartItems = asyncHandler(async (req, res) => {
-  let { userId='' } = req.query;
+  let { userId = '' } = req.query;
   const cartItems = await CartModel
-    .find({ userId: req.user?._id?req.user?._id:userId })
+    .find({ userId: req.user?._id ? req.user?._id : userId })
     .populate({
       path: "serviceId",
       populate: {

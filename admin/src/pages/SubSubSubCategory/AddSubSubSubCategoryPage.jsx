@@ -1,56 +1,81 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import { useParams, useNavigate } from "react-router-dom";
-import apis, { BASE_URL } from "../../apis/apis";
+import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
+import { useNavigate } from "react-router-dom";
 
-const UpdateCategoryPage = () => {
+const AddSubSubSubCategoryPage = () => {
   const { validToken } = useAuth();
-  const { id } = useParams();
   const navigate = useNavigate();
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
   const [image, setImage] = useState(null);
   const [icon, setIcon] = useState(null);
   const [preview, setPreview] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     shortDescription: "",
     fullDescription: "",
+    categoryId: "",
+    subCategoryId: "",
+    subSubCategoryId: "",
   });
 
-  const fetchCategory = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${apis.category.get}/${id}`, {
-        headers: { Authorization: validToken },
-      });
-
-      if (response?.data?.success) {
-        const data = response.data.data;
-        setFormData({
-          name: data?.name || "",
-          shortDescription: data?.shortDescription || "",
-          fullDescription: data?.fullDescription || "",
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(apis.category.get, {
+          headers: { Authorization: validToken },
         });
-
-        if (data?.image) setPreview(`${BASE_URL}/${data?.image}`);
-        if (data?.icon) setIconPreview(`${BASE_URL}/${data?.icon}`);
+        if (res?.data?.success) setCategories(res?.data?.data || []);
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to load categories");
       };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch category");
-    } finally {
-      setLoading(false);
     };
-  };
+    fetchCategories();
+  }, [validToken]);
 
   useEffect(() => {
-    if (id) fetchCategory();
-  }, [id]);
+    const fetchSubCategories = async () => {
+      if (!formData.categoryId) return;
+      try {
+        const res = await axios.get(
+          `${apis.subCategory.get}?categoryId=${formData.categoryId}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) setSubCategories(res?.data?.data || []);
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [formData.categoryId, validToken]);
+
+  useEffect(() => {
+    const fetchSubSubCategories = async () => {
+      if (!formData.subCategoryId) return;
+      try {
+        const res = await axios.get(
+          `${apis.subSubCategory.get}?subCategoryId=${formData.subCategoryId}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) setSubSubCategories(res.data.data || []);
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [formData.subCategoryId, validToken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -96,10 +121,10 @@ const UpdateCategoryPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name.trim()) {
-      toast.error("Category name is required");
-      return;
-    };
+    if (!formData.categoryId) return toast.error("Please select a category");
+    if (!formData.subCategoryId) return toast.error("Please select a sub category");
+    if (!formData.subSubCategoryId) return toast.error("Please select a sub sub category");
+    if (!formData.name.trim()) return toast.error("Name is required");
 
     try {
       setLoading(true);
@@ -108,7 +133,7 @@ const UpdateCategoryPage = () => {
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
 
-      const response = await axios.patch(`${apis.category.update}/${id}`, data, {
+      const response = await axios.post(apis.subSubSubCategory.create, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: validToken,
@@ -116,11 +141,13 @@ const UpdateCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Category updated successfully");
+        toast.success("Sub Sub Sub Category created successfully");
         navigate(-1);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update category");
+      toast.error(
+        error?.response?.data?.message || error.message || "Something Went Wrong"
+      );
     } finally {
       setLoading(false);
     };
@@ -131,7 +158,7 @@ const UpdateCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Category</h5>
+            <h5 className="mb-0">Add Sub Sub Sub Category</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -142,11 +169,81 @@ const UpdateCategoryPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category Name */}
+              {/* Category */}
               <div className="mb-3">
-                <label className="form-label">
-                  Name <span style={{ color: "red" }}>*</span>
-                </label>
+                <label className="form-label">Category *</label>
+                <select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      categoryId: e.target.value,
+                      subCategoryId: "",
+                      subSubCategoryId: "",
+                    })
+                  }
+                  className="form-control"
+                  required
+                >
+                  <option value="">-- Select Category --</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Sub Category *</label>
+                <select
+                  name="subCategoryId"
+                  value={formData.subCategoryId}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      subCategoryId: e.target.value,
+                      subSubCategoryId: "",
+                    })
+                  }
+                  className="form-control"
+                  required
+                  disabled={!formData.categoryId}
+                >
+                  <option value="">-- Select Sub Category --</option>
+                  {subCategories.map((sub) => (
+                    <option key={sub._id} value={sub._id}>
+                      {sub.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Sub Sub Category *</label>
+                <select
+                  name="subSubCategoryId"
+                  value={formData.subSubCategoryId}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                  disabled={!formData.subCategoryId}
+                >
+                  <option value="">-- Select Sub Sub Category --</option>
+                  {subSubCategories.map((subsub) => (
+                    <option key={subsub?._id} value={subsub?._id}>
+                      {subsub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Name */}
+              <div className="mb-3">
+                <label className="form-label">Name *</label>
                 <input
                   type="text"
                   name="name"
@@ -183,7 +280,7 @@ const UpdateCategoryPage = () => {
                 ></textarea>
               </div>
 
-              {/* Category Image */}
+              {/* Image */}
               <div className="mb-3">
                 <label className="form-label">Image</label>
                 <div
@@ -213,7 +310,7 @@ const UpdateCategoryPage = () => {
                 )}
               </div>
 
-              {/* Category Icon */}
+              {/* Icon */}
               <div className="mb-3">
                 <label className="form-label">Icon</label>
                 <div
@@ -246,14 +343,29 @@ const UpdateCategoryPage = () => {
               {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="button"
+                  type="reset"
                   className="btn btn-secondary me-2"
-                  onClick={() => navigate("/categories")}
+                  onClick={() => {
+                    setFormData({
+                      name: "",
+                      shortDescription: "",
+                      fullDescription: "",
+                      categoryId: "",
+                      subCategoryId: "",
+                      subSubCategoryId: "",
+                    });
+                    setImage(null);
+                    setPreview(null);
+                    setIcon(null);
+                    setIconPreview(null);
+                    setSubCategories([]);
+                    setSubSubCategories([]);
+                  }}
                 >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Updating..." : "Update"}
+                  {loading ? "Saving..." : "Save"}
                 </button>
               </div>
             </form>
@@ -264,4 +376,4 @@ const UpdateCategoryPage = () => {
   );
 };
 
-export default UpdateCategoryPage;
+export default AddSubSubSubCategoryPage;

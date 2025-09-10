@@ -2,19 +2,18 @@ import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddServicePage = () => {
+const UpdateSubSubSubCategoryPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subSubCategories, setSubSubCategories] = useState([]);
-  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
-
   const [image, setImage] = useState(null);
   const [icon, setIcon] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -22,16 +21,12 @@ const AddServicePage = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
+    name: "",
+    shortDescription: "",
+    fullDescription: "",
     categoryId: "",
     subCategoryId: "",
     subSubCategoryId: "",
-    subSubSubCategoryId: "",
-    name: "",
-    mrpPrice: "",
-    salePrice: "",
-    timeTaking: "",
-    shortDescription: "",
-    fullDescription: "",
   });
 
   useEffect(() => {
@@ -42,7 +37,7 @@ const AddServicePage = () => {
         });
         if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
         toast.error("Failed to load categories");
       };
     };
@@ -84,21 +79,32 @@ const AddServicePage = () => {
   }, [formData.subCategoryId, validToken]);
 
   useEffect(() => {
-    if (!formData.subSubCategoryId) return;
-    const fetchSubSubSubCategories = async () => {
+    const fetchDetails = async () => {
       try {
-        const res = await axios.get(
-          `${apis.subSubSubCategory.get}?subSubCategoryId=${formData.subSubCategoryId}`,
-          { headers: { Authorization: validToken } }
-        );
-        if (res?.data?.success) setSubSubSubCategories(res?.data?.data || []);
+        const res = await axios.get(`${apis.subSubSubCategory.get}/${id}`, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success) {
+          const data = res.data.data;
+          setFormData({
+            name: data.name || "",
+            shortDescription: data?.shortDescription || "",
+            fullDescription: data?.fullDescription || "",
+            categoryId: data?.categoryId || "",
+            subCategoryId: data?.subCategoryId || "",
+            subSubCategoryId: data?.subSubCategoryId || "",
+          });
+
+          if (data?.image) setPreview(`${BASE_URL}/${data?.image}`);
+          if (data?.icon) setIconPreview(`${BASE_URL}/${data?.icon}`);
+        };
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub sub sub categories");
+        toast.error("Failed to load sub sub sub category details");
       };
     };
-    fetchSubSubSubCategories();
-  }, [formData.subSubCategoryId, validToken]);
+    fetchDetails();
+  }, [id, validToken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -131,7 +137,8 @@ const AddServicePage = () => {
     };
   }, []);
 
-  const { getRootProps: getIconRootProps,
+  const {
+    getRootProps: getIconRootProps,
     getInputProps: getIconInputProps,
     isDragActive: isIconActive
   } = useDropzone({
@@ -144,6 +151,8 @@ const AddServicePage = () => {
     e.preventDefault();
 
     if (!formData.categoryId) return toast.error("Please select a category");
+    if (!formData.subCategoryId) return toast.error("Please select a sub category");
+    if (!formData.subSubCategoryId) return toast.error("Please select a sub sub category");
     if (!formData.name.trim()) return toast.error("Name is required");
 
     try {
@@ -153,15 +162,19 @@ const AddServicePage = () => {
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
 
-      const response = await axios.post(apis.service.create, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: validToken,
-        },
-      });
+      const response = await axios.patch(
+        `${apis.subSubSubCategory.update}/${id}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: validToken,
+          },
+        }
+      );
 
       if (response?.data?.success) {
-        toast.success("Service created successfully");
+        toast.success("Sub Sub Sub Category updated successfully");
         navigate(-1);
       };
     } catch (error) {
@@ -178,7 +191,7 @@ const AddServicePage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Service</h5>
+            <h5 className="mb-0">Update Sub Sub Sub Category</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -201,14 +214,13 @@ const AddServicePage = () => {
                       categoryId: e.target.value,
                       subCategoryId: "",
                       subSubCategoryId: "",
-                      subSubSubCategoryId: "",
                     })
                   }
                   className="form-control"
                   required
                 >
                   <option value="">-- Select Category --</option>
-                  {categories?.map((cat) => (
+                  {categories.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
                     </option>
@@ -218,7 +230,7 @@ const AddServicePage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Sub Category *</label>
                 <select
                   name="subCategoryId"
                   value={formData.subCategoryId}
@@ -227,14 +239,14 @@ const AddServicePage = () => {
                       ...formData,
                       subCategoryId: e.target.value,
                       subSubCategoryId: "",
-                      subSubSubCategoryId: "",
                     })
                   }
                   className="form-control"
+                  required
                   disabled={!formData.categoryId}
                 >
                   <option value="">-- Select Sub Category --</option>
-                  {subCategories?.map((sub) => (
+                  {subCategories.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
                     </option>
@@ -244,43 +256,19 @@ const AddServicePage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Sub Sub Category *</label>
                 <select
                   name="subSubCategoryId"
                   value={formData.subSubCategoryId}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      subSubCategoryId: e.target.value,
-                      subSubSubCategoryId: "",
-                    })
-                  }
+                  onChange={handleChange}
                   className="form-control"
+                  required
                   disabled={!formData.subCategoryId}
                 >
                   <option value="">-- Select Sub Sub Category --</option>
-                  {subSubCategories?.map((subsub) => (
+                  {subSubCategories.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sub Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
-                <select
-                  name="subSubSubCategoryId"
-                  value={formData.subSubSubCategoryId}
-                  onChange={handleChange}
-                  className="form-control"
-                  disabled={!formData.subSubCategoryId}
-                >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
-                  {subSubSubCategories?.map((sss) => (
-                    <option key={sss?._id} value={sss?._id}>
-                      {sss?.name}
                     </option>
                   ))}
                 </select>
@@ -295,43 +283,9 @@ const AddServicePage = () => {
                   value={formData.name}
                   onChange={handleChange}
                   className="form-control"
+                  maxLength="100"
                   required
                 />
-              </div>
-
-              {/* Prices */}
-              <div className="row">
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">MRP Price</label>
-                  <input
-                    type="number"
-                    name="mrpPrice"
-                    value={formData.mrpPrice}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Sale Price</label>
-                  <input
-                    type="number"
-                    name="salePrice"
-                    value={formData.salePrice}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Time Taking</label>
-                  <input
-                    type="text"
-                    name="timeTaking"
-                    value={formData.timeTaking}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="e.g. 30 mins"
-                  />
-                </div>
               </div>
 
               {/* Short Description */}
@@ -343,6 +297,7 @@ const AddServicePage = () => {
                   value={formData.shortDescription}
                   onChange={handleChange}
                   className="form-control"
+                  maxLength="250"
                 />
               </div>
 
@@ -421,34 +376,14 @@ const AddServicePage = () => {
               {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="reset"
+                  type="button"
                   className="btn btn-secondary me-2"
-                  onClick={() => {
-                    setFormData({
-                      categoryId: "",
-                      subCategoryId: "",
-                      subSubCategoryId: "",
-                      subSubSubCategoryId: "",
-                      name: "",
-                      mrpPrice: "",
-                      salePrice: "",
-                      timeTaking: "",
-                      shortDescription: "",
-                      fullDescription: "",
-                    });
-                    setImage(null);
-                    setPreview(null);
-                    setIcon(null);
-                    setIconPreview(null);
-                    setSubCategories([]);
-                    setSubSubCategories([]);
-                    setSubSubSubCategories([]);
-                  }}
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Saving..." : "Save"}
+                  {loading ? "Updating..." : "Update"}
                 </button>
               </div>
             </form>
@@ -459,4 +394,4 @@ const AddServicePage = () => {
   );
 };
 
-export default AddServicePage;
+export default UpdateSubSubSubCategoryPage;

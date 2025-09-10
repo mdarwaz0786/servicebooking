@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis, { BASE_URL } from "../../apis/apis";
 
-const CategoryListPage = () => {
+const SubCategoryListPage = () => {
   const { validToken } = useAuth();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const CategoryListPage = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.category.get, {
+      const response = await axios.get(apis.subCategory.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -72,7 +72,7 @@ const CategoryListPage = () => {
   const toggleStatus = async (id, currentStatus) => {
     try {
       const response = await axios.patch(
-        `${apis.category.update}/${id}`,
+        `${apis.subCategory.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
@@ -89,7 +89,7 @@ const CategoryListPage = () => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      const response = await axios.delete(`${apis.category.delete}/${id}`, {
+      const response = await axios.delete(`${apis.subCategory.delete}/${id}`, {
         headers: { Authorization: validToken },
       });
 
@@ -110,7 +110,7 @@ const CategoryListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Categories {categories?.length}</h5>
+          <h5>Sub Categories {categories?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -148,7 +148,7 @@ const CategoryListPage = () => {
               <option value={total}>All</option>
             </select>
             <div>
-              <Link to="/add-category">
+              <Link to="/add-sub-category">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
                   <span>Add</span>
@@ -206,7 +206,7 @@ const CategoryListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-category/${d?._id}`}>
+                            <Link to={`/update-sub-category/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-edit" />
                               </button>
@@ -225,7 +225,7 @@ const CategoryListPage = () => {
                   ) : (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No categories found
+                        No sub categories found
                       </td>
                     </tr>
                   )}
@@ -284,4 +284,4 @@ const CategoryListPage = () => {
   );
 };
 
-export default CategoryListPage;
+export default SubCategoryListPage;

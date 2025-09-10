@@ -1,17 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import { useParams, useNavigate } from "react-router-dom";
-import apis, { BASE_URL } from "../../apis/apis";
+import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
+import { useNavigate } from "react-router-dom";
 
-const UpdateCategoryPage = () => {
+const AddSubCategoryPage = () => {
   const { validToken } = useAuth();
-  const { id } = useParams();
   const navigate = useNavigate();
 
+  const [categories, setCategories] = useState([]);
   const [image, setImage] = useState(null);
   const [icon, setIcon] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -21,36 +20,25 @@ const UpdateCategoryPage = () => {
     name: "",
     shortDescription: "",
     fullDescription: "",
+    categoryId: "",
   });
 
-  const fetchCategory = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${apis.category.get}/${id}`, {
-        headers: { Authorization: validToken },
-      });
-
-      if (response?.data?.success) {
-        const data = response.data.data;
-        setFormData({
-          name: data?.name || "",
-          shortDescription: data?.shortDescription || "",
-          fullDescription: data?.fullDescription || "",
-        });
-
-        if (data?.image) setPreview(`${BASE_URL}/${data?.image}`);
-        if (data?.icon) setIconPreview(`${BASE_URL}/${data?.icon}`);
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch category");
-    } finally {
-      setLoading(false);
-    };
-  };
-
   useEffect(() => {
-    if (id) fetchCategory();
-  }, [id]);
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(apis.category.get, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success) {
+          setCategories(res?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to load categories");
+      };
+    };
+    fetchCategories();
+  }, [validToken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,7 +56,7 @@ const UpdateCategoryPage = () => {
   const {
     getRootProps: getImageRootProps,
     getInputProps: getImageInputProps,
-    isDragActive: isImageActive,
+    isDragActive: isImageActive
   } = useDropzone({
     onDrop: onDropImage,
     accept: { "image/*": [] },
@@ -86,7 +74,7 @@ const UpdateCategoryPage = () => {
   const {
     getRootProps: getIconRootProps,
     getInputProps: getIconInputProps,
-    isDragActive: isIconActive,
+    isDragActive: isIconActive
   } = useDropzone({
     onDrop: onDropIcon,
     accept: { "image/*": [] },
@@ -96,8 +84,13 @@ const UpdateCategoryPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.categoryId) {
+      toast.error("Please select a category");
+      return;
+    };
+
     if (!formData.name.trim()) {
-      toast.error("Category name is required");
+      toast.error("Subcategory name is required");
       return;
     };
 
@@ -108,7 +101,7 @@ const UpdateCategoryPage = () => {
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
 
-      const response = await axios.patch(`${apis.category.update}/${id}`, data, {
+      const response = await axios.post(apis.subCategory.create, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: validToken,
@@ -116,11 +109,11 @@ const UpdateCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Category updated successfully");
+        toast.success("Subcategory created successfully");
         navigate(-1);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update category");
+      toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
     } finally {
       setLoading(false);
     };
@@ -131,7 +124,7 @@ const UpdateCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Category</h5>
+            <h5 className="mb-0">Add Sub Category</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -142,7 +135,28 @@ const UpdateCategoryPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category Name */}
+              {/* Select Category */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Select Category <span style={{ color: "red" }}>*</span>
+                </label>
+                <select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                >
+                  <option value="">-- Select Category --</option>
+                  {categories?.map((cat) => (
+                    <option key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category Name */}
               <div className="mb-3">
                 <label className="form-label">
                   Name <span style={{ color: "red" }}>*</span>
@@ -183,13 +197,12 @@ const UpdateCategoryPage = () => {
                 ></textarea>
               </div>
 
-              {/* Category Image */}
+              {/* Subcategory Image */}
               <div className="mb-3">
                 <label className="form-label">Image</label>
                 <div
                   {...getImageRootProps()}
-                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
-                    }`}
+                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
                   style={{ cursor: "pointer" }}
                 >
                   <input {...getImageInputProps()} />
@@ -197,8 +210,7 @@ const UpdateCategoryPage = () => {
                     <p>Drop the image here...</p>
                   ) : (
                     <p>
-                      Drag & drop image here, or{" "}
-                      <span className="text-primary">browse</span>
+                      Drag & drop image here, or <span className="text-primary">browse</span>
                     </p>
                   )}
                 </div>
@@ -213,13 +225,12 @@ const UpdateCategoryPage = () => {
                 )}
               </div>
 
-              {/* Category Icon */}
+              {/* Subcategory Icon */}
               <div className="mb-3">
                 <label className="form-label">Icon</label>
                 <div
                   {...getIconRootProps()}
-                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""
-                    }`}
+                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""}`}
                   style={{ cursor: "pointer" }}
                 >
                   <input {...getIconInputProps()} />
@@ -227,8 +238,7 @@ const UpdateCategoryPage = () => {
                     <p>Drop the icon here...</p>
                   ) : (
                     <p>
-                      Drag & drop icon here, or{" "}
-                      <span className="text-primary">browse</span>
+                      Drag & drop icon here, or <span className="text-primary">browse</span>
                     </p>
                   )}
                 </div>
@@ -246,14 +256,25 @@ const UpdateCategoryPage = () => {
               {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="button"
+                  type="reset"
                   className="btn btn-secondary me-2"
-                  onClick={() => navigate("/categories")}
+                  onClick={() => {
+                    setFormData({
+                      name: "",
+                      shortDescription: "",
+                      fullDescription: "",
+                      categoryId: "",
+                    });
+                    setImage(null);
+                    setPreview(null);
+                    setIcon(null);
+                    setIconPreview(null);
+                  }}
                 >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Updating..." : "Update"}
+                  {loading ? "Saving..." : "Save"}
                 </button>
               </div>
             </form>
@@ -264,4 +285,4 @@ const UpdateCategoryPage = () => {
   );
 };
 
-export default UpdateCategoryPage;
+export default AddSubCategoryPage;
