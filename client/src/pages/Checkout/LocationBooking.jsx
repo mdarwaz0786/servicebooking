@@ -3,6 +3,8 @@ import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 
 import AddressModal from "../../components/Modal/AddressModal";
+import GoogleMapPicker from "../../components/Google/GoogleMapPicker";
+// import MapSelector from "../../components/Google/MapSelector";
 
 
 
@@ -13,6 +15,7 @@ const LocationBooking = () => {
     const [addresses, setaddresses] = useState([]);
     const [selectedaddress, setselectedaddress] = useState([]);
     const [addressSectionShow, setaddressSectionShow] = useState(false);
+    const [latLng, setLatLng] = useState({ lat: null, lng: null });
     const fetchAddresses = async () => {
       try {   
         let userId = generateUniqueId();  
@@ -30,6 +33,23 @@ const LocationBooking = () => {
     fetchAddresses(); 
   }, []);  
 
+  const handleUseCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setLatLng({ lat, lng });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Unable to fetch your location. Please enable GPS.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
   const selectAddress = (id) => {
     setselectedaddress(id);
   };
@@ -91,14 +111,18 @@ const LocationBooking = () => {
             
             <div className={`address-add-section ${addressSectionShow?'d-block':'d-none'}`}>
               <input type="text" className="form-control" placeholder="Search by location..." />
-              <Link className="mt-2 b-block" style={{display:'block'}}>
-                  <i className="fa fa-location"></i>&nbsp;&nbsp;
-                  Use current location
+                <Link
+                className="mt-2 b-block"
+                style={{ display: "block", cursor: "pointer" }}
+                onClick={handleUseCurrentLocation}
+              >
+                <i className="fa fa-location"></i>&nbsp;&nbsp;
+                Use current location
               </Link>
 
               <div className="row">
                   <div className="col-6">
-                          Image Hare
+                  <GoogleMapPicker setLatLng={setLatLng} />
                   </div>
                   <div className="col-6">
                       <h2>Dr KB Hedgewar Marg</h2>
