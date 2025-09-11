@@ -28,6 +28,12 @@ const addressSchema = new mongoose.Schema({
     enum: ["home", "other"],
     default: "home",
   },
+  lat: {
+    type: String,
+  },
+  long: {
+    type: String,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

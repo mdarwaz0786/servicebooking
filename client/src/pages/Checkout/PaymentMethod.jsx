@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+import { Link } from "react-router-dom";
 
 const PaymentMethod = () => {
+   const { steps,toggleStep } = useContext(AppContext);
+
+     const handleNext = () => {
+        toggleStep('confirmation',false)
+        toggleStep('cart',true)
+      }
+
+      const handlePre = () => {
+        toggleStep('payment',false)
+        toggleStep('cart',true)
+      }
   return (
-    <fieldset className="booking-content">
+    <fieldset className={`booking-content ${steps.payment ? "d-flex" : "d-none"}`}>
       <div className="book-card">
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
@@ -10,12 +23,12 @@ const PaymentMethod = () => {
             <h6 className="fs-16 me-2 mb-2">Payment Method</h6>
           </div>
           <div className="d-flex align-items-center mb-2">
-            <a
-              href="#"
+            <Link
+              onClick={handlePre}
               className="btn btn-sm btn-secondary d-inline-flex align-items-center prev_btn mb-2"
             >
               <i className="ti ti-caret-left-filled me-1"></i>Back to Cart
-            </a>
+            </Link>
           </div>
         </div>
 

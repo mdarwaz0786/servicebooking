@@ -1,6 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+
+import { AppContext } from "../../context/AppContext";
+import { Link } from "react-router-dom";
 
 const AdditionalServices = () => {
+
+
+  const { steps,toggleStep } = useContext(AppContext);
+
+
   const [services, setServices] = useState([
     {
       id: 1,
@@ -58,8 +66,22 @@ const AdditionalServices = () => {
     );
   };
 
+
+
+    const handleNext = () => {
+      toggleStep('additionalservice',false)
+      toggleStep('datetime',true)
+    }
+
+    const handlePre = () => {
+      toggleStep('location',true)
+      toggleStep('additionalservice',false)
+    }
+
+
+
   return (
-    <fieldset className="booking-content">
+    <fieldset className={`booking-content ${steps.additionalservice ? "d-flex" : "d-none"}`}>
       <div className="book-card">
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
@@ -184,18 +206,18 @@ const AdditionalServices = () => {
       {/* Footer */}
       <div className="booking-footer d-flex align-items-center justify-content-end">
         <div className="d-flex align-items-center">
-          <a
-            href="#"
+          <Link
+            onClick={handlePre}
             className="btn btn-sm btn-light d-inline-flex align-items-center prev_btn me-2"
           >
             <i className="ti ti-arrow-left me-1"></i>Prev
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            onClick={handleNext}
             className="btn btn-sm btn-dark d-inline-flex align-items-center next_btn"
           >
             Next<i className="ti ti-arrow-right ms-1"></i>
-          </a>
+          </Link>
         </div>
       </div>
     </fieldset>

@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const Navbar = () => {
-  const { modals, toggleModal } = useContext(AppContext);
+  const { toggleModal, handleLogout } = useContext(AppContext);
   return (
     <header className="header header-new">
       <div className="container-fluid"> 
@@ -67,9 +67,24 @@ const Navbar = () => {
 
           <ul className="nav header-navbar-rht">
             <li className="nav-item pe-1">
-              <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
-                <i className="ti ti-lock me-2" />Sign In
-              </Link>
+              <>
+              {(localStorage.getItem("user"))?(
+                <>
+                  <Link className="nav-link btn btn-light" >
+                    <i className="ti ti-user me-2" />Account
+                  </Link>
+                  <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
+                    <i className="ti ti-lock me-2" />Logout
+                  </Link>
+                </>
+                ):(
+                <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
+                  <i className="ti ti-lock me-2" />Login
+                </Link>
+              )}
+              </>
+
+
             </li>
             
           </ul>

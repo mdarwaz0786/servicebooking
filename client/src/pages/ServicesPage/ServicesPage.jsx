@@ -15,11 +15,11 @@ const ServicesPage = () => {
       let userId = generateUniqueId();
 
       const response = await postData({slug:slug,userId:userId}, Urls.serviceList, "GET");
-      if (response?.data.length > 0) {
-        setserviceListData(response.data);
-        setservicePageCategoryData(response.categoryList);
-        setservicePageName(response.name);
-      } 
+      
+        setserviceListData(response.data?response.data:[]);
+        setservicePageCategoryData(response.categoryList?response.categoryList:[]);
+        setservicePageName(response.name?response.name:'');
+       
     } catch (error) { 
       console.error("Cart API Error:", error);
     }

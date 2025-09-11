@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AppContext } from "../../context/AppContext";
 
 const BookingDateTime = () => {
   const [selectedTime, setSelectedTime] = useState(null);
-
+    const { steps,toggleStep } = useContext(AppContext);
   const timeSlots = [
     { time: "07:00 - 07:30", slots: 2, disabled: true },
     { time: "07:30 - 08:00", slots: 4, disabled: true },
@@ -27,8 +28,21 @@ const BookingDateTime = () => {
     { time: "17:00 - 17:30", slots: 3 },
   ];
 
+
+
+  const handleNext = () => {
+    toggleStep('personalinformation',true)
+    toggleStep('datetime',false)
+  }
+
+  const handlePre = () => {
+    toggleStep('datetime',false)
+    // toggleStep('additionalservice',true)
+    toggleStep('location',true)
+  }
+
   return (
-    <fieldset className="booking-content">
+    <fieldset className={`booking-content ${steps.datetime ? "d-flex" : "d-none"}`}>
       <div className="book-card">
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
@@ -132,10 +146,15 @@ const BookingDateTime = () => {
       {/* Footer Buttons */}
       <div className="booking-footer d-flex align-items-center justify-content-end">
         <div className="d-flex align-items-center">
-          <button className="btn btn-sm btn-light d-inline-flex align-items-center prev_btn me-2">
+          <button className="btn btn-sm btn-light d-inline-flex align-items-center prev_btn me-2"
+          onClick={handlePre}
+          >
             <i className="ti ti-arrow-left me-1"></i>Prev
           </button>
-          <button className="btn btn-sm btn-dark d-inline-flex align-items-center next_btn">
+          <button className="btn btn-sm btn-dark d-inline-flex align-items-center next_btn"
+          onClick={handleNext}
+          >
+
             Next<i className="ti ti-arrow-right ms-1"></i>
           </button>
         </div>

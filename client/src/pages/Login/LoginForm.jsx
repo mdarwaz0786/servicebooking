@@ -4,30 +4,49 @@ import { useContext } from "react";
 const LoginForm = () => {
 
      
-    const { Urls } = useContext(AppContext);
+    const { Urls, postData } = useContext(AppContext);
+
+    
     
     
   const [mobile, setmobile] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [otpSignin, setOtpSignin] = useState(false);
+  const [otp, setOtp] = useState("");
   const [otpField, setotpField] = useState(false);
   const [mobileField, setmobileField] = useState(true);
+
+  const [sendOtpBtn, setsendOtpBtn] = useState(true);
+  const [verifyOtpBtn, setverifyOtpBtn] = useState(false);
   
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({
-      mobile,
-      password,
-      rememberMe,
-      otpSignin,
-    });
-    // 👉 Call API here (e.g. postData)
-  };
+ 
+    const handleSendOtp = async () => {
+      try {
+        const response = await postData({mobile:mobile}, Urls.login, "POST");
+        if (response.success) {
+          setotpField(true);
+          setmobileField(false);
+          setsendOtpBtn(false);
+          setverifyOtpBtn(true);
+        } 
+      } catch (error) { 
+        console.error("Cart API Error:", error);
+      }
+    }
+
+ 
+    const handleVerifyOtp = async () => {
+      try {
+        const response = await postData({otp:otp,mobile:mobile}, Urls.verifyOtp, "POST");
+        if (response.success) {
+          
+        } 
+      } catch (error) { 
+        console.error("Cart API Error:", error);
+      }
+    }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form >
       <div className="text-center mb-3">
         <h3 className="mb-2">Welcome</h3>
         <p>Enter mobile number</p>
@@ -52,8 +71,8 @@ const LoginForm = () => {
         <input
           type="password"
           className="form-control"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
         />
       </div>
 
@@ -61,8 +80,12 @@ const LoginForm = () => {
 
       {/* Submit */}
       <div className="mb-3">
-        <button type="submit" className="btn btn-lg btn-linear-primary w-100">
-          Continue
+        <button type="button" className={`btn btn-lg btn-linear-primary w-100 ${sendOtpBtn?'':'d-none'}`} onClick={handleSendOtp}>
+          Send Otp
+        </button>
+
+        <button type="button" className={`btn btn-lg btn-linear-primary w-100 ${verifyOtpBtn?'':'d-none'}`} onClick={handleVerifyOtp}>
+          Verify Otp
         </button>
       </div>
 

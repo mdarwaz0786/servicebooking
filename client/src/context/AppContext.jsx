@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BodyLoader from "../components/Loader/bodyLoader";
 import LoginModal from "../components/Modal/LoginModal";
@@ -35,8 +35,12 @@ export const AppProvider = ({ children }) => {
 
   const [cartItems, setcartItems] = useState([]);
   const [cartAmount, setcartAmount] = useState([]);
-  
 
+  const [user, setuser] = useState();
+
+  const [servicePageCartShow, setservicePageCartShow] = useState(false);
+  
+    
 
 
 
@@ -49,7 +53,8 @@ export const AppProvider = ({ children }) => {
     const mainUrl = apiUrl + 'user/';
 
     return { 
-      login: `${mainUrl}login`,
+      login: `${commurl}user/login`,
+      verifyOtp: `${commurl}user/verify-otp`,
       registerOtpSend: `${mainUrl}register-otp-send`,
       register: `${mainUrl}register`,
       updateProfile: `${mainUrl}update-profile`,
@@ -70,6 +75,9 @@ export const AppProvider = ({ children }) => {
       subSubCategoryList: `${commurl}sub-sub-category`,
       subSubSubCategoryList: `${commurl}sub-sub-sub-category`,
       serviceList: `${commurl}service`,
+
+      addressList: `${commurl}address`,
+      addAddress: `${commurl}create-address`,
 
       addRemoveCart: `${commurl}cart/create-cart`,
       
@@ -160,7 +168,9 @@ export const AppProvider = ({ children }) => {
 
         if (result?.token) {
           storage.set('token', result.token); 
-          storage.set('user', JSON.stringify(result?.data));
+          storage.set('user', JSON.stringify(result?.user));
+          setuser(result?.user);
+          toggleModal("loginModal",false);
         }
       } else {
         showSuccessMessage(result.message || 'Something went wrong', extraData, 0, messageAlert);
@@ -206,18 +216,18 @@ export const AppProvider = ({ children }) => {
   };
 
   const generateUniqueId = () => {
-    // Pehle check karo LocalStorage me already id hai ya nahi
     let uniqueId = localStorage.getItem("uniqueId");
-
+    let user = localStorage.getItem("user");
     if (!uniqueId) {
-      // Agar nahi hai to nayi generate karo
       uniqueId =
         Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
-
-      // Save karo LocalStorage me
       localStorage.setItem("uniqueId", uniqueId);
     }
-
+    if(user)
+    {
+      user = JSON.parse(user);
+      uniqueId = user.id;
+    }
     return uniqueId;
   };
 
@@ -233,7 +243,7 @@ export const AppProvider = ({ children }) => {
   const [modals, setModals] = useState({
     homeCategoryModal: false,
     loginModal: false,
-    modal3: false,
+    addressModal: false,
   });
   const toggleModal = (modalName, isOpen) => {
     setModals((prev) => ({
@@ -246,6 +256,12 @@ export const AppProvider = ({ children }) => {
   // checkFormSteps
   const [steps, setsteps] = useState({
     location: true,
+    additionalservice: false,
+    datetime: false,
+    personalinformation: false,
+    cart: false,
+    payment: false,
+    confirmation: false,
   });
   const toggleStep = (stepName, isOpen) => {
     setsteps((prev) => ({
@@ -274,6 +290,13 @@ export const AppProvider = ({ children }) => {
 
         setcartItems(response.data.cartProducts);
         setcartAmount(response.data.amountData);
+        if(response.data?.cartProducts.length>0)
+        {
+          setservicePageCartShow(true)
+        }
+        else{
+          setservicePageCartShow(false)
+        }
 
         // if (response?.data.length > 0) {
           
@@ -343,15 +366,35 @@ export const AppProvider = ({ children }) => {
     }
   }
 
+    const handleLogout = async () => {
+      storage.delete('user');
+      storage.delete('token');
+      setuser(null);
+    }
+
+  
+
+
+
   const Urls = apiUrl();
+  
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setuser(JSON.parse(storedUser));
+    }
+  }, []);
+    
   return (
     <AppContext.Provider value={{
       toggleModal,
       modals,
       toggleStep,
       steps,
+      setsteps,
       Urls,
       postData,
+      storage,
       handleCategoryClick,
 
       handleCartAddRemove,
@@ -393,6 +436,9 @@ export const AppProvider = ({ children }) => {
       servicePageName,
       setservicePageName,
 
+      servicePageCartShow,
+      setservicePageCartShow,
+
       cartItems,
       setcartItems,
 
@@ -407,6 +453,9 @@ export const AppProvider = ({ children }) => {
       generateUniqueId,
 
       addRemoveCart,
+      user,
+      setuser,
+      handleLogout,
       
     }}>
       {children}

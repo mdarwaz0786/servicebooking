@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+import { Link } from "react-router-dom";
 
 const PersonalInformation = () => {
+   const { steps,toggleStep } = useContext(AppContext);
+
+   const handleNext = () => {
+      toggleStep('personalinformation',false)
+      toggleStep('cart',true)
+    }
+
+    const handlePre = () => {
+      toggleStep('datetime',true)
+      toggleStep('personalinformation',false)
+    }
   return (
-    <fieldset className="booking-content">
+    <fieldset className={`booking-content ${steps.personalinformation ? "d-flex" : "d-none"}`}>
       <div className="book-card">
         {/* Booking Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
@@ -206,12 +219,12 @@ const PersonalInformation = () => {
       {/* Footer Buttons */}
       <div className="booking-footer d-flex align-items-center justify-content-end">
         <div className="d-flex align-items-center">
-          <a href="#!" className="btn btn-sm btn-light d-inline-flex align-items-center prev_btn me-2">
+          <Link onClick={handlePre} className="btn btn-sm btn-light d-inline-flex align-items-center prev_btn me-2">
             <i className="ti ti-arrow-left me-1"></i>Prev
-          </a>
-          <a href="#!" className="btn btn-sm btn-dark d-inline-flex align-items-center next_btn">
+          </Link>
+          <Link onClick={handleNext} className="btn btn-sm btn-dark d-inline-flex align-items-center next_btn">
             Next<i className="ti ti-arrow-right ms-1"></i>
-          </a>
+          </Link>
         </div>
       </div>
     </fieldset>

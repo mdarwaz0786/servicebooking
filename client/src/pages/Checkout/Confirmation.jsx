@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
 
 const Confirmation = () => {
+   const { steps,toggleStep } = useContext(AppContext);
   return (
-    <fieldset className="booking-content">
+    <fieldset className={`booking-content ${steps.confirmation ? "d-flex" : "d-none"}`}>
       <div className="book-card">
         <h6 className="fs-16 me-2 mb-3">Payment Method</h6>
 
