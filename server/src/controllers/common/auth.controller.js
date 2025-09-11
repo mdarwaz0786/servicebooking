@@ -6,7 +6,7 @@ import OtpModel from "../../models/otp.model.js";
 
 // Register user
 export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, mobile, role } = req.body;
+  const { name, email, mobile, password, role } = req.body;
 
   const existingUserByEmail = await UserModel.findOne({ email });
   if (existingUserByEmail) {
@@ -18,7 +18,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User already exists with this mobile number");
   };
 
-  const user = await UserModel.create({ name, email, mobile, role });
+  const user = await UserModel.create({ name, email, mobile, password, role });
 
   if (!user) {
     throw new ApiError(400, "Invalid user data");
@@ -72,7 +72,6 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   let user = await UserModel.findOne({ mobile });
 
-  
   if (!user) {
     user = await UserModel.create({ mobile });
   };
@@ -80,11 +79,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Login successful",
-    user: {
-      id: user._id,
-      mobile: user.mobile,
-      role: user.role,
-    },
+    user,
     token: generateToken(user._id),
   });
 });

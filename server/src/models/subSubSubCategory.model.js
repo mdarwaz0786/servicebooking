@@ -25,7 +25,7 @@ const subSubSubCategorySchema = new mongoose.Schema({
   },
   shortDescription: {
     type: String,
-    required: [true, "Short description is required"],
+
     trim: true,
     maxlength: [250, "Short description must not exceed 250 characters"],
   },

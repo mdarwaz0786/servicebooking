@@ -139,7 +139,16 @@ const AddSubSubCategoryPage = () => {
 
       if (response?.data?.success) {
         toast.success("Sub sub category created successfully");
-        navigate(-1);
+        setFormData((prev) => ({
+          ...prev,
+          name: "",
+          shortDescription: "",
+          fullDescription: "",
+        }));
+        setImage(null);
+        setPreview(null);
+        setIcon(null);
+        setIconPreview(null);
       };
     } catch (error) {
       toast.error(
@@ -322,18 +331,16 @@ const AddSubSubCategoryPage = () => {
                   type="reset"
                   className="btn btn-secondary me-2"
                   onClick={() => {
-                    setFormData({
+                    setFormData((prev) => ({
+                      ...prev,
                       name: "",
                       shortDescription: "",
                       fullDescription: "",
-                      categoryId: "",
-                      subCategoryId: "",
-                    });
+                    }));
                     setImage(null);
                     setPreview(null);
                     setIcon(null);
                     setIconPreview(null);
-                    setSubCategories([]);
                   }}
                 >
                   Cancel

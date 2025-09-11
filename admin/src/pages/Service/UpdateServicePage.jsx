@@ -447,33 +447,6 @@ const UpdateServicePage = () => {
 
               {/* Buttons */}
               <div className="text-end">
-                <button
-                  type="reset"
-                  className="btn btn-secondary me-2"
-                  onClick={() => {
-                    setFormData({
-                      categoryId: "",
-                      subCategoryId: "",
-                      subSubCategoryId: "",
-                      subSubSubCategoryId: "",
-                      name: "",
-                      mrpPrice: "",
-                      salePrice: "",
-                      timeTaking: "",
-                      shortDescription: "",
-                      fullDescription: "",
-                    });
-                    setImage(null);
-                    setPreview(null);
-                    setIcon(null);
-                    setIconPreview(null);
-                    setSubCategories([]);
-                    setSubSubCategories([]);
-                    setSubSubSubCategories([]);
-                  }}
-                >
-                  Cancel
-                </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
                   {loading ? "Saving..." : "Save"}
                 </button>

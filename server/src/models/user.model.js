@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,6 +30,11 @@ const userSchema = new mongoose.Schema(
         message: "Mobile number must be exactly 10 digits",
       },
     },
+    password: {
+      type: String,
+      minlength: [6, "Password must be at least 6 characters"],
+      select: false,
+    },
     role: {
       type: String,
       enum: {
@@ -40,6 +46,17 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  if (!this.password) return false;
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const UserModel = mongoose.model("User", userSchema);
 

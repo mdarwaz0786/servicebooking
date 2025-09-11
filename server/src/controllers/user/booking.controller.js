@@ -1,12 +1,12 @@
-import BookingModel from "../models/Booking.js";
-import BookingItemModel from "../models/BookingItem.js";
-import ApiError from "../utils/ApiError.js";
-import asyncHandler from "../utils/asyncHandler.js";
+import BookingModel from "../../models/Booking.model.js";
+import BookingItemModel from "../../models/BookingItem.model.js";
+import ApiError from "../../helpers/apiError.js";
+import asyncHandler from "../../helpers/asyncHandler.js";
 
-// ✅ Generate Unique BookingId
+// Generate Unique Booking Id
 const generateBookingId = async () => {
   const today = new Date();
-  const dateStr = today.toISOString().split("T")[0].replace(/-/g, ""); // YYYYMMDD
+  const dateStr = today.toISOString().split("T")[0].replace(/-/g, "");
   const count = await BookingModel.countDocuments({
     createdAt: {
       $gte: new Date(today.setHours(0, 0, 0, 0)),
@@ -16,7 +16,7 @@ const generateBookingId = async () => {
   return `BK${dateStr}-${count + 1}`;
 };
 
-// ✅ Create Booking + Items
+// Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
   const { addressId, scheduleType, scheduleDate, scheduleTime, paymentMode, paymentBy,
     amount, gstAmount, gstPercent, discountAmount, payableAmount, isCouponUsed, items } = req.body;
@@ -25,6 +25,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   // Booking
   const bookingId = await generateBookingId();
+
   const booking = await BookingModel.create({
     bookingId,
     userId: req.user._id,
@@ -42,10 +43,10 @@ export const createBooking = asyncHandler(async (req, res) => {
     isCouponUsed,
   });
 
-  // Items
+  // Booking Items
   const bookingItems = items.map((item) => ({
-    bookingId: booking._id,
-    userId: req.user._id,
+    bookingId: booking?._id,
+    userId: req.user?._id,
     serviceId: item.serviceId,
     quantity: item.quantity,
     mrpPrice: item.mrpPrice,
@@ -61,17 +62,27 @@ export const createBooking = asyncHandler(async (req, res) => {
   });
 });
 
-// ✅ Get All Bookings (with filters, pagination)
+// Get All Bookings
 export const getBookings = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, userId } = req.query;
+  const { page = 1, limit = 10, userId, sort = "desc", } = req.query;
 
   const filters = {};
   if (userId) filters.userId = userId;
 
-  const bookings = await BookingModel.find(filters)
+  let sortOption = {};
+  if (sort === "asc") {
+    sortOption = { createdAt: 1 };
+  } else if (sort === "desc") {
+    sortOption = { createdAt: -1 };
+  } else {
+    sortOption = sort;
+  };
+
+  const bookings = await BookingModel
+    .find(filters)
     .populate("userId", "name email mobile")
     .populate("addressId")
-    .sort("-createdAt")
+    .sort(sortOption)
     .skip((page - 1) * limit)
     .limit(Number(limit));
 
@@ -86,11 +97,12 @@ export const getBookings = asyncHandler(async (req, res) => {
   });
 });
 
-// ✅ Get Booking by ID (with Items)
+// Get Booking by ID
 export const getBookingById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const booking = await BookingModel.findById(id)
+  const booking = await BookingModel
+    .findById(id)
     .populate("userId", "name email mobile")
     .populate("addressId");
 
@@ -104,7 +116,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   });
 });
 
-// ✅ Update Booking (status, payment, etc.)
+//  Update Booking 
 export const updateBooking = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -119,7 +131,7 @@ export const updateBooking = asyncHandler(async (req, res) => {
   });
 });
 
-// ✅ Delete Booking + Items
+//  Delete Booking + Booking Items
 export const deleteBooking = asyncHandler(async (req, res) => {
   const { id } = req.params;
 

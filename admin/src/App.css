@@ -9,3 +9,10 @@
   box-shadow: none;
   outline: 0 none;
 }
+
+.menu-drop-user {
+  position: absolute;
+  top: -50%;
+  right: 0;
+  left: auto;
+}

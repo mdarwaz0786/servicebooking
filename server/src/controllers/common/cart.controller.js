@@ -1,6 +1,7 @@
 import CartModel from "../../models/cart.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import { getCartData } from "../../utils/cart.utils.js";
 
 // Create or Add to Cart
 export const addToCart = asyncHandler(async (req, res) => {
@@ -10,10 +11,9 @@ export const addToCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Service ID is required");
   };
 
-  let cartItem = await CartModel.findOne({
-    serviceId,
-    userId: req.user?._id ? req.user?._id : userId
-  });
+  const resolvedUserId = req.user?._id ? req.user._id : userId;
+
+  let cartItem = await CartModel.findOne({ serviceId, userId: resolvedUserId });
 
   if (cartItem) {
     if (quantity == 0) {
@@ -21,43 +21,21 @@ export const addToCart = asyncHandler(async (req, res) => {
     } else {
       cartItem.quantity = quantity;
       await cartItem.save();
-    }
+    };
   } else {
     cartItem = await CartModel.create({
       serviceId,
-      userId: req.user?._id ? req.user?._id : userId,
+      userId: resolvedUserId,
       quantity,
     });
   };
 
-  // populate for response
-  cartItem = await cartItem.populate("serviceId");
+  await cartItem.populate("serviceId");
 
-  let cartItems = await CartModel
-    .find({ userId: req.user?._id ? req.user?._id : userId })
-    .populate("serviceId")
-    .lean();
+  const reponseData = await getCartData(resolvedUserId);
 
-  // flatten serviceId fields but keep serviceId _id
-  cartItems = cartItems.map(item => ({
-    ...item,
-    serviceId: item.serviceId?._id, // keep only the ObjectId
-    ...item.serviceId,              // merge service details at top level
-  }));
-
-  let rData = {
-    cartProducts: cartItems,
-    amountData: {
-      amount: 100,
-      gst: 10,
-      payableAmount: 100,
-    }
-  };
-
-  return res.status(201).json({ success: true, data: rData });
+  return res.status(201).json({ success: true, data: reponseData });
 });
-
-
 
 // Get cart items
 export const getCartItems = asyncHandler(async (req, res) => {

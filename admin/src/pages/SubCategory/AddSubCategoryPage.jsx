@@ -110,7 +110,16 @@ const AddSubCategoryPage = () => {
 
       if (response?.data?.success) {
         toast.success("Subcategory created successfully");
-        navigate(-1);
+        setFormData((prev) => ({
+          ...prev,
+          name: "",
+          shortDescription: "",
+          fullDescription: "",
+        }));
+        setImage(null);
+        setPreview(null);
+        setIcon(null);
+        setIconPreview(null);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
@@ -259,12 +268,12 @@ const AddSubCategoryPage = () => {
                   type="reset"
                   className="btn btn-secondary me-2"
                   onClick={() => {
-                    setFormData({
+                    setFormData((prev) => ({
+                      ...prev,
                       name: "",
                       shortDescription: "",
                       fullDescription: "",
-                      categoryId: "",
-                    });
+                    }));
                     setImage(null);
                     setPreview(null);
                     setIcon(null);
