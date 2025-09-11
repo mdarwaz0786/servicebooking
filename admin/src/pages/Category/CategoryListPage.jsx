@@ -173,13 +173,7 @@ const CategoryListPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="6" className="text-center">
-                        Loading...
-                      </td>
-                    </tr>
-                  ) : categories?.length > 0 ? (
+                  {categories?.length > 0 ? (
                     categories?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
@@ -222,13 +216,13 @@ const CategoryListPage = () => {
                         </td>
                       </tr>
                     ))
-                  ) : (
+                  ) : loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
                         No categories found
                       </td>
                     </tr>
-                  )}
+                  ) : null}
                 </tbody>
               </table>
             </div>

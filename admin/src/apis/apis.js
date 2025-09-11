@@ -34,7 +34,6 @@ const apis = {
   user: {
     register: `${BASE_URL}/api/v1/admin/user/register`,
     login: `${BASE_URL}/api/v1/admin/user/login`,
-    verifyOtp: `${BASE_URL}/api/v1/admin/user/verify-otp`,
     loggedIn: `${BASE_URL}/api/v1/admin/user/loggedIn`,
   },
 };

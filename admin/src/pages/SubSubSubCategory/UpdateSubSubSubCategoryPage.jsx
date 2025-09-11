@@ -375,13 +375,6 @@ const UpdateSubSubSubCategoryPage = () => {
 
               {/* Buttons */}
               <div className="text-end">
-                <button
-                  type="button"
-                  className="btn btn-secondary me-2"
-                  onClick={() => navigate(-1)}
-                >
-                  Cancel
-                </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
                   {loading ? "Updating..." : "Update"}
                 </button>

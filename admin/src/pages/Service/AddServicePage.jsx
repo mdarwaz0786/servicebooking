@@ -162,7 +162,15 @@ const AddServicePage = () => {
 
       if (response?.data?.success) {
         toast.success("Service created successfully");
-        setFormData({ name: "", shortDescription: "", fullDescription: "", mrpPrice: "", salePrice: "" });
+        setFormData((prev) => ({
+          ...prev,
+          name: "",
+          mrpPrice: "",
+          salePrice: "",
+          timeTaking: "",
+          shortDescription: "",
+          fullDescription: "",
+        }));
         setImage(null);
         setPreview(null);
         setIcon(null);

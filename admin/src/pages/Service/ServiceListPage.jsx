@@ -2,12 +2,17 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import Select from "react-select";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis, { BASE_URL } from "../../apis/apis";
 
 const ServiceListPage = () => {
   const { validToken } = useAuth();
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -20,6 +25,10 @@ const ServiceListPage = () => {
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const categoryId = searchParams.get("categoryId") || "";
+  const subCategoryId = searchParams.get("subCategoryId") || "";
+  const subSubCategoryId = searchParams.get("subSubCategoryId") || "";
+  const subSubSubCategoryId = searchParams.get("subSubSubCategoryId") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -31,6 +40,62 @@ const ServiceListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(apis.category.get, {
+        headers: { Authorization: validToken },
+      });
+      if (response?.data?.success) {
+        setCategories(response?.data?.data || []);
+      };
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Failed to fetch categories");
+    };
+  };
+
+  const fetchSubCategories = async () => {
+    try {
+      const response = await axios.get(apis.subCategory.get, {
+        headers: { Authorization: validToken },
+      });
+      if (response?.data?.success) {
+        setSubCategories(response?.data?.data || []);
+      };
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Failed to fetch sub categories");
+    };
+  };
+
+  const fetchSubSubCategories = async () => {
+    try {
+      const response = await axios.get(apis.subSubCategory.get, {
+        headers: { Authorization: validToken },
+      });
+      if (response?.data?.success) {
+        setSubSubCategories(response?.data?.data || []);
+      };
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Failed to fetch sub sub categories");
+    };
+  };
+
+  const fetchSubSubSubCategories = async () => {
+    try {
+      const response = await axios.get(apis.subSubSubCategory.get, {
+        headers: { Authorization: validToken },
+      });
+      if (response?.data?.success) {
+        setSubSubSubCategories(response?.data?.data || []);
+      };
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Failed to fetch sub sub sub categories");
+    };
+  };
+
   const fetchServices = async () => {
     try {
       setLoading(true);
@@ -40,6 +105,10 @@ const ServiceListPage = () => {
           page,
           limit,
           search: debouncedSearch,
+          categoryId,
+          subCategoryId,
+          subSubCategoryId,
+          subSubSubCategoryId,
           sort,
         },
       });
@@ -64,6 +133,10 @@ const ServiceListPage = () => {
       limit,
       search: debouncedSearch,
       sort,
+      categoryId,
+      subCategoryId,
+      subSubCategoryId,
+      subSubSubCategoryId,
       ...newParams,
     };
     setSearchParams(params);
@@ -103,8 +176,15 @@ const ServiceListPage = () => {
   };
 
   useEffect(() => {
+    fetchCategories();
+    fetchSubCategories();
+    fetchSubSubCategories();
+    fetchSubSubSubCategories();
+  }, []);
+
+  useEffect(() => {
     fetchServices();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId]);
 
   return (
     <div className="page-wrapper page-settings">
@@ -158,6 +238,112 @@ const ServiceListPage = () => {
           </div>
         </div>
 
+        <div className="d-flex justify-content-start align-items-center gap-2 mt-4">
+          {/* Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Categories"
+              value={
+                categoryId
+                  ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  categoryId: selected ? selected.value : "",
+                  page: 1,
+                  subCategoryId,
+                  subSubCategoryId,
+                  subSubSubCategoryId,
+                })
+              }
+              options={categories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Sub Categories"
+              value={
+                subCategoryId
+                  ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subSubCategoryId,
+                  subSubSubCategoryId,
+                })
+              }
+              options={subCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Sub Sub Categories"
+              value={
+                subSubCategoryId
+                  ? { value: subSubCategoryId, label: subSubCategories.find((c) => c?._id === subSubCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subSubCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subCategoryId,
+                  subSubSubCategoryId,
+                })
+              }
+              options={subSubCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Sub Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Sub Sub Sub Categories"
+              value={
+                subSubSubCategoryId
+                  ? { value: subSubSubCategoryId, label: subSubSubCategories.find((c) => c?._id === subSubSubCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subSubSubCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subCategoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={subSubSubCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+        </div>
+
         {/* Table */}
         <div className="row">
           <div className="col-12">
@@ -174,13 +360,7 @@ const ServiceListPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="6" className="text-center">
-                        Loading...
-                      </td>
-                    </tr>
-                  ) : services?.length > 0 ? (
+                  {services?.length > 0 ? (
                     services?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
@@ -224,13 +404,13 @@ const ServiceListPage = () => {
                         </td>
                       </tr>
                     ))
-                  ) : (
+                  ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
                         No services found
                       </td>
                     </tr>
-                  )}
+                  ) : null}
                 </tbody>
               </table>
             </div>

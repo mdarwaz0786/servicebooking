@@ -67,7 +67,7 @@ export const createService = asyncHandler(async (req, res) => {
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug, userId = "" } = req.query;
+  let { search, status, sort = "-createdAt", page = 1, limit = 10, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -76,7 +76,25 @@ export const getServices = asyncHandler(async (req, res) => {
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
+
+  if (categoryId) {
+    filters.categoryId = categoryId;
+  };
+
+  if (subCategoryId) {
+    filters.subCategoryId = subCategoryId;
+  };
+
+  if (subSubCategoryId) {
+    filters.subSubCategoryId = subSubCategoryId;
+  };
+
+  if (subSubSubCategoryId) {
+    filters.subSubSubCategoryId = subSubSubCategoryId;
+  };
+
   let data, name, categoryList;
+
   if (slug) {
     const slugData = await SlugModel.findOne({ slug });
 
@@ -121,6 +139,7 @@ export const getServices = asyncHandler(async (req, res) => {
     .lean();
 
   let cartItems = [];
+
   if (userId) {
     cartItems = await CartModel.find({ userId }).lean();
   };
