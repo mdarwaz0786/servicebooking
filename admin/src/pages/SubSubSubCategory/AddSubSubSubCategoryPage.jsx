@@ -142,7 +142,11 @@ const AddSubSubSubCategoryPage = () => {
 
       if (response?.data?.success) {
         toast.success("Sub Sub Sub Category created successfully");
-        navigate(-1);
+        setFormData({ name: "", shortDescription: "", fullDescription: "" });
+        setImage(null);
+        setPreview(null);
+        setIcon(null);
+        setIconPreview(null);
       };
     } catch (error) {
       toast.error(

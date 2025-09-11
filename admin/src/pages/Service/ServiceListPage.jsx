@@ -168,6 +168,7 @@ const ServiceListPage = () => {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Price</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -192,6 +193,7 @@ const ServiceListPage = () => {
                           />
                         </td>
                         <td>{d?.name}</td>
+                        <td>{d?.salePrice}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

@@ -162,7 +162,11 @@ const AddServicePage = () => {
 
       if (response?.data?.success) {
         toast.success("Service created successfully");
-        navigate(-1);
+        setFormData({ name: "", shortDescription: "", fullDescription: "", mrpPrice: "", salePrice: "" });
+        setImage(null);
+        setPreview(null);
+        setIcon(null);
+        setIconPreview(null);
       };
     } catch (error) {
       toast.error(
