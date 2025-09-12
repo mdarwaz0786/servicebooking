@@ -12,7 +12,7 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   };
 
   // Fetch active categories
-  const categories = await CategoryModel
+  let categories = await CategoryModel
     .find({ status: true })
     .populate({
       path: "subcategories",
@@ -34,6 +34,27 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     })
     .sort({ createdAt: -1 })
     .lean();
+
+  categories = categories.map((cat) => {
+    const subCategoryCount = cat.subcategories?.length || 0;
+
+    const subSubCategoryCount = cat.subcategories?.reduce((acc, sub) => {
+      return acc + (sub.subSubCategories?.length || 0);
+    }, 0) || 0;
+
+    const subSubSubCategoryCount = cat.subcategories?.reduce((acc1, sub) => {
+      return acc1 + (sub.subSubCategories?.reduce((acc2, subsub) => {
+        return acc2 + (subsub.subSubSubCategories?.length || 0);
+      }, 0));
+    }, 0) || 0;
+
+    return {
+      ...cat,
+      subCategoryCount,
+      subSubCategoryCount,
+      subSubSubCategoryCount
+    };
+  });
 
   // Fetch user's cart data
   let cart = await getCartData(userId);
