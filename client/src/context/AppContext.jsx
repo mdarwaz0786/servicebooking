@@ -384,8 +384,10 @@ export const AppProvider = ({ children }) => {
           if (response?.data.category.length > 0) {
             setcategoryListData(response.data.category);
           }
-          if (response?.data.cart.length > 0) {
+          if (response?.data.cart.cartProducts.length > 0) {
+            setservicePageCartShow(true);
             setcartItems(response.data.cart.cartProducts);
+            setcartAmount(response.data.cart.amountData);
           }
         }
       } catch (error) {

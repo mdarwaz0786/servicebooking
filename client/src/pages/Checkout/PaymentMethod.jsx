@@ -10,9 +10,18 @@ const PaymentMethod = () => {
 
    const handleBooking = async () => {
       try {
-        const response = await postData({mobile:bookingAddress}, Urls.createBooking, "POST");
+        const response = await postData({
+          addressId:bookingAddress,
+          scheduleType:2,
+          scheduleDate:bookingDate,
+          scheduleTime:bookingTime,
+          paymentMode:"cod",
+          paymentBy:'',
+          isCouponUsed:0,
+        }, Urls.createBooking, "POST");
         if (response.success) {
-          
+          toggleStep('confirmation',true)
+          toggleStep('payment',false)
         } 
       } catch (error) { 
         console.error("Cart API Error:", error);
