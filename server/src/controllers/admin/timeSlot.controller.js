@@ -130,16 +130,31 @@ export const updateTimeSlot = asyncHandler(async (req, res) => {
   const { id } = req.params;
   let { time, status } = req.body;
 
-  const formattedTime = moment.tz(time, "hh:mm A", "Asia/Kolkata").format("hh:mm A");
+  const updateData = {};
 
-  const exists = await TimeSlotModel.findOne({ time: formattedTime, _id: { $ne: id } });
-  if (exists) throw new ApiError(400, "Another slot with this time already exists");
+  if (time) {
+    const formattedTime = moment
+      .tz(time, "hh:mm A", "Asia/Kolkata")
+      .format("hh:mm A");
 
-  const updatedSlot = await TimeSlotModel.findByIdAndUpdate(
-    id,
-    { time: formattedTime, status },
-    { new: true, runValidators: true }
-  );
+    const exists = await TimeSlotModel.findOne({
+      time: formattedTime,
+      _id: { $ne: id },
+    });
+
+    if (exists) throw new ApiError(400, "Time already exists");
+
+    updateData.time = formattedTime;
+  };
+
+  if (typeof status !== "undefined") {
+    updateData.status = status;
+  };
+
+  const updatedSlot = await TimeSlotModel.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!updatedSlot) throw new ApiError(404, "Time slot not found");
 

@@ -4,7 +4,7 @@ import AddCategoryPage from "../pages/Category/AddCategoryPage";
 import UpdateCategoryPage from "../pages/Category/UpdateCategoryPage";
 import ServiceListPage from "../pages/Service/ServiceListPage";
 import AddServicePage from "../pages/Service/AddServicePage";
-import BookingPage from "../pages/Booking/BookingPage";
+import BookingListPage from "../pages/Booking/BookingListPage";
 import LoginPage from "../pages/auth/LoginPage";
 import NotFoundPage from "../pages/NotFound/NotFoundPage";
 import UnauthorizedPage from "../pages/Unauthorized/UnauthorizedPage";
@@ -49,7 +49,7 @@ const routesConfig = {
     { path: "/add-time-slot", element: AddTimeSlotPage },
     { path: "/update-time-slot/:id", element: UpdateTimeSlotPage },
 
-    { path: "/bookings", element: BookingPage },
+    { path: "/bookings", element: BookingListPage },
   ],
   public: [
     { path: "/login", element: LoginPage },

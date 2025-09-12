@@ -2,7 +2,6 @@ import BookingModel from "../../models/Booking.model.js";
 import BookingItemModel from "../../models/BookingItem.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
-import {getCartData} from "../../utils/cart.utils.js";
 
 // Generate Unique Booking Id
 const generateBookingId = async () => {
@@ -71,7 +70,7 @@ export const createBooking = asyncHandler(async (req, res) => {
   await BookingItemModel.insertMany(bookingItems);
 
   // Clear User Cart
-  await CartModel.deleteMany({ userId });
+  // await CartModel.deleteMany({ userId });
 
   return res.status(201).json({
     success: true,
