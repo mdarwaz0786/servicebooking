@@ -14,6 +14,24 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   // Fetch active categories
   const categories = await CategoryModel
     .find({ status: true })
+    .populate({
+      path: "subcategories",
+      match: { status: true },
+      options: { sort: { createdAt: -1 } },
+      strictPopulate: false,
+      populate: {
+        path: "subSubCategories",
+        match: { status: true },
+        options: { sort: { createdAt: -1 } },
+        strictPopulate: false,
+        populate: {
+          path: "subSubSubCategories",
+          match: { status: true },
+          options: { sort: { createdAt: -1 } },
+          strictPopulate: false,
+        }
+      }
+    })
     .sort({ createdAt: -1 })
     .lean();
 

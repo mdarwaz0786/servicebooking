@@ -16,7 +16,9 @@ export const getCartData = async (userId) => {
     cartProducts: cartItems,
     amountData: {
       amount: 100,
-      gst: 10,
+      gstAmount: 10,
+      gstPercent: "20%",
+      discountAmount: 40,
       payableAmount: 100,
     },
   };

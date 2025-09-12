@@ -18,42 +18,59 @@ const generateBookingId = async () => {
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
-  const { addressId, scheduleType, scheduleDate, scheduleTime, paymentMode, paymentBy,
-    amount, gstAmount, gstPercent, discountAmount, payableAmount, isCouponUsed, items } = req.body;
+  const userId = req.user?._id;
+  if (!userId) throw new ApiError(401, "Unauthorized: User not found");
 
-  if (!items || items.length === 0) throw new ApiError(400, "Booking must include at least 1 service");
-
-  // Booking
-  const bookingId = await generateBookingId();
-
-  const booking = await BookingModel.create({
-    bookingId,
-    userId: req.user._id,
+  const {
     addressId,
     scheduleType,
     scheduleDate,
     scheduleTime,
     paymentMode,
     paymentBy,
-    amount,
-    gstAmount,
-    gstPercent,
-    discountAmount,
-    payableAmount,
+    isCouponUsed } = req.body;
+
+  // Get cart data from utility
+  const { cartProducts, amountData } = await getCartData(userId);
+
+  if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
+
+  // Generate bookingId
+  const bookingId = await generateBookingId();
+
+  // Create Booking
+  const booking = await BookingModel.create({
+    bookingId,
+    userId,
+    addressId,
+    scheduleType,
+    scheduleDate,
+    scheduleTime,
+    paymentMode,
+    paymentBy,
+    amount: amountData.amount,
+    gstAmount: amountData.gstAmount,
+    gstPercent: amountData.gstPercent,
+    discountAmount: amountData.discountAmount,
+    payableAmount: amountData.payableAmount,
     isCouponUsed,
   });
 
-  // Booking Items
-  const bookingItems = items.map((item) => ({
-    bookingId: booking?._id,
-    userId: req.user?._id,
+  // Prepare Booking Items from cartProducts
+  const bookingItems = cartProducts.map(item => ({
+    bookingId: booking._id,
+    userId,
     serviceId: item.serviceId,
     quantity: item.quantity,
-    mrpPrice: item.mrpPrice,
-    salePrice: item.salePrice,
+    mrpPrice: item.mrpPrice || 0,
+    salePrice: item.salePrice || 0,
   }));
 
+  // Insert Booking Items
   await BookingItemModel.insertMany(bookingItems);
+
+  // Clear User Cart
+  // await CartModel.deleteMany({ userId });
 
   return res.status(201).json({
     success: true,

@@ -27,7 +27,7 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   scheduleTime: {
-    type: String, // e.g. "10:00 AM - 12:00 PM"
+    type: String, // e.g. "10:00 AM"
     required: true,
   },
   paymentMode: {
@@ -36,7 +36,7 @@ const bookingSchema = new mongoose.Schema({
   },
   paymentBy: {
     type: String, // e.g. "razorpay", "stripe", "cash"
-    required: true,
+    required: fasle,
   },
   paymentStatus: {
     type: Number, // 0 = pending, 1 = paid
@@ -53,7 +53,7 @@ const bookingSchema = new mongoose.Schema({
     default: 0,
   },
   gstPercent: {
-    type: Number,
+    type: String,
     default: 0,
   },
   discountAmount: {
