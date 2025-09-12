@@ -4,11 +4,11 @@ import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis, { BASE_URL } from "../../apis/apis";
+import apis from "../../apis/apis";
 
-const TimeSlotListPage = () => {
+const BookingListPage = () => {
   const { validToken } = useAuth();
-  const [timeSlots, setTimeSlots] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPrevPage, setHasPrevPage] = useState();
@@ -19,7 +19,7 @@ const TimeSlotListPage = () => {
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
-  const sort = searchParams.get("sort") || "asc";
+  const sort = searchParams.get("sort") || "desc";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -31,10 +31,10 @@ const TimeSlotListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const fetchTimeSlots = async () => {
+  const fetchBookings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.timeSlot.get, {
+      const response = await axios.get(apis.booking.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -45,14 +45,14 @@ const TimeSlotListPage = () => {
       });
 
       if (response?.data?.success) {
-        setTimeSlots(response?.data?.data || []);
+        setBookings(response?.data?.data || []);
         setTotalPages(response?.data?.totalPages || 1);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch time slots");
+      toast.error(error?.response?.data?.message || "Failed to fetch bookings");
     } finally {
       setLoading(false);
     };
@@ -69,48 +69,32 @@ const TimeSlotListPage = () => {
     setSearchParams(params);
   };
 
-  const toggleStatus = async (id, currentStatus) => {
-    try {
-      const response = await axios.patch(
-        `${apis.timeSlot.update}/${id}`,
-        { status: !currentStatus },
-        { headers: { Authorization: validToken } }
-      );
-
-      if (response?.data?.success) {
-        fetchTimeSlots();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update status");
-    };
-  };
-
-  const deleteTimeSlot = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this time slot?")) return;
+  const deleteBooking = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this booking?")) return;
 
     try {
-      const response = await axios.delete(`${apis.timeSlot.delete}/${id}`, {
+      const response = await axios.delete(`${apis.booking.delete}/${id}`, {
         headers: { Authorization: validToken },
       });
 
       if (response?.data?.success) {
-        toast.success("Time slot deleted successfully");
-        fetchTimeSlots();
+        toast.success("Booking deleted successfully");
+        fetchBookings();
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete time slot");
+      toast.error(error?.response?.data?.message || "Failed to delete booking");
     };
   };
 
   useEffect(() => {
-    fetchTimeSlots();
+    fetchBookings();
   }, [page, limit, debouncedSearch, sort]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Time Slots {timeSlots?.length}</h5>
+          <h5>Bookings {bookings?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -148,7 +132,7 @@ const TimeSlotListPage = () => {
               <option value={total}>All</option>
             </select>
             <div>
-              <Link to="/add-time-slot">
+              <Link to="/add-booking">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
                   <span>Add</span>
@@ -166,32 +150,19 @@ const TimeSlotListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Time</th>
-                    <th>Status</th>
+                    <th>Booking ID</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {timeSlots?.length > 0 ? (
-                    timeSlots?.map((d, index) => (
+                  {bookings?.length > 0 ? (
+                    bookings?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.time}</td>
-                        <td>
-                          <div className="active-switch">
-                            <label className="switch">
-                              <input
-                                type="checkbox"
-                                checked={d?.status}
-                                onChange={() => toggleStatus(d?._id, d?.status)}
-                              />
-                              <span className="sliders round" />
-                            </label>
-                          </div>
-                        </td>
+                        <td>{d?.bookingId}</td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-time-slot/${d?._id}`}>
+                            <Link to={`/update-booking/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-edit" />
                               </button>
@@ -199,7 +170,7 @@ const TimeSlotListPage = () => {
                             <button
                               className="btn delete-table"
                               type="button"
-                              onClick={() => deleteTimeSlot(d?._id)}
+                              onClick={() => deleteBooking(d?._id)}
                             >
                               <i className="fe fe-trash-2" />
                             </button>
@@ -210,7 +181,7 @@ const TimeSlotListPage = () => {
                   ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No time slot found
+                        No bookings found
                       </td>
                     </tr>
                   ) : null}
@@ -269,4 +240,4 @@ const TimeSlotListPage = () => {
   );
 };
 
-export default TimeSlotListPage;
+export default BookingListPage;

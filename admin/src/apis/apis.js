@@ -37,6 +37,11 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/time-slot/update-time-slot`,
     delete: `${BASE_URL}/api/v1/admin/time-slot/delete-time-slot`,
   },
+  booking: {
+    get: `${BASE_URL}/api/v1/admin/booking`,
+    update: `${BASE_URL}/api/v1/admin/booking/update-booking`,
+    delete: `${BASE_URL}/api/v1/admin/booking/delete-booking`,
+  },
   user: {
     register: `${BASE_URL}/api/v1/admin/user/register`,
     login: `${BASE_URL}/api/v1/admin/user/login`,

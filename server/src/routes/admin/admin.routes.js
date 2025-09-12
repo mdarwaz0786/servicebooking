@@ -9,6 +9,7 @@ import subSubSubCategoryRoutes from "./subSubSubCategory.routes.js";
 import serviceRoutes from "./service.routes.js";
 import slugRoutes from "./slug.routes.js";
 import timeSlotRoutes from "./timeSlot.routes.js";
+import bookingRoutes from "./booking.routes.js";
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use("/cart", cartRoutes);
 router.use("/address", addressRoutes);
 router.use("/slug", slugRoutes);
 router.use("/time-slot", timeSlotRoutes);
+router.use("/booking", bookingRoutes);
 
 export default router;
