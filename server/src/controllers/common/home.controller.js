@@ -5,7 +5,7 @@ import { getCartData } from "../../utils/cart.utils.js";
 
 // Get home page data
 export const getHomePageData = asyncHandler(async (req, res) => {
-  const userId = req.user?._id;
+  const userId = req.query.userId;
 
   if (!userId) {
     throw new ApiError(401, "Unauthorized: User not found");
