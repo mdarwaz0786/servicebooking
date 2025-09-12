@@ -8,6 +8,7 @@ import subSubCategoryRoutes from "./subSubCategory.routes.js";
 import subSubSubCategoryRoutes from "./subSubSubCategory.routes.js";
 import serviceRoutes from "./service.routes.js";
 import slugRoutes from "./slug.routes.js";
+import timeSlotRoutes from "./timeSlot.routes.js";
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use("/service", serviceRoutes);
 router.use("/cart", cartRoutes);
 router.use("/address", addressRoutes);
 router.use("/slug", slugRoutes);
+router.use("/time-slot", timeSlotRoutes);
 
 export default router;

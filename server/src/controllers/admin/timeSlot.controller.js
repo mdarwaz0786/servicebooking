@@ -1,0 +1,174 @@
+import TimeSlotModel from "../../models/timeSlot.model.js";
+import asyncHandler from "../../helpers/asyncHandler.js";
+import ApiError from "../../helpers/apiError.js";
+import moment from "moment-timezone";
+
+// Create time slot
+export const createTimeSlot = asyncHandler(async (req, res) => {
+  let { time } = req.body;
+
+  if (!time) {
+    throw new ApiError(400, "Time is required");
+  };
+
+  // Normalize to 12-hour AM/PM format in IST
+  const formattedTime = moment.tz(time, "hh:mm A", "Asia/Kolkata").format("hh:mm A");
+
+  const exists = await TimeSlotModel.findOne({ time: formattedTime });
+  if (exists) {
+    throw new ApiError(400, "Time slot already exists");
+  };
+
+  const newSlot = await TimeSlotModel.create({ time: formattedTime });
+
+  return res.status(201).json({
+    success: true,
+    message: "Time slot created successfully",
+    data: newSlot,
+  });
+});
+
+// Get time slots by date (IST, 12-hour AM/PM)
+export const getAvailableSlots = asyncHandler(async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) throw new ApiError(400, "Date is required");
+
+  const allSlots = await TimeSlotModel.find({ status: true }).sort({ time: 1 });
+
+  const currentIST = moment().tz("Asia/Kolkata"); // current IST datetime
+  const selectedDate = moment.tz(date, "YYYY-MM-DD", "Asia/Kolkata"); // selected date in IST
+
+  let availableSlots;
+
+  if (selectedDate.isSame(currentIST, "day")) {
+    // Today → filter only slots after current time
+    availableSlots = allSlots.filter(slot => {
+      const slotDateTime = moment.tz(
+        `${date} ${slot.time}`,
+        "YYYY-MM-DD hh:mm A",
+        "Asia/Kolkata"
+      );
+      return slotDateTime.isAfter(currentIST);
+    });
+  } else {
+    // Future date → all slots are available
+    availableSlots = allSlots;
+  };
+
+  // Format time in 12-hour AM/PM
+  const slotsWithFormattedTime = availableSlots.map(slot => ({
+    ...slot.toObject(),
+    time: moment.tz(slot.time, "hh:mm A", "Asia/Kolkata").format("hh:mm A")
+  }));
+
+  return res.status(200).json({
+    success: true,
+    timezone: "Asia/Kolkata",
+    date,
+    count: slotsWithFormattedTime.length,
+    data: slotsWithFormattedTime,
+  });
+});
+
+//Get all time slots
+export const getAllTimeSlots = asyncHandler(async (req, res) => {
+  let { page, limit, search, sort = "desc", status, } = req.query;
+
+  page = parseInt(page, 10);
+  limit = parseInt(limit, 10);
+  const skip = (page - 1) * limit;
+
+  let sortOption = {};
+  if (sort === "asc") {
+    sortOption = { createdAt: 1 };
+  } else if (sort === "desc") {
+    sortOption = { createdAt: -1 };
+  } else {
+    sortOption = sort;
+  };
+
+  const filter = {};
+
+  if (search) {
+    filter.time = { $regex: search, $options: "i" };
+  };
+
+  if (status !== undefined) filter.status = status === "true";
+
+  const total = await TimeSlotModel.countDocuments(filter);
+
+  const slots = await TimeSlotModel
+    .find(filter)
+    .sort(sortOption)
+    .skip(skip)
+    .limit(limit);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return res.status(200).json({
+    success: true,
+    page,
+    limit,
+    total,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
+    data: slots,
+  });
+});
+
+// Single time slot
+export const getSingleTimeSlot = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const slot = await TimeSlotModel.findById(id);
+  if (!slot) throw new ApiError(404, "Time slot not found");
+
+  return res.status(200).json({
+    success: true,
+    data: slot,
+  });
+});
+
+// Update time slot
+export const updateTimeSlot = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  let { time, status } = req.body;
+
+  if (!time) throw new ApiError(400, "Time is required");
+
+  const formattedTime = moment.tz(time, "hh:mm A", "Asia/Kolkata").format("hh:mm A");
+
+  const exists = await TimeSlotModel.findOne({ time: formattedTime, _id: { $ne: id } });
+  if (exists) throw new ApiError(400, "Another slot with this time already exists");
+
+  const updatedSlot = await TimeSlotModel.findByIdAndUpdate(
+    id,
+    { time: formattedTime, status },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedSlot) throw new ApiError(404, "Time slot not found");
+
+  return res.status(200).json({
+    success: true,
+    message: "Time slot updated successfully",
+    data: updatedSlot,
+  });
+});
+
+// Delete time slot
+export const deleteTimeSlot = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const deletedSlot = await TimeSlotModel.findByIdAndDelete(id);
+  if (!deletedSlot) throw new ApiError(404, "Time slot not found");
+
+  return res.status(200).json({
+    success: true,
+    message: "Time slot deleted successfully",
+  });
+});
+
+

@@ -185,6 +185,13 @@ const AddServicePage = () => {
     };
   };
 
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+      if (iconPreview) URL.revokeObjectURL(iconPreview);
+    };
+  }, [preview, iconPreview]);
+
   return (
     <div className="page-wrapper">
       <div className="container mt-4 mb-5">

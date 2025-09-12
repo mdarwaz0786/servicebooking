@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
@@ -98,6 +98,13 @@ const AddCategoryPage = () => {
       setLoading(false);
     };
   };
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+      if (iconPreview) URL.revokeObjectURL(iconPreview);
+    };
+  }, [preview, iconPreview]);
 
   return (
     <div className="page-wrapper">

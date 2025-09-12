@@ -18,6 +18,9 @@ import SubSubSubCategoryListPage from "../pages/SubSubSubCategory/SubSubSubCateg
 import AddSubSubSubCategoryPage from "../pages/SubSubSubCategory/AddSubSubSubCategoryPage";
 import UpdateSubSubSubCategoryPage from "../pages/SubSubSubCategory/UpdateSubSubSubCategoryPage";
 import UpdateServicePage from "../pages/Service/UpdateServicePage";
+import TimeSlotListPage from "../pages/TimeSlot/TimeSlotListPage";
+import AddTimeSlotPage from "../pages/TimeSlot/AddTimeSlotPage";
+import UpdateTimeSlotPage from "../pages/TimeSlot/UpdateTimeSlotPage";
 
 const routesConfig = {
   private: [
@@ -41,6 +44,10 @@ const routesConfig = {
     { path: "/services", element: ServiceListPage },
     { path: "/add-service", element: AddServicePage },
     { path: "/update-service/:id", element: UpdateServicePage },
+
+    { path: "/time-slots", element: TimeSlotListPage },
+    { path: "/add-time-slot", element: AddTimeSlotPage },
+    { path: "/update-time-slot/:id", element: UpdateTimeSlotPage },
 
     { path: "/bookings", element: BookingPage },
   ],
