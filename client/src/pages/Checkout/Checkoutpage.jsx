@@ -25,7 +25,7 @@ const Checkoutpage = () => {
 
 				
 				<div className="row">
-					<div className="col-xxl-10 col-xl-11 mx-auto">
+					<div className="col-xxl-9 col-xl-11 mx-auto">
 						<div className="card border-0 mb-0">
 							<div className="card-body p-3 fieldset-wizard ">
 								<div className="row">

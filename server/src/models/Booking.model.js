@@ -36,7 +36,7 @@ const bookingSchema = new mongoose.Schema({
   },
   paymentBy: {
     type: String, // e.g. "razorpay", "stripe", "cash"
-    required: fasle,
+    required: false,
   },
   paymentStatus: {
     type: Number, // 0 = pending, 1 = paid

@@ -35,36 +35,23 @@ const BookingSidebar = () => {
               <li className={`pb-3 ${steps.datetime ? "active":""}`}>
                 <span>2. Date &amp; Time</span>
               </li>
-              <li className={`pb-3 ${steps.personalinformation ? "active":""}`}>
+              {/*<li className={`pb-3 ${steps.personalinformation ? "active":""}`}>
                 <span>3. Personal Information</span>
-              </li>
+              </li> 
               <li className={`pb-3 ${steps.cart ? "active":""}`}>
                 <span>4. Cart</span>
               </li>
+              */}
               <li className={`pb-3 ${steps.payment ? "active":""}`}>
-                <span>5. Payment</span>
+                <span>3. Payment</span>
               </li>
               <li className={`pb-3 ${steps.confirmation ? "active":""}`}>
-                <span>6. Confirmation</span>
+                <span>4. Confirmation</span>
               </li>
             </ul>
           </div>
 
-          {/* Status Report */}
-          <div className="status-report mt-3">
-            <h6 className="text-white fs-14 mb-2 pb-2">Bookings</h6>
-            <p className="fs-10">0% complete</p>
-          </div>
-
-          {/* Login Message */}
-          <div className="text-center mt-3">
-            <p className="fs-10 text-white">
-              Already have an account?{" "}
-              <a href="login.html" className="link-primary">
-                Login
-              </a>
-            </p>
-          </div>
+                   
         </div>
       </div>
     </div>

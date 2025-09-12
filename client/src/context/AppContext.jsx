@@ -40,6 +40,13 @@ export const AppProvider = ({ children }) => {
 
   const [servicePageCartShow, setservicePageCartShow] = useState(false);
   
+  
+  // booking states
+  const [bookingAddress, setbookingAddress] = useState(false);
+  const [bookingDate, setbookingDate] = useState(false);
+  const [bookingTime, setbookingTime] = useState(false);
+
+  
     
 
 
@@ -54,21 +61,10 @@ export const AppProvider = ({ children }) => {
 
     return { 
       login: `${commurl}user/login`,
-      verifyOtp: `${commurl}user/verify-otp`,
-      registerOtpSend: `${mainUrl}register-otp-send`,
-      register: `${mainUrl}register`,
-      updateProfile: `${mainUrl}update-profile`,
-      updateProfilePhoto: `${mainUrl}update-profile-photo`,
-      updatePassword: `${mainUrl}update-password`,
-      getProfile: `${mainUrl}get-profile`,
+      verifyOtp: `${commurl}user/verify-otp`,      
       logout: `${mainUrl}logout`,
-      sendOtp: `${mainUrl}send-otp`,
-      submitOtp: `${mainUrl}submit-otp`,
-      createPassword: `${mainUrl}create-password`,
-
-      country: `${commurl}country`,
-      package: `${commurl}package`,
-      state: `${commurl}state`,
+      
+      homeDetail: `${commurl}home`,
 
       categoryList: `${commurl}category`,
       subCategoryList: `${commurl}sub-category`,
@@ -77,19 +73,20 @@ export const AppProvider = ({ children }) => {
       serviceList: `${commurl}service`,
 
       addressList: `${commurl}address`,
-      addAddress: `${commurl}create-address`,
+      addAddress: `${commurl}address/create-address`,
+      removeAddress: `${commurl}address/delete-address`,
+
+      timeSlot: `${commurl}time-slot/available/by-date`,
 
       addRemoveCart: `${commurl}cart/create-cart`,
       
+      createBooking: `${mainUrl}booking/create-booking`,
 
       
 
-      appSetting: `${commurl}app-setting`,
-      contactInquiry: `${commurl}contact-inquiry`,
+      
 
-      homeDetail: `${mainUrl}home-detail`,
-      createTransaction: `${mainUrl}create-transaction`,
-      transactionStatus: `${mainUrl}check-transaction-status`,
+
     };
   };
 
@@ -126,12 +123,18 @@ export const AppProvider = ({ children }) => {
     let data = '';
     if (method === 'POST')
       data = JSON.stringify({ ...filedata, device_detail: deviceInfo });
+    let UID = generateUniqueId();
     if (method === 'GET' && filedata) {
+      const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
+      url += `?${params}`;
+    }
+    if (method === 'delete' && filedata) {
       const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
       url += `?${params}`;
     }
 
     if (!loaderShowHide) setbodyLoaderShow(true);
+    
     try {
       const response = await fetch(url, {
         method,
@@ -226,7 +229,7 @@ export const AppProvider = ({ children }) => {
     if(user)
     {
       user = JSON.parse(user);
-      uniqueId = user.id;
+      uniqueId = user._id;
     }
     return uniqueId;
   };
@@ -288,14 +291,21 @@ export const AppProvider = ({ children }) => {
         const response = await postData({serviceId:serviceId,quantity:quantity,userId:generateUniqueId()}, Urls.addRemoveCart, "POST");
         item.quantity = quantity;
 
-        setcartItems(response.data.cartProducts);
-        setcartAmount(response.data.amountData);
-        if(response.data?.cartProducts.length>0)
+        if(response.success)
         {
-          setservicePageCartShow(true)
+          setcartItems(response.data.cartProducts);
+          setcartAmount(response.data.amountData);
+          if(response.data?.cartProducts.length>0)
+          {
+            setservicePageCartShow(true)
+          }
+          else{
+            setservicePageCartShow(false)
+          }
         }
         else{
-          setservicePageCartShow(false)
+          setcartItems([]);
+          setcartAmount([]);
         }
 
         // if (response?.data.length > 0) {
@@ -365,6 +375,28 @@ export const AppProvider = ({ children }) => {
       console.error("Cart API Error:", error);
     }
   }
+
+    const handleHome = async () => {
+      try {
+        const response = await postData({userId:generateUniqueId()}, Urls.homeDetail, "GET");
+        if(response.success)
+        {
+          if (response?.data.category.length > 0) {
+            setcategoryListData(response.data.category);
+          }
+          if (response?.data.cart.length > 0) {
+            setcartItems(response.data.cart.cartProducts);
+          }
+        }
+      } catch (error) {
+        console.error("Cart API Error:", error);
+      }
+    }
+
+useEffect(() => {
+  toggleModal("homeCategoryModal", false); 
+  handleHome();
+}, []);  
 
     const handleLogout = async () => {
       storage.delete('user');
@@ -456,6 +488,16 @@ export const AppProvider = ({ children }) => {
       user,
       setuser,
       handleLogout,
+
+
+      bookingAddress,
+      setbookingAddress,
+
+      bookingDate,
+      setbookingDate,
+
+      bookingTime,
+      setbookingTime,      
       
     }}>
       {children}

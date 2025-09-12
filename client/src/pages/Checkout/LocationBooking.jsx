@@ -11,11 +11,10 @@ import GoogleMapPicker from "../../components/Google/GoogleMapPicker";
 const LocationBooking = () => {
 
 
-    const {steps,toggleStep, Urls, postData, generateUniqueId, toggleModal } = useContext(AppContext);
+    const {steps,toggleStep, Urls, postData, generateUniqueId, toggleModal, setbookingAddress } = useContext(AppContext);
     const [addresses, setaddresses] = useState([]);
     const [selectedaddress, setselectedaddress] = useState([]);
-    const [addressSectionShow, setaddressSectionShow] = useState(false);
-    const [latLng, setLatLng] = useState({ lat: null, lng: null });
+    
     const fetchAddresses = async () => {
       try {   
         let userId = generateUniqueId();  
@@ -28,30 +27,29 @@ const LocationBooking = () => {
         console.error("Cart API Error:", error);
       }
     } 
-   
+      
   useEffect(() => {  
     fetchAddresses(); 
   }, []);  
 
-  const handleUseCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          setLatLng({ lat, lng });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          alert("Unable to fetch your location. Please enable GPS.");
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  };
+
+      const handleRemoveAddress = async (id) => {
+      try {   
+        let userId = generateUniqueId();  
+        const response = await postData({userId:userId}, Urls.removeAddress+'/'+id, "delete");
+        
+          fetchAddresses()
+          
+         
+      } catch (error) { 
+        console.error("Cart API Error:", error);
+      }
+    } 
+
+ 
   const selectAddress = (id) => {
     setselectedaddress(id);
+    setbookingAddress(id);
   };
   
 
@@ -74,7 +72,7 @@ const LocationBooking = () => {
             <span className="badge badge-info-transparent mb-2">Total : {addresses.length}</span>
           </div>
           <div className="d-flex align-items-center mb-2">
-            <button className="btn btn-success" onClick={()=>setaddressSectionShow(true)}>Add Address</button>
+            <button className="btn btn-success" onClick={()=>toggleModal('addressModal',true)}>Add New Address</button>
           </div>
 
           
@@ -87,6 +85,7 @@ const LocationBooking = () => {
           {addresses.map((value, index)=>(
             <div className="col-lg-4 col-md-6" key={index} onClick={()=>selectAddress(value._id)}>
               <div className={`card location-card mb-0 ${selectedaddress==value._id?'active':''}`}>
+                <i className="fa fa-times addres-remove" onClick={()=>handleRemoveAddress(value._id)}></i>
                 <div className="card-body p-3 text-center">
                   <div className="trend-icon">
                     <span className="bg-info">
@@ -109,40 +108,7 @@ const LocationBooking = () => {
             ))}
 
             
-            <div className={`address-add-section ${addressSectionShow?'d-block':'d-none'}`}>
-              <input type="text" className="form-control" placeholder="Search by location..." />
-                <Link
-                className="mt-2 b-block"
-                style={{ display: "block", cursor: "pointer" }}
-                onClick={handleUseCurrentLocation}
-              >
-                <i className="fa fa-location"></i>&nbsp;&nbsp;
-                Use current location
-              </Link>
-
-              <div className="row">
-                  <div className="col-6">
-                  <GoogleMapPicker setLatLng={setLatLng} />
-                  </div>
-                  <div className="col-6">
-                      <h2>Dr KB Hedgewar Marg</h2>
-                      <p>Dr KB Hedgewar Marg, Block GH 4, Meera Bagh, Tilak Nagar, New Delhi, Delhi, 110087, India</p>
-                      <input type="text" placeholder="House/Flat Number*" className="form-control" />
-                      <input type="text" placeholder="Landmark (Optional)*" className="form-control mt-3" />
-                      <label>
-                        <input type="radio" value="home" name="addresstype" />
-                        Home
-                      </label>
-                      <label>
-                        <input type="radio" value="other" name="addresstype"/>
-                        Other
-                      </label>
-                      <br/>
-                      <button className="btn btn-success">Save and proceed</button>
-
-                  </div>
-              </div>
-            </div>
+            
 
 
           {/* Repeat same for other locations... */}
@@ -158,7 +124,7 @@ const LocationBooking = () => {
           Next <i className="ti ti-arrow-right ms-1"></i>
         </Link>
       </div>
-      {/* <AddressModal/> */}
+      <AddressModal fetchAddresses={fetchAddresses} />
     </fieldset>
   );
 };

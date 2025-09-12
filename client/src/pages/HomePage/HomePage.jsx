@@ -26,21 +26,7 @@ const HomePage = () => {
   const { Urls, postData, toggleModal, categoryItemData, categoryListData, subcategoryItemData, setcategoryListData, subcategoryListData } = useContext(AppContext);
 
 
-  const handleCategory = async () => {
-    try {
-      const response = await postData({}, Urls.categoryList, "GET",1, 1);
-      if (response?.data.length > 0) {
-        setcategoryListData(response.data);
-      }
-    } catch (error) {
-      console.error("Cart API Error:", error);
-    }
-  }
 
-useEffect(() => {
-  toggleModal("homeCategoryModal", false); 
-  handleCategory();
-}, []);  
 
   return ( 
     <>
