@@ -21,6 +21,7 @@ import UpdateServicePage from "../pages/Service/UpdateServicePage";
 import TimeSlotListPage from "../pages/TimeSlot/TimeSlotListPage";
 import AddTimeSlotPage from "../pages/TimeSlot/AddTimeSlotPage";
 import UpdateTimeSlotPage from "../pages/TimeSlot/UpdateTimeSlotPage";
+import BookingDetailPage from "../pages/Booking/BookingDetailPage";
 
 const routesConfig = {
   private: [
@@ -50,6 +51,7 @@ const routesConfig = {
     { path: "/update-time-slot/:id", element: UpdateTimeSlotPage },
 
     { path: "/bookings", element: BookingListPage },
+    { path: "/booking-detail/:id", element: BookingDetailPage },
   ],
   public: [
     { path: "/login", element: LoginPage },

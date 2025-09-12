@@ -70,7 +70,7 @@ export const createBooking = asyncHandler(async (req, res) => {
   await BookingItemModel.insertMany(bookingItems);
 
   // Clear User Cart
-  // await CartModel.deleteMany({ userId });
+  await CartModel.deleteMany({ userId });
 
   return res.status(201).json({
     success: true,
@@ -81,7 +81,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
 // Get All Bookings
 export const getBookings = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, userId, sort = "desc", } = req.query;
+  let { page = 1, limit = 10, userId, sort = "desc", search } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -133,12 +133,14 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   const booking = await BookingModel
     .findById(id)
-    .populate("userId", "name email mobile")
+    .populate("userId")
     .populate("addressId");
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  const items = await BookingItemModel.find({ bookingId: booking._id }).populate("serviceId");
+  const items = await BookingItemModel
+    .find({ bookingId: booking._id })
+    .populate("serviceId");
 
   return res.status(200).json({
     success: true,

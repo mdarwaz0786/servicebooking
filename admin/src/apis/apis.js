@@ -39,7 +39,6 @@ const apis = {
   },
   booking: {
     get: `${BASE_URL}/api/v1/admin/booking`,
-    update: `${BASE_URL}/api/v1/admin/booking/update-booking`,
     delete: `${BASE_URL}/api/v1/admin/booking/delete-booking`,
   },
   user: {
