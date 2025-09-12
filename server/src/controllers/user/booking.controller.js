@@ -81,7 +81,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
 // Get All Bookings
 export const getBookings = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, userId, sort = "desc", } = req.query;
+  let { page = 1, limit = 10, userId, sort = "desc", search } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);

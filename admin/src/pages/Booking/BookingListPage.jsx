@@ -151,6 +151,8 @@ const BookingListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Booking ID</th>
+                    <th>Amount</th>
+                    <th>Payment Mode</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -160,13 +162,18 @@ const BookingListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.bookingId}</td>
+                        <td>{d?.payableAmount}</td>
+                        <td>{d?.paymentMode}</td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-booking/${d?._id}`}>
+                            {/* View Button */}
+                            <Link to={`/booking-detail/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
-                                <i className="fe fe-edit" />
+                                <i className="fe fe-eye" />
                               </button>
                             </Link>
+
+                            {/* Delete Button */}
                             <button
                               className="btn delete-table"
                               type="button"
