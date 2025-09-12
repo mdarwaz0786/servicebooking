@@ -5,7 +5,19 @@ import { Link } from "react-router-dom";
 import CartItem from "../../components/Cart/CartItem";
 
 const PaymentMethod = () => {
-   const { Urls, postData, steps,toggleStep, cartAmount, PriceFormat, bookingAddress, bookingDate, bookingTime } = useContext(AppContext);
+   const { Urls,
+     postData,
+     steps,
+    toggleStep,
+     cartAmount,
+     PriceFormat,
+     bookingAddress,
+     bookingDate,
+     bookingTime,
+     setbookingData,
+     setbookingItems, 
+     setbookingAmount
+     } = useContext(AppContext);
 
 
    const handleBooking = async () => {
@@ -22,6 +34,10 @@ const PaymentMethod = () => {
         if (response.success) {
           toggleStep('confirmation',true)
           toggleStep('payment',false)
+          setbookingData(response.data.booking)
+          setbookingItems(response.data.items)
+          setbookingAmount(response.data.amountData)
+          
         } 
       } catch (error) { 
         console.error("Cart API Error:", error);
@@ -52,7 +68,7 @@ const PaymentMethod = () => {
               onClick={handlePre}
               className="btn btn-sm btn-secondary d-inline-flex align-items-center prev_btn mb-2"
             >
-              <i className="ti ti-caret-left-filled me-1"></i>Back to Cart
+              <i className="ti ti-caret-left-filled me-1"></i>Back to Time Slot
             </Link>
           </div>
         </div>

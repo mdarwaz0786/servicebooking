@@ -9,11 +9,11 @@ import GoogleMapPicker from "../../components/Google/GoogleMapPicker";
 
 
 const LocationBooking = () => {
+ 
 
-
-    const {steps,toggleStep, Urls, postData, generateUniqueId, toggleModal, setbookingAddress } = useContext(AppContext);
+    const {steps,toggleStep, Urls, postData, toast, generateUniqueId, toggleModal, setbookingAddress } = useContext(AppContext);
     const [addresses, setaddresses] = useState([]);
-    const [selectedaddress, setselectedaddress] = useState([]);
+    const [selectedaddress, setselectedaddress] = useState();
     
     const fetchAddresses = async () => {
       try {   
@@ -56,6 +56,10 @@ const LocationBooking = () => {
 
 
   const handleNext = () => {
+    if(!selectedaddress) {
+      toast.error("Select Address")
+      return false;
+    }
     toggleStep('location',false)
     // toggleStep('additionalservice',true)
     toggleStep('datetime',true)

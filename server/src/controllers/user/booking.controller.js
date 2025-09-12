@@ -3,6 +3,7 @@ import BookingItemModel from "../../models/BookingItem.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import {getCartData} from "../../utils/cart.utils.js";
+import CartModel from "../../models/cart.model.js";
 
 // Generate Unique Booking Id
 const generateBookingId = async () => {

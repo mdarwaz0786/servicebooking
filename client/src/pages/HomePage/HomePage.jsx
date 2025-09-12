@@ -23,9 +23,13 @@ import { useContext, useEffect, useState } from "react";
 const HomePage = () => {
 
 
-  const { Urls, postData, toggleModal, categoryItemData, categoryListData, subcategoryItemData, setcategoryListData, subcategoryListData } = useContext(AppContext);
+  const { categoryListData, handleHome, toggleModal } = useContext(AppContext);
 
 
+useEffect(() => {
+  toggleModal("homeCategoryModal", false); 
+  handleHome();
+}, []);  
 
 
   return ( 

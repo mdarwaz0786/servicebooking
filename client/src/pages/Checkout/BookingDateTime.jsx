@@ -8,7 +8,7 @@ const BookingDateTime = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedMyDate, setSelectedMyDate] = useState(null);
   const [timeSlots, settimeSlots] = useState([]);
-  const { steps,toggleStep, postData, Urls, setbookingDate, setbookingTime } = useContext(AppContext);
+  const { steps,toggleStep, postData, Urls, toast, setbookingDate, setbookingTime, bookingDate, bookingTime } = useContext(AppContext);
   
 
 
@@ -38,6 +38,16 @@ const BookingDateTime = () => {
 
 
   const handleNext = () => {
+    if(!bookingDate)
+    {
+      toast.error("Select Date")
+      return false;
+    }
+    if(!bookingTime)
+    {
+      toast.error("Select Time")
+      return false;
+    }
     toggleStep('payment',true)
     toggleStep('datetime',false)
   }
