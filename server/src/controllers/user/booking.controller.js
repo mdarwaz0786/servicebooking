@@ -75,7 +75,7 @@ export const createBooking = asyncHandler(async (req, res) => {
   return res.status(201).json({
     success: true,
     message: "Booking created successfully",
-    data: booking,
+    data: { booking: booking, items: cartProducts, amountData: amountData },
   });
 });
 

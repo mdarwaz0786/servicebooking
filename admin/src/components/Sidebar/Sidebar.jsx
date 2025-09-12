@@ -79,6 +79,9 @@ const Sidebar = () => {
             <li>
               <Link to="/sub-sub-sub-categories"><i className="fe fe-grid" /> <span>Sub Sub Sub Categories</span></Link>
             </li>
+            <li>
+              <Link to="/time-slots"><i className="fe fe-grid" /> <span>Time Slots</span></Link>
+            </li>
             <li className="submenu">
               <Link ><i className="fe fe-star" />
                 <span>Review</span>
