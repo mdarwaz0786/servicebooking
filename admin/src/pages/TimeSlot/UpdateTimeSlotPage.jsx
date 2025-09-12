@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import moment from "moment";
 import { useParams, useNavigate } from "react-router-dom";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
@@ -22,7 +23,9 @@ const UpdateTimeSlotPage = () => {
       });
 
       if (response?.data?.success) {
-        setFormData({ time: response?.data?.data?.time || "", });
+        const time12hr = response?.data?.data?.time || "";
+        const time24hr = time12hr ? moment(time12hr, "hh:mm A").format("HH:mm") : "";
+        setFormData({ time: time24hr });
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch time slot");

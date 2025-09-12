@@ -35,7 +35,7 @@ const apis = {
     create: `${BASE_URL}/api/v1/admin/time-slot/create-time-slot`,
     get: `${BASE_URL}/api/v1/admin/time-slot`,
     update: `${BASE_URL}/api/v1/admin/time-slot/update-time-slot`,
-    delete: `${BASE_URL}/api/v1/admin/time-slot/update-time-slot`,
+    delete: `${BASE_URL}/api/v1/admin/time-slot/delete-time-slot`,
   },
   user: {
     register: `${BASE_URL}/api/v1/admin/user/register`,

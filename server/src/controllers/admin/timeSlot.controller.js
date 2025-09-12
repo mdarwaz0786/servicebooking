@@ -71,22 +71,13 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
   });
 });
 
-//Get all time slots
+// Get all time slots
 export const getAllTimeSlots = asyncHandler(async (req, res) => {
-  let { page, limit, search, sort = "desc", status, } = req.query;
+  let { page, limit, search, sort = "desc", status } = req.query;
 
-  page = parseInt(page, 10);
-  limit = parseInt(limit, 10);
+  page = parseInt(page, 10) || 1;
+  limit = parseInt(limit, 10) || 10;
   const skip = (page - 1) * limit;
-
-  let sortOption = {};
-  if (sort === "asc") {
-    sortOption = { createdAt: 1 };
-  } else if (sort === "desc") {
-    sortOption = { createdAt: -1 };
-  } else {
-    sortOption = sort;
-  };
 
   const filter = {};
 
@@ -97,12 +88,15 @@ export const getAllTimeSlots = asyncHandler(async (req, res) => {
   if (status !== undefined) filter.status = status === "true";
 
   const total = await TimeSlotModel.countDocuments(filter);
+  let slots = await TimeSlotModel.find(filter);
 
-  const slots = await TimeSlotModel
-    .find(filter)
-    .sort(sortOption)
-    .skip(skip)
-    .limit(limit);
+  slots.sort((a, b) => {
+    const timeA = moment(a.time, "hh:mm A").hours() * 60 + moment(a.time, "hh:mm A").minutes();
+    const timeB = moment(b.time, "hh:mm A").hours() * 60 + moment(b.time, "hh:mm A").minutes();
+    return sort === "asc" ? timeA - timeB : timeB - timeA;
+  });
+
+  slots = slots.slice(skip, skip + limit);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -135,8 +129,6 @@ export const getSingleTimeSlot = asyncHandler(async (req, res) => {
 export const updateTimeSlot = asyncHandler(async (req, res) => {
   const { id } = req.params;
   let { time, status } = req.body;
-
-  if (!time) throw new ApiError(400, "Time is required");
 
   const formattedTime = moment.tz(time, "hh:mm A", "Asia/Kolkata").format("hh:mm A");
 

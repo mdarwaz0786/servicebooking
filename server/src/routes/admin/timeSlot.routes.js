@@ -15,7 +15,7 @@ router.post("/create-time-slot", isLoggedIn, createTimeSlot);
 router.get("/", isLoggedIn, getAllTimeSlots);
 router.get("/:id", isLoggedIn, getSingleTimeSlot);
 router.get("/available/by-date", getAvailableSlots);
-router.put("/update-time-slot/:id", isLoggedIn, updateTimeSlot);
+router.patch("/update-time-slot/:id", isLoggedIn, updateTimeSlot);
 router.delete("/delete-time-slot/:id", isLoggedIn, deleteTimeSlot);
 
 export default router;
