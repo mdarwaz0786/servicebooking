@@ -27,7 +27,7 @@ const LoginPage = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(apis.user.login, { mobile, password });
+      const response = await axios.post(apis.auth.login, { mobile, password });
 
       if (response?.data?.token) {
         toast.success("Login successful");

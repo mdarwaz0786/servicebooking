@@ -2,7 +2,7 @@ import BookingModel from "../../models/Booking.model.js";
 import BookingItemModel from "../../models/BookingItem.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
-import {getCartData} from "../../utils/cart.utils.js";
+import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 
 // Generate Unique Booking Id
@@ -148,33 +148,33 @@ export const getBookingById = asyncHandler(async (req, res) => {
   });
 });
 
-//  Update Booking 
-export const updateBooking = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+// //  Update Booking
+// export const updateBooking = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
 
-  const booking = await BookingModel.findByIdAndUpdate(id, req.body, { new: true });
+//   const booking = await BookingModel.findByIdAndUpdate(id, req.body, { new: true });
 
-  if (!booking) throw new ApiError(404, "Booking not found");
+//   if (!booking) throw new ApiError(404, "Booking not found");
 
-  return res.status(200).json({
-    success: true,
-    message: "Booking updated successfully",
-    data: booking,
-  });
-});
+//   return res.status(200).json({
+//     success: true,
+//     message: "Booking updated successfully",
+//     data: booking,
+//   });
+// });
 
-//  Delete Booking + Booking Items
-export const deleteBooking = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+// //  Delete Booking + Booking Items
+// export const deleteBooking = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
 
-  const booking = await BookingModel.findById(id);
-  if (!booking) throw new ApiError(404, "Booking not found");
+//   const booking = await BookingModel.findById(id);
+//   if (!booking) throw new ApiError(404, "Booking not found");
 
-  await BookingItemModel.deleteMany({ bookingId: booking._id });
-  await BookingModel.findByIdAndDelete(id);
+//   await BookingItemModel.deleteMany({ bookingId: booking._id });
+//   await BookingModel.findByIdAndDelete(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Booking and items deleted successfully",
-  });
-});
+//   return res.status(200).json({
+//     success: true,
+//     message: "Booking and items deleted successfully",
+//   });
+// });

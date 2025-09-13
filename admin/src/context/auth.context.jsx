@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("user");
       toast.success("Logout successful.");
     } catch (error) {
-      console.error("Failed to remove token and user:", error);
+      console.error("Failed to remove token and admin:", error);
     };
   };
 
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
     setToken(storedToken);
     try {
       setIsLoading(true);
-      const response = await axios.get(apis.user.loggedIn, {
+      const response = await axios.get(apis.auth.loggedIn, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(userData));
       };
     } catch (error) {
-      console.error("Error while fetching user:", error?.response?.data?.message || error.message);
+      console.error("Error while fetching admin:", error?.response?.data?.message || error.message);
     } finally {
       setIsLoading(false);
       setIsAuthResolved(true);

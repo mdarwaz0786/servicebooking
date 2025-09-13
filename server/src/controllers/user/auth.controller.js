@@ -1,4 +1,5 @@
 import UserModel from "../../models/user.model.js";
+import CartModel from "../../models/cart.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
@@ -55,7 +56,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 // Verify OTP
 export const verifyOtp = asyncHandler(async (req, res) => {
-  const { mobile, otp } = req.body;
+  const { mobile, otp, userId } = req.body;
 
   const otpRecord = await OtpModel.findOne({ mobile });
   if (!otpRecord) throw new ApiError(400, "OTP not found. Please login again");
@@ -69,6 +70,13 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   if (!user) {
     user = await UserModel.create({ mobile });
+  };
+
+  if (userId) {
+    await CartModel.updateMany(
+      { userId: userId },
+      { $set: { userId: user._id } }
+    );
   };
 
   return res.status(200).json({
@@ -90,6 +98,7 @@ export const loggedInUser = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     data: req.user,
   });
 });
