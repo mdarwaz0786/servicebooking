@@ -81,9 +81,9 @@ export const AppProvider = ({ children }) => {
       subSubSubCategoryList: `${commurl}sub-sub-sub-category`,
       serviceList: `${commurl}service`,
 
-      addressList: `${commurl}address`,
-      addAddress: `${commurl}address/create-address`,
-      removeAddress: `${commurl}address/delete-address`,
+      addressList: `${mainUrl}address`,
+      addAddress: `${mainUrl}address/create-address`,
+      removeAddress: `${mainUrl}address/delete-address`,
 
       timeSlot: `${commurl}time-slot/available/by-date`,
 
@@ -298,8 +298,9 @@ const formatDateTime = (isoString) => {
         quantity = quantity > 0 ? quantity - 1 : 0;
       }
       try {
+        // generateUniqueId()
         const response = await postData({serviceId:serviceId,quantity:quantity,userId:generateUniqueId()}, Urls.addRemoveCart, "POST");
-        item.quantity = quantity;
+        
 
         if(response.success)
         {
@@ -314,13 +315,18 @@ const formatDateTime = (isoString) => {
           }
         }
         else{
+          if(type==1)
+          {
+            if(quantity>0) quantity -= 1;
+          }
+          else{
+            quantity = quantity > 0 ? quantity + 1 : 0;
+          }
           setcartItems([]);
           setcartAmount([]);
         }
+        item.quantity = quantity;
 
-        // if (response?.data.length > 0) {
-          
-        // }
       } catch (error) {
         console.error("Cart API Error:", error);
       }
@@ -374,18 +380,6 @@ const formatDateTime = (isoString) => {
     }
   }
 
-  const addRemoveCart = async () => {
-    try { 
-      const response = await postData({slug:slug}, Urls.serviceList, "GET");
-      if (response?.data.length > 0) {
-        setserviceListData(response.data);
-        setservicePageCategoryData(response.categoryList);
-        setservicePageName(response.name);
-      } 
-    } catch (error) { 
-      console.error("Cart API Error:", error);
-    }
-  }
 
     const handleHome = async () => {
       try {
@@ -502,7 +496,6 @@ useEffect(() => {
       PriceFormat,
       generateUniqueId,
 
-      addRemoveCart,
       user,
       setuser,
       handleLogout,
