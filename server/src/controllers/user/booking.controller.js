@@ -4,6 +4,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Generate Unique Booking Id
 const generateBookingId = async () => {
@@ -83,14 +84,22 @@ export const createBooking = asyncHandler(async (req, res) => {
 
 // Get All Bookings
 export const getBookings = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, userId, sort = "desc", search } = req.query;
+  let { page = 1, limit = 10, sort = "desc", search } = req.query;
+
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized: Please login to view your bookings");
+  };
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
 
   const filters = {};
+
   if (userId) filters.userId = userId;
+
   if (search) {
     filters.$or = [
       { bookingId: { $regex: search, $options: "i" } },
@@ -108,11 +117,26 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   const bookings = await BookingModel
     .find(filters)
-    .populate("userId")
-    .populate("addressId")
+    .populate({
+      path: "userId",
+      select: "-password",
+    })
+    .populate({
+      path: "addressId",
+      select: "",
+    })
     .sort(sortOption)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .lean();
+
+  const transformedBookings = bookings.map((b) => ({
+    ...b,
+    user: b.userId,
+    userId: b.userId?._id,
+    address: b.addressId,
+    addressId: b.addressId?._id,
+  }));
 
   const total = await BookingModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -125,7 +149,8 @@ export const getBookings = asyncHandler(async (req, res) => {
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    data: bookings,
+    data: transformedBookings,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 
@@ -133,48 +158,46 @@ export const getBookings = asyncHandler(async (req, res) => {
 export const getBookingById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized: Please login to view your bookings");
+  };
+
   const booking = await BookingModel
     .findById(id)
-    .populate("userId", "name email mobile")
-    .populate("addressId");
+    .populate({ path: "userId", select: "-password" })
+    .populate({ path: "addressId", select: "" })
+    .lean();
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  const items = await BookingItemModel.find({ bookingId: booking._id }).populate("serviceId");
+  const items = await BookingItemModel
+    .find({ bookingId: booking?._id })
+    .populate({ path: "serviceId", select: "" })
+    .lean();
+
+  const transformedBooking = {
+    ...booking,
+    user: booking.userId,
+    userId: booking.userId?._id,
+    address: booking.addressId,
+    addressId: booking.addressId?._id,
+  };
+
+  const transformedItems = items.map((i) => ({
+    ...i,
+    service: i.serviceId,
+    serviceId: i.serviceId?._id,
+  }));
 
   return res.status(200).json({
     success: true,
-    data: { booking, items },
+    data: {
+      booking: transformedBooking,
+      items: transformedItems,
+    },
   });
 });
 
-// //  Update Booking
-// export const updateBooking = asyncHandler(async (req, res) => {
-//   const { id } = req.params;
 
-//   const booking = await BookingModel.findByIdAndUpdate(id, req.body, { new: true });
-
-//   if (!booking) throw new ApiError(404, "Booking not found");
-
-//   return res.status(200).json({
-//     success: true,
-//     message: "Booking updated successfully",
-//     data: booking,
-//   });
-// });
-
-// //  Delete Booking + Booking Items
-// export const deleteBooking = asyncHandler(async (req, res) => {
-//   const { id } = req.params;
-
-//   const booking = await BookingModel.findById(id);
-//   if (!booking) throw new ApiError(404, "Booking not found");
-
-//   await BookingItemModel.deleteMany({ bookingId: booking._id });
-//   await BookingModel.findByIdAndDelete(id);
-
-//   return res.status(200).json({
-//     success: true,
-//     message: "Booking and items deleted successfully",
-//   });
-// });

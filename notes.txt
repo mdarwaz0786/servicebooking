@@ -1,6 +1,6 @@
 import { buildPagination } from "../../utils/pagination.js";
 pagination: buildPagination({ page, limit, total }),
 message: "Created successfully",
-message: "Data fetch successfully",
+message: "Data fetched successfully",
 message: "Updated successfully",
 message: "Deleted successfully",

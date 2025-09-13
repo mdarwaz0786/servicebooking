@@ -2,7 +2,6 @@ import TimeSlotModel from "../../models/timeSlot.model.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import ApiError from "../../helpers/apiError.js";
 import moment from "moment-timezone";
-import { buildPagination } from "../../utils/pagination.js";
 
 // Get time slots by date (IST, 12-hour AM/PM)
 export const getAvailableSlots = asyncHandler(async (req, res) => {
@@ -40,10 +39,10 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     timezone: "Asia/Kolkata",
     date,
-    count: slotsWithFormattedTime.length,
+    total: slotsWithFormattedTime.length,
     data: slotsWithFormattedTime,
   });
 });
@@ -57,7 +56,7 @@ export const getSingleTimeSlot = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     data: slot,
   });
 });

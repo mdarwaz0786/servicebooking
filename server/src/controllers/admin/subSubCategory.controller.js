@@ -126,7 +126,7 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     total,
     page,
     limit,
@@ -152,7 +152,7 @@ export const getSubSubCategoryById = asyncHandler(async (req, res) => {
 
   if (!subSubCategory) throw new ApiError(404, "Sub sub category not found");
 
-  return res.status(200).json({ success: true, message: "Data fetch successfully", data: subSubCategory });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: subSubCategory });
 });
 
 // Update sub sub category

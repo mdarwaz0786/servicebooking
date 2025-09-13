@@ -35,17 +35,19 @@ export const getSubCategories = asyncHandler(async (req, res) => {
 
   let subCategories = await SubCategoryModel
     .find(filters)
-    .populate("category createdBy updatedBy")
+    .populate({ path: "category", select: "-createdBy -updatedBy", })
     .populate({
       path: "subSubCategories",
       match: { status: true },
       options: { sort: { createdAt: -1 } },
       strictPopulate: false,
+      select: "-createdBy -updatedBy",
       populate: {
         path: "subSubSubCategories",
         match: { status: true },
         options: { sort: { createdAt: -1 } },
         strictPopulate: false,
+        select: "-createdBy -updatedBy",
       }
     })
     .sort(sortOption)
@@ -72,7 +74,7 @@ export const getSubCategories = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     total,
     page,
     limit,
@@ -88,17 +90,19 @@ export const getSubCategories = asyncHandler(async (req, res) => {
 export const getSubCategoryById = asyncHandler(async (req, res) => {
   const subCategory = await SubCategoryModel
     .findById(req.params.id)
-    .populate("category")
+    .populate({ path: "category", select: "-createdBy -updatedBy" })
     .populate({
       path: "subSubCategories",
       match: { status: true },
       options: { sort: { createdAt: -1 } },
       strictPopulate: false,
+      select: "-createdBy -updatedBy",
       populate: {
         path: "subSubSubCategories",
         match: { status: true },
         options: { sort: { createdAt: -1 } },
         strictPopulate: false,
+        select: "-createdBy -updatedBy",
       }
     });
 
@@ -106,5 +110,5 @@ export const getSubCategoryById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Subcategory not found");
   };
 
-  return res.status(200).json({ success: true, message: "Data fetch successfully", data: subCategory });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: subCategory });
 });

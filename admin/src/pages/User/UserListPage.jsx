@@ -4,11 +4,11 @@ import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis, { BASE_URL } from "../../apis/apis";
+import apis from "../../apis/apis";
 
-const CategoryListPage = () => {
+const UserListPage = () => {
   const { validToken } = useAuth();
-  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPrevPage, setHasPrevPage] = useState();
@@ -31,10 +31,10 @@ const CategoryListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const fetchCategories = async () => {
+  const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.category.get, {
+      const response = await axios.get(apis.user.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -45,14 +45,14 @@ const CategoryListPage = () => {
       });
 
       if (response?.data?.success) {
-        setCategories(response?.data?.data || []);
+        setUsers(response?.data?.data || []);
         setTotalPages(response?.data?.totalPages || 1);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch categories");
+      toast.error(error?.response?.data?.message || "Failed to fetch users");
     } finally {
       setLoading(false);
     };
@@ -69,48 +69,15 @@ const CategoryListPage = () => {
     setSearchParams(params);
   };
 
-  const toggleStatus = async (id, currentStatus) => {
-    try {
-      const response = await axios.patch(
-        `${apis.category.update}/${id}`,
-        { status: !currentStatus },
-        { headers: { Authorization: validToken } }
-      );
-
-      if (response?.data?.success) {
-        fetchCategories();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update status");
-    };
-  };
-
-  const deleteCategory = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
-
-    try {
-      const response = await axios.delete(`${apis.category.delete}/${id}`, {
-        headers: { Authorization: validToken },
-      });
-
-      if (response?.data?.success) {
-        toast.success("Category deleted successfully");
-        fetchCategories();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete category");
-    };
-  };
-
   useEffect(() => {
-    fetchCategories();
+    fetchUsers();
   }, [page, limit, debouncedSearch, sort]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Categories {categories?.length}</h5>
+          <h5>Users {users?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -147,14 +114,6 @@ const CategoryListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
-            <div>
-              <Link to="/add-category">
-                <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
-                  <i className="fa fa-plus me-2"></i>
-                  <span>Add</span>
-                </button>
-              </Link>
-            </div>
           </div>
         </div>
 
@@ -166,60 +125,21 @@ const CategoryListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th>Mobile Number</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {categories?.length > 0 ? (
-                    categories?.map((d, index) => (
+                  {users?.length > 0 ? (
+                    users?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>
-                          <img
-                            src={d?.image ? `${BASE_URL}/${d.image}` : "https://via.placeholder.com/50"}
-                            className="me-2"
-                            alt="image"
-                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                          />
-                        </td>
-                        <td>{d?.name}</td>
-                        <td>
-                          <div className="active-switch">
-                            <label className="switch">
-                              <input
-                                type="checkbox"
-                                checked={d?.status}
-                                onChange={() => toggleStatus(d?._id, d?.status)}
-                              />
-                              <span className="sliders round" />
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="d-flex">
-                            <Link to={`/update-category/${d?._id}`}>
-                              <button className="btn delete-table me-2" type="button">
-                                <i className="fe fe-edit" />
-                              </button>
-                            </Link>
-                            <button
-                              className="btn delete-table"
-                              type="button"
-                              onClick={() => deleteCategory(d?._id)}
-                            >
-                              <i className="fe fe-trash-2" />
-                            </button>
-                          </div>
-                        </td>
+                        <td>{d?.mobile}</td>
                       </tr>
                     ))
                   ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No categories found
+                        No users found
                       </td>
                     </tr>
                   ) : null}
@@ -278,4 +198,4 @@ const CategoryListPage = () => {
   );
 };
 
-export default CategoryListPage;
+export default UserListPage;

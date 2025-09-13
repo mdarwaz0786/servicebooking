@@ -89,7 +89,9 @@ export const getBookings = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   const filters = {};
+
   if (userId) filters.userId = userId;
+
   if (search) {
     filters.$or = [
       { bookingId: { $regex: search, $options: "i" } },
@@ -107,25 +109,40 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   const bookings = await BookingModel
     .find(filters)
-    .populate("userId")
-    .populate("addressId")
+    .populate({
+      path: "userId",
+      select: "-password",
+    })
+    .populate({
+      path: "addressId",
+      select: "",
+    })
     .sort(sortOption)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .lean();
+
+  const transformedBookings = bookings.map((b) => ({
+    ...b,
+    user: b.userId,
+    userId: b.userId?._id,
+    address: b.addressId,
+    addressId: b.addressId?._id,
+  }));
 
   const total = await BookingModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     total,
     page,
     limit,
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    data: bookings,
+    data: transformedBookings,
     pagination: buildPagination({ page, limit, total }),
   });
 });
@@ -136,19 +153,37 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   const booking = await BookingModel
     .findById(id)
-    .populate("userId")
-    .populate("addressId");
+    .populate({ path: "userId", select: "-password" })
+    .populate({ path: "addressId", select: "" })
+    .lean();
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
   const items = await BookingItemModel
-    .find({ bookingId: booking._id })
-    .populate("serviceId");
+    .find({ bookingId: booking?._id })
+    .populate({ path: "serviceId", select: "" })
+    .lean();
+
+  const transformedBooking = {
+    ...booking,
+    user: booking.userId,
+    userId: booking.userId?._id,
+    address: booking.addressId,
+    addressId: booking.addressId?._id,
+  };
+
+  const transformedItems = items.map((i) => ({
+    ...i,
+    service: i.serviceId,
+    serviceId: i.serviceId?._id,
+  }));
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
-    data: { booking, items },
+    data: {
+      booking: transformedBooking,
+      items: transformedItems,
+    },
   });
 });
 

@@ -44,16 +44,19 @@ export const getCategories = asyncHandler(async (req, res) => {
       match: { status: true },
       options: { sort: { createdAt: -1 } },
       strictPopulate: false,
+      select: "-createdBy -updatedBy",
       populate: {
         path: "subSubCategories",
         match: { status: true },
         options: { sort: { createdAt: -1 } },
         strictPopulate: false,
+        select: "-createdBy -updatedBy",
         populate: {
           path: "subSubSubCategories",
           match: { status: true },
           options: { sort: { createdAt: -1 } },
           strictPopulate: false,
+          select: "-createdBy -updatedBy",
         }
       }
     })
@@ -109,16 +112,19 @@ export const getCategoryById = asyncHandler(async (req, res) => {
       match: { status: true },
       options: { sort: { createdAt: -1 } },
       strictPopulate: false,
+      select: "-createdBy -updatedBy",
       populate: {
         path: "subSubCategories",
         match: { status: true },
         options: { sort: { createdAt: -1 } },
         strictPopulate: false,
+        select: "-createdBy -updatedBy",
         populate: {
           path: "subSubSubCategories",
           match: { status: true },
           options: { sort: { createdAt: -1 } },
           strictPopulate: false,
+          select: "-createdBy -updatedBy",
         }
       }
     });

@@ -65,7 +65,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     timezone: "Asia/Kolkata",
     date,
     count: slotsWithFormattedTime.length,
@@ -104,7 +104,7 @@ export const getAllTimeSlots = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     page,
     limit,
     total,
@@ -125,7 +125,7 @@ export const getSingleTimeSlot = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     data: slot,
   });
 });

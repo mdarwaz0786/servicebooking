@@ -62,7 +62,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
       },
     });
 
-  return res.status(200).json({ success: true, message: "Data fetch successfully", data: cartItems });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: cartItems });
 });
 
 // Update cart item quantity

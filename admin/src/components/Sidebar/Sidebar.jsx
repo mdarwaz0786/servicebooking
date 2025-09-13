@@ -100,6 +100,12 @@ const Sidebar = () => {
               <Link to="/bookings" className={currentPath === "/bookings" && "active"}><i className="fe fe-smartphone" /> <span> Bookings</span></Link>
             </li>
             <li className="menu-title">
+              <h6>User</h6>
+            </li>
+            <li>
+              <Link to="/users" className={currentPath === "/users" && "active"}><i className="fe fe-user" /> <span> Users</span></Link>
+            </li>
+            <li className="menu-title">
               <h6>Finance &amp; Accounts</h6>
             </li>
             <li>

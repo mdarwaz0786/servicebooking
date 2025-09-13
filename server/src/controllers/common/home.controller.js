@@ -61,7 +61,7 @@ export const getHomePageData = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     data: {
       category: categories,
       cart: cart,

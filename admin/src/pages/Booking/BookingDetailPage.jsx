@@ -97,9 +97,9 @@ const BookingDetailPage = () => {
               </div>
               <div className="col-md-6">
                 <h6 className="fw-bold text-uppercase text-muted">Customer</h6>
-                <p className="mb-1"><strong>Name:</strong> {booking?.userId?.name || "N/A"}</p>
-                <p className="mb-1"><strong>Email:</strong> {booking?.userId?.email || "N/A"}</p>
-                <p className="mb-1"><strong>Mobile:</strong> {booking?.userId?.mobile || "N/A"}</p>
+                <p className="mb-1"><strong>Name:</strong> {booking?.user?.name || "N/A"}</p>
+                <p className="mb-1"><strong>Email:</strong> {booking?.user?.email || "N/A"}</p>
+                <p className="mb-1"><strong>Mobile:</strong> {booking?.user?.mobile || "N/A"}</p>
               </div>
             </div>
 
@@ -110,7 +110,7 @@ const BookingDetailPage = () => {
               <h6 className="fw-bold text-uppercase text-muted">Service Address</h6>
               {booking?.addressId ? (
                 <p className="mb-0">
-                  {booking?.addressId?.deliveryPersonName || "N/A"}, {booking?.addressId?.houseNumber || "N/A"}, {booking?.addressId?.landmark || "N/A"}
+                  {booking?.address?.deliveryPersonName || "N/A"}, {booking?.address?.houseNumber || "N/A"}, {booking?.address?.landmark || "N/A"}
                 </p>
               ) : (
                 <p className="text-muted">No address provided</p>
@@ -132,7 +132,7 @@ const BookingDetailPage = () => {
                 <tbody>
                   {items.map((item, i) => (
                     <tr key={i}>
-                      <td>{item?.serviceId?.name}</td>
+                      <td>{item?.service?.name}</td>
                       <td className="text-center">{item?.quantity}</td>
                       <td className="text-end">₹{item?.mrpPrice}</td>
                       <td className="text-end">₹{item?.salePrice}</td>

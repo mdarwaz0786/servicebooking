@@ -43,7 +43,11 @@ export const getSubSubSubCategories = asyncHandler(async (req, res) => {
 
   const categories = await SubSubSubCategoryModel
     .find(filters)
-    .populate("category subCategory subSubCategory")
+    .populate([
+      { path: "category", select: "-createdBy -updatedBy" },
+      { path: "subCategory", select: "-createdBy -updatedBy" },
+      { path: "subSubCategory", select: "-createdBy -updatedBy" },
+    ])
     .sort(sortOption)
     .skip(skip)
     .limit(limit);
@@ -53,7 +57,7 @@ export const getSubSubSubCategories = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Data fetch successfully",
+    message: "Data fetched successfully",
     total,
     page,
     limit,
@@ -69,11 +73,15 @@ export const getSubSubSubCategories = asyncHandler(async (req, res) => {
 export const getSubSubSubCategoryById = asyncHandler(async (req, res) => {
   const subSubSubCategory = await SubSubSubCategoryModel
     .findById(req.params.id)
-    .populate("category subCategory subSubCategory createdBy updatedBy");
+    .populate([
+      { path: "category", select: "-createdBy -updatedBy" },
+      { path: "subCategory", select: "-createdBy -updatedBy" },
+      { path: "subSubCategory", select: "-createdBy -updatedBy" },
+    ])
 
   if (!subSubSubCategory) {
     throw new ApiError(404, "Sub sub sub category not found");
   };
 
-  return res.status(200).json({ success: true, message: "Data fetch successfully", data: subSubSubCategory });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: subSubSubCategory });
 });

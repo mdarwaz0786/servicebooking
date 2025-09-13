@@ -25,7 +25,7 @@ export const createAddress = asyncHandler(async (req, res) => {
 // Get all addresses
 export const getAddresses = asyncHandler(async (req, res) => {
   const addresses = await AddressModel.find({ userId: req.user?._id }).sort({ createdAt: -1 });
-  return res.status(200).json({ success: true, message: "Data fetch successfully", data: addresses });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: addresses });
 });
 
 // Get single address by ID
@@ -34,7 +34,7 @@ export const getAddressById = asyncHandler(async (req, res) => {
   if (!address) {
     throw new ApiError(404, "Address not found");
   };
-  return res.status(200).json({ success: true, message: "Data fetch successfully", data: address });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: address });
 });
 
 // Update address
