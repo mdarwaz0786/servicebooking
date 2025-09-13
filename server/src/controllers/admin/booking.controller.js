@@ -2,6 +2,7 @@ import BookingModel from "../../models/Booking.model.js";
 import BookingItemModel from "../../models/BookingItem.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Generate Unique Booking Id
 const generateBookingId = async () => {
@@ -74,7 +75,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    message: "Booking created successfully",
+    message: "Booking Created successfully",
     data: { booking: booking, items: cartProducts, amountData: amountData },
   });
 });
@@ -117,6 +118,7 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     total,
     page,
     limit,
@@ -124,6 +126,7 @@ export const getBookings = asyncHandler(async (req, res) => {
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
     data: bookings,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 
@@ -144,6 +147,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     data: { booking, items },
   });
 });
@@ -158,7 +162,7 @@ export const updateBooking = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Booking updated successfully",
+    message: "Updated successfully",
     data: booking,
   });
 });
@@ -175,6 +179,6 @@ export const deleteBooking = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Booking and items deleted successfully",
+    message: "Deleted successfully",
   });
 });

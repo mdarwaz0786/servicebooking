@@ -7,6 +7,7 @@ import compressImage from "../../helpers/compressImage.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import fs from "fs";
 import path from "path";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Create sub categories
 export const createSubCategory = asyncHandler(async (req, res) => {
@@ -42,7 +43,7 @@ export const createSubCategory = asyncHandler(async (req, res) => {
     subCategory.slug = slug;
     await subCategory.save();
 
-    return res.status(201).json({ success: true, data: subCategory });
+    return res.status(201).json({ success: true, message: "Created successfully", data: subCategory });
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
@@ -112,6 +113,7 @@ export const getSubCategories = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     total,
     page,
     limit,
@@ -119,6 +121,7 @@ export const getSubCategories = asyncHandler(async (req, res) => {
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
     data: subCategories,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 
@@ -144,7 +147,7 @@ export const getSubCategoryById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Subcategory not found");
   };
 
-  return res.status(200).json({ success: true, data: subCategory });
+  return res.status(200).json({ success: true, message: "Data fetch successfully", data: subCategory });
 });
 
 // Update sub category
@@ -178,10 +181,10 @@ export const updateSubCategory = asyncHandler(async (req, res) => {
   subCategory.updatedBy = req.user?._id;
 
   await subCategory.save();
-  return res.status(200).json({ success: true, data: subCategory });
+  return res.status(200).json({ success: true, message: "Updated successfully", data: subCategory });
 });
 
-// Create sub category
+// Delete sub category
 export const deleteSubCategory = asyncHandler(async (req, res) => {
   const subCategory = await SubCategoryModel.findById(req.params.id);
 
@@ -196,5 +199,5 @@ export const deleteSubCategory = asyncHandler(async (req, res) => {
   await SlugModel.deleteOne({ collectionName: "SubCategory", documentId: subCategory._id });
   await subCategory.deleteOne();
 
-  return res.status(200).json({ success: true, message: "Subcategory deleted successfully" });
+  return res.status(200).json({ success: true, message: "Deleted successfully" });
 });

@@ -11,6 +11,7 @@ import compressImage from "../../helpers/compressImage.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import fs from "fs";
 import path from "path";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Create service
 export const createService = asyncHandler(async (req, res) => {
@@ -56,7 +57,7 @@ export const createService = asyncHandler(async (req, res) => {
     service.slug = slug;
     await service.save();
 
-    return res.status(201).json({ success: true, data: service });
+    return res.status(201).json({ success: true, message: "Created successfully", data: service });
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
@@ -157,6 +158,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     total,
     page,
     limit,
@@ -167,6 +169,7 @@ export const getServices = asyncHandler(async (req, res) => {
     name,
     categoryList: categoryList,
     data: servicesWithQty,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 
@@ -174,7 +177,7 @@ export const getServices = asyncHandler(async (req, res) => {
 export const getServiceById = asyncHandler(async (req, res) => {
   const service = await ServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
-  return res.status(200).json({ success: true, data: service });
+  return res.status(200).json({ success: true, message: "Data fetch successfully", data: service });
 });
 
 // Update service
@@ -223,7 +226,7 @@ export const updateService = asyncHandler(async (req, res) => {
   service.updatedBy = req.user?._id;
 
   await service.save();
-  return res.status(200).json({ success: true, data: service });
+  return res.status(200).json({ success: true, message: "Updated successfully", data: service });
 });
 
 // Delete service
@@ -238,5 +241,5 @@ export const deleteService = asyncHandler(async (req, res) => {
   await SlugModel.deleteOne({ collectionName: "Service", documentId: service._id });
   await service.deleteOne();
 
-  return res.status(200).json({ success: true, message: "Service deleted successfully" });
+  return res.status(200).json({ success: true, message: "Deleted successfully" });
 });

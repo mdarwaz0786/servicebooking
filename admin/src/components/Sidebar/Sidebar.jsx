@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import $ from "jquery";
+import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const Sidebar = () => {
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   useEffect(() => {
     $("#sidebar-menu a").on("click", function (e) {
@@ -32,12 +35,6 @@ const Sidebar = () => {
             <img src="assets/img/logo.png" className="img-fluid logo-small" alt="Logo" />
           </Link>
         </div>
-        <div className="siderbar-toggle">
-          <label className="switch" id="toggle_btn">
-            <input type="checkbox" />
-            <span className="slider round" />
-          </label>
-        </div>
       </div>
       <div className="sidebar-inner slimscroll">
         <div id="sidebar-menu" className="sidebar-menu">
@@ -46,41 +43,41 @@ const Sidebar = () => {
               <h6>Home</h6>
             </li>
             <li>
-              <Link to="/" className="active"><i className="fe fe-grid" /> <span>Dashboard</span></Link>
+              <Link to="/" className={currentPath === "/" && "active"}><i className="fe fe-grid" /> <span>Dashboard</span></Link>
             </li>
             <li className="menu-title">
               <h6>Services</h6>
             </li>
             <li>
-              <Link ><i className="fe fe-briefcase" />
+              <Link className={(currentPath === "/services" || currentPath === "/add-service") && "active"}><i className="fe fe-briefcase" />
                 <span>Services</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right" /></span>
               </Link>
               <ul>
                 <li>
-                  <Link to="/add-service">Add Service</Link>
+                  <Link to="/add-service" className={currentPath === "/add-service" && "active"}>Add Service</Link>
                 </li>
                 <li>
-                  <Link to="/services">Services</Link>
+                  <Link to="/services" className={currentPath === "/services" && "active"}>Services</Link>
                 </li>
               </ul>
             </li>
             <li>
-              <Link to="/categories"><i className="fe fe-file-text" />
+              <Link to="/categories" className={currentPath === "/categories" && "active"}><i className="fe fe-file-text" />
                 <span>Categories</span>
               </Link>
             </li>
             <li>
-              <Link to="/sub-categories"><i className="fe fe-clipboard" /> <span>Sub Categories</span></Link>
+              <Link to="/sub-categories" className={currentPath === "/sub-categories" && "active"}><i className="fe fe-clipboard" /> <span>Sub Categories</span></Link>
             </li>
             <li>
-              <Link to="/sub-sub-categories"><i className="fe fe-layers" /> <span>Sub Sub Categories</span></Link>
+              <Link to="/sub-sub-categories" className={currentPath === "/sub-sub-categories" && "active"}><i className="fe fe-layers" /> <span>Sub Sub Categories</span></Link>
             </li>
             <li>
-              <Link to="/sub-sub-sub-categories"><i className="fe fe-grid" /> <span>Sub Sub Sub Categories</span></Link>
+              <Link to="/sub-sub-sub-categories" className={currentPath === "/sub-sub-sub-categories" && "active"}><i className="fe fe-grid" /> <span>Sub Sub Sub Categories</span></Link>
             </li>
             <li>
-              <Link to="/time-slots"><i className="fe fe-clock" /> <span>Time Slots</span></Link>
+              <Link to="/time-slots" className={currentPath === "/time-slots" && "active"}><i className="fe fe-clock" /> <span>Time Slots</span></Link>
             </li>
             <li className="submenu">
               <Link ><i className="fe fe-star" />
@@ -100,7 +97,7 @@ const Sidebar = () => {
               <h6>Booking</h6>
             </li>
             <li>
-              <Link to="/bookings"><i className="fe fe-smartphone" /> <span> Bookings</span></Link>
+              <Link to="/bookings" className={currentPath === "/bookings" && "active"}><i className="fe fe-smartphone" /> <span> Bookings</span></Link>
             </li>
             <li className="menu-title">
               <h6>Finance &amp; Accounts</h6>

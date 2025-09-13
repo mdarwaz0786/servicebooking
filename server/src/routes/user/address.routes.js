@@ -3,10 +3,9 @@ import {
   createAddress,
   getAddresses,
   getAddressById,
-  updateAddress,
   deleteAddress
-} from "../../controllers/common/address.controller.js";
-import isLoggedIn from "../../middlewares/common/auth.middleware.js";
+} from "../../controllers/user/address.controller.js";
+import isLoggedIn from "../../middlewares/user/auth.middleware.js";
 
 const router = express.Router();
 
@@ -18,9 +17,6 @@ router.get("/", isLoggedIn, getAddresses);
 
 // Get a single address by ID
 router.get("/:id", isLoggedIn, getAddressById);
-
-// Update an existing address by ID
-router.put("/update-address/:id", isLoggedIn, updateAddress);
 
 // Delete an address by ID
 router.delete("/delete-address/:id", isLoggedIn, deleteAddress);

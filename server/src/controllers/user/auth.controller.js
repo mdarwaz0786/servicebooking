@@ -26,13 +26,8 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    user: {
-      id: user?._id,
-      name: user?.name,
-      email: user?.email,
-      mobile: user?.mobile,
-      role: user?.role,
-    },
+    message: "User registered successfully",
+    user,
     token: generateToken(user._id),
   });
 });

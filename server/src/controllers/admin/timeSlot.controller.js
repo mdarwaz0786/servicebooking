@@ -2,6 +2,7 @@ import TimeSlotModel from "../../models/timeSlot.model.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import ApiError from "../../helpers/apiError.js";
 import moment from "moment-timezone";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Create time slot
 export const createTimeSlot = asyncHandler(async (req, res) => {
@@ -23,7 +24,7 @@ export const createTimeSlot = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    message: "Time slot created successfully",
+    message: "Created successfully",
     data: newSlot,
   });
 });
@@ -64,6 +65,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     timezone: "Asia/Kolkata",
     date,
     count: slotsWithFormattedTime.length,
@@ -102,6 +104,7 @@ export const getAllTimeSlots = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     page,
     limit,
     total,
@@ -109,6 +112,7 @@ export const getAllTimeSlots = asyncHandler(async (req, res) => {
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
     data: slots,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 
@@ -121,6 +125,7 @@ export const getSingleTimeSlot = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetch successfully",
     data: slot,
   });
 });
@@ -160,7 +165,7 @@ export const updateTimeSlot = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Time slot updated successfully",
+    message: "Updated successfully",
     data: updatedSlot,
   });
 });
@@ -174,7 +179,7 @@ export const deleteTimeSlot = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Time slot deleted successfully",
+    message: "Deleted successfully",
   });
 });
 

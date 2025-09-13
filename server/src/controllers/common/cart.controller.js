@@ -34,7 +34,7 @@ export const addToCart = asyncHandler(async (req, res) => {
 
   const reponseData = await getCartData(resolvedUserId);
 
-  return res.status(201).json({ success: true, data: reponseData });
+  return res.status(201).json({ success: true, message: "Added To Cart", data: reponseData });
 });
 
 // Get cart items
@@ -62,7 +62,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
       },
     });
 
-  return res.status(200).json({ success: true, data: cartItems });
+  return res.status(200).json({ success: true, message: "Data fetch successfully", data: cartItems });
 });
 
 // Update cart item quantity
@@ -77,7 +77,7 @@ export const updateCartItem = asyncHandler(async (req, res) => {
   cartItem.updatedBy = req.user?._id;
   await cartItem.save();
 
-  return res.status(200).json({ success: true, data: cartItem });
+  return res.status(200).json({ success: true, message: "Quantity updated successfully", data: cartItem });
 });
 
 // Remove cart item

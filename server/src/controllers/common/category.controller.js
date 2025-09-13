@@ -6,6 +6,7 @@ import compressImage from "../../helpers/compressImage.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import fs from "fs";
 import path from "path";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Create Category
 export const createCategory = asyncHandler(async (req, res) => {
@@ -130,6 +131,7 @@ export const getCategories = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     total,
     page,
     limit,
@@ -137,6 +139,7 @@ export const getCategories = asyncHandler(async (req, res) => {
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
     data: categories,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 

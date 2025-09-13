@@ -4,7 +4,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Create address
 export const createAddress = asyncHandler(async (req, res) => {
-  const { houseNumber, landmark, deliveryPersonName, type, lat, long } = req.body;
+  const { houseNumber, landmark, deliveryPersonName, type } = req.body;
 
   if (!houseNumber || !houseNumber.trim()) {
     throw new ApiError(400, "House number is required");
@@ -16,18 +16,16 @@ export const createAddress = asyncHandler(async (req, res) => {
     landmark,
     deliveryPersonName,
     type,
-    lat,
-    long,
     createdBy: req.user?._id,
   });
 
-  return res.status(201).json({ success: true, data: address });
+  return res.status(201).json({ success: true, message: "Created successfully", data: address });
 });
 
 // Get all addresses
 export const getAddresses = asyncHandler(async (req, res) => {
   const addresses = await AddressModel.find({ userId: req.user?._id }).sort({ createdAt: -1 });
-  return res.status(200).json({ success: true, data: addresses });
+  return res.status(200).json({ success: true, message: "Data fetch successfully", data: addresses });
 });
 
 // Get single address by ID
@@ -36,7 +34,7 @@ export const getAddressById = asyncHandler(async (req, res) => {
   if (!address) {
     throw new ApiError(404, "Address not found");
   };
-  return res.status(200).json({ success: true, data: address });
+  return res.status(200).json({ success: true, message: "Data fetch successfully", data: address });
 });
 
 // Update address
@@ -56,7 +54,7 @@ export const updateAddress = asyncHandler(async (req, res) => {
 
   await address.save();
 
-  return res.status(200).json({ success: true, data: address });
+  return res.status(200).json({ success: true, message: "Updated successfully", data: address });
 });
 
 // Delete address
@@ -68,5 +66,5 @@ export const deleteAddress = asyncHandler(async (req, res) => {
 
   await address.deleteOne();
 
-  return res.status(200).json({ success: true, message: "Address deleted successfully" });
+  return res.status(200).json({ success: true, message: "Deleted successfully" });
 });
