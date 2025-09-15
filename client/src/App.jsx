@@ -22,6 +22,7 @@ import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
 import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
 import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
 import Checkoutpage from "./pages/Checkout/Checkoutpage";
+import Test from "../Test";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="/providers" element={<ProvidersPage />} />
           <Route path="/provider-details" element={<ProviderDetailsPage />} />
           <Route path="/Checkout" element={<Checkoutpage />} />
+          <Route path="/test" element={<Test />} />
         </Route>
 
         <Route element={<UserLayout />}>
@@ -53,7 +55,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
-      
+
     </AppProvider>
   );
 };

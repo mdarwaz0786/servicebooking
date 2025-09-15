@@ -1,6 +1,7 @@
 import CartModel from "../models/cart.model.js";
 
 export const getCartData = async (userId) => {
+  console.log(userId)
   let cartItems = await CartModel
     .find({ userId })
     .populate("serviceId")

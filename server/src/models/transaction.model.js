@@ -15,6 +15,7 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
+    required: false,
   },
   phone: {
     type: String,
@@ -58,7 +59,7 @@ const transactionSchema = new mongoose.Schema({
     min: 0,
   },
   gstPercent: {
-    type: Number,
+    type: String,
     default: 0,
     min: 0,
   },

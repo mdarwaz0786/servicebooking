@@ -6,7 +6,7 @@ const Navbar = () => {
   const { toggleModal, handleLogout } = useContext(AppContext);
   return (
     <header className="header header-new">
-      <div className="container-fluid"> 
+      <div className="container-fluid">
         <nav className="navbar navbar-expand-lg header-nav">
           <div className="navbar-header">
             {/* Mobile button can stay as anchor if it’s only for toggling */}
@@ -19,7 +19,7 @@ const Navbar = () => {
             </a>
 
             {/* Brand logos */}
-            <Link to="/" className="navbar-brand logo">
+            <Link to="/test" className="navbar-brand logo">
               <img src="/assets/img/logo.png" className="img-fluid" alt="Logo" />
             </Link>
             <Link to="/" className="navbar-brand logo-small">
@@ -68,25 +68,25 @@ const Navbar = () => {
           <ul className="nav header-navbar-rht">
             <li className="nav-item pe-1">
               <>
-              {(localStorage.getItem("user"))?(
-                <>
-                  <Link className="nav-link btn btn-light" >
-                    <i className="ti ti-user me-2" />Account
+                {(localStorage.getItem("user")) ? (
+                  <>
+                    <Link className="nav-link btn btn-light" >
+                      <i className="ti ti-user me-2" />Account
+                    </Link>
+                    <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
+                      <i className="ti ti-lock me-2" />Logout
+                    </Link>
+                  </>
+                ) : (
+                  <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
+                    <i className="ti ti-lock me-2" />Login
                   </Link>
-                  <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
-                    <i className="ti ti-lock me-2" />Logout
-                  </Link>
-                </>
-                ):(
-                <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
-                  <i className="ti ti-lock me-2" />Login
-                </Link>
-              )}
+                )}
               </>
 
 
             </li>
-            
+
           </ul>
         </nav>
       </div>

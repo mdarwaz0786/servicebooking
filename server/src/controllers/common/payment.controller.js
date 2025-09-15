@@ -10,7 +10,7 @@ import generateBookingId from "../../utils/generateBookingId.js"
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
-  const userId = req.body;
+  const { userId } = req.body;
   if (!userId) throw new ApiError(401, "Unauthorized: User not found");
 
   // Get cart data
@@ -30,7 +30,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
 // STEP 2: Verify Payment & Create Booking
 export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
-  const userId = req.body;
+  const { userId } = req.body;
   if (!userId) throw new ApiError(401, "Unauthorized: User not found");
 
   const {
@@ -104,7 +104,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     transactionId: razorpay_payment_id,
     productName: "Booking Services",
     productType: "Service",
-    type: "Credit",
+    type: "purchase",
     itemData: cartProducts,
     paymentBy: "razorpay",
     amount: amountData.amount,
@@ -116,7 +116,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
   });
 
   // 7. Clear Cart
-  await CartModel.deleteMany({ userId });
+  // await CartModel.deleteMany({ userId });
 
   return res.status(201).json({
     success: true,
