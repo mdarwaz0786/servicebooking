@@ -116,7 +116,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
   });
 
   // 7. Clear Cart
-  // await CartModel.deleteMany({ userId });
+  await CartModel.deleteMany({ userId });
 
   return res.status(201).json({
     success: true,
