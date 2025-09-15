@@ -5,19 +5,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
-
-// Generate Unique Booking Id
-const generateBookingId = async () => {
-  const today = new Date();
-  const dateStr = today.toISOString().split("T")[0].replace(/-/g, "");
-  const count = await BookingModel.countDocuments({
-    createdAt: {
-      $gte: new Date(today.setHours(0, 0, 0, 0)),
-      $lt: new Date(today.setHours(23, 59, 59, 999)),
-    },
-  });
-  return `BK${dateStr}-${count + 1}`;
-};
+import generateBookingId from "../../utils/generateBookingId.js"
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {

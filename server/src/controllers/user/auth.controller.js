@@ -5,34 +5,6 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
 import OtpModel from "../../models/otp.model.js";
 
-// Register user
-export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, mobile, password, role } = req.body;
-
-  const existingUserByEmail = await UserModel.findOne({ email });
-  if (existingUserByEmail) {
-    throw new ApiError(400, "User already exists with this email id");
-  };
-
-  const existingUserByMobile = await UserModel.findOne({ mobile });
-  if (existingUserByMobile) {
-    throw new ApiError(400, "User already exists with this mobile number");
-  };
-
-  const user = await UserModel.create({ name, email, mobile, password, role });
-
-  if (!user) {
-    throw new ApiError(400, "Invalid user data");
-  };
-
-  return res.status(201).json({
-    success: true,
-    message: "User registered successfully",
-    user,
-    token: generateToken(user._id),
-  });
-});
-
 const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 // Login user

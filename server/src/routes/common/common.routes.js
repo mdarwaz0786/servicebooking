@@ -8,6 +8,7 @@ import serviceRoutes from "./service.routes.js";
 import slugRoutes from "./slug.routes.js";
 import timeSlotRoutes from "./timeSlot.routes.js";
 import homeRoutes from "./home.routes.js";
+import paymentRoutes from "./payment.routes.js";
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use("/cart", cartRoutes);
 router.use("/slug", slugRoutes);
 router.use("/time-slot", timeSlotRoutes);
 router.use("/home", homeRoutes);
+router.use("/payment", paymentRoutes);
 
 export default router;
