@@ -18969,6 +18969,21 @@ input[type=password]::-ms-clear {
   z-index: 1;
 }
 
+.login-form-number-show h2 {
+    font-size: 20px;
+    letter-spacing: 1.5px;
+}
+.login-form-number-show {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.login-form-btn-lr {
+    display: flex;
+    justify-content: space-between;
+    color: #008cc5;
+    cursor: pointer;
+}
 .booking-sidebar::before {
   content: "";
   background: url("../img/bg/book-bg-01.svg") no-repeat;
@@ -19024,6 +19039,10 @@ input[type=password]::-ms-clear {
     width: 20px;
     height: 20px;
     cursor: pointer;
+}
+.modal-category-banner img {
+    height: 200px;
+    width: 100%;
 }
 
 .location-card:hover::before {

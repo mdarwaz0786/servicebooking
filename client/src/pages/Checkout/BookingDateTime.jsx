@@ -14,12 +14,12 @@ const BookingDateTime = () => {
 
     const fetchTimeSlot = async () => {
       try {
-          const response = await postData({date:selectedMyDate}, Urls.timeSlot, "GET");
+          const response = await postData({date:selectedMyDate}, Urls.timeSlot, "GET", 0, 1);
           if(response.success)
           {
             settimeSlots(response.data)
           }          
-      } catch (error) { 
+      } catch (error) {  
         console.error("Cart API Error:", error);
       }
     } 

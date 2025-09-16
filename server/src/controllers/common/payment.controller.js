@@ -10,39 +10,75 @@ import generateBookingId from "../../utils/generateBookingId.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
-  const { userId } = req.body;
-  if (!userId) throw new ApiError(401, "Unauthorized: User not found");
+  const { pId, type } = req.body;
 
-  // Get cart data
-  const { cartProducts, amountData } = await getCartData(userId);
-  if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
+  let itemData, bookingData, userId, bookingItems;
+  if(type=='booking'){
+    // Get cart data
+    
+    bookingData = await BookingModel.findById({_id:pId});
+    bookingItems = await BookingItemModel.find({bookingId:bookingData._id});
+    userId = bookingData.userId;
+
+    const { cartProducts, amountData } = await getCartData(userId);
+    itemData = bookingItems;
+  }
+  else if(type=="subscription"){
+    
+  }
+  
 
   // Create Razorpay order
-  const razorpayOrder = await createRazorpayOrder(amountData.payableAmount);
+  const razorpayOrder = await createRazorpayOrder(bookingData.payableAmount);
+
+    // Save Transaction
+  let transactionDetail = await TransactionModel.create({
+    userId,
+    PID: pId,
+    transactionId: '',
+    productName: "Booking Services",
+    productType: type,
+    type: 1,
+    itemData: itemData,
+    paymentBy: "razorpay",
+    amount: bookingData.amount,
+    gstPercent: bookingData.gstPercent,
+    finalAmount: bookingData.payableAmount,
+    status: "pending",
+    paymentDate: '',
+    paymentTime: '',
+  });
+  
 
   return res.status(200).json({
     success: true,
     order: razorpayOrder,
-    amountData,
-    cartProducts,
+    bookingData,
+    transactionDetail,
   });
 });
 
-// STEP 2: Verify Payment & Create Booking
-export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
-  const { userId } = req.body;
-  if (!userId) throw new ApiError(401, "Unauthorized: User not found");
 
+
+
+
+// STEP 2: Verify Payment & Create Booking
+export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => { 
+  const { transactionTableId } = req.body;
   const {
-    addressId,
-    scheduleType,
-    scheduleDate,
-    scheduleTime,
-    isCouponUsed,
     razorpay_order_id,
     razorpay_payment_id,
     razorpay_signature,
   } = req.body;
+
+ const paymentTime = new Date().toLocaleTimeString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  
 
   // 1. Verify Signature
   const isValid = verifyRazorpayPayment({
@@ -50,78 +86,44 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     razorpay_payment_id,
     razorpay_signature,
   });
-  if (!isValid) throw new ApiError(400, "Payment verification failed");
+  if (!isValid)
+  {
+    await TransactionModel.findByIdAndUpdate({_id:transactionTableId},{
+      transactionId: razorpay_payment_id,
+      status: "failed",
+      paymentDate: new Date().toISOString().split("T")[0],
+      paymentTime: paymentTime,
+    },{new:true});
+    throw new ApiError(400, "Payment verification failed");
+  } 
 
-  // 2. Get Cart Data
-  const { cartProducts, amountData } = await getCartData(userId);
-  if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
-
-  // 3. Generate Booking ID
-  const bookingId = await generateBookingId();
-
-  // 4. Create Booking
-  const booking = await BookingModel.create({
-    bookingId,
-    userId,
-    addressId,
-    scheduleType,
-    scheduleDate,
-    scheduleTime,
-    isCouponUsed,
-    paymentMode: "online",
-    paymentBy: "razorpay",
-    paymentStatus: 1, // Paid
-    amount: amountData.amount,
-    gstAmount: amountData.gstAmount,
-    gstPercent: amountData.gstPercent,
-    discountAmount: amountData.discountAmount,
-    payableAmount: amountData.payableAmount,
-  });
-
-  // 5. Create Booking Items
-  const bookingItems = cartProducts.map((item) => ({
-    bookingId: booking._id,
-    userId,
-    serviceId: item.serviceId,
-    quantity: item.quantity,
-    mrpPrice: item.mrpPrice || 0,
-    salePrice: item.salePrice || 0,
-  }));
-  await BookingItemModel.insertMany(bookingItems);
-
-  const paymentTime = new Date().toLocaleTimeString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    hour12: true,
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-
-  // 6. Save Transaction
-  await TransactionModel.create({
-    userId,
-    PID: razorpay_order_id,
+ 
+  await TransactionModel.findByIdAndUpdate({_id:transactionTableId},{
     transactionId: razorpay_payment_id,
-    productName: "Booking Services",
-    productType: "Service",
-    type: "purchase",
-    itemData: cartProducts,
-    paymentBy: "razorpay",
-    amount: amountData.amount,
-    gstPercent: amountData.gstPercent,
-    finalAmount: amountData.payableAmount,
     status: "success",
     paymentDate: new Date().toISOString().split("T")[0],
     paymentTime: paymentTime,
-  });
+  },{new:true});
 
-  // 7. Clear Cart
-  await CartModel.deleteMany({ userId });
+    
+  const transactionData = await TransactionModel.findById({_id:transactionTableId});
+  if(transactionData.productType=='booking')
+  {
+    // const bookingData = await BookingModel.findById({_id:transactionData.PID});
+    await BookingModel.findByIdAndUpdate({_id:transactionData.PID},{
+      paymentStatus:1,
+      paymentBy:"razorpay"
+    },{new:true})
+  }
+  else if(transactionData.productType=='subscription'){
 
+  }
+
+  
   return res.status(201).json({
     success: true,
-    message: "Booking created successfully",
-    data: { booking, items: cartProducts, amountData },
+    message: "Payment successfully",
+    data: {},
   });
 });
 

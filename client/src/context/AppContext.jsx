@@ -36,8 +36,11 @@ export const AppProvider = ({ children }) => {
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
 
+  const [categoryModalImage, setcategoryModalImage] = useState([]);
+
   const [servicePageCategoryData, setservicePageCategoryData] = useState([]);
   const [servicePageName, setservicePageName] = useState([]);
+
 
   const [cartItems, setcartItems] = useState([]);
   const [cartAmount, setcartAmount] = useState([]);
@@ -60,18 +63,20 @@ export const AppProvider = ({ children }) => {
 
 
 
+  const SERVER_BASE_URL = import.meta.env.VITE_API_SERVER_BASE_URL;
+  const VITE_APP_NAME = import.meta.env.VITE_APP_NAME;
 
   // ✅ Base API URLs
   const apiUrl = () => {
     // const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/';
-    const apiUrl = 'http://localhost:8080/api/v1/';
+    const apiUrl = SERVER_BASE_URL+'api/v1/';
     const commurl = apiUrl+'common/';
-    const mainUrl = apiUrl + 'user/';
+    const userUrl = apiUrl + 'user/';
 
     return { 
-      login: `${commurl}user/login`,
-      verifyOtp: `${commurl}user/verify-otp`,      
-      logout: `${mainUrl}logout`,
+      login: `${userUrl}auth/login`,
+      verifyOtp: `${userUrl}auth/verify-otp`,      
+      logout: `${userUrl}logout`,
       
       homeDetail: `${commurl}home`,
 
@@ -81,18 +86,21 @@ export const AppProvider = ({ children }) => {
       subSubSubCategoryList: `${commurl}sub-sub-sub-category`,
       serviceList: `${commurl}service`,
 
-      addressList: `${mainUrl}address`,
-      addAddress: `${mainUrl}address/create-address`,
-      removeAddress: `${mainUrl}address/delete-address`,
+      addressList: `${userUrl}address`,
+      addAddress: `${userUrl}address/create-address`,
+      removeAddress: `${userUrl}address/delete-address`,
 
       timeSlot: `${commurl}time-slot/available/by-date`,
 
       addRemoveCart: `${commurl}cart/create-cart`,
       
-      createBooking: `${mainUrl}booking/create-booking`,
+      createBooking: `${userUrl}booking/create-booking`,
+
+      createTransaction: `${commurl}payment/create-order`,
+      verifyTransaction: `${commurl}payment/verify-payment`,
       };
   };
-  const SERVER_BASE_URL = import.meta.env.VITE_API_SERVER_BASE_URL;
+
 
   // ✅ LocalStorage helpers
   const storage = {
@@ -299,7 +307,7 @@ const formatDateTime = (isoString) => {
       }
       try {
         // generateUniqueId()
-        const response = await postData({serviceId:serviceId,quantity:quantity,userId:generateUniqueId()}, Urls.addRemoveCart, "POST");
+        const response = await postData({serviceId:serviceId,quantity:quantity,userId:generateUniqueId()}, Urls.addRemoveCart, "POST", 0, 1);
         
 
         if(response.success)
@@ -335,11 +343,12 @@ const formatDateTime = (isoString) => {
 
 
   const handleCategoryClick = async (item) => {
+    setcategoryModalImage(item.image)
     if(item.subCategoryCount)
     {
       setcategoryModalItemData(item)
       try {
-        const response = await postData({id:item._id}, Urls.subCategoryList, "GET");
+        const response = await postData({id:item._id}, Urls.subCategoryList, "GET", 0, 1);
         if (response?.data.length > 0) {
           setcategoryModalListData(response.data);
         }
@@ -352,7 +361,7 @@ const formatDateTime = (isoString) => {
       toggleModal("homeCategoryModal",false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({id:item._id}, Urls.subSubCategoryList, "GET");
+        const response = await postData({id:item._id}, Urls.subSubCategoryList, "GET", 0, 1);
         if (response?.data.length > 0) {
           setcategoryModalListData(response.data);
         }        
@@ -365,7 +374,7 @@ const formatDateTime = (isoString) => {
       toggleModal("homeCategoryModal",false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({id:item._id}, Urls.subSubSubCategoryList, "GET");
+        const response = await postData({id:item._id}, Urls.subSubSubCategoryList, "GET", 0, 1);
         if (response?.data.length > 0) {
           setcategoryModalListData(response.data);
         }        
@@ -383,7 +392,7 @@ const formatDateTime = (isoString) => {
 
     const handleHome = async () => {
       try {
-        const response = await postData({userId:generateUniqueId()}, Urls.homeDetail, "GET");
+        const response = await postData({userId:generateUniqueId()}, Urls.homeDetail, "GET", 0, 1);
         if(response.success)
         {
           if (response?.data.category.length > 0) {
@@ -427,6 +436,7 @@ useEffect(() => {
   return (
     <AppContext.Provider value={{
       SERVER_BASE_URL,
+      VITE_APP_NAME,
       toggleModal,
       modals,
       toggleStep,
@@ -468,6 +478,9 @@ useEffect(() => {
       setsubsubsubcategoryListData,
       subsubsubcategoryItemData,
       setsubsubsubcategoryItemData,
+
+      categoryModalImage,
+      setcategoryModalImage,
 
       serviceListData,
       setserviceListData,

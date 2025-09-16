@@ -11,6 +11,7 @@ const LoginForm = () => {
     
   const [mobile, setmobile] = useState("");
   const [otp, setOtp] = useState("");
+  const [formTitle, setformTitle] = useState("Enter Mobile Number");
   const [otpField, setotpField] = useState(false);
   const [mobileField, setmobileField] = useState(true);
 
@@ -23,6 +24,7 @@ const LoginForm = () => {
       try {
         const response = await postData({mobile:mobile}, Urls.login, "POST");
         if (response.success) {
+          setformTitle("Enter Otp")
           setotpField(true);
           setmobileField(false);
           setsendOtpBtn(false);
@@ -38,7 +40,13 @@ const LoginForm = () => {
       try {
         const response = await postData({otp:otp,mobile:mobile}, Urls.verifyOtp, "POST");
         if (response.success) {
-          
+          setformTitle("Enter Mobile Number")
+          setotpField(false);
+          setmobileField(true);
+          setsendOtpBtn(true);
+          setverifyOtpBtn(false);
+          setmobile('')
+          setOtp('')
         } 
       } catch (error) { 
         console.error("Cart API Error:", error);
@@ -49,7 +57,14 @@ const LoginForm = () => {
     <form >
       <div className="text-center mb-3">
         <h3 className="mb-2">Welcome</h3>
-        <p>Enter mobile number</p>
+        <p>{formTitle}</p>
+        <div className="login-form-number-show">
+          <h2>{mobile}</h2>
+          <div className="login-form-btn-lr">
+            <span>Edit</span>
+            <span>Resend</span>
+          </div>
+        </div>
       </div>
 
       {/* mobile */}

@@ -14,7 +14,7 @@ const ServicesPage = () => {
 
       let userId = generateUniqueId();
 
-      const response = await postData({slug:slug,userId:userId}, Urls.serviceList, "GET");
+      const response = await postData({slug:slug,userId:userId}, Urls.serviceList, "GET", 0, 1);
       
         setserviceListData(response.data?response.data:[]);
         setservicePageCategoryData(response.categoryList?response.categoryList:[]);

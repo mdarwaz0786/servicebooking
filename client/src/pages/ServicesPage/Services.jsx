@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 
 const Services = () => {
 
-  const { servicePageCategoryData, servicePageName, cartAmount, servicePageCartShow } = useContext(AppContext);
+  const { servicePageCategoryData, servicePageName, cartAmount,cartItems, servicePageCartShow } = useContext(AppContext);
   return (
     <div className="page-wrapper">
       <div className="content">
@@ -29,7 +29,7 @@ const Services = () => {
             </div>
 
             {/* -- 2nd  box- */}
-            <div className={`${servicePageCartShow?'col-xl-6 col-lg-6':'col-xl-8'}`}>
+            <div className={`${cartItems.length>0?'col-xl-6 col-lg-6':'col-xl-8'}`}>
 
               <div className="row justify-content-center align-items-center">
 
@@ -40,7 +40,7 @@ const Services = () => {
             </div>
 
             {/* 3rd box */}
-            {(servicePageCartShow)?(
+            {(cartItems.length>0)?(
               <div className="col-xl-3 col-lg-2">
                 <CartSidebar />
               </div>
