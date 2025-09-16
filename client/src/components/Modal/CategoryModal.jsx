@@ -7,7 +7,7 @@ import Categories from "../Category/Categories";
 
 const CategoryModal = () => {
 
-  const { modals,toggleModal, categoryModalListData, categoryModalItemData } = useContext(AppContext);
+  const { modals,toggleModal, categoryModalListData, categoryModalItemData, categoryModalImage, SERVER_BASE_URL } = useContext(AppContext);
 
   return (
     <div
@@ -30,6 +30,9 @@ const CategoryModal = () => {
           </div>
 
           <div className="wizard-fieldset">
+            <div className="modal-category-banner">
+              <img src={SERVER_BASE_URL+''+categoryModalImage} />
+            </div>
             
             <Categories categoryData={categoryModalListData} />
             

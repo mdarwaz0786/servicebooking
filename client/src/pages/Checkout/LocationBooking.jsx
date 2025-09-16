@@ -18,7 +18,7 @@ const LocationBooking = () => {
     const fetchAddresses = async () => {
       try {   
         let userId = generateUniqueId();  
-        const response = await postData({userId:userId}, Urls.addressList, "GET");
+        const response = await postData({userId:userId}, Urls.addressList, "GET", 0, 1);
         
           setaddresses(response.data);
           

@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import CartItem from "../../components/Cart/CartItem";
+import { handlePayment } from "../../components/Payment/Razorpay";
 
 const PaymentMethod = () => {
+  const navigate = useNavigate();
+
    const { Urls,
      postData,
      steps,
@@ -16,7 +19,10 @@ const PaymentMethod = () => {
      bookingTime,
      setbookingData,
      setbookingItems, 
-     setbookingAmount
+     setbookingAmount,
+     setcartAmount,
+     setcartItems,
+     toast
      } = useContext(AppContext);
 
 
@@ -27,19 +33,40 @@ const PaymentMethod = () => {
           scheduleType:2,
           scheduleDate:bookingDate,
           scheduleTime:bookingTime,
-          paymentMode:"cod",
+          paymentMode:"online",
           paymentBy:'',
           isCouponUsed:0,
-        }, Urls.createBooking, "POST");
+        }, Urls.createBooking, "POST",0,1);
         if (response.success) {
-          toggleStep('confirmation',true)
-          toggleStep('payment',false)
+
+          
           setbookingData(response.data.booking)
           setbookingItems(response.data.items)
           setbookingAmount(response.data.amountData)
+          toggleStep('payment', false);
+          setcartItems([]);
+          setcartAmount([]);
+          
+          const success = await handlePayment({
+            pId: response.data.booking._id,
+            type: "booking",
+            createUrl: Urls.createTransaction,
+            verifyUrl: Urls.verifyTransaction,
+            toast: toast
+          });
+
+
+          if (success) {
+            toggleStep('confirmation', true);   // ✅ move forward
+            toggleStep('payment', false);
+          }
+          else{
+            navigate("/");
+          }
           
         } 
       } catch (error) { 
+        navigate("/");
         console.error("Cart API Error:", error);
       }
    }

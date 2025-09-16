@@ -9,13 +9,23 @@ import PaymentMethod from "./PaymentMethod";
 import Confirmation from "./Confirmation";
 
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import LoginForm from "../Login/LoginForm";
 
 
 const Checkoutpage = () => {
 
-  const { Urls, postData, user, steps, setsteps } = useContext(AppContext);
+  const { Urls, postData, user, toggleStep } = useContext(AppContext);
+
+  useEffect(() => {
+    toggleStep('location', true);
+    toggleStep('additionalservice', false);
+    toggleStep('datetime', false);
+    toggleStep('personalinformation', false);
+    toggleStep('cart', false);
+    toggleStep('payment', false);
+    toggleStep('confirmation', false);
+  }, []);  
 
 
   return (

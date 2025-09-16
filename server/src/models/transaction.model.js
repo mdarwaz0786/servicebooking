@@ -24,7 +24,7 @@ const transactionSchema = new mongoose.Schema({
   },
   PID: {
     type: String, // Product ID or Payment ID
-    required: true,
+    required: false,
     index: true,
   },
   productName: {
@@ -33,11 +33,11 @@ const transactionSchema = new mongoose.Schema({
     required: true,
   },
   productType: {
-    type: String,
+    type: String, // e.g. "purchase", "subscription", etc.
     trim: true,
   },
   type: {
-    type: String, // e.g. "purchase", "subscription", etc.
+    type: Number, // e.g. "1=add", "2=deduct"
     trim: true,
   },
   itemData: {
@@ -49,8 +49,8 @@ const transactionSchema = new mongoose.Schema({
   },
   transactionId: {
     type: String,
-    unique: true,
-    required: true,
+    unique: false,
+    required: false,
     index: true,
   },
   amount: {
@@ -75,7 +75,7 @@ const transactionSchema = new mongoose.Schema({
   },
   paymentDate: {
     type: Date,
-    required: true,
+    required: false,
   },
   paymentTime: {
     type: String, // can also be stored in paymentDate as full DateTime
