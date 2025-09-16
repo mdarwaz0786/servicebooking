@@ -19,7 +19,7 @@ const Navbar = () => {
             </a>
 
             {/* Brand logos */}
-            <Link to="/test" className="navbar-brand logo">
+            <Link to="/" className="navbar-brand logo">
               <img src="/assets/img/logo.png" className="img-fluid" alt="Logo" />
             </Link>
             <Link to="/" className="navbar-brand logo-small">
