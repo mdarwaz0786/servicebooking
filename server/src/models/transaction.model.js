@@ -23,13 +23,10 @@ const transactionSchema = new mongoose.Schema({
     required: false,
   },
   PID: {
-<<<<<<< HEAD
     type: String, // Booking Id
     required: true,
-=======
     type: String, // Product ID or Payment ID
     required: false,
->>>>>>> 410291cda1d5b67a7f708073d2858bd7974015c2
     index: true,
   },
   productName: {
@@ -42,11 +39,8 @@ const transactionSchema = new mongoose.Schema({
     trim: true,
   },
   type: {
-<<<<<<< HEAD
     type: String, // e.g. "booking", "subscription", etc.
-=======
     type: Number, // e.g. "1=add", "2=deduct"
->>>>>>> 410291cda1d5b67a7f708073d2858bd7974015c2
     trim: true,
   },
   itemData: {
