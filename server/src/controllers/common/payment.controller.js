@@ -6,7 +6,7 @@ import TransactionModel from "../../models/transaction.model.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
-import generateBookingId from "../../utils/generateBookingId.js"
+import generateBookingId from "../../utils/generateBookingId.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
