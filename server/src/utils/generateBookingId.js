@@ -1,4 +1,4 @@
-import BookingModel from "../models/Booking.model.js";
+import BookingModel from "../models/booking.model.js";
 
 const generateBookingId = async () => {
   const today = new Date();

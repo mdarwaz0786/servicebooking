@@ -84,7 +84,14 @@ const kycSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+serviceManProfileSchema.virtual("user", {
+  ref: "User",
+  localField: "userId",
+  foreignField: "_id",
+  justOne: true,
+});
 
 const KycModel = mongoose.model("KYC", kycSchema);
 

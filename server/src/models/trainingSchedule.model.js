@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const trainingScheduleSchema = new mongoose.Schema({
-  scheduledDate: {
+  scheduleDate: {
     type: Date,
     required: true,
   },

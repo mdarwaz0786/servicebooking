@@ -1,7 +1,7 @@
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
-import BookingModel from "../../models/Booking.model.js";
-import BookingItemModel from "../../models/BookingItem.model.js";
+import BookingModel from "../../models/booking.model.js";
+import BookingItemModel from "../../models/bookingItem.model.js";
 import TransactionModel from "../../models/transaction.model.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
@@ -13,25 +13,25 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
   const { pId, type } = req.body;
 
   let itemData, bookingData, userId, bookingItems;
-  if(type=='booking'){
+  if (type == 'booking') {
     // Get cart data
-    
-    bookingData = await BookingModel.findById({_id:pId});
-    bookingItems = await BookingItemModel.find({bookingId:bookingData._id});
+
+    bookingData = await BookingModel.findById({ _id: pId });
+    bookingItems = await BookingItemModel.find({ bookingId: bookingData._id });
     userId = bookingData.userId;
 
     const { cartProducts, amountData } = await getCartData(userId);
     itemData = bookingItems;
   }
-  else if(type=="subscription"){
-    
+  else if (type == "subscription") {
+
   }
-  
+
 
   // Create Razorpay order
   const razorpayOrder = await createRazorpayOrder(bookingData.payableAmount);
 
-    // Save Transaction
+  // Save Transaction
   let transactionDetail = await TransactionModel.create({
     userId,
     PID: pId,
@@ -48,7 +48,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     paymentDate: '',
     paymentTime: '',
   });
-  
+
 
   return res.status(200).json({
     success: true,
@@ -63,7 +63,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
 
 // STEP 2: Verify Payment & Create Booking
-export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => { 
+export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
   const { transactionTableId } = req.body;
   const {
     razorpay_order_id,
@@ -71,14 +71,14 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     razorpay_signature,
   } = req.body;
 
- const paymentTime = new Date().toLocaleTimeString("en-IN", {
+  const paymentTime = new Date().toLocaleTimeString("en-IN", {
     timeZone: "Asia/Kolkata",
     hour12: true,
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   });
-  
+
 
   // 1. Verify Signature
   const isValid = verifyRazorpayPayment({
@@ -86,40 +86,38 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     razorpay_payment_id,
     razorpay_signature,
   });
-  if (!isValid)
-  {
-    await TransactionModel.findByIdAndUpdate({_id:transactionTableId},{
+  if (!isValid) {
+    await TransactionModel.findByIdAndUpdate({ _id: transactionTableId }, {
       transactionId: razorpay_payment_id,
       status: "failed",
       paymentDate: new Date().toISOString().split("T")[0],
       paymentTime: paymentTime,
-    },{new:true});
+    }, { new: true });
     throw new ApiError(400, "Payment verification failed");
-  } 
+  }
 
- 
-  await TransactionModel.findByIdAndUpdate({_id:transactionTableId},{
+
+  await TransactionModel.findByIdAndUpdate({ _id: transactionTableId }, {
     transactionId: razorpay_payment_id,
     status: "success",
     paymentDate: new Date().toISOString().split("T")[0],
     paymentTime: paymentTime,
-  },{new:true});
+  }, { new: true });
 
-    
-  const transactionData = await TransactionModel.findById({_id:transactionTableId});
-  if(transactionData.productType=='booking')
-  {
+
+  const transactionData = await TransactionModel.findById({ _id: transactionTableId });
+  if (transactionData.productType == 'booking') {
     // const bookingData = await BookingModel.findById({_id:transactionData.PID});
-    await BookingModel.findByIdAndUpdate({_id:transactionData.PID},{
-      paymentStatus:1,
-      paymentBy:"razorpay"
-    },{new:true})
+    await BookingModel.findByIdAndUpdate({ _id: transactionData.PID }, {
+      paymentStatus: 1,
+      paymentBy: "razorpay"
+    }, { new: true })
   }
-  else if(transactionData.productType=='subscription'){
+  else if (transactionData.productType == 'subscription') {
 
   }
 
-  
+
   return res.status(201).json({
     success: true,
     message: "Payment successfully",

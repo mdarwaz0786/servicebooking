@@ -7,7 +7,7 @@ const serviceManProfileSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
-  categories: [{
+  categoryIds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true,
@@ -97,7 +97,21 @@ const serviceManProfileSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+serviceManProfileSchema.virtual("user", {
+  ref: "User",
+  localField: "userId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+serviceManProfileSchema.virtual("categories", {
+  ref: "Category",
+  localField: "categoryIds",
+  foreignField: "_id",
+  justOne: false,
+});
 
 const ServiceManProfileModel = mongoose.model("ServiceManProfile", serviceManProfileSchema);
 

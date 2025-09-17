@@ -52,7 +52,7 @@ const earningSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 earningSchema.virtual("category", {
   ref: "Category",

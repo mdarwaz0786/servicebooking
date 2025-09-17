@@ -16,3 +16,26 @@
   right: 0;
   left: auto;
 }
+
+.sidebar-inner {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-inner::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-inner::-webkit-scrollbar-track {
+  border-radius: 8px;
+}
+
+.sidebar-inner::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+.sidebar-inner::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}

@@ -77,10 +77,38 @@ const serviceSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 serviceSchema.index({ name: 1 });
 serviceSchema.index({ categoryId: 1, subCategoryId: 1, subSubCategoryId: 1, subSubSubCategoryId: 1 });
+
+serviceSchema.virtual("category", {
+  ref: "Category",
+  localField: "categoryId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+serviceSchema.virtual("subCategory", {
+  ref: "SubCategory",
+  localField: "subCategoryId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+serviceSchema.virtual("subSubCategory", {
+  ref: "SubSubCategory",
+  localField: "subSubCategoryId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+serviceSchema.virtual("subSubSubCategory", {
+  ref: "SubSubSubCategory",
+  localField: "subSubSubCategoryId",
+  foreignField: "_id",
+  justOne: true,
+});
 
 const ServiceModel = mongoose.model("Service", serviceSchema);
 

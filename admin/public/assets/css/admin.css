@@ -2991,7 +2991,7 @@ html.menu-opened body {
   color: #fff;
 }
 
-.sidebar-menu>ul>li>a.active:after {
+/* .sidebar-menu>ul>li>a.active:after {
   background: #4C40ED;
   width: 6px;
   height: 40px;
@@ -3000,7 +3000,7 @@ html.menu-opened body {
   position: absolute;
   content: "";
   border-radius: 0 5px 5px 0;
-}
+} */
 
 .siderbar-toggle {
   position: relative;

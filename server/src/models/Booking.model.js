@@ -18,7 +18,7 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   scheduleType: {
-    type: Number, // 1 = immediate, 2 = scheduled
+    type: Number, // 1 = immediate, 2 = scheduled 
     enum: [1, 2],
     required: true,
   },

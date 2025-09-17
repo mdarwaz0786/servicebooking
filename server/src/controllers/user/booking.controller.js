@@ -1,5 +1,5 @@
-import BookingModel from "../../models/Booking.model.js";
-import BookingItemModel from "../../models/BookingItem.model.js";
+import BookingModel from "../../models/booking.model.js";
+import BookingItemModel from "../../models/bookingItem.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
