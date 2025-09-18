@@ -1,109 +1,105 @@
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
-import { buildPagination } from "../../utils/pagination.js";
+import compressImage from "../../helpers/compressImage.js";
+import path from "path";
+import fs from "fs";
 
-// Create Service Man Profile
+// Create or Update Service Man Profile
 export const createServiceManProfile = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
   const {
-    userId,
-    categories,
+    categoryIds,
     name,
     email,
     dob,
-    workingHistory,
+    experienceLevel,
+    companyName,
+    yearOfExperience,
     permanentAddress,
     currentAddress,
     referenceName1,
     referenceMobile1,
     referenceName2,
     referenceMobile2,
-    profileImage,
   } = req.body;
 
-  if (!categories?.length) {
+  if (categoryIds && !categoryIds.length) {
     throw new ApiError(400, "At least one category is required");
   };
 
-  const profile = await ServiceManProfileModel.create({
-    userId,
-    categories,
-    name,
-    email,
-    dob,
-    workingHistory,
-    permanentAddress,
-    currentAddress,
-    referenceName1,
-    referenceMobile1,
-    referenceName2,
-    referenceMobile2,
-    profileImage,
-    createdBy: req.user?._id,
-  });
+  let newImagePath = null;
 
-  return res.status(201).json({
-    success: true,
-    message: "Created successfully",
-    data: profile,
-  });
-});
+  try {
+    if (req.files?.profileImage?.[0]) {
+      newImagePath = await compressImage(req.files.profileImage[0].buffer, "servicemanProfile");
+    };
 
-// Get All Service Man Profiles
-export const getServiceManProfiles = asyncHandler(async (req, res) => {
-  let { search, status, page = 1, limit = 10, sort = "desc" } = req.query;
+    let profile = await ServiceManProfileModel.findOne({ userId });
 
-  page = parseInt(page, 10);
-  limit = parseInt(limit, 10);
-  const skip = (page - 1) * limit;
+    if (profile) {
+      if (newImagePath && profile.profileImage) {
+        const oldImagePath = path.join(process.cwd(), profile.profileImage);
+        if (fs.existsSync(oldImagePath)) {
+          await fs.promises.unlink(oldImagePath);
+        };
+      };
 
-  const filters = {};
-  if (status) filters.status = status;
+      const updatedData = {
+        ...req.body,
+        updatedBy: userId,
+      };
 
-  if (search) {
-    filters.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
-    ];
+      if (newImagePath) updatedData.profileImage = newImagePath;
+
+      profile.set(updatedData);
+      await profile.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Updated successfully",
+        data: profile,
+      });
+    };
+
+    profile = await ServiceManProfileModel.create({
+      userId,
+      categoryIds,
+      name,
+      email,
+      dob,
+      experienceLevel,
+      companyName,
+      yearOfExperience,
+      permanentAddress,
+      currentAddress,
+      referenceName1,
+      referenceMobile1,
+      referenceName2,
+      referenceMobile2,
+      profileImage: newImagePath,
+      createdBy: userId,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Profile created successfully",
+      data: profile,
+    });
+  } catch (error) {
+    if (newImagePath && fs.existsSync(path.join(process.cwd(), newImagePath))) {
+      await fs.promises.unlink(path.join(process.cwd(), newImagePath)).catch(() => { });
+    };
+    throw new ApiError(500, error.message || "Something went wrong");
   };
-
-  let sortOption = {};
-  if (sort === "asc") sortOption = { createdAt: 1 };
-  else if (sort === "desc") sortOption = { createdAt: -1 };
-  else sortOption = sort;
-
-  const [profiles, total] = await Promise.all([
-    ServiceManProfileModel
-      .find(filters)
-      .populate("categories")
-      .populate("user")
-      .sort(sortOption)
-      .skip(skip)
-      .limit(limit)
-      .lean(),
-    ServiceManProfileModel.countDocuments(filters),
-  ]);
-
-  const totalPages = Math.ceil(total / limit);
-
-  return res.status(200).json({
-    success: true,
-    message: "Data fetched successfully",
-    total,
-    page,
-    limit,
-    totalPages,
-    hasPrevPage: page > 1,
-    hasNextPage: page < totalPages,
-    data: profiles,
-    pagination: buildPagination({ page, limit, total }),
-  });
 });
 
 // Get Single Profile by ID
 export const getServiceManProfileById = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
   const profile = await ServiceManProfileModel
-    .findById(req.params.id)
+    .findOne({ userId })
     .populate("categories")
     .populate("user");
 
@@ -113,33 +109,5 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     success: true,
     message: "Data fetched successfully",
     data: profile,
-  });
-});
-
-// Update Profile
-export const updateServiceManProfile = asyncHandler(async (req, res) => {
-  const profile = await ServiceManProfileModel.findById(req.params.id);
-  if (!profile) throw new ApiError(404, "Profile not found");
-
-  Object.assign(profile, req.body, { updatedBy: req.user?._id });
-  await profile.save();
-
-  return res.status(200).json({
-    success: true,
-    message: "Updated successfully",
-    data: profile,
-  });
-});
-
-// Delete Profile
-export const deleteServiceManProfile = asyncHandler(async (req, res) => {
-  const profile = await ServiceManProfileModel.findById(req.params.id);
-  if (!profile) throw new ApiError(404, "Profile not found");
-
-  await profile.deleteOne();
-
-  return res.status(200).json({
-    success: true,
-    message: "Deleted successfully",
   });
 });

@@ -1,28 +1,28 @@
 import express from "express";
-import isLoggedIn from "../../middlewares/admin/auth.middleware.js";
+import isLoggedIn from "../../middlewares/serviceman/auth.middleware.js";
 import {
   createKyc,
-  getKycs,
   getKycById,
-  updateKyc,
-  deleteKyc,
 } from "../../controllers/serviceman/kyc.controller.js";
+import upload from "../../middlewares/multer.middleware.js"
+import validateFileSize from "../../middlewares/validateFileSize.middleware.js";
 
 const router = express.Router();
 
-// Create KYC
-router.post("/", isLoggedIn, createKyc);
+router.post(
+  "/",
+  isLoggedIn,
+  upload.fields([
+    { name: "passbookOrCheque", maxCount: 1 },
+    { name: "panCardImage", maxCount: 1 },
+    { name: "aadharFrontImage", maxCount: 1 },
+    { name: "aadharBackImage", maxCount: 1 },
+    { name: "shopImage", maxCount: 1 },
+  ]),
+  validateFileSize,
+  createKyc
+);
 
-// Get all KYCs
-router.get("/", isLoggedIn, getKycs);
-
-// Get single KYC by ID
-router.get("/:id", isLoggedIn, getKycById);
-
-// Update KYC
-router.patch("/:id", isLoggedIn, updateKyc);
-
-// Delete KYC
-router.delete("/:id", isLoggedIn, deleteKyc);
+router.get("/detail", isLoggedIn, getKycById);
 
 export default router;

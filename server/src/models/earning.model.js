@@ -5,14 +5,15 @@ const earningSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true,
+    unique: true,
   },
   earningHour1: {
     type: Number,
-    required: false,
+    required: true,
   },
   earningPrice1: {
     type: Number,
-    required: false,
+    required: true,
   },
   earningHour2: {
     type: Number,

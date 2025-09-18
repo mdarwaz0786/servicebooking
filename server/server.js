@@ -10,6 +10,7 @@ import testRoutes from "./src/routes/test.routes.js";
 import commonRoutes from "./src/routes/common/common.routes.js";
 import adminRoutes from "./src/routes/admin/admin.routes.js";
 import userRoutes from "./src/routes/user/user.routes.js";
+import servicemanRoutes from "./src/routes/serviceman/serviceman.routes.js";
 
 // Get the current file 
 const __filename = fileURLToPath(import.meta.url);
@@ -39,6 +40,7 @@ app.use("/api/v1", testRoutes);
 app.use("/api/v1/common", commonRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/serviceman", servicemanRoutes);
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

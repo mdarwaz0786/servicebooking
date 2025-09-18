@@ -6,9 +6,8 @@ const trainingScheduleSchema = new mongoose.Schema({
     required: true,
   },
   scheduleTime: {
-    type: Number,
+    type: String,
     required: true,
-    min: 1,
   },
   status: {
     type: Boolean,
@@ -27,7 +26,7 @@ const trainingScheduleSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 trainingScheduleSchema.virtual("isNextSchedule").get(function () {
-  return this.scheduledDate > new Date();
+  return this.scheduleDate > new Date();
 });
 
 const TrainingScheduleModel = mongoose.model("TrainingSchedule", trainingScheduleSchema);

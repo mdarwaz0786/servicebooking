@@ -2,51 +2,70 @@ import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import compressImage from "../../helpers/compressImage.js";
+import path from "path";
+import fs from "fs";
 
 // Create Service Man Profile
 export const createServiceManProfile = asyncHandler(async (req, res) => {
   const {
     userId,
-    categories,
+    categoryIds,
     name,
     email,
     dob,
-    workingHistory,
+    experienceLevel,
+    companyName,
+    yearOfExperience,
     permanentAddress,
     currentAddress,
     referenceName1,
     referenceMobile1,
     referenceName2,
     referenceMobile2,
-    profileImage,
   } = req.body;
 
-  if (!categories?.length) {
+  if (!categoryIds?.length) {
     throw new ApiError(400, "At least one category is required");
   };
 
-  const profile = await ServiceManProfileModel.create({
-    userId,
-    categories,
-    name,
-    email,
-    dob,
-    workingHistory,
-    permanentAddress,
-    currentAddress,
-    referenceName1,
-    referenceMobile1,
-    referenceName2,
-    referenceMobile2,
-    profileImage,
-    createdBy: req.user?._id,
-  });
+  let imagePath = null;
 
-  return res.status(201).json({
-    success: true,
-    message: "Created successfully",
-    data: profile,
-  });
+  try {
+    if (req.files?.profileImage?.[0]) {
+      imagePath = await compressImage(req.files.profileImage[0].buffer, "serviceman");
+    };
+
+    const profile = await ServiceManProfileModel.create({
+      userId,
+      categories,
+      name,
+      email,
+      dob,
+      experienceLevel,
+      companyName,
+      yearOfExperience,
+      permanentAddress,
+      currentAddress,
+      referenceName1,
+      referenceMobile1,
+      referenceName2,
+      referenceMobile2,
+      profileImage: imagePath,
+      createdBy: req.user?._id,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Created successfully",
+      data: profile,
+    });
+  } catch (error) {
+    if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), imagePath));
+    };
+    throw new ApiError(500, error.message || "Something went wrong");
+  };
 });
 
 // Get All Service Man Profiles
@@ -121,7 +140,26 @@ export const updateServiceManProfile = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel.findById(req.params.id);
   if (!profile) throw new ApiError(404, "Profile not found");
 
-  Object.assign(profile, req.body, { updatedBy: req.user?._id });
+  if (req.files?.profileImage?.[0]) {
+    const oldImagePath = profile.profileImage
+      ? path.join(process.cwd(), profile.profileImage)
+      : null;
+
+    if (oldImagePath && fs.existsSync(oldImagePath)) {
+      await fs.promises.unlink(oldImagePath);
+    };
+
+    profile.profileImage = await compressImage(
+      req.files.profileImage[0].buffer,
+      "serviceman"
+    );
+  };
+
+  profile.set({
+    ...req.body,
+    updatedBy: req.user?._id,
+  });
+
   await profile.save();
 
   return res.status(200).json({
@@ -135,6 +173,10 @@ export const updateServiceManProfile = asyncHandler(async (req, res) => {
 export const deleteServiceManProfile = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel.findById(req.params.id);
   if (!profile) throw new ApiError(404, "Profile not found");
+
+  if (profile.profileImage && fs.existsSync(path.join(process.cwd(), profile.profileImage))) {
+    fs.unlinkSync(path.join(process.cwd(), profile.profileImage));
+  };
 
   await profile.deleteOne();
 

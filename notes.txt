@@ -14,3 +14,12 @@
 // Earning Table
 // category name select, earning hour 1 earning price 1, earning hour 2 earning price 2, earning hour 3 earning price 3, 
 // earning hour 4 earning price 4,
+
+service man
+// service man booking Table
+// booking id
+// service man id
+// user id
+// assign data and time
+// status [new, accept, reject, ongoing, complete]
+// start date and time and end date and time

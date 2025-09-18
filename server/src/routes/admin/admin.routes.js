@@ -11,6 +11,11 @@ import serviceRoutes from "./service.routes.js";
 import slugRoutes from "./slug.routes.js";
 import timeSlotRoutes from "./timeSlot.routes.js";
 import bookingRoutes from "./booking.routes.js";
+import reviewRoutes from "./review.routes.js";
+import kycRoutes from "./kyc.routes.js";
+import profileRoutes from "./servicemanProfile.routes.js";
+import trainingScheduleRoutes from "./trainingSchedule.routes.js";
+import earningRoutes from "./earning.routes.js";
 
 const router = express.Router();
 
@@ -26,5 +31,10 @@ router.use("/address", addressRoutes);
 router.use("/slug", slugRoutes);
 router.use("/time-slot", timeSlotRoutes);
 router.use("/booking", bookingRoutes);
+router.use("/review", reviewRoutes);
+router.use("/kyc", kycRoutes);
+router.use("/profile", profileRoutes);
+router.use("/training-schedule", trainingScheduleRoutes);
+router.use("/earning", earningRoutes);
 
 export default router;

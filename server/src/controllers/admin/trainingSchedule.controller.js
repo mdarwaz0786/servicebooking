@@ -107,7 +107,7 @@ export const updateTrainingSchedule = asyncHandler(async (req, res) => {
 
   await schedule.save();
 
-  return res.status(200).json({ success: true, message: "Data fetched successfully", data: schedule });
+  return res.status(200).json({ success: true, message: "Updated successfully", data: schedule });
 });
 
 // Delete Training Schedule
@@ -129,8 +129,8 @@ export const getNextTrainingSchedule = asyncHandler(async (req, res) => {
   const nextSchedule = await TrainingScheduleModel
     .findOne({
       status: true,
-      scheduledDate: { $gte: new Date() },
-    }).sort({ scheduledDate: 1 });
+      scheduleDate: { $gte: new Date() },
+    }).sort({ scheduleDate: 1 });
 
   if (!nextSchedule) {
     throw new ApiError(404, "No upcoming training schedule found");

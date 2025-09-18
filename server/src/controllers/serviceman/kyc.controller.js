@@ -1,156 +1,107 @@
 import KycModel from "../../models/kyc.model.js";
-import { buildPagination } from "../../utils/pagination.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import compressImage from "../../helpers/compressImage.js";
+import path from "path";
+import fs from "fs";
 
 // Create KYC
 export const createKyc = asyncHandler(async (req, res) => {
   const { accountNumber, confirmAccountNumber } = req.body;
+  const userId = req.user?._id;
 
   if (accountNumber !== confirmAccountNumber) {
     throw new ApiError(400, "Account number and confirm account number do not match");
   };
 
-  const kyc = await KycModel.create({
-    ...req.body,
-    createdBy: req.user?._id,
-  });
+  let passbookOrChequePath = null;
+  let panCardImagePath = null;
+  let aadharFrontPath = null;
+  let aadharBackPath = null;
+  let shopImagePath = null;
 
-  return res.status(201).json({
-    success: true,
-    message: "KYC submitted successfully",
-    data: kyc,
-  });
-});
+  try {
+    if (req.files?.passbookOrCheque?.[0]) {
+      passbookOrChequePath = await compressImage(
+        req.files.passbookOrCheque[0].buffer,
+        "kyc"
+      );
+    };
 
-// Get All KYC
-export const getKycs = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, status, sort = "desc", search } = req.query;
+    if (req.files?.panCardImage?.[0]) {
+      panCardImagePath = await compressImage(
+        req.files.panCardImage[0].buffer,
+        "kyc"
+      );
+    };
 
-  page = parseInt(page, 10);
-  limit = parseInt(limit, 10);
-  const skip = (page - 1) * limit;
+    if (req.files?.aadharFrontImage?.[0]) {
+      aadharFrontPath = await compressImage(
+        req.files.aadharFrontImage[0].buffer,
+        "kyc"
+      );
+    };
 
-  const filters = {};
-  if (status) filters.status = status;
+    if (req.files?.aadharBackImage?.[0]) {
+      aadharBackPath = await compressImage(
+        req.files.aadharBackImage[0].buffer,
+        "kyc"
+      );
+    };
 
-  if (search) {
-    const schemaPaths = Object.keys(EarningModel.schema.paths);
-    const orFilters = [];
+    if (req.files?.shopImage?.[0]) {
+      shopImagePath = await compressImage(
+        req.files.shopImage[0].buffer,
+        "kyc"
+      );
+    };
 
-    schemaPaths.forEach((field) => {
-      const fieldType = EarningModel.schema.paths[field].instance;
-
-      if (fieldType === "String") {
-        orFilters.push({ [field]: { $regex: search, $options: "i" } });
-      };
-
-      if (fieldType === "Number" && !isNaN(Number(search))) {
-        orFilters.push({ [field]: Number(search) });
-      };
-
-      if (fieldType === "Boolean") {
-        if (search.toLowerCase() === "true") {
-          orFilters.push({ [field]: true });
-        };
-
-        if (search.toLowerCase() === "false") {
-          orFilters.push({ [field]: false });
-        };
-      };
-
-      if (fieldType === "ObjectId" && mongoose.isValidObjectId(search)) {
-        orFilters.push({ [field]: search });
-      };
+    const kyc = await KycModel.create({
+      ...req.body,
+      userId,
+      createdBy: req.user?._id,
+      passbookOrCheque: passbookOrChequePath,
+      panCardImage: panCardImagePath,
+      aadharFrontImage: aadharFrontPath,
+      aadharBackImage: aadharBackPath,
+      shopImage: shopImagePath,
     });
 
-    if (orFilters.length > 0) {
-      filters.$or = orFilters;
+    return res.status(201).json({
+      success: true,
+      message: "Created successfully",
+      data: kyc,
+    });
+  } catch (error) {
+    const pathsToClean = [
+      passbookOrChequePath,
+      panCardImagePath,
+      aadharFrontPath,
+      aadharBackPath,
+      shopImagePath,
+    ].filter(Boolean);
+    for (const filePath of pathsToClean) {
+      const absPath = path.join(process.cwd(), filePath);
+      if (fs.existsSync(absPath)) {
+        await fs.promises.unlink(absPath).catch(() => { });
+      };
     };
+    throw new ApiError(500, error.message || "Something went wrong");
   };
-
-  let sortOption = {};
-  if (sort === "asc") {
-    sortOption = { createdAt: 1 };
-  } else if (sort === "desc") {
-    sortOption = { createdAt: -1 };
-  } else {
-    sortOption = sort;
-  };
-
-  const [kycs, total] = await Promise.all([
-    KycModel
-      .find(filters)
-      .populate("user")
-      .sort(sortOption)
-      .skip(skip)
-      .limit(limit)
-      .lean(),
-    KycModel.countDocuments(filters),
-  ]);
-
-  const totalPages = Math.ceil(total / limit);
-
-  return res.status(200).json({
-    success: true,
-    message: "Data fetched successfully",
-    total,
-    page,
-    limit,
-    totalPages,
-    hasPrevPage: page > 1,
-    hasNextPage: page < totalPages,
-    data: kycs,
-    pagination: buildPagination({ page, limit, total }),
-  });
 });
 
 // Get Single KYC by ID
 export const getKycById = asyncHandler(async (req, res) => {
-  const kyc = await KycModel
-    .findById(req.params.id)
-    .populate("user");
+  const userId = req.user?._id;
+
+  const kyc = await KycModel.findOne({ userId }).populate("user");
 
   if (!kyc) throw new ApiError(404, "KYC not found");
 
   return res.status(200).json({
     success: true,
-    message: "KYC fetched successfully",
+    message: "Data fetched successfully",
     data: kyc,
   });
 });
 
-// Update KYC (Admin or User)
-export const updateKyc = asyncHandler(async (req, res) => {
-  const { accountNumber, confirmAccountNumber } = req.body;
-
-  if (accountNumber && confirmAccountNumber && accountNumber !== confirmAccountNumber) {
-    throw new ApiError(400, "Account number and confirm account number do not match");
-  };
-
-  const kyc = await KycModel.findByIdAndUpdate(
-    req.params.id,
-    { ...req.body, updatedBy: req.user?._id },
-    { new: true }
-  );
-
-  if (!kyc) throw new ApiError(404, "KYC not found");
-
-  return res.status(200).json({
-    success: true,
-    message: "Updated successfully",
-    data: kyc,
-  });
-});
-
-// Delete KYC
-export const deleteKyc = asyncHandler(async (req, res) => {
-  const kyc = await KycModel.findByIdAndDelete(req.params.id);
-
-  if (!kyc) throw new ApiError(404, "KYC not found");
-
-  return res.status(200).json({
-    success: true,
-    message: "Deleted successfully",
-  });
-});

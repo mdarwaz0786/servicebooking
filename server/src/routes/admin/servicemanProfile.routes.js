@@ -7,13 +7,15 @@ import {
   getServiceManProfiles,
   updateServiceManProfile
 } from "../../controllers/admin/servicemanProfile.controller.js";
+import upload from "../../middlewares/multer.middleware.js"
+import validateFileSize from "../../middlewares/validateFileSize.middleware.js";
 
 const router = express.Router();
 
-router.post("/", isLoggedIn, createServiceManProfile);
+router.post("/", isLoggedIn, upload.fields([{ name: "profileImage", maxCount: 1 }]), validateFileSize, createServiceManProfile);
 router.get("/", isLoggedIn, getServiceManProfiles);
 router.get("/:id", isLoggedIn, getServiceManProfileById);
-router.patch("/:id", isLoggedIn, updateServiceManProfile);
+router.patch("/:id", isLoggedIn, upload.fields([{ name: "profileImage", maxCount: 1 }]), validateFileSize, updateServiceManProfile);
 router.delete("/:id", isLoggedIn, deleteServiceManProfile);
 
 export default router;

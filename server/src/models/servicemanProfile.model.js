@@ -27,26 +27,24 @@ const serviceManProfileSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  workingHistory: {
-    type: {
-      type: String,
-      enum: ["Fresher", "Experience"],
-      required: true,
+  experienceLevel: {
+    type: String,
+    enum: ["Fresher", "Experience"],
+    required: true,
+  },
+  companyName: {
+    type: String,
+    required: function () {
+      return this.workingType === "Experience";
     },
-    company: {
-      type: String,
-      required: function () {
-        return this.workingHistory?.type === "Experience";
-      },
-      trim: true,
+    trim: true,
+  },
+  yearOfExperience: {
+    type: Number,
+    required: function () {
+      return this.workingType === "Experience";
     },
-    yearsOfExperience: {
-      type: Number,
-      required: function () {
-        return this.workingHistory?.type === "Experience";
-      },
-      min: 0,
-    },
+    min: 0,
   },
   permanentAddress: {
     type: String,
