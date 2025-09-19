@@ -86,7 +86,7 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   const filters = {};
 
-  if (userId) filters.userId = userId;
+  filters.userId = userId;
 
   if (search) {
     filters.$or = [
@@ -153,7 +153,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   };
 
   const booking = await BookingModel
-    .findById(id)
+    .findOne({ _id: id, userId: userId })
     .populate({ path: "userId", select: "-password" })
     .populate({ path: "addressId", select: "" })
     .lean();

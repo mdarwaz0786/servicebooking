@@ -16,6 +16,7 @@ import kycRoutes from "./kyc.routes.js";
 import profileRoutes from "./servicemanProfile.routes.js";
 import trainingScheduleRoutes from "./trainingSchedule.routes.js";
 import earningRoutes from "./earning.routes.js";
+import servicemanBookingRoutes from "./servicemanBooking.routes.js";
 
 const router = express.Router();
 
@@ -33,8 +34,9 @@ router.use("/time-slot", timeSlotRoutes);
 router.use("/booking", bookingRoutes);
 router.use("/review", reviewRoutes);
 router.use("/kyc", kycRoutes);
-router.use("/profile", profileRoutes);
+router.use("/serviceman-profile", profileRoutes);
 router.use("/training-schedule", trainingScheduleRoutes);
 router.use("/earning", earningRoutes);
+router.use("/serviceman-booking", servicemanBookingRoutes);
 
 export default router;

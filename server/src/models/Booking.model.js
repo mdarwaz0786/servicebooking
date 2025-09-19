@@ -43,6 +43,11 @@ const bookingSchema = new mongoose.Schema({
     enum: [0, 1],
     default: 0,
   },
+  status: {                // booking status 
+    type: String,
+    enum: ["new", "accept", "reject", "ongoing", "complete"],
+    default: "new",
+  },
   amount: {
     type: Number,
     required: true,

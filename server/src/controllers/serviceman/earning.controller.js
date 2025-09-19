@@ -5,7 +5,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Get All Earnings
 export const getEarnings = asyncHandler(async (req, res) => {
-  const { status, page = 1, limit = 10, sort = "desc", search, categoryId } = req.query;
+  let { status, page = 1, limit = 10, sort = "desc", search, categoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);

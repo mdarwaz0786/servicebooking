@@ -41,6 +41,12 @@ const apis = {
     get: `${BASE_URL}/api/v1/admin/booking`,
     delete: `${BASE_URL}/api/v1/admin/booking/delete-booking`,
   },
+  servicemanProfile: {
+    get: `${BASE_URL}/api/v1/admin/serviceman-profile`,
+  },
+  servicemanBooking: {
+    create: `${BASE_URL}/api/v1/admin/serviceman-booking`,
+  },
   user: {
     register: `${BASE_URL}/api/v1/admin/user/register`,
     get: `${BASE_URL}/api/v1/admin/user`,

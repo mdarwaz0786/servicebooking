@@ -20,6 +20,8 @@ service man
 // booking id
 // service man id
 // user id
-// assign data and time
+// assign date and time
 // status [new, accept, reject, ongoing, complete]
 // start date and time and end date and time
+
+// booking Table--> otp column
