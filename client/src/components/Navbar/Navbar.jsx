@@ -3,9 +3,9 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const Navbar = () => {
-  const { toggleModal, handleLogout } = useContext(AppContext);
+  const { toggleModal, handleLogout, user } = useContext(AppContext);
   return (
-    <header className="header header-new">
+    <header className="header header-new"> 
       <div className="container-fluid">
         <nav className="navbar navbar-expand-lg header-nav">
           <div className="navbar-header">
@@ -70,23 +70,32 @@ const Navbar = () => {
               <>
                 {(localStorage.getItem("user")) ? (
                   <>
-                    <Link to={'/user'} className="nav-link btn btn-light" >
+                  {(user?.role=='user')?(                  
+                      <Link to={'/user'} className="nav-link btn btn-light" >
+                        <i className="ti ti-user me-2" />Account
+                      </Link>
+                  ):(
+                    <Link to={'/serviceman'} className="nav-link btn btn-light" >
                       <i className="ti ti-user me-2" />Account
                     </Link>
-                    <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
-                      <i className="ti ti-lock me-2" />Logout
-                    </Link>
-                  </>
+                  )}
+                      <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
+                        <i className="ti ti-lock me-2" />Logout
+                      </Link>
+                    </>
+                  
                 ) : (
-                  <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
-                    <i className="ti ti-lock me-2" />Login
-                  </Link>
+                  <>
+                    <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
+                      <i className="ti ti-lock me-2" />Login
+                    </Link>
+                    <li className="nav-item">
+                      <Link className="nav-link btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i class="ti ti-user-filled me-2"></i>Join Us</Link>
+                    </li>
+                  </>
                 )}
               </>
 
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i class="ti ti-user-filled me-2"></i>Join Us</Link>
             </li>
 
           </ul>

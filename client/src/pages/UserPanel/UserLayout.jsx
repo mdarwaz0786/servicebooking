@@ -14,13 +14,13 @@ const UserLayout = () => {
     <div className="app-wrapper">
       <Navbar />
       <main className="main-content">
-        <div className="page-wrapper">
+        <div className="page-wrapper m-0 p-0">
           <div className="content">
             <div className="container">
               <div className="row justify-content-center">
 
                 <>
-                  {(user)?(
+                  {(user?.role=='user')?(
                     <>
                       {/* <Sidebar /> */}
                       <Outlet />

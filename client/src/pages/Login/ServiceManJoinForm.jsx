@@ -4,7 +4,7 @@ import { useContext } from "react";
 const ServiceManJoinForm = () => {
 
      
-    const { Urls, postData } = useContext(AppContext);
+    const { Urls, postData, toggleModal } = useContext(AppContext);
 
     
     
@@ -47,6 +47,7 @@ const ServiceManJoinForm = () => {
           setverifyOtpBtn(false);
           setmobile('')
           setOtp('')
+          toggleModal("serviceManJoinModal", false)
         } 
       } catch (error) { 
         console.error("Cart API Error:", error);

@@ -26,6 +26,9 @@ import Checkoutpage from "./pages/Checkout/Checkoutpage";
 import Test from "../Test";
 
 
+import ServiceManLayout from "./pages/ServiceManPanel/ServiceManLayout";
+import ServiceManBookingPage from "./pages/ServiceManPanel/Booking/ServiceManBookingPage";
+
 
 
 
@@ -62,11 +65,23 @@ const App = () => {
           <Route path="/user-wallet" element={<UserWalletPage />} />
           <Route path="/user-reviews" element={<UserReviewsPage />} />
         </Route>
-          
-
-        
         <Route path="/register" element={<RegisterPage />} />
+
+
+        <Route element={<ServiceManLayout />}>
+          <Route path="/serviceman" element={<ServiceManBookingPage />} />
+          <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/user-favourites" element={<UserFavouritesPage />} />
+          <Route path="/user-wallet" element={<UserWalletPage />} />
+          <Route path="/user-reviews" element={<UserReviewsPage />} />
+        </Route>
+
+
+
       </Routes>
+
+      
 
     
   );

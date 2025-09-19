@@ -13770,6 +13770,7 @@ footer .form-control {
 
 .sidebar .sidebar-inner {
   width: 100%;
+  overflow: auto;
 }
 
 .sidebar .sidebar-menu {

@@ -13,7 +13,6 @@ const ServiceManJoinModal = () => {
   return (
     <div
         className={`modal fade ${modals.serviceManJoinModal ? "show" : ""}`}
-        id="provider"
     >
 
       <div className="modal-dialog modal-lg modal-dialog-centered">
