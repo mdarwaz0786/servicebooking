@@ -1,4 +1,4 @@
-import ServiceManBookingModel from "../../models/serviceManBooking.model.js";
+import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -7,32 +7,18 @@ import { buildPagination } from "../../utils/pagination.js";
 export const createServiceManBooking = asyncHandler(async (req, res) => {
   const {
     bookingId,
-    serviceManId,
-    userId,
-    assignedDate,
-    assignedTime,
-    status,
-    startDate,
-    startTime,
-    endDate,
-    endTime,
+    servicemanId,
+    userId
   } = req.body;
 
-  if (!bookingId || !serviceManId || !userId || !assignedDate || !assignedTime) {
+  if (!bookingId || !servicemanId || !userId) {
     throw new ApiError(400, "Required fields are missing");
   };
 
   const booking = await ServiceManBookingModel.create({
     bookingId,
-    serviceManId,
+    servicemanId,
     userId,
-    assignedDate,
-    assignedTime,
-    status,
-    startDate,
-    startTime,
-    endDate,
-    endTime,
     createdBy: req.user?._id,
   });
 

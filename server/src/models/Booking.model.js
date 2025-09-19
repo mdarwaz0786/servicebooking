@@ -45,8 +45,12 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {                // booking status 
     type: String,
-    enum: ["new", "accept", "reject", "ongoing", "complete"],
+    enum: ["new", "accept", "reject", "ongoing", "complete", "cancel"],
     default: "new",
+  },
+  otp: {
+    type: String,
+    default: "1234",
   },
   amount: {
     type: Number,

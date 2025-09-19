@@ -7,7 +7,7 @@ const serviceManBookingSchema = new mongoose.Schema({
     ref: "Booking",
     required: true,
   },
-  serviceManId: {
+  servicemanId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -29,7 +29,7 @@ const serviceManBookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["new", "accept", "reject", "ongoing", "complete"],
+    enum: ["new", "accept", "reject", "ongoing", "complete", "cancel"],
     default: "new",
   },
   startDate: {
@@ -71,7 +71,7 @@ serviceManBookingSchema.virtual("booking", {
 
 serviceManBookingSchema.virtual("serviceman", {
   ref: "ServiceManProfile",
-  localField: "serviceManId",
+  localField: "servicemanId",
   foreignField: "_id",
   justOne: true
 });
