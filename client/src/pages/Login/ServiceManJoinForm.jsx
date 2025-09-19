@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
-const LoginForm = () => {
+const ServiceManJoinForm = () => {
 
      
     const { Urls, postData } = useContext(AppContext);
@@ -22,7 +22,7 @@ const LoginForm = () => {
  
     const handleSendOtp = async () => {
       try {
-        const response = await postData({mobile:mobile}, Urls.login, "POST");
+        const response = await postData({mobile:mobile}, Urls.serviceManlogin, "POST");
         if (response.success) {
           setformTitle("Enter Otp")
           setotpField(true);
@@ -38,7 +38,7 @@ const LoginForm = () => {
  
     const handleVerifyOtp = async () => {
       try {
-        const response = await postData({otp:otp,mobile:mobile}, Urls.verifyOtp, "POST");
+        const response = await postData({otp:otp,mobile:mobile}, Urls.serviceManverifyOtp, "POST");
         if (response.success) {
           setformTitle("Enter Mobile Number")
           setotpField(false);
@@ -123,4 +123,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default ServiceManJoinForm;

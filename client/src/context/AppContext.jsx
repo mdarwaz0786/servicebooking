@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { toast } from "react-toastify";
+import ServiceManJoinModal from "../components/Modal/ServiceManJoinModal";
 
 
 
@@ -35,6 +36,8 @@ export const AppProvider = ({ children }) => {
 
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
+
+  const [myserviceListData, setmyserviceListData] = useState([]);
 
   const [categoryModalImage, setcategoryModalImage] = useState([]);
 
@@ -72,6 +75,7 @@ export const AppProvider = ({ children }) => {
     const apiUrl = SERVER_BASE_URL+'api/v1/';
     const commurl = apiUrl+'common/';
     const userUrl = apiUrl + 'user/';
+    const servicemanUrl = apiUrl + 'serviceman/';
 
     return { 
       login: `${userUrl}auth/login`,
@@ -95,9 +99,21 @@ export const AppProvider = ({ children }) => {
       addRemoveCart: `${commurl}cart/create-cart`,
       
       createBooking: `${userUrl}booking/create-booking`,
+      myBooking: `${userUrl}booking`,
+      myBookingDetail: `${userUrl}booking`,
 
       createTransaction: `${commurl}payment/create-order`,
       verifyTransaction: `${commurl}payment/verify-payment`,
+
+      // service man urls
+      serviceManlogin: `${servicemanUrl}auth/login`,
+      serviceManverifyOtp: `${servicemanUrl}auth/verify-otp`,
+      // service man urls end
+
+
+
+
+
       };
   };
 
@@ -202,6 +218,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+
  
 
   // ✅ Convert File to Base64
@@ -223,6 +240,7 @@ export const AppProvider = ({ children }) => {
     }).format(value);
     return formatted;
   };
+ 
 
   const generateUniqueId = () => {
     let uniqueId = localStorage.getItem("uniqueId");
@@ -264,6 +282,7 @@ const formatDateTime = (isoString) => {
   const [modals, setModals] = useState({
     homeCategoryModal: false,
     loginModal: false,
+    serviceManJoinModal: false,
     addressModal: false,
   });
   const toggleModal = (modalName, isOpen) => {
@@ -409,10 +428,10 @@ const formatDateTime = (isoString) => {
       }
     }
 
-useEffect(() => {
-  toggleModal("homeCategoryModal", false); 
-  handleHome();
-}, []);  
+    useEffect(() => {
+      toggleModal("homeCategoryModal", false); 
+      handleHome();
+    }, []);  
 
     const handleLogout = async () => {
       storage.delete('user');
@@ -448,6 +467,9 @@ useEffect(() => {
       formatDateTime,
       handleHome,
       toast,
+      user,
+      setuser,
+      handleLogout,
       
       handleCategoryClick,
 
@@ -482,6 +504,9 @@ useEffect(() => {
       categoryModalImage,
       setcategoryModalImage,
 
+      myserviceListData,
+      setmyserviceListData,
+
       serviceListData,
       setserviceListData,
       serviceItemData,
@@ -509,9 +534,7 @@ useEffect(() => {
       PriceFormat,
       generateUniqueId,
 
-      user,
-      setuser,
-      handleLogout,
+      
 
 
       bookingAddress,
@@ -536,6 +559,7 @@ useEffect(() => {
       {children}
       <BodyLoader />
       <LoginModal />
+      <ServiceManJoinModal />
       <ToastContainer 
       position="bottom-right"   // you can change to "top-right", "top-center", etc.
       autoClose={3000}          // close after 3s

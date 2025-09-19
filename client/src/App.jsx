@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { AppProvider } from "./context/AppContext";
+
 import "./App.css";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";
@@ -17,6 +17,7 @@ import ProviderDetailsPage from "./pages/ProviderDetails/ProviderDetailsPage";
 import UserLayout from "./pages/UserPanel/UserLayout";
 import UserDashboard from "./pages/UserPanel/UserDashboard";
 import UserBookingPage from "./pages/UserPanel/Booking/UserBookingPage";
+import UserBookingDetailPage from "./pages/UserPanel/Booking/UserBookingDetailPage";
 import UserFavouritesPage from "./pages/UserPanel/Favourites/UserFavouritesPage";
 import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
 import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
@@ -24,11 +25,19 @@ import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
 import Checkoutpage from "./pages/Checkout/Checkoutpage";
 import Test from "../Test";
 
+
+
+
+
+
 const App = () => {
+ 
+
   return (
-    <AppProvider>
+    
       <Routes>
         <Route element={<Layout />}>
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="/contact" element={<ContactUsPage />} />
@@ -44,19 +53,22 @@ const App = () => {
           <Route path="/test" element={<Test />} />
         </Route>
 
+        
         <Route element={<UserLayout />}>
+          <Route path="/user" element={<UserBookingPage />} />
+          <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
           <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/user-booking" element={<UserBookingPage />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
           <Route path="/user-wallet" element={<UserWalletPage />} />
           <Route path="/user-reviews" element={<UserReviewsPage />} />
         </Route>
+          
 
-        <Route path="/login" element={<LoginPage />} />
+        
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
 
-    </AppProvider>
+    
   );
 };
 

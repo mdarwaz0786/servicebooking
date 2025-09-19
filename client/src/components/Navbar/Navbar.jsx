@@ -70,7 +70,7 @@ const Navbar = () => {
               <>
                 {(localStorage.getItem("user")) ? (
                   <>
-                    <Link className="nav-link btn btn-light" >
+                    <Link to={'/user'} className="nav-link btn btn-light" >
                       <i className="ti ti-user me-2" />Account
                     </Link>
                     <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
@@ -84,7 +84,9 @@ const Navbar = () => {
                 )}
               </>
 
-
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i class="ti ti-user-filled me-2"></i>Join Us</Link>
             </li>
 
           </ul>
