@@ -42,7 +42,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   let user = await UserModel.findOne({ mobile });
 
   if (!user) {
-    user = await UserModel.create({ mobile });
+    user = await UserModel.create({ mobile: mobile, role: "serviceman" });
   };
 
   return res.status(200).json({
