@@ -2,6 +2,7 @@ import EarningModel from "../../models/earning.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import mongoose from "mongoose";
 
 // Create Earning
 export const createEarning = asyncHandler(async (req, res) => {

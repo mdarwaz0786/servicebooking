@@ -3,6 +3,7 @@ import BookingModel from "../../models/booking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -122,7 +123,7 @@ export const serviceManBookingOtp = asyncHandler(async (req, res) => {
 
 // Verify OTP Booking
 export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
-  const { otp, status, startDate, startTime, endDate, endTime } = req.body;
+  const { otp, status } = req.body;
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "Unauthorized");
 
@@ -137,23 +138,39 @@ export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
   booking.status = status || booking.status;
   servicemanBooking.status = status || servicemanBooking.status;
 
-  if (status === "ongoing") {
-    if (!startDate || !startTime) {
-      throw new ApiError(400, "Start date and start time are required when status is ongoing");
-    };
-    servicemanBooking.startDate = startDate;
-    servicemanBooking.startTime = startTime;
-  };
+  const nowDate = new Date();
+  const nowTime = getCurrentIndianTime();
 
-  if (status === "complete") {
-    if (!endDate || !endTime) {
-      throw new ApiError(400, "End date and end time are required when status is complete");
-    };
-    servicemanBooking.endDate = endDate;
-    servicemanBooking.endTime = endTime;
+  switch (status) {
+    case "accept":
+      servicemanBooking.acceptDate = nowDate;
+      servicemanBooking.acceptTime = nowTime;
+      break;
+
+    case "reject":
+      servicemanBooking.rejectDate = nowDate;
+      servicemanBooking.rejectTime = nowTime;
+      break;
+
+    case "cancel":
+      servicemanBooking.cancelDate = nowDate;
+      servicemanBooking.cancelTime = nowTime;
+      break;
+
+    case "ongoing":
+      if (!servicemanBooking.startDate) servicemanBooking.startDate = nowDate;
+      if (!servicemanBooking.startTime) servicemanBooking.startTime = nowTime;
+      break;
+
+    case "complete":
+      if (!servicemanBooking.endDate) servicemanBooking.endDate = nowDate;
+      if (!servicemanBooking.endTime) servicemanBooking.endTime = nowTime;
+      break;
   };
 
   servicemanBooking.updatedBy = userId;
+  servicemanBooking.actionById = userId;
+  booking.actionById = userId;
 
   await booking.save();
   await servicemanBooking.save();

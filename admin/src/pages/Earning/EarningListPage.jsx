@@ -4,11 +4,11 @@ import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 
-const UserListPage = () => {
+const EarningListPage = () => {
   const { validToken } = useAuth();
-  const [users, setUsers] = useState([]);
+  const [earnings, setEarnings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPrevPage, setHasPrevPage] = useState();
@@ -31,10 +31,10 @@ const UserListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const fetchUsers = async () => {
+  const fetchEarnings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.user.get, {
+      const response = await axios.get(apis.earning.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -45,14 +45,14 @@ const UserListPage = () => {
       });
 
       if (response?.data?.success) {
-        setUsers(response?.data?.data || []);
+        setEarnings(response?.data?.data || []);
         setTotalPages(response?.data?.totalPages || 1);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch users");
+      toast.error(error?.response?.data?.message || "Failed to fetch earnings");
     } finally {
       setLoading(false);
     };
@@ -69,15 +69,48 @@ const UserListPage = () => {
     setSearchParams(params);
   };
 
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await axios.patch(
+        `${apis.earning.update}/${id}`,
+        { status: !currentStatus },
+        { headers: { Authorization: validToken } }
+      );
+
+      if (response?.data?.success) {
+        fetchEarnings();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    };
+  };
+
+  const deleteEarning = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this earning?")) return;
+
+    try {
+      const response = await axios.delete(`${apis.earning.delete}/${id}`, {
+        headers: { Authorization: validToken },
+      });
+
+      if (response?.data?.success) {
+        toast.success("Earning deleted successfully");
+        fetchEarnings();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to delete earning");
+    };
+  };
+
   useEffect(() => {
-    fetchUsers();
+    fetchEarnings();
   }, [page, limit, debouncedSearch, sort]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Users {users?.length}</h5>
+          <h5>Earnings {earnings?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -114,6 +147,14 @@ const UserListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+            <div>
+              <Link to="/add-earning">
+                <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                  <i className="fa fa-plus me-2"></i>
+                  <span>Add</span>
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -125,30 +166,51 @@ const UserListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Mobile Number</th>
+                    <th>Category</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users?.length > 0 ? (
-                    users?.map((d, index) => (
+                  {earnings?.length > 0 ? (
+                    earnings?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.mobile}</td>
-                        <div className="d-flex">
-                          <button
-                            className="btn delete-table"
-                            type="button"
-                          >
-                            <i className="fe fe-trash-2" />
-                          </button>
-                        </div>
+                        <td>{d?.category?.name}</td>
+                        <td>
+                          <div className="active-switch">
+                            <label className="switch">
+                              <input
+                                type="checkbox"
+                                checked={d?.status}
+                                onChange={() => toggleStatus(d?._id, d?.status)}
+                              />
+                              <span className="sliders round" />
+                            </label>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="d-flex">
+                            <Link to={`/update-earning/${d?._id}`}>
+                              <button className="btn delete-table me-2" type="button">
+                                <i className="fe fe-edit" />
+                              </button>
+                            </Link>
+                            <button
+                              className="btn delete-table"
+                              type="button"
+                              onClick={() => deleteEarning(d?._id)}
+                            >
+                              <i className="fe fe-trash-2" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No users found
+                        No earnings found
                       </td>
                     </tr>
                   ) : null}
@@ -207,4 +269,4 @@ const UserListPage = () => {
   );
 };
 
-export default UserListPage;
+export default EarningListPage;

@@ -5,7 +5,7 @@ import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 
-const ServicemanBookingModal = ({ booking }) => {
+const ServicemanBookingModal = ({ booking, fetchBookings }) => {
   const { validToken } = useAuth();
   const [formData, setFormData] = useState({
     bookingId: "",
@@ -75,16 +75,19 @@ const ServicemanBookingModal = ({ booking }) => {
     setLoading(true);
 
     try {
-      await axios.post(apis.servicemanBooking.create, formData, {
+      const res = await axios.post(apis.servicemanBooking.create, formData, {
         headers: { Authorization: validToken },
       });
-      toast.success("Assigned successfully");
-      modalInstance.current?.hide();
+      if (res?.data?.success) {
+        toast.success(res?.data?.message);
+        fetchBookings();
+      };
     } catch (error) {
       console.log(error.message);
       toast.error("Error while assigning");
     } finally {
       setLoading(false);
+      modalInstance.current?.hide();
     };
   };
 

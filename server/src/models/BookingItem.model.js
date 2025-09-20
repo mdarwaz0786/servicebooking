@@ -34,6 +34,29 @@ const bookingItemSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+bookingItemSchema.index({ addressId: 1, userId: 1, status: 1 });
+
+bookingItemSchema.virtual("booking", {
+  ref: "Booking",
+  localField: "bookingId",
+  foreignField: "_id",
+  justOne: true
+});
+
+bookingItemSchema.virtual("user", {
+  ref: "User",
+  localField: "userId",
+  foreignField: "_id",
+  justOne: true
+});
+
+bookingItemSchema.virtual("service", {
+  ref: "Service",
+  localField: "serviceId",
+  foreignField: "_id",
+  justOne: true
+});
+
 const BookingItemModel = mongoose.model("BookingItem", bookingItemSchema);
 
 export default BookingItemModel;

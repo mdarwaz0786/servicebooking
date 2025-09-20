@@ -1,7 +1,9 @@
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import BookingModel from "../../models/booking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 
 // Create Service Man Booking
 export const createServiceManBooking = asyncHandler(async (req, res) => {
@@ -15,7 +17,29 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Required fields are missing");
   };
 
-  const booking = await ServiceManBookingModel.create({
+  const latestAssignment = await ServiceManBookingModel
+    .findOne({ bookingId: bookingId })
+    .sort({ createdAt: -1 });
+
+  if (latestAssignment) {
+    await ServiceManBookingModel.findByIdAndUpdate(latestAssignment?._id, {
+      status: "cancel",
+      actionById: req.user?._id,
+      updatedBy: req.user?._id,
+      cancelDate: new Date(),
+      cancelTime: getCurrentIndianTime(),
+    });
+
+    await BookingModel.findByIdAndUpdate(bookingId, {
+      $set: {
+        status: "new",
+        actionById: req.user?._id,
+        updatedBy: req.user?._id,
+      },
+    });
+  };
+
+  const newAssignment = await ServiceManBookingModel.create({
     bookingId,
     servicemanId,
     userId,
@@ -24,14 +48,16 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    message: "Service man booking created successfully",
-    data: booking,
+    message: latestAssignment
+      ? "Service re-assigned successfully"
+      : "Service assigned successfully",
+    data: newAssignment,
   });
 });
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10 } = req.query;
+  let { search, status, sort = "desc", page = 1, limit = 10, bookingId, servicemanId, userId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -39,15 +65,30 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 
   const filters = {};
 
-  if (search) {
-    filters.$or = [
-      { assignedTime: { $regex: search, $options: "i" } },
-      { status: { $regex: search, $options: "i" } },
-    ];
+  if (userId) {
+    filters.userId = userId;
+  };
+
+  if (bookingId) {
+    filters.bookingId = bookingId;
+  };
+
+  if (servicemanId) {
+    filters.servicemanId = servicemanId;
+  };
+
+  if (servicemanId) {
+    filters.servicemanId = servicemanId;
   };
 
   if (status) {
     filters.status = status;
+  };
+
+  if (search) {
+    filters.$or = [
+      { status: { $regex: search, $options: "i" } },
+    ];
   };
 
   let sortOption = {};
@@ -97,55 +138,5 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
     success: true,
     message: "Data fetched successfully",
     data: booking,
-  });
-});
-
-// Update Booking
-export const updateServiceManBooking = asyncHandler(async (req, res) => {
-  const {
-    assignedDate,
-    assignedTime,
-    status,
-    startDate,
-    startTime,
-    endDate,
-    endTime,
-  } = req.body;
-
-  const booking = await ServiceManBookingModel.findById(req.params.id);
-  if (!booking) {
-    throw new ApiError(404, "Booking not found");
-  };
-
-  booking.assignedDate = assignedDate || booking.assignedDate;
-  booking.assignedTime = assignedTime || booking.assignedTime;
-  booking.status = status || booking.status;
-  booking.startDate = startDate || booking.startDate;
-  booking.startTime = startTime || booking.startTime;
-  booking.endDate = endDate || booking.endDate;
-  booking.endTime = endTime || booking.endTime;
-  booking.updatedBy = req.user?._id;
-
-  await booking.save();
-
-  return res.status(200).json({
-    success: true,
-    message: "Updated successfully",
-    data: booking,
-  });
-});
-
-// Delete Booking
-export const deleteServiceManBooking = asyncHandler(async (req, res) => {
-  const booking = await ServiceManBookingModel.findById(req.params.id);
-  if (!booking) {
-    throw new ApiError(404, "Booking not found");
-  };
-
-  await booking.deleteOne();
-
-  return res.status(200).json({
-    success: true,
-    message: "Deleted successfully",
   });
 });

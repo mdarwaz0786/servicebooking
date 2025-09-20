@@ -43,10 +43,15 @@ const bookingSchema = new mongoose.Schema({
     enum: [0, 1],
     default: 0,
   },
-  status: {                // booking status 
+  status: { // booking status 
     type: String,
     enum: ["new", "accept", "reject", "ongoing", "complete", "cancel"],
     default: "new",
+  },
+  actionById: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
   otp: {
     type: String,
@@ -79,7 +84,47 @@ const bookingSchema = new mongoose.Schema({
     enum: [0, 1],
     default: 0,
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
 }, { timestamps: true });
+
+bookingSchema.index({ addressId: 1, userId: 1, status: 1 });
+
+bookingSchema.virtual("address", {
+  ref: "Address",
+  localField: "addressId",
+  foreignField: "_id",
+  justOne: true
+});
+
+bookingSchema.virtual("user", {
+  ref: "User",
+  localField: "userId",
+  foreignField: "_id",
+  justOne: true
+});
+
+bookingSchema.virtual("actionBy", {
+  ref: "User",
+  localField: "actionById",
+  foreignField: "_id",
+  justOne: true
+});
+
+bookingSchema.virtual("serviceman", {
+  ref: "ServiceManBooking",
+  localField: "_id",
+  foreignField: "bookingId",
+  justOne: true,
+});
 
 const BookingModel = mongoose.model("Booking", bookingSchema);
 

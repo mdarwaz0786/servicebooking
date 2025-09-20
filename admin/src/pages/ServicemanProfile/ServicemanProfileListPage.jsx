@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 
-const UserListPage = () => {
+const ServicemanProfileListPage = () => {
   const { validToken } = useAuth();
-  const [users, setUsers] = useState([]);
+  const [servicemanProfile, setServicemanProfile] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPrevPage, setHasPrevPage] = useState();
@@ -31,10 +31,10 @@ const UserListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const fetchUsers = async () => {
+  const fetchServicemanProfile = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.user.get, {
+      const response = await axios.get(apis.servicemanProfile.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -45,14 +45,14 @@ const UserListPage = () => {
       });
 
       if (response?.data?.success) {
-        setUsers(response?.data?.data || []);
+        setServicemanProfile(response?.data?.data || []);
         setTotalPages(response?.data?.totalPages || 1);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch users");
+      toast.error(error?.response?.data?.message || "Failed to fetch serviceman profile");
     } finally {
       setLoading(false);
     };
@@ -69,15 +69,32 @@ const UserListPage = () => {
     setSearchParams(params);
   };
 
+  const deleteServicemanProfile = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this serviceman profile?")) return;
+
+    try {
+      const response = await axios.delete(`${apis.servicemanProfile.delete}/${id}`, {
+        headers: { Authorization: validToken },
+      });
+
+      if (response?.data?.success) {
+        toast.success("Serviceman profile deleted successfully");
+        fetchServicemanProfile();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to delete serviceman profile");
+    };
+  };
+
   useEffect(() => {
-    fetchUsers();
+    fetchServicemanProfile();
   }, [page, limit, debouncedSearch, sort]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Users {users?.length}</h5>
+          <h5>Service Man Profile {servicemanProfile?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -114,6 +131,12 @@ const UserListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+            <Link to="/add-training-schedule">
+              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                <i className="fa fa-plus me-2"></i>
+                <span>Add</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -125,30 +148,42 @@ const UserListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Mobile Number</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users?.length > 0 ? (
-                    users?.map((d, index) => (
+                  {servicemanProfile?.length > 0 ? (
+                    servicemanProfile?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.mobile}</td>
-                        <div className="d-flex">
-                          <button
-                            className="btn delete-table"
-                            type="button"
-                          >
-                            <i className="fe fe-trash-2" />
-                          </button>
-                        </div>
+                        <td>{d?.name}</td>
+                        <td>{d?.email}</td>
+                        <td>{d?.user?.mobile}</td>
+                        <td>
+                          <div className="d-flex">
+                            <Link to={`/service-man-profle-detail/${d?._id}`}>
+                              <button className="btn delete-table me-2" type="button">
+                                <i className="fe fe-eye" />
+                              </button>
+                            </Link>
+                            <button
+                              className="btn delete-table"
+                              type="button"
+                              onClick={() => deleteServicemanProfile(d?._id)}
+                            >
+                              <i className="fe fe-trash-2" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No users found
+                        No serviceman profile found
                       </td>
                     </tr>
                   ) : null}
@@ -207,4 +242,4 @@ const UserListPage = () => {
   );
 };
 
-export default UserListPage;
+export default ServicemanProfileListPage;
