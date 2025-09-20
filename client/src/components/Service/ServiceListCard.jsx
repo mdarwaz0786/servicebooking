@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 
 
 const ServiceListCard = () => {
-    const { serviceListData, PriceFormat, handleCartAddRemove } = useContext(AppContext);
+    const { serviceListData, PriceFormat, handleCartAddRemove, imageCheck } = useContext(AppContext);
 
     
     
@@ -20,7 +20,7 @@ const ServiceListCard = () => {
                     <img
                     className="img-fluid serv-img"
                     alt="Service Image"
-                    src="/assets/img/services/service-04.jpg"
+                    src={imageCheck(value.image)}
                     />
                 </a>
                 

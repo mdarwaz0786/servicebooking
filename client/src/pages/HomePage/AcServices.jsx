@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 
-const PopularServices = () => {
+const AcServices = () => {
   return (
     <section className="section popular-section">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-6 text-center wow fadeInUp" data-wow-delay="0.2s">
             <div className="section-header text-center mb-4">
-              <h2 className="mb-1">Our Popular <span className="text-linear-primary">Services</span></h2>
+              <h2 className="mb-1">AC/Home Appliance  <span className="text-linear-primary">Repair & Services</span></h2>
             </div>
           </div>
         </div>
@@ -101,4 +101,4 @@ const PopularServices = () => {
   );
 };
 
-export default PopularServices;
+export default AcServices;

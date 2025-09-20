@@ -38,24 +38,19 @@ const Navbar = () => {
             </div>
 
             <ul className="main-nav align-items-lg-center">
-              <li className="has-submenu megamenu active">
+              <li className="has-submenu megamenu">
                 <Link to="/">Home </Link>
+              </li>
+              <li className="has-submenu">
+                <Link to="/services">About Us </Link>
               </li>
               <li className="has-submenu">
                 <Link to="/services">Services </Link>
               </li>
-              <li className="has-submenu">
-                <Link to="/user-dashboard">Customers</Link>
-              </li>
-              <li className="has-submenu">
-                <Link to="/providers">Providers <i className="fas fa-chevron-down" /></Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/become-provider" className="nav-link">Become a Provider</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/admin" className="nav-link">Admin</Link>
-              </li>
+             
+              
+              
+              
               <li className="nav-item d-sm-none">
                 <Link to="/login" className="nav-link">Sign In</Link>
               </li>
@@ -71,27 +66,26 @@ const Navbar = () => {
                 {(localStorage.getItem("user")) ? (
                   <>
                   {(user?.role=='user')?(                  
-                      <Link to={'/user'} className="nav-link btn btn-light" >
+                      <Link to={'/user'} className="btn btn-linear-primary " >
                         <i className="ti ti-user me-2" />Account
                       </Link>
                   ):(
-                    <Link to={'/serviceman'} className="nav-link btn btn-light" >
+                    <Link to={'/serviceman'} className="btn btn-linear-primary " >
                       <i className="ti ti-user me-2" />Account
                     </Link>
                   )}
-                      <Link className="nav-link btn btn-light m-2" onClick={handleLogout}>
+                      <Link className="btn btn-linear-primary  m-2" onClick={handleLogout}>
                         <i className="ti ti-lock me-2" />Logout
                       </Link>
                     </>
                   
                 ) : (
                   <>
-                    <Link className="nav-link btn btn-light" onClick={() => toggleModal("loginModal", true)}>
+                    <Link className="btn btn-linear-primary me-1 " onClick={() => toggleModal("loginModal", true)}>
                       <i className="ti ti-lock me-2" />Login
                     </Link>
-                    <li className="nav-item">
-                      <Link className="nav-link btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i class="ti ti-user-filled me-2"></i>Join Us</Link>
-                    </li>
+                    <Link className="btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i class="ti ti-user-filled me-2"></i>Join Us</Link>
+                    
                   </>
                 )}
               </>

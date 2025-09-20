@@ -30,12 +30,11 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                       </div>
                     </div>
                   </form>
-                  <img src="assets/img/bg/bg-06.svg" alt="img" className="shape-06 round-animate" />
                 </div>
-                <div className="card card-body">
-                  <div className="row">
+                <div className="card card-body  shadow-none bg-transparent">
+                  <div className="row hero-category">
                       <>
-                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} />
+                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} className={'col-md-4 hero-category'} />
                       </>                    
                   </div>
                 </div>
@@ -45,7 +44,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                     <img src="assets/img/icons/success-01.svg" alt="icon" />
                     <div className="ms-2">
                       <h6>215,292 +</h6>
-                      <p>Verified Providers</p>
+                      <p>Customers </p>
                     </div>
                   </div>
                   <div className="d-flex align-items-center me-4 mt-4">
@@ -65,26 +64,25 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                 </div>
               </div>
             </div>
-            <div className="banner-img wow fadeInUp" data-wow-duration="1s" data-wow-delay=".25s">
-              <img src="assets/img/banner.png" alt="img" className="img-fluid animation-float" />
+            <div className="col-md-6" data-wow-duration="1s" data-wow-delay=".25s">
+              <div className="row hero-images">
+                <div className="col-md-6">
+                  <img src="/assets/img/home/hero/img1.jpg"/>
+                </div>
+                <div className="col-md-6">
+                  <img src="/assets/img/home/hero/img2.jpg"/>
+                </div>
+                <div className="col-md-6">
+                  <img src="/assets/img/home/hero/img3.jpg"/>
+                </div>
+                <div className="col-md-6">
+                  <img src="/assets/img/home/hero/img4.jpg"/>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="hero-image">
-          <div className="d-inline-flex bg-white p-2 rounded align-items-center shape-01 floating-x">
-            <span className="avatar avatar-md bg-warning rounded-circle me-2"><i className="ti ti-star-filled" /></span>
-            <span>4.9 / 5<small className="d-block">(255 reviews)</small></span>
-            <i className="border-edge" />
-          </div>
-          <div className="d-inline-flex bg-white p-2 rounded align-items-center shape-02 floating-x">
-            <span className="me-2"><img src="assets/img/icons/tick-banner.svg" alt /></span>
-            <p className="fs-12 text-dark mb-0">300 Booking Completed</p>
-            <i className="border-edge" />
-          </div>
-          <img src="assets/img/bg/bg-03.svg" alt="img" className="shape-03" />
-          <img src="assets/img/bg/bg-04.svg" alt="img" className="shape-04" />
-          <img src="assets/img/bg/bg-05.svg" alt="img" className="shape-05" />
-        </div>
+        
       </div>
     </section>
   );

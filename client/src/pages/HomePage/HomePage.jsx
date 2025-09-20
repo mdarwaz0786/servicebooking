@@ -13,6 +13,12 @@ import RecentBlog from "./RecentBlog";
 import Testimonial from "./Testimonial";
 
 
+import AcServices from "./AcServices";
+import KitchenServices from "./KitchenServices";
+import TvServices from "./TvServices";
+import EpServices from "./EpServices";
+
+
 import CategoryModal from "../../components/Modal/CategoryModal";
 
 
@@ -35,17 +41,26 @@ useEffect(() => {
   return ( 
     <>
       <HeroSection categoryData={categoryListData}  />
-      <OurCategories />
-      <FeaturedServices />
       <PopularServices />
       <HowWorks />
-      <PopularProviders />
-      <PreferredServices />
-      <HighRatedServices />
-      <Testimonial />
-      <Provider />
-      <RecentBlog />
-      <Business />
+      {/* <FeaturedServices /> */}
+      <AcServices />
+      <div className="container">
+        <img src="/assets/img/home/acbanner.jpg" className="img-fluid" alt="img" />
+      </div>
+      <KitchenServices />
+      <div className="container">
+        <img src="/assets/img/home/kitchenbanner.jpg" className="img-fluid" alt="img" />
+      </div>
+      <TvServices />
+      <div className="container">
+        <img src="/assets/img/home/tvbanner.jpg" className="img-fluid" alt="img" />
+      </div>
+      <EpServices />
+      <div className="container">
+        <img src="/assets/img/home/epbanner.jpg" className="img-fluid" alt="img" />
+      </div>
+      
       <Links />
       <CategoryModal />
     </>

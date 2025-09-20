@@ -7,9 +7,7 @@ const HowWorks = () => {
           <div className="row align-items-center bg-01">
             <div className="col-md-12 wow fadeInUp" data-wow-delay="0.2s">
               <div className="section-header text-center">
-                <h2 className="text-white">How Truelysell <span className="text-linear-primary">Works</span></h2>
-                <p className="text-light">Each listing is designed to be clear and concise, providing customers
-                </p>
+                <h2 className="text-white">How Truelysell Works</h2>
               </div>
             </div>
           </div>
@@ -45,12 +43,7 @@ const HowWorks = () => {
               </div>
             </div>
           </div>
-          <div className="work-bg1">
-            <img src="assets/img/bg/work-bg-01.svg" className="img-fluid" alt="img" />
-          </div>
-          <div className="work-bg2">
-            <img src="assets/img/bg/work-bg-02.svg" className="img-fluid" alt="img" />
-          </div>
+          
         </div>
       </div>
     </section>

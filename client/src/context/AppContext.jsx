@@ -276,6 +276,29 @@ const formatDateTime = (isoString) => {
 };
 
 
+const imageCheck = (path, defaultImg = "uploads/default.jpg") => {
+  const baseUrl = SERVER_BASE_URL
+
+  let image = `${baseUrl}${defaultImg}`;
+
+  try {
+    const decoded = JSON.parse(path);
+
+    if (Array.isArray(decoded) || typeof decoded === "object") {
+      if (decoded?.[0]?.image_path) {
+        image = `${baseUrl}uploads/${decoded[0].image_path}`;
+      }
+    } else if (path && typeof path === "string") {
+      image = `${baseUrl}uploads/${path}`;
+    }
+  } catch (e) {
+    if (path && typeof path === "string") {
+      image = `${baseUrl}uploads/${path}`;
+    }
+  }
+
+  return image;
+}
 
   
 
@@ -470,6 +493,7 @@ const formatDateTime = (isoString) => {
       user,
       setuser,
       handleLogout,
+      imageCheck,
       
       handleCategoryClick,
 
