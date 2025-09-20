@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, memo, useRef, useState } from "react";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
@@ -70,7 +70,6 @@ const ServicemanBookingModal = ({ booking }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -149,4 +148,4 @@ const ServicemanBookingModal = ({ booking }) => {
   );
 };
 
-export default ServicemanBookingModal;
+export default memo(ServicemanBookingModal);

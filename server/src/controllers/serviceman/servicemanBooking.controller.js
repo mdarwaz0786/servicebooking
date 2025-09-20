@@ -74,7 +74,7 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
   };
 
   const booking = await ServiceManBookingModel
-    .findOne({ _id: req.params.id, userId: userId })
+    .findOne({ _id: req.params.id, servicemanId: userId })
     .populate("booking serviceman user")
 
   if (!booking) {
@@ -97,7 +97,7 @@ export const serviceManBookingOtp = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "Unauthorized");
 
-  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, userId });
+  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: userId });
   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
 
   const otp = generateOtp();
@@ -126,7 +126,7 @@ export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "Unauthorized");
 
-  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, userId });
+  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: userId });
   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
 
   const booking = await BookingModel.findById(servicemanBooking.bookingId);

@@ -60,7 +60,7 @@ const serviceManBookingSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-serviceManBookingSchema.index({ bookingId: 1, serviceManId: 1, userId: 1, status: 1 });
+serviceManBookingSchema.index({ bookingId: 1, servicemanId: 1, userId: 1, status: 1 });
 
 serviceManBookingSchema.virtual("booking", {
   ref: "Booking",
@@ -70,7 +70,7 @@ serviceManBookingSchema.virtual("booking", {
 });
 
 serviceManBookingSchema.virtual("serviceman", {
-  ref: "ServiceManProfile",
+  ref: "User",
   localField: "servicemanId",
   foreignField: "_id",
   justOne: true
