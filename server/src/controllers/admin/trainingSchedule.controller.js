@@ -37,7 +37,7 @@ export const getAllTrainingSchedules = asyncHandler(async (req, res) => {
   const filters = {};
   if (search) {
     filters.$or = [
-      { status: { $regex: search, $options: "i" } },
+      { scheduleTime: { $regex: search, $options: "i" } },
     ];
   };
 

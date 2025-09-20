@@ -5,7 +5,7 @@ import UpdateCategoryPage from "../pages/Category/UpdateCategoryPage";
 import ServiceListPage from "../pages/Service/ServiceListPage";
 import AddServicePage from "../pages/Service/AddServicePage";
 import BookingListPage from "../pages/Booking/BookingListPage";
-import LoginPage from "../pages/auth/LoginPage";
+import LoginPage from "../pages/Auth/LoginPage";
 import NotFoundPage from "../pages/NotFound/NotFoundPage";
 import UnauthorizedPage from "../pages/Unauthorized/UnauthorizedPage";
 import SubCategoryListPage from "../pages/SubCategory/SubCategoryListPage";
@@ -23,6 +23,10 @@ import AddTimeSlotPage from "../pages/TimeSlot/AddTimeSlotPage";
 import UpdateTimeSlotPage from "../pages/TimeSlot/UpdateTimeSlotPage";
 import BookingDetailPage from "../pages/Booking/BookingDetailPage";
 import UserListPage from "../pages/User/UserListPage";
+import KycListPage from "../pages/Kyc/KycListPage";
+import TrainingScheduleListPage from "../pages/TrainingSchedule/TrainingScheduleListPage";
+import EarningListPage from "../pages/Earning/EarningListPage";
+import ServicemanProfileListPage from "../pages/ServicemanProfile/ServicemanProfileListPage";
 
 const routesConfig = {
   private: [
@@ -53,6 +57,14 @@ const routesConfig = {
 
     { path: "/bookings", element: BookingListPage },
     { path: "/booking-detail/:id", element: BookingDetailPage },
+
+    { path: "/kyc", element: KycListPage },
+
+    { path: "/training-schedule", element: TrainingScheduleListPage },
+
+    { path: "/earning", element: EarningListPage },
+
+    { path: "/service-man-profile", element: ServicemanProfileListPage },
 
     { path: "/users", element: UserListPage },
   ],

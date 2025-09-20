@@ -1,5 +1,7 @@
 import BookingModel from "../../models/booking.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
+import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import ServiceManProfile from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
@@ -45,6 +47,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     discountAmount: amountData.discountAmount,
     payableAmount: amountData.payableAmount,
     isCouponUsed,
+    createdBy: userId,
   });
 
   // Prepare Booking Items from cartProducts
@@ -88,6 +91,8 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   filters.userId = userId;
 
+  if (userId) filters.userId = userId;
+
   if (search) {
     filters.$or = [
       { bookingId: { $regex: search, $options: "i" } },
@@ -105,39 +110,45 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   const bookings = await BookingModel
     .find(filters)
-    .populate({
-      path: "userId",
-      select: "-password",
-    })
-    .populate({
-      path: "addressId",
-      select: "",
-    })
+    .populate({ path: "user", select: "-password" })
+    .populate("address")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
     .lean();
 
-  const transformedBookings = bookings.map((b) => ({
-    ...b,
-    user: b.userId,
-    userId: b.userId?._id,
-    address: b.addressId,
-    addressId: b.addressId?._id,
-  }));
+  for (let booking of bookings) {
+    const latestAssignment = await ServiceManBookingModel
+      .findOne({ bookingId: booking?._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const servicemanId = latestAssignment?.servicemanId;
+    const serviceman = await ServiceManProfile.findOne({ userId: servicemanId }).populate("user");
+
+    const servicemanDetail = {
+      name: serviceman?.name,
+      email: serviceman?.email,
+      mobile: serviceman?.user?.mobile,
+      profileImage: serviceman?.profileImage,
+    };
+
+    booking.serviceman = servicemanDetail;
+  };
 
   const total = await BookingModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     total,
     page,
     limit,
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    data: transformedBookings,
+    data: bookings,
     pagination: buildPagination({ page, limit, total }),
   });
 });
@@ -154,38 +165,46 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   const booking = await BookingModel
     .findOne({ _id: id, userId: userId })
-    .populate({ path: "userId", select: "-password" })
-    .populate({ path: "addressId", select: "" })
+    .populate({ path: "user", select: "-password" })
+    .populate({ path: "address", select: "" })
     .lean();
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  const items = await BookingItemModel
-    .find({ bookingId: booking?._id })
-    .populate({ path: "serviceId", select: "" })
+  const latestAssignment = await ServiceManBookingModel
+    .findOne({ bookingId: booking?._id })
+    .sort({ createdAt: -1 })
     .lean();
 
-  const transformedBooking = {
-    ...booking,
-    user: booking.userId,
-    userId: booking.userId?._id,
-    address: booking.addressId,
-    addressId: booking.addressId?._id,
+  if (latestAssignment) {
+    const servicemanId = latestAssignment?.servicemanId;
+    const serviceman = await ServiceManProfile
+      .findOne({ userId: servicemanId })
+      .populate("user")
+      .lean();
+
+    booking.serviceman = serviceman
+      ? {
+        name: serviceman?.name,
+        email: serviceman?.email,
+        mobile: serviceman?.user?.mobile,
+        profileImage: serviceman?.profileImage,
+      }
+      : null;
+  } else {
+    booking.serviceman = null;
   };
 
-  const transformedItems = items.map((i) => ({
-    ...i,
-    service: i.serviceId,
-    serviceId: i.serviceId?._id,
-  }));
+  const items = await BookingItemModel
+    .find({ bookingId: booking?._id })
+    .populate({ path: "service", select: "" })
+    .lean();
 
   return res.status(200).json({
     success: true,
     data: {
-      booking: transformedBooking,
-      items: transformedItems,
+      booking: booking,
+      items: items,
     },
   });
 });
-
-

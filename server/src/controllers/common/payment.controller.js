@@ -110,7 +110,8 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     // const bookingData = await BookingModel.findById({_id:transactionData.PID});
     await BookingModel.findByIdAndUpdate({ _id: transactionData.PID }, {
       paymentStatus: 1,
-      paymentBy: "razorpay"
+      paymentBy: "razorpay",
+      createdBy: req.user?._id,
     }, { new: true })
   }
   else if (transactionData.productType == 'subscription') {

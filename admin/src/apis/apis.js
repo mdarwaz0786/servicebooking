@@ -47,6 +47,23 @@ const apis = {
   servicemanBooking: {
     create: `${BASE_URL}/api/v1/admin/serviceman-booking`,
   },
+  kyc: {
+    get: `${BASE_URL}/api/v1/admin/kyc`,
+    update: `${BASE_URL}/api/v1/admin/kyc`,
+    delete: `${BASE_URL}/api/v1/admin/kyc`,
+  },
+  trainingSchedule: {
+    create: `${BASE_URL}/api/v1/admin/training-schedule`,
+    get: `${BASE_URL}/api/v1/admin/training-schedule`,
+    update: `${BASE_URL}/api/v1/admin/training-schedule`,
+    delete: `${BASE_URL}/api/v1/admin/training-schedule`,
+  },
+  earning: {
+    create: `${BASE_URL}/api/v1/admin/earning`,
+    get: `${BASE_URL}/api/v1/admin/earning`,
+    update: `${BASE_URL}/api/v1/admin/earning`,
+    delete: `${BASE_URL}/api/v1/admin/earning`,
+  },
   user: {
     register: `${BASE_URL}/api/v1/admin/user/register`,
     get: `${BASE_URL}/api/v1/admin/user`,

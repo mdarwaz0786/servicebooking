@@ -39,8 +39,7 @@ const transactionSchema = new mongoose.Schema({
     trim: true,
   },
   type: {
-    type: String, // e.g. "booking", "subscription", etc.
-    type: Number, // e.g. "1=add", "2=deduct"
+    type: Number, // e.g. "1 = add", "2 = deduct"
     trim: true,
   },
   itemData: {

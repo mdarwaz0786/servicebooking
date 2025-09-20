@@ -101,38 +101,9 @@ export const getKycs = asyncHandler(async (req, res) => {
   if (status) filters.status = status;
 
   if (search) {
-    const schemaPaths = Object.keys(EarningModel.schema.paths);
-    const orFilters = [];
-
-    schemaPaths.forEach((field) => {
-      const fieldType = EarningModel.schema.paths[field].instance;
-
-      if (fieldType === "String") {
-        orFilters.push({ [field]: { $regex: search, $options: "i" } });
-      };
-
-      if (fieldType === "Number" && !isNaN(Number(search))) {
-        orFilters.push({ [field]: Number(search) });
-      };
-
-      if (fieldType === "Boolean") {
-        if (search.toLowerCase() === "true") {
-          orFilters.push({ [field]: true });
-        };
-
-        if (search.toLowerCase() === "false") {
-          orFilters.push({ [field]: false });
-        };
-      };
-
-      if (fieldType === "ObjectId" && mongoose.isValidObjectId(search)) {
-        orFilters.push({ [field]: search });
-      };
-    });
-
-    if (orFilters.length > 0) {
-      filters.$or = orFilters;
-    };
+    filters.$or = [
+      { status: { $regex: search, $options: "i" } },
+    ];
   };
 
   let sortOption = {};

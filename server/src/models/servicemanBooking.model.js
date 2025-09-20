@@ -32,6 +32,11 @@ const serviceManBookingSchema = new mongoose.Schema({
     enum: ["new", "accept", "reject", "ongoing", "complete", "cancel"],
     default: "new",
   },
+  actionById: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
   startDate: {
     type: Date,
     default: null,
@@ -48,10 +53,34 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  cancelDate: {
+    type: Date,
+    default: null,
+  },
+  cancelTime: {
+    type: String,
+    default: null,
+  },
+  acceptDate: {
+    type: Date,
+    default: null,
+  },
+  acceptTime: {
+    type: String,
+    default: null,
+  },
+  rejectDate: {
+    type: Date,
+    default: null,
+  },
+  rejectTime: {
+    type: String,
+    default: null,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    default: null,
   },
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,

@@ -154,9 +154,9 @@ const BookingListPage = () => {
                     <tr>
                       <th>#</th>
                       <th>Booking ID</th>
-                      <th>Amount</th>
                       <th>Mode</th>
                       <th>Assign</th>
+                      <th>Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -166,7 +166,6 @@ const BookingListPage = () => {
                         <tr key={d?._id}>
                           <td>{(page - 1) * limit + index + 1}</td>
                           <td>{d?.bookingId}</td>
-                          <td>{d?.payableAmount}</td>
                           <td>{d?.paymentMode}</td>
                           <td>
                             <button
@@ -176,9 +175,10 @@ const BookingListPage = () => {
                               data-bs-toggle="modal"
                               data-bs-target="#serviceManBookingModal"
                             >
-                              Assign
+                              {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
                             </button>
                           </td>
+                          <td>{d?.status || "new"}</td>
                           <td>
                             <div className="d-flex">
                               {/* View Button */}
@@ -259,7 +259,7 @@ const BookingListPage = () => {
           </div>
         </div>
       </div>
-      <ServicemanBookingModal booking={selectedBooking} />
+      <ServicemanBookingModal booking={selectedBooking} fetchBookings={fetchBookings} />
     </>
   );
 };
