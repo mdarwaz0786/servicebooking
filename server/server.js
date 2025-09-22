@@ -42,16 +42,20 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/serviceman", servicemanRoutes);
 
-// Serve uploaded files
+// Serve uploads file
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Serve static file for client
-app.use(express.static(path.join(__dirname, "../client", "dist")));
+// Serve dist file of client
+app.use("/", express.static(path.join(__dirname, "../client", "dist")));
 
-// Catch all route for client
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
-});
+// Serve dist file of admin
+app.use("/admin", express.static(path.join(__dirname, "../admin", "dist")));
+
+// Admin routes
+app.get(/admin/, (req, res) => res.sendFile(path.join(__dirname, "../admin", "dist", "index.html")));
+
+// Client routes
+app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "../client", "dist", "index.html")));
 
 // Global error handling middleware
 app.use(errorHandler);
