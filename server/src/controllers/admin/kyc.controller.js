@@ -119,6 +119,7 @@ export const getKycs = asyncHandler(async (req, res) => {
     KycModel
       .find(filters)
       .populate("user")
+      .populate("profile")
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
@@ -146,7 +147,8 @@ export const getKycs = asyncHandler(async (req, res) => {
 export const getKycById = asyncHandler(async (req, res) => {
   const kyc = await KycModel
     .findById(req.params.id)
-    .populate("user");
+    .populate("user")
+    .populate("profile");
 
   if (!kyc) throw new ApiError(404, "KYC not found");
 
@@ -157,7 +159,7 @@ export const getKycById = asyncHandler(async (req, res) => {
   });
 });
 
-// Update KYC (Admin or User)
+// Update KYC
 export const updateKyc = asyncHandler(async (req, res) => {
   const { accountNumber, confirmAccountNumber } = req.body;
 

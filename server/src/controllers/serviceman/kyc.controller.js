@@ -94,7 +94,7 @@ export const createKyc = asyncHandler(async (req, res) => {
 export const getKycById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
-  const kyc = await KycModel.findOne({ userId }).populate("user");
+  const kyc = await KycModel.findOne({ userId }).populate("user").populate("profile");
 
   if (!kyc) throw new ApiError(404, "KYC not found");
 

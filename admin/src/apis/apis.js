@@ -43,6 +43,7 @@ const apis = {
   },
   servicemanProfile: {
     get: `${BASE_URL}/api/v1/admin/serviceman-profile`,
+    update: `${BASE_URL}/api/v1/admin/serviceman-profile`,
   },
   servicemanBooking: {
     create: `${BASE_URL}/api/v1/admin/serviceman-booking`,
@@ -65,8 +66,8 @@ const apis = {
     delete: `${BASE_URL}/api/v1/admin/earning`,
   },
   user: {
-    register: `${BASE_URL}/api/v1/admin/user/register`,
     get: `${BASE_URL}/api/v1/admin/user`,
+    register: `${BASE_URL}/api/v1/admin/user/register`,
   },
   auth: {
     login: `${BASE_URL}/api/v1/admin/auth/login`,

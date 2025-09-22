@@ -27,6 +27,12 @@ import KycListPage from "../pages/Kyc/KycListPage";
 import TrainingScheduleListPage from "../pages/TrainingSchedule/TrainingScheduleListPage";
 import EarningListPage from "../pages/Earning/EarningListPage";
 import ServicemanProfileListPage from "../pages/ServicemanProfile/ServicemanProfileListPage";
+import AddTrainingSchedulePage from "../pages/TrainingSchedule/AddTrainingSchedulePage";
+import UpdateTrainingSchedulePage from "../pages/TrainingSchedule/UpdateTrainingSchedulePage";
+import AddEarningPage from "../pages/Earning/AddEarningPage";
+import UpdateEarningPage from "../pages/Earning/UpdateEarningPage";
+import KycDetailsPage from "../pages/Kyc/KycDetailPage";
+import ServicemanProfileDetailPage from "../pages/ServicemanProfile/ServicemanProfileDetailPage";
 
 const routesConfig = {
   private: [
@@ -59,12 +65,18 @@ const routesConfig = {
     { path: "/booking-detail/:id", element: BookingDetailPage },
 
     { path: "/kyc", element: KycListPage },
+    { path: "/kyc-detail", element: KycDetailsPage },
 
     { path: "/training-schedule", element: TrainingScheduleListPage },
+    { path: "/add-training-schedule", element: AddTrainingSchedulePage },
+    { path: "/update-training-schedule/:id", element: UpdateTrainingSchedulePage },
 
     { path: "/earning", element: EarningListPage },
+    { path: "/add-earning", element: AddEarningPage },
+    { path: "/update-earning/:id", element: UpdateEarningPage },
 
     { path: "/service-man-profile", element: ServicemanProfileListPage },
+    { path: "/service-man-profile-detail", element: ServicemanProfileDetailPage },
 
     { path: "/users", element: UserListPage },
   ],

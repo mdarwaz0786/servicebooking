@@ -33,12 +33,12 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 
   try {
     if (req.files?.profileImage?.[0]) {
-      imagePath = await compressImage(req.files.profileImage[0].buffer, "serviceman");
+      imagePath = await compressImage(req.files.profileImage[0].buffer, "servicemanProfile");
     };
 
     const profile = await ServiceManProfileModel.create({
       userId,
-      categories,
+      categoryIds,
       name,
       email,
       dob,
@@ -96,6 +96,7 @@ export const getServiceManProfiles = asyncHandler(async (req, res) => {
       .find(filters)
       .populate("categories")
       .populate("user")
+      .populate("kyc")
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
@@ -124,7 +125,8 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel
     .findById(req.params.id)
     .populate("categories")
-    .populate("user");
+    .populate("user")
+    .populate("kyc");
 
   if (!profile) throw new ApiError(404, "Profile not found");
 
@@ -151,7 +153,7 @@ export const updateServiceManProfile = asyncHandler(async (req, res) => {
 
     profile.profileImage = await compressImage(
       req.files.profileImage[0].buffer,
-      "serviceman"
+      "servicemanProfile"
     );
   };
 

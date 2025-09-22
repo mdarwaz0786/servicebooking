@@ -178,7 +178,7 @@ const BookingListPage = () => {
                               {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
                             </button>
                           </td>
-                          <td>{d?.status || "new"}</td>
+                          <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1) || "New"}</td>
                           <td>
                             <div className="d-flex">
                               {/* View Button */}

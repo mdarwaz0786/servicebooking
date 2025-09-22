@@ -85,6 +85,9 @@ const serviceManProfileSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
+  remarks: {
+    type: String,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -109,6 +112,13 @@ serviceManProfileSchema.virtual("categories", {
   localField: "categoryIds",
   foreignField: "_id",
   justOne: false,
+});
+
+serviceManProfileSchema.virtual("kyc", {
+  ref: "KYC",
+  localField: "userId",
+  foreignField: "userId",
+  justOne: true,
 });
 
 const ServiceManProfileModel = mongoose.model("ServiceManProfile", serviceManProfileSchema);

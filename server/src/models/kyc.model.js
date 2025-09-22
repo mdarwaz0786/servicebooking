@@ -74,6 +74,9 @@ const kycSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
+  remarks: {
+    type: String,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -90,6 +93,13 @@ kycSchema.virtual("user", {
   ref: "User",
   localField: "userId",
   foreignField: "_id",
+  justOne: true,
+});
+
+kycSchema.virtual("profile", {
+  ref: "ServiceManProfile",
+  localField: "userId",
+  foreignField: "userId",
   justOne: true,
 });
 

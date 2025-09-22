@@ -142,8 +142,10 @@ const KycListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
                     <th>Mobile</th>
-                    <th>Role</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -152,11 +154,13 @@ const KycListPage = () => {
                     kyc?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>{d?.profile?.name}</td>
+                        <td>{d?.profile?.email}</td>
                         <td>{d?.user?.mobile}</td>
-                        <td>{d?.user?.role}</td>
+                        <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1)}</td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/kyc-detail/${d?._id}`}>
+                            <Link to={`/kyc-detail`} state={{ record: d }}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />
                               </button>

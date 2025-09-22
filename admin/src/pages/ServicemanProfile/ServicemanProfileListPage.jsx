@@ -131,12 +131,6 @@ const ServicemanProfileListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
-            <Link to="/add-training-schedule">
-              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
-                <i className="fa fa-plus me-2"></i>
-                <span>Add</span>
-              </button>
-            </Link>
           </div>
         </div>
 
@@ -151,6 +145,7 @@ const ServicemanProfileListPage = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Mobile</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -162,9 +157,10 @@ const ServicemanProfileListPage = () => {
                         <td>{d?.name}</td>
                         <td>{d?.email}</td>
                         <td>{d?.user?.mobile}</td>
+                        <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1)}</td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/service-man-profle-detail/${d?._id}`}>
+                            <Link to="/service-man-profile-detail" state={{ record: d }}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />
                               </button>

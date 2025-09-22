@@ -101,7 +101,8 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel
     .findOne({ userId })
     .populate("categories")
-    .populate("user");
+    .populate("user")
+    .populate("kyc");
 
   if (!profile) throw new ApiError(404, "Profile not found");
 
