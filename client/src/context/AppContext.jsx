@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BodyLoader from "../components/Loader/bodyLoader";
+import BodyLoader from "../components/Loader/BodyLoader";
 import LoginModal from "../components/Modal/LoginModal";
 
 import { ToastContainer } from "react-toastify";
