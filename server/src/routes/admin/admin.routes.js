@@ -17,6 +17,7 @@ import profileRoutes from "./servicemanProfile.routes.js";
 import trainingScheduleRoutes from "./trainingSchedule.routes.js";
 import earningRoutes from "./earning.routes.js";
 import servicemanBookingRoutes from "./servicemanBooking.routes.js";
+import transactionRoutes from "./transaction.routes.js";
 
 const router = express.Router();
 
@@ -38,5 +39,6 @@ router.use("/serviceman-profile", profileRoutes);
 router.use("/training-schedule", trainingScheduleRoutes);
 router.use("/earning", earningRoutes);
 router.use("/serviceman-booking", servicemanBookingRoutes);
+router.use("/transaction", transactionRoutes);
 
 export default router;

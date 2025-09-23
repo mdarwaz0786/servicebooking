@@ -23,11 +23,8 @@ const transactionSchema = new mongoose.Schema({
     required: false,
   },
   PID: {
-    type: String, // Booking Id
-    required: true,
     type: String, // Product ID or Payment ID
     required: false,
-    index: true,
   },
   productName: {
     type: String,
@@ -51,9 +48,7 @@ const transactionSchema = new mongoose.Schema({
   },
   transactionId: {
     type: String,
-    unique: false,
     required: false,
-    index: true,
   },
   amount: {
     type: Number,
@@ -82,7 +77,14 @@ const transactionSchema = new mongoose.Schema({
   paymentTime: {
     type: String,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+transactionSchema.virtual("user", {
+  ref: "User",
+  localField: "userId",
+  foreignField: "_id",
+  justOne: false,
+})
 
 const TransactionModel = mongoose.model("Transaction", transactionSchema);
 
