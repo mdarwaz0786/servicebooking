@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import MyServiceListCard from "../../../components/Service/MyServiceListCard";
+
 import { AppContext } from "../../../context/AppContext";
 import { Link, useParams } from "react-router-dom";
 
 const UserBookingDetailPage = () => {
     const { bookingId } = useParams();
-  const { Urls, postData, formatDateTime, PriceFormat } = useContext(AppContext);
+  const { Urls, postData, formatDateTime, formatDate, PriceFormat, imageCheck } = useContext(AppContext);
   const [data, setdata] = useState([]);
   const [items, setitems] = useState([]);
   const fetchData = async () => {
@@ -72,7 +72,7 @@ const UserBookingDetailPage = () => {
             <h6>Booked Slot</h6>
             <ul>
               <li className="fs-12 d-flex align-items-center mb-2">
-                <i className="feather-calendar me-1" /> {(data.scheduleDate)}
+                <i className="feather-calendar me-1" /> {formatDate(data.scheduleDate)}
               </li>
               <li className="fs-12 d-flex align-items-center">
                 <i className="feather-clock  me-1" /> {data.scheduleTime}
@@ -82,27 +82,30 @@ const UserBookingDetailPage = () => {
         </div>
         <div className="col-md-6">
           <div className="slot-user">
-            <h6>Services Provider</h6>
-            <div className="slot-chat">
-              <div className="slot-user-img d-flex align-items-center">
-                <img
-                  className="avatar rounded-circle  me-2"
-                  src="assets/img/profiles/avatar-31.jpg"
-                  alt="image"
-                />
-                <div className="slot-user-info">
-                  <p className="mb-1 fs-12">John Doe</p>
-                  <p className="mb-0 fs-12">john@example.com</p>
+            {(data?.serviceman)?(
+              <>
+                <h6>Services Man</h6>
+                <div className="slot-chat">
+                  <div className="slot-user-img d-flex align-items-center">
+                    <img
+                      className="avatar rounded-circle  me-2"
+                      src={imageCheck(data.serviceman.profileImage)}
+                      alt="image"
+                    />
+                    <div className="slot-user-info">
+                      <p className="mb-1 fs-12">{data.serviceman.name}</p>
+                    </div>
+                  </div>
+                  <div className="chat-item d-flex align-items-center">
+                    <div className="slot-user-info">
+                      <p className="mb-0 fs-12"><Link to={'tel:'+data.serviceman.mobile}>{data.serviceman.mobile}</Link></p>
+                    </div>
+                    
+                  </div>
                 </div>
-              </div>
-              <div className="chat-item d-flex align-items-center">
-                <div className="slot-user-info">
-                  <p className="mb-0 fs-12">+1 888 888 8888</p>
-                  <p className="mb-0 fs-12">Montana, USA</p>
-                </div>
-                
-              </div>
-            </div>
+              </>
+              ):(null)}
+
           </div>
         </div>
         <div className="col-md-3">

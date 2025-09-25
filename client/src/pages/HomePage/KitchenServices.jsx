@@ -12,14 +12,14 @@ const KitchenServices = () => {
           </div>
         </div>
         
-        <div className="tab-content">
-          <div className="tab-pane fade active show" id="computer-service">
-            <div className="feature-slider row">
+        <div className=" row">
+              
+              
               <div className="col-md-3">
                 <div className="service-item">
                   <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
+                    <div className=" nav-center">
+                      <div className="">
                         <Link to="/service-details">
                           <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
                         </Link>
@@ -37,8 +37,8 @@ const KitchenServices = () => {
               <div className="col-md-3">
                 <div className="service-item">
                   <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
+                    <div className=" nav-center">
+                      <div className="">
                         <Link to="/service-details">
                           <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
                         </Link>
@@ -56,8 +56,8 @@ const KitchenServices = () => {
               <div className="col-md-3">
                 <div className="service-item">
                   <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
+                    <div className=" nav-center">
+                      <div className="">
                         <Link to="/service-details">
                           <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
                         </Link>
@@ -75,8 +75,8 @@ const KitchenServices = () => {
               <div className="col-md-3">
                 <div className="service-item">
                   <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
+                    <div className=" nav-center">
+                      <div className="">
                         <Link to="/service-details">
                           <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
                         </Link>
@@ -91,10 +91,8 @@ const KitchenServices = () => {
                   </div>
                 </div>
               </div>
+              
             </div>
-          </div>
-          
-        </div>
         
       </div>
     </section>

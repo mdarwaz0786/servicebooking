@@ -18,6 +18,7 @@ export const AppProvider = ({ children }) => {
   // const Urls = apiUrl();
 
   const [bodyLoaderShow, setbodyLoaderShow] = useState(false);
+  const [pagination, setpagination] = useState([]);
 
   const [categoryModalListData, setcategoryModalListData] = useState([]);
   const [categoryModalItemData, setcategoryModalItemData] = useState([]);
@@ -194,6 +195,11 @@ export const AppProvider = ({ children }) => {
       setbodyLoaderShow(false);
 
       if (result.success === true) {
+        if(result?.pagination)
+        {
+          if(result.pagination.pages.length>0)
+          setpagination(result.pagination);
+        }
         if(!messageAlert && result.message) 
         {
           toast.success(result.message);
@@ -212,7 +218,7 @@ export const AppProvider = ({ children }) => {
 
       return result;
     } catch (error) {
-      if (extraData?.loader) extraData.loader.setShowLoader(false);
+      setbodyLoaderShow(false);
       console.error('Invalid JSON response:', error);
       return error;
     }
@@ -275,25 +281,46 @@ const formatDateTime = (isoString) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+const formatDate = (isoString) => {
+  const date = new Date(isoString);
 
-const imageCheck = (path, defaultImg = "uploads/default.jpg") => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+
+const imageCheck = (path, defaultImg = null) => {
   const baseUrl = SERVER_BASE_URL
-
-  let image = `${baseUrl}${defaultImg}`;
+  let image = '';
+  if(!path)
+  {
+    if(defaultImg) image = `${baseUrl}${'uploads/'+defaultImg}`;
+    else image = `${baseUrl}${'uploads/default.jpg'}`;
+  }
+  else{
+    image = `${baseUrl}${path}`;
+  }
 
   try {
     const decoded = JSON.parse(path);
 
     if (Array.isArray(decoded) || typeof decoded === "object") {
       if (decoded?.[0]?.image_path) {
-        image = `${baseUrl}uploads/${decoded[0].image_path}`;
+        image = `${baseUrl}${decoded[0].image_path}`;
       }
     } else if (path && typeof path === "string") {
-      image = `${baseUrl}uploads/${path}`;
+      image = `${baseUrl}${path}`;
     }
   } catch (e) {
     if (path && typeof path === "string") {
-      image = `${baseUrl}uploads/${path}`;
+      image = `${baseUrl}${path}`;
     }
   }
 
@@ -488,12 +515,15 @@ const imageCheck = (path, defaultImg = "uploads/default.jpg") => {
       postData,
       storage,
       formatDateTime,
+      formatDate,
       handleHome,
       toast,
       user,
       setuser,
       handleLogout,
       imageCheck,
+      pagination,
+      setpagination,
       
       handleCategoryClick,
 

@@ -7,9 +7,6 @@ import { getCartData } from "../../utils/cart.utils.js";
 export const getHomePageData = asyncHandler(async (req, res) => {
   const userId = req.query.userId;
 
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized: User not found");
-  };
 
   // Fetch active categories
   let categories = await CategoryModel

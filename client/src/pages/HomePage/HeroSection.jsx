@@ -1,17 +1,24 @@
 import { Link } from "react-router-dom";
 import CategoryMiniCard3 from "../../components/Category/CategoryMiniCard3";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+
 const HeroSection = ({categoryData, handleSubCategory}) => {
   return (
     <section className="hero-section" id="home">
       <div className="hero-content position-relative overflow-hidden">
         <div className="container">
           <div className="row align-items-center">
-            <div className="col-lg-6">
+            <div className="col-lg-12 hero-category-div">
               <div className="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".25s">
-                <h1 className="mb-2">Connect with Nearby Top-rated Professional <span className="typed" data-type-text="Carpenters" /></h1>
-
-                <div className="banner-form bg-white border mb-3">
+                
+                <h1 className="mb-2 text-center">Connect with Nearby Top-rated Professional <span className="typed" data-type-text="Carpenters" /></h1>
+                <div className="banner-form bg-white border mb-3 col-md-6" style={{margin:'0 auto'}}>
                   <form action="#">
                     <div className="d-md-flex align-items-center">
                       <div className="input-group mb-2">
@@ -31,10 +38,54 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                     </div>
                   </form>
                 </div>
-                <div className="card card-body  shadow-none bg-transparent">
+                  
+                <div className="banner-slider">
+                  <Swiper
+                    modules={[Navigation, Pagination, Autoplay, EffectFade]} // enable extra features
+                    spaceBetween={20}       // gap between slides (px)
+                    slidesPerView={1}       // number of slides visible
+                    loop={true}             // infinite loop
+                    autoplay={{             // autoplay settings
+                      delay: 1500,
+                      disableOnInteraction: false,
+                    }}
+                    // navigation              // show next/prev arrows
+                    pagination={{ clickable: true }} // show pagination dots
+                    // scrollbar={{ draggable: true }}  // scrollbar option
+                    effect="slide"           // slide, fade, cube, coverflow, flip
+                    // speed={800}             // transition speed (ms)
+                    // centeredSlides={true}   // center active slide
+                    // grabCursor={true}       // cursor turns into grab hand
+                    // breakpoints={{          // responsive settings
+                    //   320: { slidesPerView: 1 },
+                    //   640: { slidesPerView: 2 },
+                    //   1024: { slidesPerView: 3 },
+                    // }}
+                    // onSlideChange={() => console.log("Slide changed")}
+                    // onSwiper={(swiper) => console.log(swiper)}
+                  >
+                    <SwiperSlide>
+                      <Link>
+                        <img src="/public/assets/img/home/hero/banner1.jpg" />
+                      </Link>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <Link>
+                        <img src="/public/assets/img/home/hero/banner1.jpg" />
+                      </Link>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <Link>
+                        <img src="/public/assets/img/home/hero/banner1.jpg" />
+                      </Link>
+                    </SwiperSlide>
+                  </Swiper>
+                </div>
+
+                <div className="card card-body mt-3 shadow-none bg-transparent">
                   <div className="row hero-category">
                       <>
-                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} className={'col-md-4 hero-category'} />
+                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} className={'col-md-2 hero-category'} />
                       </>                    
                   </div>
                 </div>
@@ -64,22 +115,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                 </div>
               </div>
             </div>
-            <div className="col-md-6" data-wow-duration="1s" data-wow-delay=".25s">
-              <div className="row hero-images">
-                <div className="col-md-6">
-                  <img src="/assets/img/home/hero/img1.jpg"/>
-                </div>
-                <div className="col-md-6">
-                  <img src="/assets/img/home/hero/img2.jpg"/>
-                </div>
-                <div className="col-md-6">
-                  <img src="/assets/img/home/hero/img3.jpg"/>
-                </div>
-                <div className="col-md-6">
-                  <img src="/assets/img/home/hero/img4.jpg"/>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
         

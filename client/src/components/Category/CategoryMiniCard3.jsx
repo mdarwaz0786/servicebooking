@@ -10,7 +10,8 @@ const CategoryMiniCard3 = ({ data = [], handleSubCategory, className='' }) => {
     
     <>    
       {data.map((value, index) => (
-            <div className={className?className:'col d-flex mb-4'} onClick={() => handleCategoryClick(value)} 
+            <div className={className?className:'col d-flex mb-4'} onClick={() => handleCategoryClick(value)}
+            key={index} 
             >
                 <div className="category-item text-center flex-fill wow fadeInUp" data-wow-delay="0.2s">
                   <div className="mx-auto mb-3">

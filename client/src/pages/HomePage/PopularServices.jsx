@@ -12,89 +12,92 @@ const PopularServices = () => {
           </div>
         </div>
         
-        <div className="tab-content">
-          <div className="tab-pane fade active show" id="computer-service">
-            <div className="feature-slider row">
-              <div className="col-md-3">
-                <div className="service-item">
-                  <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
-                        <Link to="/service-details">
-                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
-                        </Link>
-                      </div>                      
-                    </div>
-                  </div>
-                  <div className="service-content">
-                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <small>From Rs. 350.00</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="service-item">
-                  <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
-                        <Link to="/service-details">
-                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
-                        </Link>
-                      </div>                      
-                    </div>
-                  </div>
-                  <div className="service-content">
-                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <small>From Rs. 350.00</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="service-item">
-                  <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
-                        <Link to="/service-details">
-                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
-                        </Link>
-                      </div>                      
-                    </div>
-                  </div>
-                  <div className="service-content">
-                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <small>From Rs. 350.00</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="service-item">
-                  <div className="service-img">
-                    <div className="img-slider nav-center">
-                      <div className="slide-images">
-                        <Link to="/service-details">
-                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
-                        </Link>
-                      </div>                      
-                    </div>
-                  </div>
-                  <div className="service-content">
-                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <small>From Rs. 350.00</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+       
           
-        </div>
+            <div className=" row">
+              
+              
+              <div className="col-md-3">
+                <div className="service-item">
+                  <div className="service-img">
+                    <div className=" nav-center">
+                      <div className="">
+                        <Link to="/service-details">
+                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
+                        </Link>
+                      </div>                      
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <small>From Rs. 350.00</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-3">
+                <div className="service-item">
+                  <div className="service-img">
+                    <div className=" nav-center">
+                      <div className="">
+                        <Link to="/service-details">
+                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
+                        </Link>
+                      </div>                      
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <small>From Rs. 350.00</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-3">
+                <div className="service-item">
+                  <div className="service-img">
+                    <div className=" nav-center">
+                      <div className="">
+                        <Link to="/service-details">
+                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
+                        </Link>
+                      </div>                      
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <small>From Rs. 350.00</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-3">
+                <div className="service-item">
+                  <div className="service-img">
+                    <div className=" nav-center">
+                      <div className="">
+                        <Link to="/service-details">
+                          <img src="/assets/img/home/ac.jpg" className="img-fluid" alt="img" />
+                        </Link>
+                      </div>                      
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h6 className="mb-1 text-truncate"><Link to="/service-details">AC Service</Link></h6>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <small>From Rs. 350.00</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          
+          
+        
         
       </div>
     </section>

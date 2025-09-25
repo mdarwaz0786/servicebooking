@@ -1,28 +1,28 @@
-import { useContext, useEffect } from "react";
-import MyServiceListCard from "../../../components/Service/MyServiceListCard";
+import { useContext, useEffect, useState } from "react";
+import BookingListCard from "./BookingListCard";
 import { AppContext } from "../../../context/AppContext";
 
 const UserBookingPage = () => {
 
   const { Urls, postData, setmyserviceListData, generateUniqueId } = useContext(AppContext);
+  const [page, setpage] = useState(1);
   const fetchData = async () => {
       try { 
-
-      let userId = generateUniqueId();
-
-      const response = await postData({}, Urls.myBooking, "GET", 0, 1);
-      
-          setmyserviceListData(response.data?response.data:[]);
+        const response = await postData({page:page}, Urls.myBooking, "GET", 0, 1);    
+        setmyserviceListData(response.data?response.data:[]);
       
       } catch (error) { 
       console.error("Cart API Error:", error);
       }
   }
 
+  const handlePagination = async (page) => {
+      setpage(page);
+  }
   
   useEffect(() => {  
   fetchData(); 
-  }, []);  
+  }, [page]);  
 
   return (
     <div className="col-xl-9 col-lg-8">
@@ -44,7 +44,7 @@ const UserBookingPage = () => {
         </div>
       </div>
       
-      <MyServiceListCard />
+      <BookingListCard handlePagination={handlePagination} />
       
 
     </div>

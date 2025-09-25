@@ -45,10 +45,10 @@ useEffect(() => {
       <HowWorks />
       {/* <FeaturedServices /> */}
       <AcServices />
+      <KitchenServices />
       <div className="container">
         <img src="/assets/img/home/acbanner.jpg" className="img-fluid" alt="img" />
       </div>
-      <KitchenServices />
       <div className="container">
         <img src="/assets/img/home/kitchenbanner.jpg" className="img-fluid" alt="img" />
       </div>

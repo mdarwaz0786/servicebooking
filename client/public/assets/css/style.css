@@ -15041,7 +15041,7 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
 }
 
 .hero-section .hero-content {
-  padding: 80px 0;
+  padding: 25px 0;
   z-index: 1;
 }
 
@@ -36168,5 +36168,7 @@ animation-delay: 1.56s;
 .hero-category img {
     height: 80px;
 }
+
+
 
 /*# sourceMappingURL=style.css.map */
