@@ -109,6 +109,14 @@ export const AppProvider = ({ children }) => {
       // service man urls
       serviceManlogin: `${servicemanUrl}auth/login`,
       serviceManverifyOtp: `${servicemanUrl}auth/verify-otp`,
+      serviceMankycDetail: `${servicemanUrl}kyc/detail`,
+      serviceMankycUpdate: `${servicemanUrl}kyc`,
+
+      serviceManProfileDetail: `${servicemanUrl}profile/detail`,
+      serviceManProfileUpdate: `${servicemanUrl}profile`,
+
+      serviceManBooking: `${servicemanUrl}booking`,
+
       // service man urls end
 
 
@@ -185,7 +193,7 @@ export const AppProvider = ({ children }) => {
   const responseCheck = async (response, messageAlert) => {
     try {
       let result = [];
-      if ([200, 400, 401, 204, 201].includes(response.status)) {
+      if ([200, 400, 401, 204, 201,500].includes(response.status)) {
         result = await response.json();
       } else {
         result = response;
@@ -213,7 +221,8 @@ export const AppProvider = ({ children }) => {
           toggleModal("loginModal",false);
         }
       } else {
-        toast.error(result.message || 'Something went wrong');
+        if(!messageAlert && result.message) 
+          toast.error(result.message || 'Something went wrong');
       }
 
       return result;

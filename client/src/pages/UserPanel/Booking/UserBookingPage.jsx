@@ -6,9 +6,10 @@ const UserBookingPage = () => {
 
   const { Urls, postData, setmyserviceListData, generateUniqueId } = useContext(AppContext);
   const [page, setpage] = useState(1);
+  const [limit, setlimit] = useState(10);
   const fetchData = async () => {
       try { 
-        const response = await postData({page:page}, Urls.myBooking, "GET", 0, 1);    
+        const response = await postData({page:page,limit:limit}, Urls.myBooking, "GET", 0, 1);    
         setmyserviceListData(response.data?response.data:[]);
       
       } catch (error) { 
@@ -16,13 +17,14 @@ const UserBookingPage = () => {
       }
   }
 
-  const handlePagination = async (page) => {
-      setpage(page);
-  }
+  const handlePagination = async (page, limit) => {
+    setpage(page);
+    if(limit) setlimit(limit);
+}
   
   useEffect(() => {  
   fetchData(); 
-  }, [page]);  
+  }, [page, limit]);  
 
   return (
     <div className="col-xl-9 col-lg-8">

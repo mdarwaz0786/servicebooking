@@ -84,7 +84,7 @@ const Navbar = () => {
                     <Link className="btn btn-linear-primary me-1 " onClick={() => toggleModal("loginModal", true)}>
                       <i className="ti ti-lock me-2" />Login
                     </Link>
-                    <Link className="btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i className="ti ti-user-filled me-2"></i>Join Us</Link>
+                    <Link className="btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i className="ti ti-user-filled me-2"></i>Join As Partner</Link>
                     
                   </>
                 )}

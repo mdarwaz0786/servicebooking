@@ -28,6 +28,9 @@ import Test from "../Test";
 
 import ServiceManLayout from "./pages/ServiceManPanel/ServiceManLayout";
 import ServiceManBookingPage from "./pages/ServiceManPanel/Booking/ServiceManBookingPage";
+import KycForm from "./pages/ServiceManPanel/Kyc/KycForm";
+import ProfileForm from "./pages/ServiceManPanel/Profile/ProfileForm";
+import ServiceManDashboard from "./pages/ServiceManPanel/Dashboard/ServiceManDashboard";
 
 
 
@@ -69,9 +72,11 @@ const App = () => {
 
 
         <Route element={<ServiceManLayout />}>
-          <Route path="/serviceman" element={<ServiceManBookingPage />} />
+          <Route path="/serviceman/dashboard" element={<ServiceManDashboard />} />
+          <Route path="/serviceman/booking" element={<ServiceManBookingPage />} />
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
-          <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/serviceman/profile" element={<ProfileForm />} />
+          <Route path="/serviceman/kyc" element={<KycForm />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
           <Route path="/user-wallet" element={<UserWalletPage />} />
           <Route path="/user-reviews" element={<UserReviewsPage />} />
