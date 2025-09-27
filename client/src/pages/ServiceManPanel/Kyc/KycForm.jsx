@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { Link } from "react-router-dom";
+import KycAlert from "../../../components/Alert/KycAlert";
 
 const KycForm = () => {
 
@@ -28,6 +29,9 @@ const KycForm = () => {
                     aadharCardNumber: response.data.aadharCardNumber,
                     gstNumber: response.data.gstNumber,
                 }));
+            }
+            else{
+                
             }
 
         } catch (error) {
@@ -123,6 +127,7 @@ const KycForm = () => {
 
 
             <>
+                <KycAlert/>
                 <div className="row justify-content-center">
                     <div className="col-xxl-12 col-lg-12">
 

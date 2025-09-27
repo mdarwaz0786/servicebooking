@@ -5,6 +5,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 
+
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
   let { search, status, sort = "desc", page = 1, limit = 10 } = req.query;
@@ -43,10 +44,10 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 
   let bookings = await ServiceManBookingModel
     .find(filters)
-    .populate("booking serviceman user")
+    .populate("serviceman user")
     .populate({
-      path: "serviceman.addressId",
-      model: "Address",
+      path: "booking",
+      populate: { path: "addressId", model: "Address", strictPopulate: false }
     })
     .sort(sortOption)
     .skip(skip)
@@ -80,10 +81,10 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
 
   const booking = await ServiceManBookingModel
     .findOne({ _id: req.params.id, servicemanId: userId })
-    .populate("booking serviceman user")
+    .populate("serviceman user")
     .populate({
-      path: "serviceman.addressId",
-      model: "Address",
+      path: "booking",
+      populate: { path: "addressId", model: "Address", strictPopulate: false }
     });
 
   if (!booking) {
