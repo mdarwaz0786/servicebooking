@@ -1,7 +1,7 @@
 import ApiError from "../helpers/apiError.js";
 
 const SIZE_LIMITS = {
-  image: 10 * 1024 * 1024,
+  image: 1000 * 1024 * 1024,
 };
 
 const validateFileSize = (req, res, next) => {

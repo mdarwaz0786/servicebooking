@@ -2,9 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { Link } from "react-router-dom";
 
+import Select2Multiple from "../../../components/Select2/Select2Multiple";
+
 const ProfileForm = () => {
 
-    const { Urls, postData, generateUniqueId, imageCheck, formatDate } = useContext(AppContext);
+    const { Urls, postData, generateUniqueId, imageCheck, formatDate, categoryListData, bodyLoaderShow } = useContext(AppContext);
     const fetchData = async () => {
         try {
             let userId = generateUniqueId();
@@ -66,7 +68,7 @@ const ProfileForm = () => {
 
         try {
             let userId = generateUniqueId();
-            const response = await postData(formData, Urls.serviceManProfileUpdate, "POST", 0, 0); 
+            const response = await postData(formData, Urls.serviceManProfileUpdate, "POST", 0, 0,1); 
             if(response.success)
             {
                 
@@ -88,22 +90,10 @@ const ProfileForm = () => {
             [name]: files ? files[0] : value,
         });
     };
-    const handleCategoryChange = (e) => {
-        const { name, options, type } = e.target;
-        let value;
-    
-        if (type === "select-multiple") {
-            // ✅ Multiple selected values ko array me convert karo
-            value = Array.from(options)
-                         .filter(option => option.selected)
-                         .map(option => option.value);
-        } else {
-            value = e.target.value;
-        }
-    
+    const handleCategoryChange = (selectedIds) => {
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            categoryIds: selectedIds
         }));
     };
 
@@ -128,7 +118,7 @@ const ProfileForm = () => {
     };
 
 
-
+  
     return (
         <>
             <div className="row">
@@ -151,17 +141,12 @@ const ProfileForm = () => {
 
                                     <div className="col-md-12 mb-3">
                                         <label className="form-label">Category</label>
-                                        <select
-                                            name="categoryIds"
-                                            multiple
-                                            className="form-select"
-                                            value={formData.categoryIds}
-                                            onChange={handleCategoryChange}
-                                            >
-                                            <option value="">Select</option>
-                                            <option value="Passport">Passport</option>
-                                            <option value="Visa">Visa</option>
-                                        </select>
+                                        <Select2Multiple
+                                        optionsList={categoryListData}
+                                        value={formData.categoryIds}
+                                        onChange={handleCategoryChange}
+                                        />
+                                        
                                     </div>
                                     <div className="col-md-4 mb-3">
                                         <label className="form-label">Name</label>

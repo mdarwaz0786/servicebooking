@@ -35,7 +35,7 @@ const kycSchema = new mongoose.Schema({
   },
   passbookOrCheque: {
     type: String,
-    required: true,
+    required: false,
   },
   panCardNumber: {
     type: String,
@@ -45,7 +45,7 @@ const kycSchema = new mongoose.Schema({
   },
   panCardImage: {
     type: String,
-    required: true,
+    required: false,
   },
   aadharCardNumber: {
     type: String,
@@ -54,11 +54,11 @@ const kycSchema = new mongoose.Schema({
   },
   aadharFrontImage: {
     type: String,
-    required: true,
+    required: false,
   },
   aadharBackImage: {
     type: String,
-    required: true,
+    required: false,
   },
   gstNumber: {
     type: String,

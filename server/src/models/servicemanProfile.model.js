@@ -7,11 +7,11 @@ const serviceManProfileSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
-  categoryIds: [{
-    type: mongoose.Schema.Types.ObjectId,
+  categoryIds: {
+    type: [mongoose.Schema.Types.ObjectId],
     ref: "Category",
     required: true,
-  }],
+  },
   name: {
     type: String,
     required: true,
@@ -78,7 +78,7 @@ const serviceManProfileSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    required: true,
+    required: false,
   },
   status: {
     type: String,

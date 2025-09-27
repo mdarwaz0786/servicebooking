@@ -68,7 +68,7 @@ const KycForm = () => {
 
         try {
             let userId = generateUniqueId();
-            const response = await postData(formData, Urls.serviceMankycUpdate, "POST", 0, 0); 
+            const response = await postData(formData, Urls.serviceMankycUpdate, "POST", 0, 0,1); 
             if(response.success)
             {
                 
@@ -115,7 +115,7 @@ const KycForm = () => {
         <>
             <div className="row">
                 <div className="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-4">
-                    <h4>Profile Verification</h4>
+                    <h4>Kyc Verification</h4>
 
                 </div>
             </div>
@@ -186,9 +186,43 @@ const KycForm = () => {
                                             placeholder="Enter IFSC Code"
                                         />
                                     </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">PanCard Number</label>
+                                        <input
+                                            type="text"
+                                            name="panCardNumber"
+                                            className="form-control"
+                                            value={formData.panCardNumber}
+                                            onChange={handleChange}
+                                            placeholder="Enter PanCard Number"
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">AadharCard Number</label>
+                                        <input
+                                            type="text"
+                                            name="aadharCardNumber"
+                                            className="form-control"
+                                            value={formData.aadharCardNumber}
+                                            onChange={handleChange}
+                                            placeholder="Enter AadharCard Number"
+                                        />
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">Gst Number</label>
+                                        <input
+                                            type="text"
+                                            name="gstNumber"
+                                            className="form-control"
+                                            value={formData.gstNumber}
+                                            onChange={handleChange}
+                                            placeholder="Enter Gst Number"
+                                        />
+                                    </div>
                                     
 
-                                    <div className="col-md-12 mb-3">
+                                    <div className="col-md-6 mb-3">
                                         <label className="form-label">Passbook/Cancel Cheque</label>
                                         <div className="file-upload drag-file w-100 d-flex align-items-center justify-content-center flex-column mb-2 border p-3 rounded">
                                             <span className="upload-img d-block mb-2">
@@ -221,19 +255,9 @@ const KycForm = () => {
                                         )}
                                     </div>
 
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label">PanCard Number</label>
-                                        <input
-                                            type="text"
-                                            name="panCardNumber"
-                                            className="form-control"
-                                            value={formData.panCardNumber}
-                                            onChange={handleChange}
-                                            placeholder="Enter PanCard Number"
-                                        />
-                                    </div>
+                                    
 
-                                    <div className="col-md-12 mb-3">
+                                    <div className="col-md-6 mb-3">
                                         <label className="form-label">PanCard Image</label>
                                         <div className="file-upload drag-file w-100 d-flex align-items-center justify-content-center flex-column mb-2 border p-3 rounded">
                                             <span className="upload-img d-block mb-2">
@@ -266,18 +290,8 @@ const KycForm = () => {
                                         )}
                                     </div>
 
+                                    
                                     <div className="col-md-6 mb-3">
-                                        <label className="form-label">AadharCard Number</label>
-                                        <input
-                                            type="text"
-                                            name="aadharCardNumber"
-                                            className="form-control"
-                                            value={formData.aadharCardNumber}
-                                            onChange={handleChange}
-                                            placeholder="Enter AadharCard Number"
-                                        />
-                                    </div>
-                                    <div className="col-md-12 mb-3">
                                         <label className="form-label">AadharFront Image</label>
                                         <div className="file-upload drag-file w-100 d-flex align-items-center justify-content-center flex-column mb-2 border p-3 rounded">
                                             <span className="upload-img d-block mb-2">
@@ -309,7 +323,7 @@ const KycForm = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="col-md-12 mb-3">
+                                    <div className="col-md-6 mb-3">
                                         <label className="form-label">AadharBack Image</label>
                                         <div className="file-upload drag-file w-100 d-flex align-items-center justify-content-center flex-column mb-2 border p-3 rounded">
                                             <span className="upload-img d-block mb-2">
@@ -346,17 +360,7 @@ const KycForm = () => {
 
 
 
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label">Gst Number</label>
-                                        <input
-                                            type="text"
-                                            name="gstNumber"
-                                            className="form-control"
-                                            value={formData.gstNumber}
-                                            onChange={handleChange}
-                                            placeholder="Enter Gst Number"
-                                        />
-                                    </div>
+                                    
                                     <div className="col-md-12 mb-3">
                                         <label className="form-label">Shop Image</label>
                                         <div className="file-upload drag-file w-100 d-flex align-items-center justify-content-center flex-column mb-2 border p-3 rounded">

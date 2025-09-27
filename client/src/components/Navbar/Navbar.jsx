@@ -70,7 +70,7 @@ const Navbar = () => {
                         <i className="ti ti-user me-2" />Account
                       </Link>
                   ):(
-                    <Link to={'/serviceman'} className="btn btn-linear-primary " >
+                    <Link to={'/serviceman/dashboard'} className="btn btn-linear-primary " >
                       <i className="ti ti-user me-2" />Account
                     </Link>
                   )}
