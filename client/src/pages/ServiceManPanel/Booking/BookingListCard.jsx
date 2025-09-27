@@ -41,7 +41,7 @@ const BookingListCard = ({handlePagination}) => {
                     </li>
                     <li className="d-flex align-items-center mb-2">
                     <span className="book-item">Location</span>{" "}
-                    <small className="me-2">: </small>{value?.booking.address?.houseNumber}, {value?.booking.address?.landmark}
+                    <small className="me-2">: </small>{value?.booking.addressId?.houseNumber}, {value?.booking.addressId?.landmark}
                     </li>
                     {(value?.serviceman)?(
                             <li className="d-flex align-items-center flex-wrap">

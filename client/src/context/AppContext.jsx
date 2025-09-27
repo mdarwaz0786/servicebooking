@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import BodyLoader from "../components/Loader/BodyLoader";
 import LoginModal from "../components/Modal/LoginModal";
@@ -147,47 +148,79 @@ export const AppProvider = ({ children }) => {
   };
 
   // ✅ API call function
-  const postData = async (
-    filedata,
-    url,
-    method,
-    loaderShowHide = null,
-    messageAlert = null
-  ) => {
-    const deviceInfo = JSON.stringify(getDeviceInfo());
+const postData = async (
+  filedata,
+  url,
+  method,
+  loaderShowHide = null,
+  messageAlert = null,
+  isFileUpload = false // new flag for file uploads
+) => {
+  const deviceInfo = JSON.stringify(getDeviceInfo());
+  let bodyData = null;
 
-    let data = '';
-    if (method === 'POST')
-      data = JSON.stringify({ ...filedata, device_detail: deviceInfo });
-    let UID = generateUniqueId();
+  if (isFileUpload) {
+    // Use FormData for file uploads
+    bodyData = new FormData();
+
+    for (const key in filedata) {
+      const value = filedata[key];
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (item instanceof File) {
+            // Append each file with the same key
+            bodyData.append(key, item);
+          } else if (typeof item === 'object') {
+            bodyData.append(`${key}[]`, JSON.stringify(item)); // objects in array
+          } else {
+            bodyData.append(`${key}[]`, item); // primitive array
+          }
+        });
+      } else if (value instanceof File) {
+        bodyData.append(key, value); // single file
+      } else if (typeof value === 'object' && value !== null) {
+        bodyData.append(key, JSON.stringify(value)); // nested object
+      } else {
+        bodyData.append(key, value); // primitive
+      }
+    }
+
+    // Append device info
+    bodyData.append('device_detail', deviceInfo);
+  } else {
+    if (method === 'POST') bodyData = JSON.stringify({ ...filedata, device_detail: deviceInfo });
     if (method === 'GET' && filedata) {
       const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
       url += `?${params}`;
     }
-    if (method === 'delete' && filedata) {
+    if (method === 'DELETE' && filedata) {
       const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
       url += `?${params}`;
     }
+  }
 
-    if (!loaderShowHide) setbodyLoaderShow(true);
-    
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + storage.get('token'),
-        },
-        body: method === 'POST' ? data : undefined,
-      });
-      // console.log(response);
-      return await responseCheck(response, messageAlert);
-    } catch (error) {
-      setbodyLoaderShow(false);
-      console.error('Failed to make API request:', error);
-      return error;
-    }
-  };
+  if (!loaderShowHide) setbodyLoaderShow(true);
+
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        ...(isFileUpload ? {} : { 'Content-Type': 'application/json' }),
+        Authorization: 'Bearer ' + storage.get('token'),
+      },
+      body: method === 'POST' || method === 'PUT' ? bodyData : undefined,
+    });
+
+    return await responseCheck(response, messageAlert);
+  } catch (error) {
+    setbodyLoaderShow(false);
+    console.error('Failed to make API request:', error);
+    return error;
+  }
+};
+
+
 
   // ✅ Response Handler
   const responseCheck = async (response, messageAlert) => {

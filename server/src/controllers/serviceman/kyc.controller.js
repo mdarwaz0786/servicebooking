@@ -4,6 +4,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
 import path from "path";
 import fs from "fs";
+import { create } from "domain";
 
 // Create KYC
 export const createKyc = asyncHandler(async (req, res) => {
@@ -56,6 +57,18 @@ export const createKyc = asyncHandler(async (req, res) => {
       );
     };
 
+    const kycOldLast = await KycModel.findOne({ userId }).sort({createdAt:-1});
+    if(kycOldLast)
+    {
+      if(!passbookOrChequePath) passbookOrChequePath = kycOldLast.passbookOrCheque;
+      if(!panCardImagePath) panCardImagePath = kycOldLast.panCardImage;
+      if(!aadharFrontPath) aadharFrontPath = kycOldLast.aadharFrontImage;
+      if(!aadharBackPath) aadharBackPath = kycOldLast.aadharBackImage;
+      if(!shopImagePath) shopImagePath = kycOldLast.shopImage;
+    }
+
+
+
     const kyc = await KycModel.create({
       ...req.body,
       userId,
@@ -94,7 +107,7 @@ export const createKyc = asyncHandler(async (req, res) => {
 export const getKycById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
-  const kyc = await KycModel.findOne({ userId }).populate("user").populate("profile");
+  const kyc = await KycModel.findOne({ userId }).sort({createdAt:-1}).populate("user").populate("profile");
 
   if (!kyc) throw new ApiError(404, "KYC not found");
 
