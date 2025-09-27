@@ -112,6 +112,13 @@ serviceManBookingSchema.virtual("user", {
   justOne: true
 });
 
+serviceManBookingSchema.virtual("address").get(function () {
+  if (this.serviceman && this.serviceman.addressId) {
+    return this.serviceman.addressId;
+  };
+  return null;
+});
+
 const ServiceManBookingModel = mongoose.model("ServiceManBooking", serviceManBookingSchema);
 
 export default ServiceManBookingModel;

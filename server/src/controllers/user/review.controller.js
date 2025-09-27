@@ -36,7 +36,9 @@ export const getReviews = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (serviceId) filters.serviceId = serviceId;
-  if (userId) filters.userId = userId;
+
+  filters.userId = userId || req.user?._id;
+
   if (status !== undefined) filters.status = status === "true";
 
   let sortOption = {};
@@ -75,7 +77,7 @@ export const getReviews = asyncHandler(async (req, res) => {
 //  Get Single Review
 export const getReviewById = asyncHandler(async (req, res) => {
   const review = await ReviewModel
-    .findById(req.params.id)
+    .findOne({ _id: req.params.id, userId: req.user?._id })
     .populate("user")
     .populate("service");
 
@@ -88,7 +90,7 @@ export const getReviewById = asyncHandler(async (req, res) => {
 export const updateReview = asyncHandler(async (req, res) => {
   const { rating, description, status } = req.body;
 
-  const review = await ReviewModel.findById(req.params.id);
+  const review = await ReviewModel.findOne({ _id: req.params.id, userId: req.user?._id });
   if (!review) throw new ApiError(404, "Review not found");
 
   if (String(review.userId) !== String(req.user?._id)) {
