@@ -1,5 +1,7 @@
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import BookingModel from "../../models/booking.model.js";
+import ReviewModel from "../../models/review.model.js";
+import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -9,11 +11,11 @@ import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 export const getServiceManBookings = asyncHandler(async (req, res) => {
   let { search, status, sort = "desc", page = 1, limit = 10 } = req.query;
 
-  const userId = req.user?._id;
+  // const userId = req.user?._id;
 
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized");
-  };
+  // if (!userId) {
+  //   throw new ApiError(401, "Unauthorized");
+  // };
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -21,7 +23,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 
   const filters = {};
 
-  filters.servicemanId = userId;
+  // filters.servicemanId = userId;
 
   if (search) {
     filters.$or = [
@@ -43,15 +45,40 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 
   let bookings = await ServiceManBookingModel
     .find(filters)
-    .populate("booking serviceman user")
+    .populate("serviceman user")
     .populate({
-      path: "serviceman.addressId",
-      model: "Address",
+      path: "booking",
+      populate: { path: "addressId", model: "Address", strictPopulate: false }
     })
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
     .lean();
+
+  for (let b of bookings) {
+    const review = await ReviewModel
+      .findOne({
+        bookingId: b?.booking?._id,
+      })
+      .populate({
+        path: "userId",
+        select: "mobile",
+      })
+      .lean();
+
+    b.review = review
+      ? {
+        rating: review?.rating,
+        description: review?.description,
+        user: review?.userId
+          ? {
+            _id: review?.userId?._id,
+            mobile: review?.userId?.mobile,
+          }
+          : null,
+      }
+      : null;
+  };
 
   const total = await ServiceManBookingModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -80,15 +107,38 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
 
   const booking = await ServiceManBookingModel
     .findOne({ _id: req.params.id, servicemanId: userId })
-    .populate("booking serviceman user")
+    .populate("serviceman user")
     .populate({
-      path: "serviceman.addressId",
-      model: "Address",
+      path: "booking",
+      populate: { path: "addressId", model: "Address", strictPopulate: false }
     });
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
   };
+
+  const review = await ReviewModel.findOne({
+    bookingId: booking.booking?._id,
+  })
+    .populate({
+      path: "userId",
+      select: "mobile",
+    })
+    .lean();
+
+  booking.review = review
+    ? {
+      rating: review.rating,
+      description: review.description,
+      user: review.userId
+        ? {
+          _id: review.userId._id,
+          mobile: review.userId.mobile,
+          role: review.userId.role,
+        }
+        : null,
+    }
+    : null;
 
   return res.status(200).json({
     success: true,
@@ -104,13 +154,16 @@ export const serviceManBookingOtp = asyncHandler(async (req, res) => {
   const { status } = req.body;
 
   const userId = req.user?._id;
-  if (!userId) throw new ApiError(401, "Unauthorized");
+  if (!userId) throw new ApiError(401, "User not found");
 
-  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: userId });
+  const serviceman = await ServiceManProfileModel.findOne({ userId });
+  if (!serviceman) throw new ApiError(404, "Service man profile not found");
+
+  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
 
   const otp = generateOtp();
-  const booking = await BookingModel.findById(servicemanBooking.bookingId);
+  const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
   booking.otp = "1234";
@@ -121,10 +174,9 @@ export const serviceManBookingOtp = asyncHandler(async (req, res) => {
     success: true,
     message: "OTP sent successfully",
     data: {
-      booking: booking,
-      servicemanBooking: servicemanBooking,
       otp,
       status,
+      servicemanBooking: servicemanBooking
     },
   });
 });
@@ -132,19 +184,23 @@ export const serviceManBookingOtp = asyncHandler(async (req, res) => {
 // Verify OTP Booking
 export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
   const { otp, status } = req.body;
-  const userId = req.user?._id;
-  if (!userId) throw new ApiError(401, "Unauthorized");
 
-  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: userId });
+  const userId = req.user?._id;
+  if (!userId) throw new ApiError(401, "User not found");
+
+  const serviceman = await ServiceManProfileModel.findOne({ userId });
+  if (!serviceman) throw new ApiError(404, "Service man profile not found");
+
+  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
 
-  const booking = await BookingModel.findById(servicemanBooking.bookingId);
+  const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
   if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
 
-  booking.status = status || booking.status;
-  servicemanBooking.status = status || servicemanBooking.status;
+  booking.status = status || booking?.status;
+  servicemanBooking.status = status || servicemanBooking?.status;
 
   const nowDate = new Date();
   const nowTime = getCurrentIndianTime();

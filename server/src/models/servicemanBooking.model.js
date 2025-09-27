@@ -9,7 +9,7 @@ const serviceManBookingSchema = new mongoose.Schema({
   },
   servicemanId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "ServiceManProfile",
     required: true,
   },
   userId: {
@@ -77,6 +77,14 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  images: {
+    type: [String],
+    default: null,
+  },
+  videos: {
+    type: [String],
+    default: null,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -110,13 +118,6 @@ serviceManBookingSchema.virtual("user", {
   localField: "userId",
   foreignField: "_id",
   justOne: true
-});
-
-serviceManBookingSchema.virtual("address").get(function () {
-  if (this.serviceman && this.serviceman.addressId) {
-    return this.serviceman.addressId;
-  };
-  return null;
 });
 
 const ServiceManBookingModel = mongoose.model("ServiceManBooking", serviceManBookingSchema);

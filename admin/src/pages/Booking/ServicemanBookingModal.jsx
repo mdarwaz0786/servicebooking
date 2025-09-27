@@ -128,7 +128,7 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
                 >
                   <option value="">-- Select Service Man --</option>
                   {serviceMen?.map((sm) => (
-                    <option key={sm?._id} value={sm?.userId}>
+                    <option key={sm?._id} value={sm?._id}>
                       {sm?.name}
                     </option>
                   ))}

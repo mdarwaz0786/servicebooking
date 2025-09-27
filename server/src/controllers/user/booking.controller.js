@@ -1,13 +1,14 @@
 import BookingModel from "../../models/booking.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
-import ServiceManProfile from "../../models/servicemanProfile.model.js";
+import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
+import ReviewModel from "../../models/review.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
-import generateBookingId from "../../utils/generateBookingId.js"
+import generateBookingId from "../../utils/generateBookingId.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -119,21 +120,55 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   for (let booking of bookings) {
     const latestAssignment = await ServiceManBookingModel
-      .findOne({ bookingId: booking?._id })
+      .findOne({ bookingId: booking._id })
       .sort({ createdAt: -1 })
       .lean();
 
-    const servicemanId = latestAssignment?.servicemanId;
-    const serviceman = await ServiceManProfile.findOne({ userId: servicemanId }).populate("user");
+    if (latestAssignment) {
+      const serviceman = await ServiceManProfileModel
+        .findOne({ userId: latestAssignment.servicemanId })
+        .populate("user", "mobile")
+        .lean();
 
-    const servicemanDetail = {
-      name: serviceman?.name,
-      email: serviceman?.email,
-      mobile: serviceman?.user?.mobile,
-      profileImage: serviceman?.profileImage,
+      booking.serviceman = serviceman
+        ? {
+          name: serviceman.name,
+          email: serviceman.email,
+          mobile: serviceman.user?.mobile || null,
+          profileImage: serviceman.profileImage,
+        }
+        : null;
+    } else {
+      booking.serviceman = null;
     };
 
-    booking.serviceman = servicemanDetail;
+    const review = await ReviewModel.findOne({
+      bookingId: booking._id,
+      userId: userId,
+    })
+      .populate({
+        path: "servicemanId",
+        select: "name email profileImage userId",
+        populate: { path: "userId", select: "mobile" },
+      })
+      .lean();
+
+    if (review) {
+      booking.review = {
+        rating: review.rating,
+        description: review.description,
+        serviceman: review.servicemanId
+          ? {
+            name: review.servicemanId.name,
+            email: review.servicemanId.email,
+            profileImage: review.servicemanId.profileImage,
+            mobile: review.servicemanId.userId?.mobile || null,
+          }
+          : null,
+      };
+    } else {
+      booking.review = null;
+    };
   };
 
   const total = await BookingModel.countDocuments(filters);
@@ -178,7 +213,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   if (latestAssignment) {
     const servicemanId = latestAssignment?.servicemanId;
-    const serviceman = await ServiceManProfile
+    const serviceman = await ServiceManProfileModel
       .findOne({ userId: servicemanId })
       .populate("user")
       .lean();
@@ -194,6 +229,32 @@ export const getBookingById = asyncHandler(async (req, res) => {
   } else {
     booking.serviceman = null;
   };
+
+  const review = await ReviewModel.findOne({
+    bookingId: booking._id,
+    userId,
+  })
+    .populate({
+      path: "servicemanId",
+      select: "name email profileImage userId",
+      populate: { path: "userId", select: "mobile" },
+    })
+    .lean();
+
+  booking.review = review
+    ? {
+      rating: review.rating,
+      description: review.description,
+      serviceman: review.servicemanId
+        ? {
+          name: review.servicemanId.name,
+          email: review.servicemanId.email,
+          profileImage: review.servicemanId.profileImage,
+          mobile: review.servicemanId.userId?.mobile || null,
+        }
+        : null,
+    }
+    : null;
 
   const items = await BookingItemModel
     .find({ bookingId: booking?._id })

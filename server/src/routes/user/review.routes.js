@@ -11,9 +11,9 @@ import {
 const router = express.Router();
 
 router.post("/", isLoggedIn, createReview);
-router.get("/", getReviews);
-router.get("/:id", getReviewById);
-router.patch("/:id", isLoggedIn, updateReview);
+router.get("/", isLoggedIn, getReviews);
+router.get("/:id", isLoggedIn, getReviewById);
+router.patch("/:id", isLoggedIn, isLoggedIn, updateReview);
 router.delete("/:id", isLoggedIn, deleteReview);
 
 export default router;

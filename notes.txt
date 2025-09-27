@@ -28,3 +28,5 @@ service man
 // actionBy
 
 // PORT=3001
+
+// selfie click api: servicemanId, servicemanBookingId, images, videos in servicemanBooing table

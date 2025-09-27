@@ -7,10 +7,16 @@ const reviewSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
-  serviceId: {
+  bookingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Service",
+    ref: "Booking",
     required: true,
+    index: true,
+  },
+  servicemanId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManProfile",
+    required: false,
     index: true,
   },
   rating: {
@@ -47,9 +53,9 @@ reviewSchema.virtual("user", {
   justOne: true,
 });
 
-reviewSchema.virtual("service", {
-  ref: "Service",
-  localField: "serviceId",
+reviewSchema.virtual("booking", {
+  ref: "Booking",
+  localField: "bookingId",
   foreignField: "_id",
   justOne: true,
 });
