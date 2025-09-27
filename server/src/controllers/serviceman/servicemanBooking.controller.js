@@ -44,6 +44,10 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   let bookings = await ServiceManBookingModel
     .find(filters)
     .populate("booking serviceman user")
+    .populate({
+      path: "serviceman.addressId",
+      model: "Address",
+    })
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -77,6 +81,10 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
   const booking = await ServiceManBookingModel
     .findOne({ _id: req.params.id, servicemanId: userId })
     .populate("booking serviceman user")
+    .populate({
+      path: "serviceman.addressId",
+      model: "Address",
+    });
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
