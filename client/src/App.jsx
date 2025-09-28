@@ -14,9 +14,12 @@ import CategoriesPage from "./pages/Categories/CategoriesPage";
 import SearchPage from "./pages/Search/SearchPage";
 import ProvidersPage from "./pages/Providers/ProvidersPage";
 import ProviderDetailsPage from "./pages/ProviderDetails/ProviderDetailsPage";
+
+
 import UserLayout from "./pages/UserPanel/UserLayout";
 import UserDashboard from "./pages/UserPanel/UserDashboard";
 import UserBookingPage from "./pages/UserPanel/Booking/UserBookingPage";
+import UserAddressPage from "./pages/UserPanel/Address/UserAddressPage";
 import UserBookingDetailPage from "./pages/UserPanel/Booking/UserBookingDetailPage";
 import UserFavouritesPage from "./pages/UserPanel/Favourites/UserFavouritesPage";
 import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
@@ -31,6 +34,8 @@ import ServiceManBookingPage from "./pages/ServiceManPanel/Booking/ServiceManBoo
 import KycForm from "./pages/ServiceManPanel/Kyc/KycForm";
 import ProfileForm from "./pages/ServiceManPanel/Profile/ProfileForm";
 import ServiceManDashboard from "./pages/ServiceManPanel/Dashboard/ServiceManDashboard";
+
+import ServiceManReviewPage from "./pages/ServiceManPanel/Review/ServiceManReviewPage";
 
 
 
@@ -63,10 +68,11 @@ const App = () => {
         <Route element={<UserLayout />}>
           <Route path="/user" element={<UserBookingPage />} />
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
-          <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/user/dashboard" element={<UserDashboard />} />
+          <Route path="/user/address" element={<UserAddressPage />} />
+          <Route path="/user/reviews" element={<UserReviewsPage />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
           <Route path="/user-wallet" element={<UserWalletPage />} />
-          <Route path="/user-reviews" element={<UserReviewsPage />} />
         </Route>
         <Route path="/register" element={<RegisterPage />} />
 
@@ -77,9 +83,10 @@ const App = () => {
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
           <Route path="/serviceman/profile" element={<ProfileForm />} />
           <Route path="/serviceman/kyc" element={<KycForm />} />
+
+          <Route path="/serviceman/reviews" element={<ServiceManReviewPage />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
           <Route path="/user-wallet" element={<UserWalletPage />} />
-          <Route path="/user-reviews" element={<UserReviewsPage />} />
         </Route>
 
 

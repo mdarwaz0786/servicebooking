@@ -99,13 +99,16 @@ export const AppProvider = ({ children }) => {
       timeSlot: `${commurl}time-slot/available/by-date`,
 
       addRemoveCart: `${commurl}cart/create-cart`,
+
+      createTransaction: `${commurl}payment/create-order`,
+      verifyTransaction: `${commurl}payment/verify-payment`,
       
       createBooking: `${userUrl}booking/create-booking`,
       myBooking: `${userUrl}booking`,
       myBookingDetail: `${userUrl}booking`,
-
-      createTransaction: `${commurl}payment/create-order`,
-      verifyTransaction: `${commurl}payment/verify-payment`,
+      
+      myReview: `${userUrl}review`,
+      myReviewRemove: `${userUrl}review`,
 
       // service man urls
       serviceManlogin: `${servicemanUrl}auth/login`,
@@ -117,6 +120,9 @@ export const AppProvider = ({ children }) => {
       serviceManProfileUpdate: `${servicemanUrl}profile`,
 
       serviceManBooking: `${servicemanUrl}booking`,
+      serviceManBookingAccept: `${servicemanUrl}booking/accept`,
+      serviceManBookingOtp: `${servicemanUrl}booking/booking-start-otp`,
+      serviceManBookingOtpVerify: `${servicemanUrl}booking/booking-start-otp-verify`,
 
       // service man urls end
 
@@ -376,6 +382,7 @@ const imageCheck = (path, defaultImg = null) => {
     loginModal: false,
     serviceManJoinModal: false,
     addressModal: false,
+    BookignStartModal: false,
   });
   const toggleModal = (modalName, isOpen) => {
     setModals((prev) => ({

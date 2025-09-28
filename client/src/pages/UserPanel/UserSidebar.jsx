@@ -16,55 +16,43 @@ const UserSidebar = () => {
         <div className="card-body user-sidebar-body p-0">
           <ul>
             <li className="mb-4">
-              <Link to="user-dashboard" className="d-flex align-items-center active">
+              <Link to="/user" className="d-flex align-items-center active">
                 <i className="ti ti-layout-grid me-2" />
                 Dashboard
               </Link>
             </li>
             <li className="mb-4">
-              <Link to="/user-booking" className="d-flex align-items-center">
+              <Link to="/user" className="d-flex align-items-center">
                 <i className="ti ti-device-mobile me-2" />
                 Bookings
               </Link>
             </li>
-            <li className="mb-4">
+            {/* <li className="mb-4">
               <Link to="/user-favourites" className="d-flex align-items-center">
                 <i className="ti ti-heart me-2" />
                 Favorites
               </Link>
-            </li>
-            <li className="mb-4">
+            </li> */}
+            {/* <li className="mb-4">
               <Link to="/user-wallet" className="d-flex align-items-center">
                 <i className="ti ti-wallet me-2" />
                 Wallet
               </Link>
+            </li> */}
+            <li className="mb-4">
+              <Link to="/user/address" className="d-flex align-items-center">
+                <i className="ti ti-map-pin me-2" />
+                Address
+              </Link>
             </li>
             <li className="mb-4">
-              <Link to="/user-reviews" className="d-flex align-items-center">
+              <Link to="/user/reviews" className="d-flex align-items-center">
                 <i className="ti ti-star me-2" />
                 Reviews
               </Link>
             </li>
-            <li className="submenu">
-              <Link to="#" className="d-block mb-3"><i className="ti ti-settings me-2" /><span>Settings</span><span className="menu-arrow" /></Link>
-              <ul className="ms-4">
-                <li className="mb-3">
-                  <Link to="/account-settings" className="fs-14 d-inline-flex align-items-center"><i className="ti ti-chevrons-right me-2" />Account Settings</Link>
-                </li>
-                <li className="mb-3">
-                  <Link to="/security-settings" className="fs-14 d-inline-flex align-items-center"><i className="ti ti-chevrons-right me-2" />Security Settings</Link>
-                </li>
-                <li className="mb-3">
-                  <Link to="/notification-settings" className="fs-14 d-inline-flex align-items-center"><i className="ti ti-chevrons-right me-2" />Notifications</Link>
-                </li>
-                <li className="mb-3">
-                  <Link to="/connected-apps" className="fs-14 d-inline-flex align-items-center"><i className="ti ti-chevrons-right me-2" />Connected Apps</Link>
-                </li>
-                <li className="mb-3">
-                  <Link to="/javascript:void(0);" data-bs-toggle="modal" data-bs-target="#del-account" className="fs-14"><i className="ti ti-chevrons-right me-2" />Delete Account</Link>
-                </li>
-              </ul>
-            </li>
+            
+            
             <li className="mb-0">
               <Link to="/login" className="d-flex align-items-center">
                 <i className="ti ti-logout me-2" />
