@@ -126,6 +126,13 @@ bookingSchema.virtual("serviceman", {
   justOne: true,
 });
 
+bookingSchema.virtual("bookingItems", {
+  ref: "BookingItem",
+  localField: "_id",
+  foreignField: "bookingId",
+  justOne: false,
+});
+
 const BookingModel = mongoose.model("Booking", bookingSchema);
 
 export default BookingModel;

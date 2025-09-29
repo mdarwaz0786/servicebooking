@@ -1,12 +1,12 @@
 import asyncHandler from "../../helpers/asyncHandler.js";
-import ApiError from "../../helpers/apiError.js";
 import CategoryModel from "../../models/category.model.js";
+import HomePageServiceModel from "../../models/homePageService.model.js";
+import HomePageBannerModel from "../../models/homePageBanner.model.js";
 import { getCartData } from "../../utils/cart.utils.js";
 
 // Get home page data
 export const getHomePageData = asyncHandler(async (req, res) => {
   const userId = req.query.userId;
-
 
   // Fetch active categories
   let categories = await CategoryModel
@@ -56,12 +56,25 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   // Fetch user's cart data
   let cart = await getCartData(userId);
 
+  // Fetch active home page services
+  const services = await HomePageServiceModel.find({ status: true })
+    .populate("services", "name image")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // Fetch active home page banners
+  const banners = await HomePageBannerModel.find({ status: true })
+    .sort({ createdAt: -1 })
+    .lean();
+
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
     data: {
       category: categories,
       cart: cart,
+      service: services,
+      banner: banners,
     },
   });
 });

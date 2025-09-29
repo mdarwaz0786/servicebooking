@@ -4,7 +4,7 @@ import {
   createServiceManProfile,
   getServiceManProfileById,
 } from "../../controllers/serviceman/servicemanProfile.controller.js";
-import upload from "../../middlewares/multer.middleware.js"
+import upload from "../../middlewares/multer.middleware.js";
 import validateFileSize from "../../middlewares/validateFileSize.middleware.js";
 
 const router = express.Router();

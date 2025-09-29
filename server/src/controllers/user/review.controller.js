@@ -52,7 +52,18 @@ export const getReviews = asyncHandler(async (req, res) => {
   let reviews = await ReviewModel
     .find(filters)
     .populate("user")
-    .populate("booking")
+    .populate({
+      path: "booking",
+      populate: {
+        path: "bookingItems",
+        strictPopulate: false,
+        populate: {
+          path: "service",
+          strictPopulate: false,
+          select: "name image"
+        }
+      }
+    })
     .populate({
       path: "servicemanId",
       strictPopulate: false,
@@ -107,7 +118,18 @@ export const getReviewById = asyncHandler(async (req, res) => {
   let review = await ReviewModel
     .findOne({ _id: req.params.id, userId: req.user?._id })
     .populate("user")
-    .populate("booking")
+    .populate({
+      path: "booking",
+      populate: {
+        path: "bookingItems",
+        strictPopulate: false,
+        populate: {
+          path: "service",
+          strictPopulate: false,
+          select: "name image"
+        }
+      }
+    })
     .populate({
       path: "servicemanId",
       select: "name email profileImage userId",

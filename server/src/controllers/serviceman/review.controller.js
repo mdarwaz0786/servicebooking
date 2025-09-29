@@ -38,7 +38,18 @@ export const getReviews = asyncHandler(async (req, res) => {
   let reviews = await ReviewModel
     .find(filters)
     .populate("user")
-    .populate("booking")
+    .populate({
+      path: "booking",
+      populate: {
+        path: "bookingItems",
+        strictPopulate: false,
+        populate: {
+          path: "service",
+          strictPopulate: false,
+          select: "name image"
+        }
+      }
+    })
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -75,7 +86,18 @@ export const getReviewById = asyncHandler(async (req, res) => {
   const review = await ReviewModel
     .findOne({ _id: req.params.id, servicemanId })
     .populate("user")
-    .populate("booking")
+    .populate({
+      path: "booking",
+      populate: {
+        path: "bookingItems",
+        strictPopulate: false,
+        populate: {
+          path: "service",
+          strictPopulate: false,
+          select: "name image"
+        }
+      }
+    })
     .lean();
 
   if (!review) throw new ApiError(404, "Review not found");

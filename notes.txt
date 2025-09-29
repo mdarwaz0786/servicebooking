@@ -30,3 +30,6 @@ service man
 // PORT=3001
 
 // selfie click api: servicemanId, servicemanBookingId, images, videos in servicemanBooing table
+
+// home page service table = services, title, status
+// home page banner = image, title, link

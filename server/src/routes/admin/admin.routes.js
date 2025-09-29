@@ -18,6 +18,8 @@ import trainingScheduleRoutes from "./trainingSchedule.routes.js";
 import earningRoutes from "./earning.routes.js";
 import servicemanBookingRoutes from "./servicemanBooking.routes.js";
 import transactionRoutes from "./transaction.routes.js";
+import homePageBannerRoutes from "./homePageBanner.routes.js";
+import homePageSeviceRoutes from "./homePageService.routes.js";
 
 const router = express.Router();
 
@@ -40,5 +42,7 @@ router.use("/training-schedule", trainingScheduleRoutes);
 router.use("/earning", earningRoutes);
 router.use("/serviceman-booking", servicemanBookingRoutes);
 router.use("/transaction", transactionRoutes);
+router.use("/home-page-banner", homePageBannerRoutes);
+router.use("/home-page-service", homePageSeviceRoutes);
 
 export default router;

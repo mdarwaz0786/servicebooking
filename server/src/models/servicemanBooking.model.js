@@ -37,6 +37,9 @@ const serviceManBookingSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
+  selfie: {
+    type: String,
+  },
   startDate: {
     type: Date,
     default: null,

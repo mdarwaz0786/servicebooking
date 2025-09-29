@@ -50,7 +50,23 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
     .populate({
       path: "booking",
       select: "-otp",
-      populate: { path: "addressId", model: "Address", strictPopulate: false },
+      populate: [
+        {
+          path: "addressId",
+          model: "Address",
+          strictPopulate: false,
+        },
+        {
+          path: "bookingItems",
+          strictPopulate: false,
+          populate: {
+            path: "service",
+            model: "Service",
+            select: "name image",
+            strictPopulate: false,
+          },
+        },
+      ],
     })
     .sort(sortOption)
     .skip(skip)
@@ -113,8 +129,25 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
     .populate("serviceman user")
     .populate({
       path: "booking",
-      populate: { path: "addressId", model: "Address", strictPopulate: false }
-    });
+      select: "-otp",
+      populate: [
+        {
+          path: "addressId",
+          model: "Address",
+          strictPopulate: false,
+        },
+        {
+          path: "bookingItems",
+          strictPopulate: false,
+          populate: {
+            path: "service",
+            model: "Service",
+            select: "name image",
+            strictPopulate: false,
+          },
+        },
+      ],
+    })
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
@@ -333,43 +366,58 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
   const { otp } = req.body;
   let status = 'ongoing';
 
-  const userId = req.user?._id;
-  if (!userId) throw new ApiError(401, "User not found");
+  try {
+    const userId = req.user?._id;
+    if (!userId) throw new ApiError(401, "User not found");
 
-  const serviceman = await ServiceManProfileModel.findOne({ userId });
-  if (!serviceman) throw new ApiError(404, "Service man profile not found");
+    const serviceman = await ServiceManProfileModel.findOne({ userId });
+    if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
-  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
-  if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
+    const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
+    if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
 
-  const booking = await BookingModel.findById(servicemanBooking?.bookingId);
-  if (!booking) throw new ApiError(404, "Booking not found");
+    const booking = await BookingModel.findById(servicemanBooking?.bookingId);
+    if (!booking) throw new ApiError(404, "Booking not found");
 
-  if (status != 'accept')
-    if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
+    if (status != 'accept')
+      if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
 
-  booking.status = status || booking?.status;
-  servicemanBooking.status = status || servicemanBooking?.status;
+    if (req.file && req.file.buffer) {
+      selfiePath = await compressImage(
+        req.file.buffer,
+        "servicemanSelfies",
+      );
+      servicemanBooking.selfie = selfiePath;
+    };
 
-  const nowDate = new Date();
-  const nowTime = getCurrentIndianTime();
+    booking.status = status || booking?.status;
+    servicemanBooking.status = status || servicemanBooking?.status;
 
-  if (!servicemanBooking.startDate) servicemanBooking.startDate = nowDate;
-  if (!servicemanBooking.startTime) servicemanBooking.startTime = nowTime;
+    const nowDate = new Date();
+    const nowTime = getCurrentIndianTime();
 
-  servicemanBooking.updatedBy = userId;
-  servicemanBooking.actionById = userId;
-  booking.actionById = userId;
+    if (!servicemanBooking.startDate) servicemanBooking.startDate = nowDate;
+    if (!servicemanBooking.startTime) servicemanBooking.startTime = nowTime;
 
-  await booking.save();
-  await servicemanBooking.save();
+    servicemanBooking.updatedBy = userId;
+    servicemanBooking.actionById = userId;
+    booking.actionById = userId;
 
-  return res.status(200).json({
-    success: true,
-    message: "OTP verified & status updated successfully",
-    data: {
-      booking,
-      servicemanBooking: servicemanBooking,
-    },
-  });
+    await booking.save();
+    await servicemanBooking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified & status updated successfully",
+      data: {
+        booking,
+        servicemanBooking: servicemanBooking,
+      },
+    });
+  } catch (error) {
+    if (selfiePath && fs.existsSync(path.join(process.cwd(), selfiePath))) {
+      fs.unlinkSync(path.join(process.cwd(), selfiePath));
+    };
+    throw error;
+  };
 });

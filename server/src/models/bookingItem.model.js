@@ -32,7 +32,7 @@ const bookingItemSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 bookingItemSchema.index({ addressId: 1, userId: 1, status: 1 });
 

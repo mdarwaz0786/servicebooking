@@ -116,6 +116,15 @@ export const getBookings = asyncHandler(async (req, res) => {
     .find(filters)
     .populate({ path: "user", select: "-password" })
     .populate("address")
+    .populate({
+      path: "bookingItems",
+      strictPopulate: false,
+      populate: {
+        path: "service",
+        select: "name image",
+        strictPopulate: false,
+      },
+    })
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
