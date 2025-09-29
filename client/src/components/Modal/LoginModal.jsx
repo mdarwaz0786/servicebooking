@@ -3,8 +3,8 @@ import React from "react";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
-import Categories from "../Category/Categories";
 import LoginForm from "../../pages/Login/LoginForm";
+import { Link } from "react-router-dom";
 
 const LoginModal = () => {
 
@@ -16,21 +16,21 @@ const LoginModal = () => {
         id="provider"
     >
 
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content">
-          {/* Modal Header */}
-          <div className="modal-header d-flex align-items-center justify-content-between">
-            <h5></h5>
-            <a
-              data-bs-dismiss="modal"
-              aria-label="Close"
+      <div className="modal-dialog modal-md modal-dialog-centered">
+        <div className="modal-content" style={{background: 'transparent', border: 0}}>
+
+          <div className="wizard-fieldset">
+          <Link
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                zIndex: 1,
+              }}
               onClick={() => toggleModal("loginModal",false)}
             >
               <i className="ti ti-circle-x-filled fs-20"></i>
-            </a>
-          </div>
-
-          <div className="wizard-fieldset p-4">
+            </Link>
             
             <LoginForm />
             

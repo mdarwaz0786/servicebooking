@@ -5,6 +5,7 @@ import { useContext } from "react";
 
 
 import ServiceManJoinForm from "../../pages/Login/ServiceManJoinForm";
+import { Link } from "react-router-dom";
 
 const ServiceManJoinModal = () => {
 
@@ -15,27 +16,30 @@ const ServiceManJoinModal = () => {
         className={`modal fade ${modals.serviceManJoinModal ? "show" : ""}`}
     >
 
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content">
-          {/* Modal Header */}
-          <div className="modal-header d-flex align-items-center justify-content-between">
-            <h5></h5>
-            <a
-              data-bs-dismiss="modal"
-              aria-label="Close"
+
+      <div className="modal-dialog modal-md modal-dialog-centered">
+        <div className="modal-content" style={{background: 'transparent', border: 0}}>
+
+          <div className="wizard-fieldset">
+          <Link
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                zIndex: 1,
+              }}
               onClick={() => toggleModal("serviceManJoinModal",false)}
             >
               <i className="ti ti-circle-x-filled fs-20"></i>
-            </a>
-          </div>
-
-          <div className="wizard-fieldset p-4">
+            </Link>
             
             <ServiceManJoinForm />
             
           </div>
         </div>
       </div>
+
+      
     </div>
   );
 };
