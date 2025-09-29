@@ -77,13 +77,21 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-  images: {
+  beforeStartImages: {
     type: [String],
-    default: null,
+    default: [],
   },
-  videos: {
+  beforeStartVideos: {
     type: [String],
-    default: null,
+    default: [],
+  },
+  afterCompleteImages: {
+    type: [String],
+    default: [],
+  },
+  afterCompleteVideos: {
+    type: [String],
+    default: [],
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

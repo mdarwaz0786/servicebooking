@@ -142,26 +142,6 @@ export const getReviewById = asyncHandler(async (req, res) => {
   });
 });
 
-// Update Review
-export const updateReview = asyncHandler(async (req, res) => {
-  const { rating, description } = req.body;
-
-  const review = await ReviewModel.findOne({ _id: req.params.id, userId: req.user?._id });
-  if (!review) throw new ApiError(404, "Review not found");
-
-  if (String(review.userId) !== String(req.user?._id)) {
-    throw new ApiError(403, "You are not allowed to update this review");
-  };
-
-  review.rating = rating || review.rating;
-  review.description = description || review.description;
-  review.updatedBy = req.user?._id;
-
-  await review.save();
-
-  return res.status(200).json({ success: true, message: "Updated successfully", data: review });
-});
-
 // Delete Review
 export const deleteReview = asyncHandler(async (req, res) => {
   const review = await ReviewModel.findById(req.params.id);

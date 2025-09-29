@@ -8,6 +8,8 @@ import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateBookingId from "../../utils/generateBookingId.js";
 
+const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
+
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
   const { pId, type } = req.body;
@@ -112,6 +114,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       paymentStatus: 1,
       paymentBy: "razorpay",
       createdBy: req.user?._id,
+      opt: "1234"
     }, { new: true })
   }
   else if (transactionData.productType == 'subscription') {

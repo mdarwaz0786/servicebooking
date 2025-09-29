@@ -7,16 +7,16 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 
-
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
   let { search, status, sort = "desc", page = 1, limit = 10 } = req.query;
 
-  // const userId = req.user?._id;
+  const userId = req.user?._id;
 
-  // if (!userId) {
-  //   throw new ApiError(401, "Unauthorized");
-  // };
+  if (!userId) throw new ApiError(401, "User not found");
+
+  const serviceman = await ServiceManProfileModel.findOne({ userId });
+  if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -24,7 +24,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 
   const filters = {};
 
-  // filters.servicemanId = userId;
+  filters.servicemanId = serviceman?._id;
 
   if (search) {
     filters.$or = [
@@ -49,7 +49,8 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
     .populate("serviceman user")
     .populate({
       path: "booking",
-      populate: { path: "addressId", model: "Address", strictPopulate: false }
+      select: "-otp",
+      populate: { path: "addressId", model: "Address", strictPopulate: false },
     })
     .sort(sortOption)
     .skip(skip)
@@ -102,12 +103,13 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 export const getServiceManBookingById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized");
-  };
+  if (!userId) throw new ApiError(401, "User not found");
+
+  const serviceman = await ServiceManProfileModel.findOne({ userId });
+  if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
   const booking = await ServiceManBookingModel
-    .findOne({ _id: req.params.id, servicemanId: userId })
+    .findOne({ _id: req.params.id, servicemanId: serviceman?._id })
     .populate("serviceman user")
     .populate({
       path: "booking",
@@ -198,8 +200,8 @@ export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  if(status!='accept')
-  if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
+  if (status != 'accept')
+    if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
 
   booking.status = status || booking?.status;
   servicemanBooking.status = status || servicemanBooking?.status;
@@ -251,8 +253,6 @@ export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
   });
 });
 
-
-
 // Accept Booking
 export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   // const { status } = req.body;
@@ -270,7 +270,6 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
-
   booking.status = status || booking?.status;
   servicemanBooking.status = status || servicemanBooking?.status;
 
@@ -279,7 +278,6 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
 
   servicemanBooking.acceptDate = nowDate;
   servicemanBooking.acceptTime = nowTime;
-  
 
   servicemanBooking.updatedBy = userId;
   servicemanBooking.actionById = userId;
@@ -297,8 +295,6 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
     },
   });
 });
-
-
 
 // Generate OTP Booking
 export const serviceManBookingStartOtp = asyncHandler(async (req, res) => {
@@ -335,7 +331,7 @@ export const serviceManBookingStartOtp = asyncHandler(async (req, res) => {
 // Verify OTP Booking
 export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => {
   const { otp } = req.body;
-  let status ='ongoing';
+  let status = 'ongoing';
 
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "User not found");
@@ -349,19 +345,17 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  if(status!='accept')
-  if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
+  if (status != 'accept')
+    if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
 
   booking.status = status || booking?.status;
-  servicemanBooking.status = status || servicemanBooking?.status; 
+  servicemanBooking.status = status || servicemanBooking?.status;
 
   const nowDate = new Date();
   const nowTime = getCurrentIndianTime();
 
-
   if (!servicemanBooking.startDate) servicemanBooking.startDate = nowDate;
   if (!servicemanBooking.startTime) servicemanBooking.startTime = nowTime;
-
 
   servicemanBooking.updatedBy = userId;
   servicemanBooking.actionById = userId;

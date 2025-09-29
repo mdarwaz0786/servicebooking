@@ -10,6 +10,8 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateBookingId from "../../utils/generateBookingId.js";
 
+const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
+
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
@@ -48,6 +50,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     discountAmount: amountData.discountAmount,
     payableAmount: amountData.payableAmount,
     isCouponUsed,
+    otp: "1234",
     createdBy: userId,
   });
 
@@ -132,10 +135,10 @@ export const getBookings = asyncHandler(async (req, res) => {
 
       booking.serviceman = serviceman
         ? {
-          name: serviceman.name,
-          email: serviceman.email,
-          mobile: serviceman.user?.mobile || null,
-          profileImage: serviceman.profileImage,
+          name: serviceman?.name,
+          email: serviceman?.email,
+          mobile: serviceman?.user?.mobile || null,
+          profileImage: serviceman?.profileImage,
         }
         : null;
     } else {
@@ -143,7 +146,7 @@ export const getBookings = asyncHandler(async (req, res) => {
     };
 
     const review = await ReviewModel.findOne({
-      bookingId: booking._id,
+      bookingId: booking?._id,
       userId: userId,
     })
       .populate({
@@ -155,14 +158,14 @@ export const getBookings = asyncHandler(async (req, res) => {
 
     if (review) {
       booking.review = {
-        rating: review.rating,
-        description: review.description,
-        serviceman: review.servicemanId
+        rating: review?.rating,
+        description: review?.description,
+        serviceman: review?.servicemanId
           ? {
-            name: review.servicemanId.name,
-            email: review.servicemanId.email,
-            profileImage: review.servicemanId.profileImage,
-            mobile: review.servicemanId.userId?.mobile || null,
+            name: review?.servicemanId?.name,
+            email: review?.servicemanId?.email,
+            profileImage: review?.servicemanId?.profileImage,
+            mobile: review?.servicemanId?.userId?.mobile || null,
           }
           : null,
       };
@@ -231,7 +234,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   };
 
   const review = await ReviewModel.findOne({
-    bookingId: booking._id,
+    bookingId: booking?._id,
     userId,
   })
     .populate({
@@ -243,14 +246,14 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   booking.review = review
     ? {
-      rating: review.rating,
-      description: review.description,
-      serviceman: review.servicemanId
+      rating: review?.rating,
+      description: review?.description,
+      serviceman: review?.servicemanId
         ? {
-          name: review.servicemanId.name,
-          email: review.servicemanId.email,
-          profileImage: review.servicemanId.profileImage,
-          mobile: review.servicemanId.userId?.mobile || null,
+          name: review?.servicemanId?.name,
+          email: review?.servicemanId?.email,
+          profileImage: review?.servicemanId?.profileImage,
+          mobile: review?.servicemanId?.userId?.mobile || null,
         }
         : null,
     }
