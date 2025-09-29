@@ -1,8 +1,8 @@
 import ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "ffmpeg-static"; // cross-platform FFmpeg binary
+import ffmpegPath from "ffmpeg-static";
 import fs from "fs";
 import path from "path";
-import ApiError from "./apiError";
+import ApiError from "./apiError.js";
 
 // Set the path to FFmpeg binary
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -41,7 +41,7 @@ const compressVideo = async (buffer, folder = "videos", crf = 28, preset = "very
         .save(finalPath);
     } catch (err) {
       reject(new ApiError(500, "Video compression failed: " + err.message));
-    }
+    };
   });
 };
 

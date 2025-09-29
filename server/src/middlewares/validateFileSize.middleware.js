@@ -1,10 +1,9 @@
 import ApiError from "../helpers/apiError.js";
 
 const SIZE_LIMITS = {
-<<<<<<< HEAD
-  image: 10 * 1024 * 1024,   // 10MB
+  image: 100 * 1024 * 1024,   // 100MB
   video: 100 * 1024 * 1024,  // 100MB
-  pdf: 20 * 1024 * 1024,     // 20MB
+  pdf: 100 * 1024 * 1024,     // 100MB
 };
 
 const checkSize = (file) => {
@@ -23,9 +22,6 @@ const checkSize = (file) => {
   };
 
   return null;
-=======
-  image: 1000 * 1024 * 1024,
->>>>>>> f8da22d77cea8ec1f32fa96e32a35eefbf477625
 };
 
 const validateFileSize = (req, res, next) => {

@@ -5,6 +5,7 @@ import profileRoutes from "./servicemanProfile.routes.js";
 import trainingScheduleRoutes from "./trainingSchedule.routes.js";
 import earningRoutes from "./earning.routes.js";
 import bookingRoutes from "./servicemanBooking.routes.js";
+import servicemanBookingUploadsRoutes from "./servicemanBookingUploads.routes.js";
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use("/profile", profileRoutes);
 router.use("/training-schedule", trainingScheduleRoutes);
 router.use("/earning", earningRoutes);
 router.use("/booking", bookingRoutes);
+router.use("/servicemanBookingUploads", servicemanBookingUploadsRoutes);
 
 export default router;
