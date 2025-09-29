@@ -1,11 +1,7 @@
 import ApiError from "../helpers/apiError.js";
 
 const SIZE_LIMITS = {
-<<<<<<< HEAD
-  image: 100 * 1024 * 1024,   // 100MB
-=======
   image: 10 * 1024 * 1024,   // 10MB
->>>>>>> 2bfa018a1ef8f703335250cb75d825e14310c350
   video: 100 * 1024 * 1024,  // 100MB
   pdf: 100 * 1024 * 1024,     // 100MB
 };
@@ -19,7 +15,7 @@ const checkSize = (file) => {
 
   if (mimetype.startsWith("video/") && size > SIZE_LIMITS.video) {
     return `${originalname} exceeds 100MB video size limit.`;
-  }; 
+  };
 
   if (mimetype === "application/pdf" && size > SIZE_LIMITS.pdf) {
     return `${originalname} exceeds 20MB PDF size limit.`;
