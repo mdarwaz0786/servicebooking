@@ -36169,4 +36169,44 @@ animation-delay: 1.56s;
     height: 80px;
 }
 
+.booking-otp {
+  display: flex;
+  justify-content: center;
+  gap: 5px; /* space between numbers */
+  margin: 10px 0;
+}
+
+.booking-otp span {
+  width: 20px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  border: 1px solid #4CAF50;
+  border-radius: 5px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s 
+ease;
+}
+
+.booking-otp span:hover {
+  border-color: #2196F3;  /* blue on hover */
+  background: #e8f4ff;
+  transform: translateY(-3px);
+}
+
+.selfie-round {
+  width: 300px;          /* same as Webcam width */
+  height: 300px;         /* make it square to get a perfect circle */
+  border-radius: 50%;    /* 🔵 makes it round */
+  object-fit: cover;     /* crop/cover to fill the circle */
+  overflow: hidden;
+  border: 3px solid #00bfa5; /* optional border */
+}
+
+
 /*# sourceMappingURL=style.css.map */

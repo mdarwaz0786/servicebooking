@@ -35,7 +35,7 @@ const Sidebar = () => {
              
               
               <li>
-                <Link href="provider-reviews.html">
+                <Link to={'serviceman/reviews'}>
                   <i className="ti ti-star" />
                   <span>Reviews</span>
                 </Link>

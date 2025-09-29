@@ -53,6 +53,12 @@ const BookingListCard = ({handlePagination}) => {
                     </div>
                 </div>
                 <div>
+                    <div className="booking-otp">
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                    </div>
                     <Link to={`booking/`+value._id} className="btn btn-light" >View Detail</Link>
                 </div>
             </div>

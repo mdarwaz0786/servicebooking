@@ -22,7 +22,7 @@ const UserLayout = () => {
                 <>
                   {(user?.role=='user')?(
                     <>
-                      {/* <Sidebar /> */}
+                      <Sidebar />
                       <Outlet />
                     </>
                     ):(
