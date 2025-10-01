@@ -36,6 +36,9 @@ import ServicemanProfileDetailPage from "../pages/ServicemanProfile/ServicemanPr
 import HomeBannerListPage from "../pages/HomeBanner/HomeBannerListPage";
 import AddHomeBannerPage from "../pages/HomeBanner/AddHomeBannerPage";
 import UpdateHomeBannerPage from "../pages/HomeBanner/UpdateHomeBannerPage";
+import HomeServiceListPage from "../pages/HomeService/HomeServiceListPage";
+import AddHomeServicePage from "../pages/HomeService/AddHomeServicePage";
+import UpdateHomeServicePage from "../pages/HomeService/UpdateHomeServicePage";
 
 const routesConfig = {
   private: [
@@ -84,6 +87,10 @@ const routesConfig = {
     { path: "/home-banner", element: HomeBannerListPage },
     { path: "/add-home-banner", element: AddHomeBannerPage },
     { path: "/update-home-banner/:id", element: UpdateHomeBannerPage },
+
+    { path: "/home-service", element: HomeServiceListPage },
+    { path: "/add-home-service", element: AddHomeServicePage },
+    { path: "/update-home-service/:id", element: UpdateHomeServicePage },
 
     { path: "/users", element: UserListPage },
   ],

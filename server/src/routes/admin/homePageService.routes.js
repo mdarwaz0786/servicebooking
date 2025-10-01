@@ -11,7 +11,7 @@ import isLoggedIn from "../../middlewares/admin/auth.middleware.js";
 const router = express.Router();
 
 router.post("/", isLoggedIn, createHomePageService);
-router.put("/:id", isLoggedIn, updateHomePageService);
+router.patch("/:id", isLoggedIn, updateHomePageService);
 router.get("/", getHomePageServices);
 router.get("/:id", getHomePageServiceById);
 router.delete("/:id", isLoggedIn, deleteHomePageService);
