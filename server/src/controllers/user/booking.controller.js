@@ -138,7 +138,7 @@ export const getBookings = asyncHandler(async (req, res) => {
 
     if (latestAssignment) {
       const serviceman = await ServiceManProfileModel
-        .findOne({ userId: latestAssignment.servicemanId })
+        .findOne({ _id: latestAssignment.servicemanId })
         .populate("user", "mobile")
         .lean();
 
