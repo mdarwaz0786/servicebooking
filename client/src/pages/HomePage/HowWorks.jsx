@@ -1,7 +1,7 @@
 
 const HowWorks = () => {
   return (
-    <section className="section pt-0">
+    <section className="section" style={{background:'#F5F5F5'}}>
       <div className="container">
         <div className="work-section bg-black m-0">
           <div className="row align-items-center bg-01">

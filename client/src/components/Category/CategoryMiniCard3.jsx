@@ -14,7 +14,7 @@ const CategoryMiniCard3 = ({ data = [], handleSubCategory, className='' }) => {
             key={index} 
             >
                 <div className="category-item text-center flex-fill wow fadeInUp" data-wow-delay="0.2s">
-                  <div className="mx-auto mb-3">
+                  <div className="mx-auto mb-1">
                     <img src={imageCheck(value.icon)} className="img-fluid" alt="img" />
                   </div>
                   <h6 className="fs-10 mb-1">{value.name}</h6>              

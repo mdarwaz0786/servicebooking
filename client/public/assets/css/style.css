@@ -13481,8 +13481,9 @@ html.menu-opened body {
 }
 
 footer .footer-top {
-  background-color: #F6F7F7;
+  background-color: #f7f1f1;
   padding: 40px 0 24px;
+  margin-top: 40px;
 }
 
 footer .footer-top .footer-widget {
@@ -13523,7 +13524,7 @@ footer .footer-top .dropdown a img {
 }
 
 footer .footer-bottom {
-  background-color: #F6F7F7;
+  background-color: #f7f1f1;
   border-top: 1px solid #EBECED;
   padding: 20px 0 12px;
 }
@@ -13597,8 +13598,8 @@ footer .form-control {
 }
 
 .social-icon li a {
-  width: 24px;
-  height: 24px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   color: #FFF;
   -webkit-box-align: center;
@@ -15578,9 +15579,10 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
   margin-top: 40px;
 }
 .hero-category .category-item  {
-    min-height: 162px;
+    /* height: 145px; */
     margin-bottom: 10px;
     background: white;
+    padding: 7px 10px;
 }
 
 .category-item {
@@ -16518,6 +16520,7 @@ fieldset#first-availability {
 
 .social-icon li a img {
   transition: 0.5s all;
+  width: 100%;
 }
 
 .social-icon li a img:hover {
@@ -36166,7 +36169,7 @@ animation-delay: 1.56s;
 }
 
 .hero-category img {
-    height: 80px;
+    height: 55px;
 }
 
 .booking-otp {
@@ -36207,6 +36210,13 @@ ease;
   overflow: hidden;
   border: 3px solid #00bfa5; /* optional border */
 }
-
+.hero-category-item {
+    width: 20%;
+}
+.hero-category h6 {
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: ellipsis;
+}
 
 /*# sourceMappingURL=style.css.map */

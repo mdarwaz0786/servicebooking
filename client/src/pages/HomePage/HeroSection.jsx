@@ -28,10 +28,6 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                             <span className="input-group-text px-1"><i className="ti ti-search" /></span>
                             <input type="text" className="form-control" placeholder="Search for Service" />
                           </div>
-                          <div className="input-group mb-2">
-                            <span className="input-group-text px-1"><i className="ti ti-map-pin" /></span>
-                            <input type="text" className="form-control" placeholder="Enter Location" />
-                          </div>
                           <div className="mb-2">
                             <Link to="/search" className="btn btn-linear-primary d-inline-flex align-items-center w-100">
                               <i className="feather-search me-2" />
@@ -116,7 +112,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                 <div className="card card-body mt-3 shadow-none bg-transparent">
                   <div className="row hero-category">
                       <>
-                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} className={'col-md-2 hero-category'} />
+                        <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} className={'col-md-2 hero-category hero-category-item'} />
                       </>                    
                   </div>
                 </div>

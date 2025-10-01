@@ -61,7 +61,7 @@ useEffect(() => {
         <img src="/assets/img/home/epbanner.jpg" className="img-fluid" alt="img" />
       </div>
       
-      <Links />
+      {/* <Links /> */}
       <CategoryModal />
     </>
   );
