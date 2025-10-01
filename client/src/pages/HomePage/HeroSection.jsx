@@ -7,8 +7,13 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 const HeroSection = ({categoryData, handleSubCategory}) => {
+
+  const { homePageData, imageCheck } = useContext(AppContext);
+
   return (
     <section className="hero-section" id="home">
       <div className="hero-content position-relative overflow-hidden">
@@ -44,21 +49,21 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                       <div className="d-flex align-items-center me-4 mt-0">
                         <img src="assets/img/icons/success-01.svg" alt="icon" />
                         <div className="ms-2">
-                          <h6>215,292 +</h6>
+                          <h6>{homePageData?.customer} +</h6>
                           <p>Customers </p>
                         </div>
                       </div>
                       <div className="d-flex align-items-center me-4 mt-0">
                         <img src="assets/img/icons/success-02.svg" alt="icon" />
                         <div className="ms-2">
-                          <h6>90,000+</h6>
+                          <h6>{homePageData?.serviceCompleted}+</h6>
                           <p>Services Completed</p>
                         </div>
                       </div>
                       <div className="d-flex align-items-center me-4 mt-0">
                         <img src="assets/img/icons/success-03.svg" alt="icon" />
                         <div className="ms-2">
-                          <h6>2,390,968 </h6>
+                          <h6>{homePageData?.review} </h6>
                           <p>Reviews Globally</p>
                         </div>
                       </div>
@@ -67,46 +72,30 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                 </div>
                   
                 <div className="banner-slider">
-                  <Swiper
-                    modules={[Navigation, Pagination, Autoplay, EffectFade]} // enable extra features
-                    spaceBetween={20}       // gap between slides (px)
-                    slidesPerView={1}       // number of slides visible
-                    loop={true}             // infinite loop
-                    autoplay={{             // autoplay settings
-                      delay: 1500,
-                      disableOnInteraction: false,
-                    }}
-                    // navigation              // show next/prev arrows
-                    pagination={{ clickable: true }} // show pagination dots
-                    // scrollbar={{ draggable: true }}  // scrollbar option
-                    effect="slide"           // slide, fade, cube, coverflow, flip
-                    // speed={800}             // transition speed (ms)
-                    // centeredSlides={true}   // center active slide
-                    // grabCursor={true}       // cursor turns into grab hand
-                    // breakpoints={{          // responsive settings
-                    //   320: { slidesPerView: 1 },
-                    //   640: { slidesPerView: 2 },
-                    //   1024: { slidesPerView: 3 },
-                    // }}
-                    // onSlideChange={() => console.log("Slide changed")}
-                    // onSwiper={(swiper) => console.log(swiper)}
-                  >
-                    <SwiperSlide>
-                      <Link>
-                        <img src="/public/assets/img/home/hero/banner1.jpg" />
-                      </Link>
-                    </SwiperSlide>
-                    <SwiperSlide>
-                      <Link>
-                        <img src="/public/assets/img/home/hero/banner1.jpg" />
-                      </Link>
-                    </SwiperSlide>
-                    <SwiperSlide>
-                      <Link>
-                        <img src="/public/assets/img/home/hero/banner1.jpg" />
-                      </Link>
-                    </SwiperSlide>
-                  </Swiper>
+                <Swiper
+                  modules={[Navigation, Pagination, Autoplay, EffectFade]} 
+                  spaceBetween={20}
+                  slidesPerView={1}
+                  loop={true}
+                  autoplay={{
+                    delay: 1500,
+                    disableOnInteraction: false,
+                  }}
+                  pagination={{ clickable: true }}
+                  effect="slide"
+                >
+                  {homePageData.sliders && homePageData.sliders.length > 0 ? (
+                    homePageData.sliders.map((value, index) => (
+                      <SwiperSlide key={index}>
+                        <Link to={value.link ?? "#"}> 
+                          <img src={imageCheck(value.image)} alt={`Slide ${index}`} />
+                        </Link>
+                      </SwiperSlide>
+                    ))
+                  ) : (
+                    null
+                  )}
+                </Swiper>
                 </div>
 
                 <div className="card card-body mt-3 shadow-none bg-transparent">

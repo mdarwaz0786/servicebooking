@@ -20,7 +20,6 @@ export const getCartData = async (userId) => {
   let payableAmount = 0;
 
   cartItems.forEach((item) => {
-    console.log(item);
     amount+=item.salePrice*item.quantity;
   });
 

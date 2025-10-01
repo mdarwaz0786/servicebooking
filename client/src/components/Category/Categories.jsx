@@ -1,4 +1,4 @@
-import CategoryCard from "../../components/Category/CategoryCard";
+import CategoryModalCard from "../../components/Category/CategoryModalCard";
 
 const Categories = ({categoryData = []}) => {
   return (
@@ -6,9 +6,9 @@ const Categories = ({categoryData = []}) => {
     
      
         <div className="container-fluid">
-            <div className="row justify-content-center align-items-start mt-3 g-4">
+            <div className="row justify-content-center align-items-start g-4">
                 {categoryData.map((cat) => (
-                <div key={cat.id} className="col-12">
+                <div key={cat.id} className="col-12 p-0 m-0">
                     {cat.subcategories?.length > 0 ? (
                     <>
                         <h5 className="text-center fw-bold text-dark mb-3">{cat.name}</h5>
@@ -19,13 +19,13 @@ const Categories = ({categoryData = []}) => {
                                 <h6 className="text-center fw-semibold text-muted mb-2">{subCat.name}</h6>
                                 <div className="row g-3 justify-content-center">
                                 {subCat.subsubcategories.map((subSubCat) => (
-                                    <CategoryCard key={subSubCat.id} value={subSubCat} />
+                                    <CategoryModalCard key={subSubCat.id} value={subSubCat} />
                                 ))}
                                 </div>
                             </>
                             ) : (
                             <div className="row g-3 justify-content-center">
-                                <CategoryCard key={subCat.id} value={subCat} />
+                                <CategoryModalCard key={subCat.id} value={subCat} />
                             </div>
                             )}
                         </div>
@@ -33,7 +33,7 @@ const Categories = ({categoryData = []}) => {
                     </>
                     ) : (
                     <div className="row g-3 justify-content-center">
-                        <CategoryCard key={cat.id} value={cat} />
+                        <CategoryModalCard key={cat.id} value={cat} />
                     </div>
                     )}
                 </div>

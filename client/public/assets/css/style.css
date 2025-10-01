@@ -36062,7 +36062,7 @@ span.select2-container.select2-container--default.select2-container--open {
   display: block;
 }
 .modal.show:before {
-  content: "0";
+  content: "";
   position: fixed;
   width: 100%;
   height: 100%;
@@ -36218,5 +36218,37 @@ ease;
     white-space: pre;
     text-overflow: ellipsis;
 }
+.w-20 {
+    width: 20%;
+}
+.service-item .service-img img {
+  min-height: 200px;
+  max-height: 200px;
+}
+
+
+.why-icon-div i {
+  margin-right: 20px;
+  font-size: 30px;
+}
+.why-icon-div {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.why-icon-div p {
+  margin: 0;
+  font-size: 25px;
+  font-weight: bold;
+  line-height: 1;
+}
+.why-rating-text {
+  font-size: 13px !important;
+  display: block;
+}
+.modal-category-card {
+  cursor: pointer;
+}
+
 
 /*# sourceMappingURL=style.css.map */

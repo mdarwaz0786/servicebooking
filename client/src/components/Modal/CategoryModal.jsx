@@ -46,7 +46,7 @@ const CategoryModal = () => {
               </div>
 
               {/* Title */}
-              <div className="p-3 text-center">
+              <div className="p-3 text-center" style={{marginBottom: '30px'}}>
                 <h4 className="fw-bold text-success">{categoryModalItemData.name}</h4>
               </div>
 

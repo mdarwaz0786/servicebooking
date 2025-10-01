@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
-const CategoryMiniCard = ({ value = [] }) => {
+const CategoryCard = ({ value = [] }) => {
   const { handleCategoryClick, imageCheck } = useContext(AppContext);
+
   return (
-    
-    <>    
-        <div className="category p-2 rounded-4 overflow-hidden cursor-pointer mb-2" style={{boxShadow: '0px 0px 17px -9px rgba(0, 0, 0, 0.5)'}}>
+    <div 
+      className="col-lg-12 col-md-12 col-sm-12 col-12 m-1" 
+      onClick={() => handleCategoryClick(value)}
+    >
+      <div className="category rounded-4 overflow-hidden cursor-pointer mb-4" style={{boxShadow: '0px 0px 17px -9px rgba(0, 0, 0, 0.5)'}}>
         <div className="card-body d-flex align-items-center gap-3 modal-category-card ">
 
           {/* Right Side Content */}
@@ -22,7 +24,8 @@ const CategoryMiniCard = ({ value = [] }) => {
                 />
             </div>
             <div className="p-2">
-                <h6 className="fw-bold mb-1 fs-2 d-block">{value.name}</h6>
+                <h6 className="fw-bold mb-1 fs-3 me-2 d-block">{value.name}</h6>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
             </div>
             <div>
                 <i className="fa fa-angle-double-right fs-4 text-success"></i>
@@ -31,9 +34,8 @@ const CategoryMiniCard = ({ value = [] }) => {
           </div>
         </div>
       </div>
-    </>
-
+    </div>
   );
 };
 
-export default CategoryMiniCard;
+export default CategoryCard;

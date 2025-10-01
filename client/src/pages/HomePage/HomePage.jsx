@@ -13,7 +13,7 @@ import RecentBlog from "./RecentBlog";
 import Testimonial from "./Testimonial";
 
 
-import AcServices from "./AcServices";
+import AllServices from "./AllServices";
 import KitchenServices from "./KitchenServices";
 import TvServices from "./TvServices";
 import EpServices from "./EpServices";
@@ -29,7 +29,7 @@ import { useContext, useEffect, useState } from "react";
 const HomePage = () => {
 
 
-  const { categoryListData, handleHome, toggleModal } = useContext(AppContext);
+  const { categoryListData, handleHome, toggleModal, homePageData, imageCheck } = useContext(AppContext);
 
 
 useEffect(() => {
@@ -37,29 +37,55 @@ useEffect(() => {
   handleHome();
 }, []);  
 
-
+  let i=0;
   return ( 
     <>
-      <HeroSection categoryData={categoryListData}  />
+      <HeroSection categoryData={categoryListData}   />
       <PopularServices />
       <HowWorks />
+      
+
+      {homePageData.services && homePageData.services.length > 0 ? (
+        homePageData.services.map((value, index) => {
+          // counter maintain karo
+          let bannerIndex = Math.floor((index + 1) / 2) - 1; 
+
+          return (
+            <div key={index}>
+              <AllServices value={value} />
+
+              {/* Har 2 service ke baad banner dikhana */}
+              {(index + 1) % 2 === 0 && homePageData.banners && homePageData.banners[bannerIndex] && (
+                <div className="container">
+                  <img
+                    src={imageCheck(homePageData.banners[bannerIndex].image)}
+                    className="img-fluid"
+                    alt={`Banner ${bannerIndex}`}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })
+      ) : null}
+
+        
+
+
+
       {/* <FeaturedServices /> */}
-      <AcServices />
-      <KitchenServices />
-      <div className="container">
-        <img src="/assets/img/home/acbanner.jpg" className="img-fluid" alt="img" />
-      </div>
-      <div className="container">
+      {/* <KitchenServices /> */}
+      {/* <div className="container">
         <img src="/assets/img/home/kitchenbanner.jpg" className="img-fluid" alt="img" />
-      </div>
-      <TvServices />
-      <div className="container">
+      </div> */}
+      {/* <TvServices /> */}
+      {/* <div className="container">
         <img src="/assets/img/home/tvbanner.jpg" className="img-fluid" alt="img" />
-      </div>
-      <EpServices />
-      <div className="container">
+      </div> */}
+      {/* <EpServices /> */}
+      {/* <div className="container">
         <img src="/assets/img/home/epbanner.jpg" className="img-fluid" alt="img" />
-      </div>
+      </div> */}
       
       {/* <Links /> */}
       <CategoryModal />

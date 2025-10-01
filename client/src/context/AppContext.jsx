@@ -45,6 +45,7 @@ export const AppProvider = ({ children }) => {
 
   const [servicePageCategoryData, setservicePageCategoryData] = useState([]);
   const [servicePageName, setservicePageName] = useState([]);
+  const [homePageData, sethomePageData] = useState([]);
 
 
   const [cartItems, setcartItems] = useState([]);
@@ -513,6 +514,7 @@ const imageCheck = (path, defaultImg = null) => {
         const response = await postData({userId:generateUniqueId()}, Urls.homeDetail, "GET", 0, 1);
         if(response.success)
         {
+          sethomePageData(response.data)
           if (response?.data.category.length > 0) {
             setcategoryListData(response.data.category);
           }
@@ -566,6 +568,8 @@ const imageCheck = (path, defaultImg = null) => {
       formatDateTime,
       formatDate,
       handleHome,
+      homePageData,
+      sethomePageData,
       toast,
       user,
       setuser,

@@ -60,7 +60,7 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   // Fetch active home page services
   const services = await HomePageServiceModel.find({ status: true })
     .populate("services", "name image slug mrpPrice salePrice")
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: 1 })
     .lean();
 
   // Fetch active home page banners
