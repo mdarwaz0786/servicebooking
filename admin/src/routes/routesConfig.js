@@ -39,6 +39,9 @@ import UpdateHomeBannerPage from "../pages/HomeBanner/UpdateHomeBannerPage";
 import HomeServiceListPage from "../pages/HomeService/HomeServiceListPage";
 import AddHomeServicePage from "../pages/HomeService/AddHomeServicePage";
 import UpdateHomeServicePage from "../pages/HomeService/UpdateHomeServicePage";
+import HomeSliderListPage from "../pages/HomeSlider/HomePageSliderListPage";
+import AddHomeSliderPage from "../pages/HomeSlider/AddHomeSliderPage";
+import UpdateHomeSliderPage from "../pages/HomeSlider/UpdateHomeSliderPage";
 
 const routesConfig = {
   private: [
@@ -87,6 +90,10 @@ const routesConfig = {
     { path: "/home-banner", element: HomeBannerListPage },
     { path: "/add-home-banner", element: AddHomeBannerPage },
     { path: "/update-home-banner/:id", element: UpdateHomeBannerPage },
+
+    { path: "/home-slider", element: HomeSliderListPage },
+    { path: "/add-home-slider", element: AddHomeSliderPage },
+    { path: "/update-home-slider/:id", element: UpdateHomeSliderPage },
 
     { path: "/home-service", element: HomeServiceListPage },
     { path: "/add-home-service", element: AddHomeServicePage },

@@ -71,6 +71,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/home-page-banner`,
     delete: `${BASE_URL}/api/v1/admin/home-page-banner`,
   },
+  slider: {
+    create: `${BASE_URL}/api/v1/admin/home-page-slider`,
+    get: `${BASE_URL}/api/v1/admin/home-page-slider`,
+    update: `${BASE_URL}/api/v1/admin/home-page-slider`,
+    delete: `${BASE_URL}/api/v1/admin/home-page-slider`,
+  },
   homeService: {
     create: `${BASE_URL}/api/v1/admin/home-page-service`,
     get: `${BASE_URL}/api/v1/admin/home-page-service`,
