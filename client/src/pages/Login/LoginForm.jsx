@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
-// import logo from "/assets/logo.png"; // apna logo path use karein
 
 const LoginForm = () => {
   const { Urls, postData, toast } = useContext(AppContext);

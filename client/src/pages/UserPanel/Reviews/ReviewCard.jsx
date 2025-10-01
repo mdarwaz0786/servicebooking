@@ -5,11 +5,12 @@ import { useContext, useEffect, useState } from "react";
 
 const ReviewCard = ({ data=[], handleRemoveReview, handlePagination }) => {
 
+    const {imageCheck } = useContext(AppContext);
     return(
 
         <>
         {data.map((item, index)=>(
-            <div className="col-xxl-12 col-lg-12">
+            <div className="col-xxl-12 col-lg-12" key={index}>
                 <div className="card shadow-none">
                     <div className="card-body">
                     <div className="d-md-flex align-items-center">
@@ -17,38 +18,38 @@ const ReviewCard = ({ data=[], handleRemoveReview, handlePagination }) => {
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <div className="d-flex">
                             <span className="review-img me-2">
-                                <img src="/assets/img/providers/provider-22.jpg" className="rounded img-fluid" alt="User Image" />
+                                <img src={imageCheck(item.booking?.bookingItems[0]?.service?.image)} className="rounded img-fluid" alt="User Image" />
                             </span>
                             <div>
                                 <div className="d-flex justify-content-between align-items-center mb-2">
                                 <div className="d-flex align-items-center">
-                                    <h6 className="fs-14 me-2">Building Construction Services.</h6>
-                                    <span><i className="ti ti-star-filled text-warning" /></span>
-                                    <span><i className="ti ti-star-filled text-warning" /></span>
-                                    <span><i className="ti ti-star-filled text-warning" /></span>
-                                    <span><i className="ti ti-star-filled text-warning" /></span>
-                                    <span><i className="ti ti-star-filled text-warning" /></span>
+                                    <h6 className="fs-14 me-2">{item.booking?.bookingItems[0]?.service?.name}</h6>
+                                    <div className="rating">
+                                {(item?.rating)?(
+                                    <>
+                                        {[1,2,3,4,5].map((value) =>
+                                            <span key={index+''+value}>
+                                                {(value<=item?.rating)?(
+                                                    <i className="fas fa-star filled" key={index}></i>
+                                                ):(<i className="fas fa-star" key={index}></i>)}
+                                            </span>
+                                        )}
+                                    </>
+                                ):(null)}
                                 </div>
                                 </div>
-                                <div className="d-flex align-items-center">
-                                <span className="avatar avatar-sm me-2">
-                                    <img src="/assets/img/user/user-10.jpg" className="rounded-circle " alt="Img" />
-                                </span>
-                                <h6 className="fs-13 me-2">Jeffrey Akridge,</h6>
-                                <span className="fs-12">July 11, 2024 11:38 am</span>
                                 </div>
                             </div>
                             </div>
                         </div>
                         </div>
                         <div className="user-icon d-inline-flex">
-                        <Link className><i className="ti ti-trash" /></Link>
+                        <Link className="" onClick={()=>handleRemoveReview(item._id)}><i className="ti ti-trash" /></Link>
                         </div>
                     </div>
                     <div>
                         <p className="fs-14">
-                        The construction service delivered excellent craftsmanship, completing my home renovation on
-                        time with clear communication throughout. Highly recommend for quality and professionalism!
+                        {item.description}
                         </p>
                     </div>
                     </div>

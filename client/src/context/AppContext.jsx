@@ -466,7 +466,7 @@ const imageCheck = (path, defaultImg = null) => {
     {
       setcategoryModalItemData(item)
       try {
-        const response = await postData({id:item._id}, Urls.subCategoryList, "GET", 0, 1);
+        const response = await postData({categoryId:item._id}, Urls.subCategoryList, "GET", 0, 1);
         if (response?.data.length > 0) {
           setcategoryModalListData(response.data);
         }
@@ -479,7 +479,7 @@ const imageCheck = (path, defaultImg = null) => {
       toggleModal("homeCategoryModal",false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({id:item._id}, Urls.subSubCategoryList, "GET", 0, 1);
+        const response = await postData({subCategoryId:item._id}, Urls.subSubCategoryList, "GET", 0, 1);
         if (response?.data.length > 0) {
           setcategoryModalListData(response.data);
         }        
@@ -492,7 +492,7 @@ const imageCheck = (path, defaultImg = null) => {
       toggleModal("homeCategoryModal",false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({id:item._id}, Urls.subSubSubCategoryList, "GET", 0, 1);
+        const response = await postData({subSubCategoryId:item._id}, Urls.subSubSubCategoryList, "GET", 0, 1);
         if (response?.data.length > 0) {
           setcategoryModalListData(response.data);
         }        

@@ -12,14 +12,35 @@ export const getCartData = async (userId) => {
     ...item.serviceId,
   }));
 
+  let amount = 0;
+  let gst = 10;
+  let gstAmount = 0;
+  let gstPercent = '18%';
+  let discountAmount = 40;
+  let payableAmount = 0;
+
+  cartItems.forEach((item) => {
+    console.log(item);
+    amount+=item.salePrice*item.quantity;
+  });
+
+  payableAmount = amount;
+
+  gstAmount = amount*gst/100;
+  payableAmount+=gstAmount;
+  payableAmount-=discountAmount;
+
+
+
+
   return {
     cartProducts: cartItems,
     amountData: {
-      amount: 100,
-      gstAmount: 10,
-      gstPercent: "20%",
-      discountAmount: 40,
-      payableAmount: 100,
+      amount: amount,
+      gstAmount: gstAmount,
+      gstPercent: gstPercent,
+      discountAmount: discountAmount,
+      payableAmount: payableAmount,
     },
   };
 };

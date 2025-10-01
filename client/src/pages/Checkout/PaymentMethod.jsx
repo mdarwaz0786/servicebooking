@@ -87,13 +87,13 @@ const PaymentMethod = () => {
       <div className="book-card">
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
-          <div className="d-flex align-items-center mb-2">
-            <h6 className="fs-16 me-2 mb-2">Payment Method</h6>
+          <div className="d-flex align-items-center justify-content-between mb-3">
+            <h5 className="fw-bold text-success">Payment Method</h5>
           </div>
           <div className="d-flex align-items-center mb-2">
             <Link
               onClick={handlePre}
-              className="btn btn-sm btn-secondary d-inline-flex align-items-center prev_btn mb-2"
+              className="btn btn-sm btn-success d-inline-flex align-items-center prev_btn mb-2"
             >
               <i className="ti ti-caret-left-filled me-1"></i>Back to Time Slot
             </Link>

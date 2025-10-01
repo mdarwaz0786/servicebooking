@@ -1,33 +1,42 @@
-import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 
 const CategoryCard = ({ value = [] }) => {
-
-    const { handleCategoryClick, SERVER_BASE_URL } = useContext(AppContext);
+  const { handleCategoryClick, imageCheck } = useContext(AppContext);
 
   return (
-    
-    <>    
-        <div key={value.id} className="col-lg-3 col-md-6" onClick={() => handleCategoryClick(value)}>
-            <div className="category card wow fadeInUp" data-wow-delay="0.3s">
-                <div className="card-body">
-                <div className="feature-icon d-flex justify-content-center align-items-center mb-2">
-                    <span className="rounded-pill d-flex justify-content-center align-items-center p-3">
-                    <img src={SERVER_BASE_URL+''+value.icon} className="img-fluid" alt={value.name} />
-                    </span>
-                </div>
-                <h5 className="text-center">
-                    <Link key={value.id}>{value.name}</Link>
-                </h5>
-                <div className="overlay">
-                    <img src={SERVER_BASE_URL+''+value.image} className="img-fluid" alt={value.name} />
-                </div>
-                </div>
-            </div>
-        </div>   
-    </>
+    <div 
+      className="col-lg-12 col-md-12 col-sm-12 col-12 mb-3" 
+      onClick={() => handleCategoryClick(value)}
+    >
+      <div className="category card shadow-sm border-0 rounded-4 overflow-hidden cursor-pointer">
+        <div className="card-body d-flex align-items-center gap-3">
+          
+          {/* Left Side Image */}
+          <div className="flex-shrink-0">
+            <img
+              src={imageCheck(value.icon)}
+              className="img-fluid rounded-3"
+              alt={value.name}
+              style={{ width: "60px", height: "60px", objectFit: "cover" }}
+            />
+          </div>
 
+          {/* Right Side Content */}
+          <div className="flex-grow-1">
+            <h6 className="fw-bold text-dark mb-1">{value.name}</h6>
+            {value.image && (
+              <img
+                src={imageCheck(value.icon)}
+                className="img-fluid rounded-3"
+                alt={value.name}
+                style={{ maxHeight: "120px", objectFit: "cover" }}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

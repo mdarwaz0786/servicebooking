@@ -26,8 +26,8 @@ const UserBookingDetailPage = () => {
   }, []);  
 
   return (
+  <div className="col-lg-9 mx-auto">
     <div className="row justify-content-center">
-  <div className="col-lg-10 mx-auto">
     
     <div className="row booking-details">
       <div className="col-md-4">

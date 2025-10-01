@@ -8,6 +8,8 @@ const UserReviewsPage = () => {
   const {steps,toggleStep, Urls, postData, toast, generateUniqueId, toggleModal, setbookingAddress } = useContext(AppContext);
   const [reviews, setreviews] = useState([]);
   const [selectedaddress, setselectedaddress] = useState();
+  const [page, setpage] = useState();
+  const [limit, setlimit] = useState();
   
   const fetchReviews = async () => {
       try {    
@@ -23,7 +25,7 @@ const UserReviewsPage = () => {
       
   useEffect(() => {  
     fetchReviews(); 
-  }, []);  
+  }, [page, limit]);  
 
   const handlePagination = async (page, limit) => {
     setpage(page);
@@ -34,7 +36,7 @@ const UserReviewsPage = () => {
   const handleRemoveReview = async (id) => {
   try {   
     let userId = generateUniqueId();  
-    const response = await postData({userId:userId}, Urls.myReviewRemove, "delete");
+    const response = await postData({userId:userId}, Urls.myReviewRemove+'/'+id, "delete");
     
       fetchReviews()
       
@@ -50,17 +52,6 @@ const UserReviewsPage = () => {
     <div className="col-xl-9 col-lg-8">
       <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
         <h4 className="mb-3">Reviews</h4>
-        <div className="d-flex align-items-center">
-          <p className="text-gray-6 me-2 fs-14 mb-0">Sort</p>
-          <div className="dropdown me-2">
-            <a href="javascript:void(0);" className="dropdown-toggle " data-bs-toggle="dropdown">
-              Most helful
-            </a>
-            <div className="dropdown-menu">
-              <a href="javascript:void(0);" className="dropdown-item active">Recently Added</a>
-            </div>
-          </div>
-        </div>
       </div>
       <div className="row ">
        

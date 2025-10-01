@@ -4,6 +4,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 import Categories from "../Category/Categories";
+import { Link } from "react-router-dom";
 
 const CategoryModal = () => {
 
@@ -16,25 +17,44 @@ const CategoryModal = () => {
     >
 
       <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content">
-          {/* Modal Header */}
-          <div className="modal-header d-flex align-items-center justify-content-between">
-            <h5>{categoryModalItemData.name}</h5>
-            <a
-              data-bs-dismiss="modal"
-              aria-label="Close"
+        <div className="modal-content" style={{background: 'transparent', border: 0}}>
+          
+
+          <div className="wizard-fieldset">
+            <Link
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                zIndex: 1,
+              }}
               onClick={() => toggleModal("homeCategoryModal",false)}
             >
               <i className="ti ti-circle-x-filled fs-20"></i>
-            </a>
-          </div>
+            </Link>
 
-          <div className="wizard-fieldset">
-            <div className="modal-category-banner">
-              <img src={SERVER_BASE_URL+''+categoryModalImage} />
+
+            <div className="card shadow-lg border-0 m-0 rounded-4 overflow-hidden" style={{ width: "100%" }}>
+              {/* Banner */}
+              <div className="modal-category-banner">
+                <img 
+                  src={SERVER_BASE_URL + categoryModalImage} 
+                  className="img-fluid w-100" 
+                  style={{ height: "180px", objectFit: "cover" }} 
+                  alt="Category Banner"
+                />
+              </div>
+
+              {/* Title */}
+              <div className="p-3 text-center">
+                <h4 className="fw-bold text-success">{categoryModalItemData.name}</h4>
+              </div>
+
+              {/* Categories List */}
+              <div className="px-3 pb-3">
+                <Categories categoryData={categoryModalListData} />
+              </div>
             </div>
-            
-            <Categories categoryData={categoryModalListData} />
             
           </div>
         </div>

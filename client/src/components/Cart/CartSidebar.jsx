@@ -22,7 +22,7 @@ const CartSidebar = () => {
 
       {/* View Cart Button */}
       <Link to={`../checkout`} className="btn btn-primary w-100 mb-4">
-        {PriceFormat(cartAmount.amount)}
+        {PriceFormat(cartAmount.payableAmount)}
         <span className="ms-2">View Cart</span>
       </Link>
 

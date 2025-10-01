@@ -1,16 +1,20 @@
 import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 const UserSidebar = () => {
+  const { user, imageCheck, formatDate, handleLogout } = useContext(AppContext);
   return (
     <div className="col-xl-3 col-lg-4 theiaStickySidebar">
       <div className="card user-sidebar mb-4 mb-lg-0">
         <div className="card-header user-sidebar-header mb-4">
           <div className="d-flex justify-content-center align-items-center flex-column">
             <span className="user rounded-circle avatar avatar-xxl mb-2">
-              <img src="assets/img/profiles/avatar-21.jpg" className="img-fluid rounded-circle" alt="Img" />
+              <img src={imageCheck(user.image, 'user.png')} className="img-fluid rounded-circle" alt="Img" />
             </span>
-            <h6 className="mb-2">John Smith</h6>
-            <p className="fs-14">Member Since Sep 2021</p>
+            <h6 className="mb-2">{user.name}</h6>
+            <h6 className="mb-2">{user.mobile}</h6>
+            <p className="fs-14">Member Since {formatDate(user.createdAt)}</p>
           </div>
         </div>
         <div className="card-body user-sidebar-body p-0">
@@ -54,7 +58,7 @@ const UserSidebar = () => {
             
             
             <li className="mb-0">
-              <Link to="/login" className="d-flex align-items-center">
+              <Link onClick={handleLogout} className="d-flex align-items-center">
                 <i className="ti ti-logout me-2" />
                 Logout
               </Link>

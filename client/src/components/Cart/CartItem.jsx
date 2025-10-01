@@ -22,9 +22,9 @@ const CartItem = () => {
 
                 <div className="text-end">
                     <p className="text-decoration-line-through small text-muted mb-0 cart-item-price">
-                        {PriceFormat(value.mrpPrice)}
+                        {PriceFormat(value.mrpPrice*value.quantity)}
                     </p>
-                    <p className="fw-bold text-dark mb-0 cart-item-price">{PriceFormat(value.salePrice)}</p>
+                    <p className="fw-bold text-dark mb-0 cart-item-price">{PriceFormat(value.salePrice*value.quantity)}</p>
                 </div>
             </div>
         ))}

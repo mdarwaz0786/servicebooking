@@ -29,7 +29,7 @@ const Checkoutpage = () => {
 
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper m-0">
 		<div className="content">
 			<div className="container">
 

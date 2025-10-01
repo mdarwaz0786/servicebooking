@@ -6,44 +6,40 @@ const Categories = ({categoryData = []}) => {
     
      
         <div className="container-fluid">
-          <div className="row justify-content-center align-items-center mt-4">
-            
+            <div className="row justify-content-center align-items-start mt-3 g-4">
                 {categoryData.map((cat) => (
+                <div key={cat.id} className="col-12">
+                    {cat.subcategories?.length > 0 ? (
                     <>
-                    {cat.subcategories && cat.subcategories.length > 0 ? (
-                        <>
-                        <div className="col-lg-12 col-md-6">
-                            <h2 class="breadcrumb-title mb-2 text-center">{cat.name}</h2>
-                        </div>
+                        <h5 className="text-center fw-bold text-dark mb-3">{cat.name}</h5>
                         {cat.subcategories.map((subCat) => (
+                        <div key={subCat.id} className="mb-4">
+                            {subCat.subsubcategories?.length > 0 ? (
                             <>
-                            {subCat.subsubcategories && subCat.subsubcategories.length > 0 ? (
-                                <>
-                                <div className="col-lg-12 col-md-6">
-                                    <h6 class="breadcrumb-title mb-2 text-center">{subCat.name}</h6>
-                                </div>
+                                <h6 className="text-center fw-semibold text-muted mb-2">{subCat.name}</h6>
+                                <div className="row g-3 justify-content-center">
                                 {subCat.subsubcategories.map((subSubCat) => (
-                                    <CategoryCard value={subSubCat} />
+                                    <CategoryCard key={subSubCat.id} value={subSubCat} />
                                 ))}
-                                </>
-                            ) : (
-                                <>
-                                {cat.subcategories.map((subCat) => (
-                                    <CategoryCard value={subCat} />
-                                ))}
-                                </>
-                            )}
+                                </div>
                             </>
-
+                            ) : (
+                            <div className="row g-3 justify-content-center">
+                                <CategoryCard key={subCat.id} value={subCat} />
+                            </div>
+                            )}
+                        </div>
                         ))}
-                        </>
-                    ) : (
-                        <CategoryCard value={cat} />
-                    )}
                     </>
+                    ) : (
+                    <div className="row g-3 justify-content-center">
+                        <CategoryCard key={cat.id} value={cat} />
+                    </div>
+                    )}
+                </div>
                 ))}
-        </div>
-        </div>
+            </div>
+            </div>
      
     
 

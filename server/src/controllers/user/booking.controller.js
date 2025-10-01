@@ -82,20 +82,21 @@ export const getBookings = asyncHandler(async (req, res) => {
   let { page = 1, limit = 10, sort = "desc", search } = req.query;
 
   const userId = req.user?._id;
-
+  
   if (!userId) {
     throw new ApiError(401, "Unauthorized: Please login to view your bookings");
   };
-
+  
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
-
+  
   const filters = {};
-
+  
   filters.userId = userId;
+  
 
-  if (userId) filters.userId = userId;
+  // if (userId) filters.userId = userId;
 
   if (search) {
     filters.$or = [
@@ -138,7 +139,7 @@ export const getBookings = asyncHandler(async (req, res) => {
 
     if (latestAssignment) {
       const serviceman = await ServiceManProfileModel
-        .findOne({ userId: latestAssignment.servicemanId })
+        .findOne({ _id: latestAssignment.servicemanId })
         .populate("user", "mobile")
         .lean();
 
@@ -226,7 +227,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   if (latestAssignment) {
     const servicemanId = latestAssignment?.servicemanId;
     const serviceman = await ServiceManProfileModel
-      .findOne({ userId: servicemanId })
+      .findOne({ _id: servicemanId })
       .populate("user")
       .lean();
 

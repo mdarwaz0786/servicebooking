@@ -16,14 +16,14 @@ const BookingListCard = ({handlePagination}) => {
                 <div className="booking-widget d-sm-flex align-items-center row-gap-3 flex-fill  mb-3 mb-md-0">
                     <div className="booking-img me-sm-3 mb-3 mb-sm-0">
                     <Link to={`booking/`+value._id} className="avatar">
-                        <img src="assets/img/services/service-08.jpg" alt="User Image" />
+                        <img src={imageCheck(value.bookingItems[0]?.service?.image)} alt="User Image" />
                     </Link>
                     </div>
                     <div className="booking-det-info">
+                    <h4><Link to={`booking/`+value._id}>{value.bookingItems[0]?.service?.name}</Link></h4>
                     <h6 className="mb-3">
                         <Link to={`booking/`+value._id}>{value.bookingId}</Link>
-                        <span className="badge badge-soft-info ms-2">{value?.status}</span>
-                        <span className="badge badge-soft-danger ms-2">Cancelled</span>
+                        
                     </h6>
                     <ul className="booking-details">
                         <li className="d-flex align-items-center mb-2">
@@ -52,12 +52,15 @@ const BookingListCard = ({handlePagination}) => {
                     </ul>
                     </div>
                 </div>
-                <div>
+                <div className="text-center">
+                    <span className="badge badge-soft-info ms-2">{value?.status}</span>
                     <div className="booking-otp">
-                        <span>1</span>
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
+                        {value?.otp?.split("").map((digit, index) => (
+                        <span key={index} className="otp-box">
+                        {digit}
+                        </span>
+                    ))}
+
                     </div>
                     <Link to={`booking/`+value._id} className="btn btn-light" >View Detail</Link>
                 </div>
