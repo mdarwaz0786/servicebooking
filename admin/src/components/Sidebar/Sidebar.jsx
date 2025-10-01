@@ -170,12 +170,32 @@ const Sidebar = () => {
                 <i className="fe fe-calendar" /> <span>Training Schedule</span>
               </Link>
             </li>
-            <li style={{ marginBottom: "5rem" }}>
+            <li>
               <Link
                 to="/earning"
                 className={currentPath === "/earning" ? "active" : ""}
               >
                 <i className="fe fe-dollar-sign" /> <span>Earning</span>
+              </Link>
+            </li>
+
+            <li className="menu-title">
+              <h6>Website</h6>
+            </li>
+            <li>
+              <Link
+                to="/home-banner"
+                className={currentPath === "/banner" ? "active" : ""}
+              >
+                <i className="fe fe-image" /> <span>Banner</span>
+              </Link>
+            </li>
+            <li style={{ marginBottom: "5rem" }}>
+              <Link
+                to="/home-service"
+                className={currentPath === "/banner" ? "active" : ""}
+              >
+                <i className="fe fe-briefcase" /> <span>Service</span>
               </Link>
             </li>
           </ul>

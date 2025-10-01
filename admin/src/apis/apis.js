@@ -65,6 +65,18 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/earning`,
     delete: `${BASE_URL}/api/v1/admin/earning`,
   },
+  banner: {
+    create: `${BASE_URL}/api/v1/admin/home-page-banner`,
+    get: `${BASE_URL}/api/v1/admin/home-page-banner`,
+    update: `${BASE_URL}/api/v1/admin/home-page-banner`,
+    delete: `${BASE_URL}/api/v1/admin/home-page-banner`,
+  },
+  homeService: {
+    create: `${BASE_URL}/api/v1/admin/home-page-service`,
+    get: `${BASE_URL}/api/v1/admin/home-page-service`,
+    update: `${BASE_URL}/api/v1/admin/home-page-service`,
+    delete: `${BASE_URL}/api/v1/admin/home-page-service`,
+  },
   user: {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,

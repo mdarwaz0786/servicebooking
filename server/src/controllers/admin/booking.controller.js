@@ -116,7 +116,7 @@ export const getBookings = asyncHandler(async (req, res) => {
       .lean();
 
     const servicemanId = latestAssignment?.servicemanId;
-    const serviceman = await ServiceManProfile.findOne({ userId: servicemanId }).populate("user");
+    const serviceman = await ServiceManProfile.findOne({ _id: servicemanId }).populate("user");
 
     const servicemanDetail = {
       name: serviceman?.name,

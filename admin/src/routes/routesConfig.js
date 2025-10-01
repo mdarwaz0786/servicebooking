@@ -33,6 +33,9 @@ import AddEarningPage from "../pages/Earning/AddEarningPage";
 import UpdateEarningPage from "../pages/Earning/UpdateEarningPage";
 import KycDetailsPage from "../pages/Kyc/KycDetailPage";
 import ServicemanProfileDetailPage from "../pages/ServicemanProfile/ServicemanProfileDetailPage";
+import HomeBannerListPage from "../pages/HomeBanner/HomeBannerListPage";
+import AddHomeBannerPage from "../pages/HomeBanner/AddHomeBannerPage";
+import UpdateHomeBannerPage from "../pages/HomeBanner/UpdateHomeBannerPage";
 
 const routesConfig = {
   private: [
@@ -77,6 +80,10 @@ const routesConfig = {
 
     { path: "/service-man-profile", element: ServicemanProfileListPage },
     { path: "/service-man-profile-detail", element: ServicemanProfileDetailPage },
+
+    { path: "/home-banner", element: HomeBannerListPage },
+    { path: "/add-home-banner", element: AddHomeBannerPage },
+    { path: "/update-home-banner/:id", element: UpdateHomeBannerPage },
 
     { path: "/users", element: UserListPage },
   ],
