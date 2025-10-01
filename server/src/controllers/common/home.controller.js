@@ -2,6 +2,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import CategoryModel from "../../models/category.model.js";
 import HomePageServiceModel from "../../models/homePageService.model.js";
 import HomePageBannerModel from "../../models/homePageBanner.model.js";
+import HomePageSliderModel from "../../models/homePageSlider.model.js";
 import { getCartData } from "../../utils/cart.utils.js";
 
 // Get home page data
@@ -58,12 +59,17 @@ export const getHomePageData = asyncHandler(async (req, res) => {
 
   // Fetch active home page services
   const services = await HomePageServiceModel.find({ status: true })
-    .populate("services", "name image")
+    .populate("services", "name image slug mrpPrice salePrice")
     .sort({ createdAt: -1 })
     .lean();
 
   // Fetch active home page banners
   const banners = await HomePageBannerModel.find({ status: true })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // Fetch active home page sliders
+  const sliders = await HomePageSliderModel.find({ status: true })
     .sort({ createdAt: -1 })
     .lean();
 
@@ -73,10 +79,11 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     data: {
       category: categories,
       cart: cart,
-      service: services,
-      banner: banners,
+      services: services,
+      banners: banners,
+      sliders: sliders,
       customer: 215292,
-      service: 90000,
+      serviceCompleted: 90000,
       review: 2390968,
     },
   });

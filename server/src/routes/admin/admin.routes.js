@@ -20,6 +20,7 @@ import servicemanBookingRoutes from "./servicemanBooking.routes.js";
 import transactionRoutes from "./transaction.routes.js";
 import homePageBannerRoutes from "./homePageBanner.routes.js";
 import homePageSeviceRoutes from "./homePageService.routes.js";
+import homePageSliderRoutes from "./homePageSlider.routes.js";
 
 const router = express.Router();
 
@@ -44,5 +45,6 @@ router.use("/serviceman-booking", servicemanBookingRoutes);
 router.use("/transaction", transactionRoutes);
 router.use("/home-page-banner", homePageBannerRoutes);
 router.use("/home-page-service", homePageSeviceRoutes);
+router.use("/home-page-slider", homePageSliderRoutes);
 
 export default router;

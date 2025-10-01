@@ -185,17 +185,25 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/home-banner"
-                className={currentPath === "/banner" ? "active" : ""}
+                className={currentPath === "/home-banner" ? "active" : ""}
               >
                 <i className="fe fe-image" /> <span>Banner</span>
               </Link>
             </li>
-            <li style={{ marginBottom: "5rem" }}>
+            <li>
               <Link
                 to="/home-service"
-                className={currentPath === "/banner" ? "active" : ""}
+                className={currentPath === "/home-service" ? "active" : ""}
               >
                 <i className="fe fe-briefcase" /> <span>Service</span>
+              </Link>
+            </li>
+            <li style={{ marginBottom: "5rem" }}>
+              <Link
+                to="/home-slider"
+                className={currentPath === "/home-slider" ? "active" : ""}
+              >
+                <i className="fe fe-sliders" /> <span>Slider</span>
               </Link>
             </li>
           </ul>
