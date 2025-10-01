@@ -75,6 +75,9 @@ export const getHomePageData = asyncHandler(async (req, res) => {
       cart: cart,
       service: services,
       banner: banners,
+      customer: 215292,
+      service: 90000,
+      review: 2390968,
     },
   });
 });

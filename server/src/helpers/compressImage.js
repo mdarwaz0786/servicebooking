@@ -18,7 +18,7 @@ const compressImage = async (
   };
 
   const baseName = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-  const finalPath = path.join(uploadDir, `${baseName}.jpeg`);
+  const finalPath = path.join(uploadDir, `${baseName}.webp`);
 
   try {
     const baseImage = sharp(buffer);
@@ -34,14 +34,14 @@ const compressImage = async (
       resizedBuffer = await baseImage
         .clone()
         .resize({ width: currentWidth, height, fit: "inside" })
-        .jpeg({ quality: currentQuality, mozjpeg: true })
+        .webp({ quality: currentQuality })
         .toBuffer();
 
       const bufferSizeKB = resizedBuffer.length / 1024;
 
       if (bufferSizeKB <= maxSizeKB) {
         fs.writeFileSync(finalPath, resizedBuffer);
-        return `uploads/${folder}/${baseName}.jpeg`;
+        return `uploads/${folder}/${baseName}.webp`;
       };
 
       if (currentQuality > minQuality) {
