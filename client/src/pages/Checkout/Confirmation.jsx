@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 
 const Confirmation = () => {
-   const { steps,toggleStep, bookingData, bookingAmount, bookingItems, formatDateTime, PriceFormat } = useContext(AppContext);
+   const { steps,toggleStep, bookingData, bookingAmount, bookingItems, formatDateTime, PriceFormat, imageCheck  } = useContext(AppContext);
   return (
     <fieldset className={`booking-content ${steps.confirmation ? "d-flex" : "d-none"}`}>
       <div className="book-card">
@@ -17,15 +17,15 @@ const Confirmation = () => {
             </h6>
 
             <div className="card shadow-none mb-0">
-              <div className="card-body p-3">
+              <div className="card-body p-3"> 
                 {/* Booking Info */}
                 
                 {bookingItems.map((value, index)=>
                 
-                  <div className="d-flex align-items-center justify-content-between flex-wrap p-2 bg-light-300 rounded mb-3">
+                  <div className="d-flex align-items-center justify-content-between flex-wrap p-2 bg-light-300 rounded mb-3" key={index}>
                     <div className="d-flex align-items-center pb-2">
                       <span className="avatar avatar-xl flex-shrink-0">
-                        <img src="/assets/img/services/addservice-05.jpg" alt="img" />
+                        <img src={imageCheck(value.image)} alt="img" />
                       </span>
                       <div className="ms-2">
                         <h6 className="mb-1">{value.name}</h6>
@@ -50,7 +50,7 @@ const Confirmation = () => {
                         {/* 30 Min */}
                         </p>
                     </div>
-                    <h6 className="fs-12 fw-medium">{PriceFormat(value.salePrice)}</h6>
+                    <h6 className="fs-12 fw-medium">{PriceFormat(value.salePrice*value.quantity)}</h6>
                   </div>
                 )}
 
@@ -66,6 +66,12 @@ const Confirmation = () => {
                     <h6 className="fw-medium">GST({bookingAmount.gstPercent})</h6>
                     <p>{PriceFormat(bookingAmount.gstAmount)}</p>
                   </div>
+                  <div className="mb-2 d-flex align-items-center justify-content-between">
+                      <h6 className="fw-medium">
+                        Discount <span className="text-default fw-normal"></span>
+                      </h6>
+                      <p className="text-gray-9">-{PriceFormat(bookingAmount.discountAmount)}</p>
+                    </div>
                   
                 </div>
                 <div className="border-top pt-2 d-flex align-items-center justify-content-between">

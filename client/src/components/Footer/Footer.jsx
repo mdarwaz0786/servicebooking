@@ -47,12 +47,12 @@ const Footer = () => {
               <div className="footer-widget">
                 
                     <ul className="social-icon mb-3">
-                      <li><Link to="#"><img src="assets/img/icons/fb.svg" alt="facebook" /></Link></li>
-                      <li><Link to="#"><img src="assets/img/icons/instagram.svg" alt="instagram" /></Link></li>
-                      <li><Link to="#"><img src="assets/img/icons/twitter.svg" alt="twitter" /></Link></li>
-                      <li><Link to="#"><img src="assets/img/icons/whatsapp.svg" alt="whatsapp" /></Link></li>
-                      <li><Link to="#"><img src="assets/img/icons/youtube.svg" alt="youtube" /></Link></li>
-                      <li><Link to="#"><img src="assets/img/icons/linkedin.svg" alt="linkedin" /></Link></li>
+                      <li><Link to="#"><img src="/assets/img/icons/fb.svg" alt="facebook" /></Link></li>
+                      <li><Link to="#"><img src="/assets/img/icons/instagram.svg" alt="instagram" /></Link></li>
+                      <li><Link to="#"><img src="/assets/img/icons/twitter.svg" alt="twitter" /></Link></li>
+                      <li><Link to="#"><img src="/assets/img/icons/whatsapp.svg" alt="whatsapp" /></Link></li>
+                      <li><Link to="#"><img src="/assets/img/icons/youtube.svg" alt="youtube" /></Link></li>
+                      <li><Link to="#"><img src="/assets/img/icons/linkedin.svg" alt="linkedin" /></Link></li>
                     </ul>
                 <div className="d-flex align-items-center flex-wrap">
                   <img src="/assets/img/icons/app-store.svg" className="me-2" alt="app-store" />

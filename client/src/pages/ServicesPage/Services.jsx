@@ -17,13 +17,15 @@ const Services = () => {
 
             {/* 1st box */}
             <div className="col-xl-3 col-lg-4 theiaStickySidebar">
-              <div className="d-flex justify-content-between align-items-center flex-wrap mb-3">
-                <h4><span className="text-primary">{servicePageName}</span></h4>
+              <div className="side-category">
+                <div className="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                  <h4><span className="text-primary">{servicePageName}</span></h4>
+                </div>
+                <div className="row m-0">
+                {servicePageCategoryData.map((item, index)=>(
+                  <CategoryMiniCard2 value={item} key={item._id} />
+                ))}
               </div>
-              <div className="row m-0">
-              {servicePageCategoryData.map((item, index)=>(
-                <CategoryMiniCard2 value={item} key={item._id} />
-              ))}
 
               </div>
             </div>

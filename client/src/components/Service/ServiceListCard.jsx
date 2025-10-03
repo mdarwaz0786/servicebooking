@@ -13,7 +13,7 @@ const ServiceListCard = () => {
       {serviceListData.map((value, index)=>(
 
       
-        <div className="service-list" key={index}>
+        <div className="service-list" key={index} id={value.categoryId}>
             <div className="service-cont row">
                 <div className="service-cont-img col-4">
                 <a href="service-details.html">

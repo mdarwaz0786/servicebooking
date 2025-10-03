@@ -36250,5 +36250,10 @@ ease;
   cursor: pointer;
 }
 
+.side-category, .cart-sidebar {
+    position: sticky;
+    top: 70px;
+}
+
 
 /*# sourceMappingURL=style.css.map */

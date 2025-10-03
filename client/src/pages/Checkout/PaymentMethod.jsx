@@ -117,18 +117,18 @@ const PaymentMethod = () => {
                       <h6 className="fw-medium">Sub Total</h6>
                       <p className="text-gray-9">{PriceFormat(cartAmount.amount)}</p>
                     </div>
-                    {/* <div className="mb-2 d-flex align-items-center justify-content-between">
+                    <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
-                        Tax <span className="text-default fw-normal">(GST 5%)</span>
+                        GST <span className="text-default fw-normal">({cartAmount.gstPercent})</span>
                       </h6>
-                      <p className="text-gray-9">$60</p>
-                    </div> */}
-                    {/* <div className="mb-2 d-flex align-items-center justify-content-between">
+                      <p className="text-gray-9">{PriceFormat(cartAmount.gstAmount)}</p>
+                    </div>
+                    <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
-                        Discount <span className="text-default fw-normal">15%</span>
+                        Discount <span className="text-default fw-normal"></span>
                       </h6>
-                      <p className="text-gray-9">$757</p>
-                    </div> */}
+                      <p className="text-gray-9">-{PriceFormat(cartAmount.discountAmount)}</p>
+                    </div>
                     <div className="d-flex align-items-center justify-content-between">
                       <h6 className="fs-14">Total</h6>
                       <h6 className="fs-14">{PriceFormat(cartAmount.payableAmount)}</h6>
