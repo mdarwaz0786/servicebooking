@@ -52,7 +52,7 @@ const UpdateHomeServicePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `${apis.homeService.update}/${id}`,
         {
           title,
