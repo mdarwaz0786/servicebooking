@@ -64,23 +64,13 @@ export const getHomePageServiceById = asyncHandler(async (req, res) => {
 
 // Update
 export const updateHomePageService = asyncHandler(async (req, res) => {
-  const { addServices = [], removeServices = [], title, status } = req.body;
+  const { services = [], title, status } = req.body;
   const userId = req.user?._id;
 
   const service = await HomePageServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Home Page Service not found");
 
-  if (removeServices.length) {
-    service.services = service.services.filter(
-      (sId) => !removeServices.includes(sId.toString())
-    );
-  };
-
-  if (addServices.length) {
-    addServices.forEach((sId) => {
-      if (!service.services.includes(sId)) service.services.push(sId);
-    });
-  };
+  service.services = services;
 
   if (title) service.title = title;
   if (status !== undefined) service.status = status;

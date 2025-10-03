@@ -42,6 +42,7 @@ import UpdateHomeServicePage from "../pages/HomeService/UpdateHomeServicePage";
 import HomeSliderListPage from "../pages/HomeSlider/HomePageSliderListPage";
 import AddHomeSliderPage from "../pages/HomeSlider/AddHomeSliderPage";
 import UpdateHomeSliderPage from "../pages/HomeSlider/UpdateHomeSliderPage";
+import TransactionListPage from "../pages/Transaction/TransactionListPage";
 
 const routesConfig = {
   private: [
@@ -72,6 +73,8 @@ const routesConfig = {
 
     { path: "/bookings", element: BookingListPage },
     { path: "/booking-detail/:id", element: BookingDetailPage },
+
+    { path: "/transactions", element: TransactionListPage },
 
     { path: "/kyc", element: KycListPage },
     { path: "/kyc-detail", element: KycDetailsPage },

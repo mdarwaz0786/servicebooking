@@ -20,8 +20,6 @@ export const getTransactions = asyncHandler(async (req, res) => {
   const filters = {};
   if (search) {
     filters.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
       { phone: { $regex: search, $options: "i" } },
       { transactionId: { $regex: search, $options: "i" } },
     ];
@@ -43,6 +41,18 @@ export const getTransactions = asyncHandler(async (req, res) => {
   let transactions = await TransactionModel
     .find(filters)
     .populate("user")
+    .populate({
+      path: "PID",
+      model: "Booking",
+      select: "",
+      strictPopulate: false,
+    })
+    .populate({
+      path: "itemData.serviceId",
+      model: "Service",
+      select: "",
+      strictPopulate: false,
+    })
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -72,6 +82,18 @@ export const getTransactionById = asyncHandler(async (req, res) => {
   const transaction = await TransactionModel
     .findById(id)
     .populate("user")
+    .populate({
+      path: "PID",
+      model: "Booking",
+      select: "",
+      strictPopulate: false,
+    })
+    .populate({
+      path: "itemData.serviceId",
+      model: "Service",
+      select: "",
+      strictPopulate: false,
+    })
     .lean();
 
   if (!transaction) {

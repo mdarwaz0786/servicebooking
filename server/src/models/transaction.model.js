@@ -83,7 +83,7 @@ transactionSchema.virtual("user", {
   ref: "User",
   localField: "userId",
   foreignField: "_id",
-  justOne: false,
+  justOne: true,
 })
 
 const TransactionModel = mongoose.model("Transaction", transactionSchema);

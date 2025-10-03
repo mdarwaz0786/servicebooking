@@ -210,24 +210,45 @@ const HomeSliderListPage = () => {
                 </tbody>
               </table>
             </div>
-
             {/* Pagination */}
             <nav aria-label="Page navigation" className="mt-4">
               <ul className="pagination justify-content-center align-items-center">
+                {/* Prev */}
                 <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => updateParams({ page: page - 1 })} disabled={!hasPrevPage}>
+                  <button
+                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
+                    style={{ width: "40px", height: "40px" }}
+                    onClick={() => updateParams({ page: page - 1 })}
+                    disabled={!hasPrevPage}
+                  >
                     <i className="fa fa-chevron-left"></i>
                   </button>
                 </li>
+
+                {/* Page Numbers */}
                 {Array.from({ length: totalPages }, (_, i) => (
-                  <li key={i} className={`page-item mx-1 ${page === i + 1 ? "active" : ""}`}>
-                    <button className="page-link" onClick={() => updateParams({ page: i + 1 })}>
+                  <li
+                    key={i}
+                    className={`page-item mx-1 ${page === i + 1 ? "active" : ""}`}
+                  >
+                    <button
+                      className={`page-link rounded-circle shadow-sm ${page === i + 1 ? "bg-primary text-white border-primary" : ""}`}
+                      onClick={() => updateParams({ page: i + 1 })}
+                      style={{ width: "40px", height: "40px" }}
+                    >
                       {i + 1}
                     </button>
                   </li>
                 ))}
+
+                {/* Next */}
                 <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => updateParams({ page: page + 1 })} disabled={!hasNextPage}>
+                  <button
+                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
+                    style={{ width: "40px", height: "40px" }}
+                    onClick={() => updateParams({ page: page + 1 })}
+                    disabled={!hasNextPage}
+                  >
                     <i className="fa fa-chevron-right"></i>
                   </button>
                 </li>
