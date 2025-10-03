@@ -9,7 +9,7 @@ const CartItem = () => {
   return (
     <>
         {cartItems.map((value, index)=>(
-            <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="d-flex justify-content-between align-items-center mb-3" key={index}>
                 <div>
                     <p className="mb-1 cart-item-name">{value.name} <br /></p>
                 </div>

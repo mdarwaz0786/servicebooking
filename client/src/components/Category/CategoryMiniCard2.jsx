@@ -11,20 +11,31 @@ const CategoryMiniCard = ({ value = [] }) => {
         <div className="card-body d-flex align-items-center gap-3 modal-category-card ">
 
           {/* Right Side Content */}
-          <div className="d-flex align-items-center">
+          <div className="row align-items-center">
             
-            <div>
+            <div className="col-3">
                 <img
                 src={imageCheck(value.icon)}
                 className="img-fluid rounded-3"
                 alt={value.name}
-                style={{ maxHeight: "120px", objectFit: "cover" }}
+                style={{ maxHeight: "55px", objectFit: "cover" }}
                 />
             </div>
-            <div className="p-2">
-                <h6 className="fw-bold mb-1 fs-2 d-block">{value.name}</h6>
+            <div className="p-2 col-7">
+                <h6 className="fw-bold mb-0 d-block"><Link to={'#'+value._id}>{value.name}</Link></h6>
+                <p
+                style={{
+                  overflow: 'hidden',
+                  whiteSpace: 'pre',
+                  textOverflow: 'ellipsis',
+                  width: '170px',
+                  fontSize: '10px',
+                  margin: '0',
+                  lineHeight: 1,
+                }}
+                >{value.sort_description}</p>
             </div>
-            <div>
+            <div className="col-2">
                 <i className="fa fa-angle-double-right fs-4 text-success"></i>
             </div>
             

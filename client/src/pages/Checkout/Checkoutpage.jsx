@@ -11,11 +11,12 @@ import Confirmation from "./Confirmation";
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect } from "react";
 import LoginForm from "../Login/LoginForm";
+import { Link } from "react-router-dom";
 
 
 const Checkoutpage = () => {
 
-  const { Urls, postData, user, toggleStep } = useContext(AppContext);
+  const { Urls, postData, user, toggleStep, cartAmount, bookingAmount } = useContext(AppContext);
 
   useEffect(() => {
     toggleStep('location', true);
@@ -26,6 +27,8 @@ const Checkoutpage = () => {
     toggleStep('payment', false);
     toggleStep('confirmation', false);
   }, []);  
+
+  
 
 
   return (
@@ -40,25 +43,44 @@ const Checkoutpage = () => {
 							<div className="card-body p-3 fieldset-wizard ">
 								<div className="row">
                   
-                  <>
-                  {(user)?(
                     <>
-                      <BookingSidebar />
-                      <div className="col-lg-9">
-                          <LocationBooking />
-                          <AdditionalServices />
-                          <BookingDateTime />
-                          <PersonalInformation />
-                          <Cart />
-                          <PaymentMethod />
-                          <Confirmation />
-                      </div>
+                    {(user)?(
+                      <>
+                      {(cartAmount.amount)?(
+                        <>
+                            <BookingSidebar />
+                            <div className="col-lg-9">
+                              <LocationBooking />
+                              <AdditionalServices />
+                              <BookingDateTime />
+                              <PersonalInformation />
+                              <Cart />
+                              <PaymentMethod />
+                            </div>
+                          </>
+                          ):(
+                            <>
+                            {(bookingAmount.amount)?(
+                              <>
+                                <BookingSidebar />
+                                <div className="col-lg-9">
+                                  <Confirmation />
+                                </div>
+                              </>
+                            ):(
+                              <>
+                                <h1 className="text-center mb-2">Cart is empty!</h1>
+                                <Link to={'/'} className="btn btn-primary" style={{width: 'fit-content',margin: '0 auto'}}>Go Home</Link>
+                              </>
+                            )}
+                            </>
+                          )}
+                        
+                      </>
+                      ):(
+                      <LoginForm/>
+                    )}
                     </>
-                    ):(
-                    <LoginForm/>
-                  )}
-                  </>
-
 
 
 

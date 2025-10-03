@@ -25,7 +25,7 @@ const CategoryCard = ({ value = [] }) => {
             </div>
             <div className="p-2">
                 <h6 className="fw-bold mb-1 fs-3 me-2 d-block">{value.name}</h6>
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                <p>{value.sort_description}</p>
             </div>
             <div>
                 <i className="fa fa-angle-double-right fs-4 text-success"></i>
