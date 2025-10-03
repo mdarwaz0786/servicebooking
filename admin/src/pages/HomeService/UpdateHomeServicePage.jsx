@@ -56,7 +56,7 @@ const UpdateHomeServicePage = () => {
         `${apis.homeService.update}/${id}`,
         {
           title,
-          services: selectedServices.map((s) => s._id),
+          services: selectedServices.map((s) => s?._id),
         },
         {
           headers: { Authorization: validToken },

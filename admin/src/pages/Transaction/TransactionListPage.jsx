@@ -6,16 +6,16 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis, { BASE_URL } from "../../apis/apis";
 
-const HomeBannerListPage = () => {
+const TransactionListPage = () => {
   const { validToken } = useAuth();
-  const [banners, setBanners] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [hasPrevPage, setHasPrevPage] = useState(false);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [total, setTotal] = useState(0);
-
+  const [hasPrevPage, setHasPrevPage] = useState();
+  const [hasNextPage, setHasNexrPage] = useState();
+  const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
@@ -25,80 +25,76 @@ const HomeBannerListPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchInput), 500);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 500);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const updateParams = (newParams) => {
-    setSearchParams({ page, limit, search: debouncedSearch, sort, ...newParams });
-  };
-
-  const fetchBanners = async () => {
+  const fetchTransactions = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.banner.get, {
+      const response = await axios.get(apis.transaction.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: {
+          page,
+          limit,
+          search: debouncedSearch,
+          sort,
+        },
       });
 
       if (response?.data?.success) {
-        setBanners(response?.data?.data || []);
+        setTransactions(response?.data?.data || []);
         setTotalPages(response?.data?.totalPages || 1);
-        setTotal(response?.data?.total || 0);
+        setTotal(response?.data?.total || 1);
+        setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
-        setHasNextPage(response?.data?.hasNextPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch banners");
+      toast.error(error?.response?.data?.message || "Failed to fetch transactions");
     } finally {
       setLoading(false);
     };
   };
 
-  const toggleStatus = async (id, currentStatus) => {
-    try {
-      setBanners(prev => prev.map(b => b._id === id ? { ...b, status: !currentStatus } : b));
-      const response = await axios.patch(
-        `${apis.banner.update}/${id}`,
-        { status: !currentStatus },
-        { headers: { Authorization: validToken } }
-      );
-
-      if (!response?.data?.success) {
-        toast.error("Failed to update status");
-        fetchBanners();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update status");
-      fetchBanners();
+  const updateParams = (newParams) => {
+    const params = {
+      page,
+      limit,
+      search: debouncedSearch,
+      sort,
+      ...newParams,
     };
+    setSearchParams(params);
   };
 
-  const deleteBanner = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this banner?")) return;
+  const deleteTransaction = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this transaction?")) return;
 
     try {
-      const response = await axios.delete(`${apis.banner.delete}/${id}`, {
+      const response = await axios.delete(`${apis.transaction.delete}/${id}`, {
         headers: { Authorization: validToken },
       });
+
       if (response?.data?.success) {
-        toast.success("Banner deleted successfully");
-        fetchBanners();
+        toast.success("Transaction deleted successfully");
+        fetchTransactions();
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete banner");
+      toast.error(error?.response?.data?.message || "Failed to delete transaction");
     };
   };
 
   useEffect(() => {
-    fetchBanners();
+    fetchTransactions();
   }, [page, limit, debouncedSearch, sort]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Banners {banners?.length}</h5>
+          <h5>Transactions {transactions?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -108,7 +104,10 @@ const HomeBannerListPage = () => {
               className="form-control form-control-sm toolbar-input w-auto"
               style={{ width: "200px" }}
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(e) => {
+                setSearchInput(e.target.value);
+                updateParams({ page: 1, search: e.target.value });
+              }}
             />
 
             {/* Sort */}
@@ -132,12 +131,6 @@ const HomeBannerListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
-
-            <Link to="/add-home-banner">
-              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
-                <i className="fa fa-plus me-2"></i>Add
-              </button>
-            </Link>
           </div>
         </div>
 
@@ -149,52 +142,30 @@ const HomeBannerListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Image</th>
-                    <th>Title</th>
+                    <th>Mobile</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="5" className="text-center">Loading...</td>
-                    </tr>
-                  ) : banners?.length > 0 ? (
-                    banners.map((b, index) => (
-                      <tr key={b?._id}>
+                  {transactions?.length > 0 ? (
+                    transactions?.map((d, index) => (
+                      <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>
-                          <img
-                            src={b?.image ? `${BASE_URL}/${b?.image}` : "https://via.placeholder.com/50"}
-                            alt="banner"
-                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                          />
-                        </td>
-                        <td>{b?.title}</td>
-                        <td>
-                          <div className="active-switch">
-                            <label className="switch">
-                              <input
-                                type="checkbox"
-                                checked={b?.status}
-                                onChange={() => toggleStatus(b?._id, b?.status)}
-                              />
-                              <span className="sliders round" />
-                            </label>
-                          </div>
-                        </td>
+                        <td>{d?.user?.mobile}</td>
+                        <td>{d?.status}</td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-home-banner/${b?._id}`}>
+                            {/* View Button */}
+                            <Link to={`/transaction-detail/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
-                                <i className="fe fe-edit" />
+                                <i className="fe fe-eye" />
                               </button>
                             </Link>
                             <button
                               className="btn delete-table"
                               type="button"
-                              onClick={() => deleteBanner(b?._id)}
+                              onClick={() => deleteTransaction(d?._id)}
                             >
                               <i className="fe fe-trash-2" />
                             </button>
@@ -202,14 +173,17 @@ const HomeBannerListPage = () => {
                         </td>
                       </tr>
                     ))
-                  ) : (
+                  ) : !loading ? (
                     <tr>
-                      <td colSpan="5" className="text-center">No banners found</td>
+                      <td colSpan="6" className="text-center">
+                        No transactions found
+                      </td>
                     </tr>
-                  )}
+                  ) : null}
                 </tbody>
               </table>
             </div>
+
             {/* Pagination */}
             <nav aria-label="Page navigation" className="mt-4">
               <ul className="pagination justify-content-center align-items-center">
@@ -261,4 +235,4 @@ const HomeBannerListPage = () => {
   );
 };
 
-export default HomeBannerListPage;
+export default TransactionListPage;

@@ -211,6 +211,7 @@ const SubCategoryListPage = () => {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Category</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -229,6 +230,7 @@ const SubCategoryListPage = () => {
                           />
                         </td>
                         <td>{d?.name}</td>
+                        <td>{d?.category?.name}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

@@ -306,6 +306,9 @@ const SubSubSubCategoryListPage = () => {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Category</th>
+                    <th>Sub Category</th>
+                    <th>Sub Sub Category</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -324,6 +327,9 @@ const SubSubSubCategoryListPage = () => {
                           />
                         </td>
                         <td>{d?.name}</td>
+                        <td>{d?.category?.name}</td>
+                        <td>{d?.subCategory?.name}</td>
+                        <td>{d?.subSubCategory?.name}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">
