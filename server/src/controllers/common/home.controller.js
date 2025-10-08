@@ -15,22 +15,22 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     .populate({
       path: "subcategories",
       match: { status: true },
-      options: { sort: { createdAt: -1 } },
+      options: { sort: { createdAt: 1 } },
       strictPopulate: false,
       populate: {
         path: "subSubCategories",
         match: { status: true },
-        options: { sort: { createdAt: -1 } },
+        options: { sort: { createdAt: 1 } },
         strictPopulate: false,
         populate: {
           path: "subSubSubCategories",
           match: { status: true },
-          options: { sort: { createdAt: -1 } },
+          options: { sort: { createdAt: 1 } },
           strictPopulate: false,
         }
       }
     })
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: 1 })
     .lean();
 
   categories = categories.map((cat) => {

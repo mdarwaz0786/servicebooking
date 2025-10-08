@@ -33,9 +33,7 @@ const AllServices = ({ value=[] }) => {
                     </div>
                     <div className="service-content">
                       <h6 className="mb-1 text-truncate"><Link to="/service-details">{item.name}</Link></h6>
-                      <div className="d-flex align-items-center justify-content-between">
-                        <small>From {PriceFormat(item.salePrice)}</small>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>

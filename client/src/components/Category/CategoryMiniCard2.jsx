@@ -7,8 +7,10 @@ const CategoryMiniCard = ({ value = [] }) => {
   return (
     
     <>    
-        <div className="category p-2 rounded-4 overflow-hidden cursor-pointer mb-2" style={{boxShadow: '0px 0px 17px -9px rgba(0, 0, 0, 0.5)'}}>
-        <div className="card-body d-flex align-items-center gap-3 modal-category-card ">
+    {/* style={{boxShadow: '0px 0px 17px -9px rgba(0, 0, 0, 0.5)'}} */}
+        <div className="category p-0 rounded-3 overflow-hidden cursor-pointer mb-2" style={{cursor: 'pointer'}} >
+          {/* card-body d-flex align-items-center gap-3 modal-category-card */}
+        <div className=" ">
 
           {/* Right Side Content */}
           <div className="row align-items-center">

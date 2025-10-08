@@ -6,9 +6,9 @@ const Categories = ({categoryData = []}) => {
     
      
         <div className="container-fluid">
-            <div className="row justify-content-center align-items-start g-4">
-                {categoryData.map((cat) => (
-                <div key={cat.id} className="col-12 p-0 m-0">
+            <div className="row p-4 pt-0">
+                {categoryData.map((cat, index) => (
+               <>
                     {cat.subcategories?.length > 0 ? (
                     <>
                         <h5 className="text-center fw-bold text-dark mb-3">{cat.name}</h5>
@@ -24,19 +24,19 @@ const Categories = ({categoryData = []}) => {
                                 </div>
                             </>
                             ) : (
-                            <div className="row g-3 justify-content-center">
+                            
                                 <CategoryModalCard key={subCat.id} value={subCat} />
-                            </div>
+                           
                             )}
                         </div>
                         ))}
                     </>
                     ) : (
-                    <div className="row g-3 justify-content-center">
+                    
                         <CategoryModalCard key={cat.id} value={cat} />
-                    </div>
+                    
                     )}
-                </div>
+                </>
                 ))}
             </div>
             </div>

@@ -9,7 +9,7 @@ const Footer = () => {
             
             <div className="col-md-6 col-xl-3">
               <div className="footer-widget">
-                <h5 className="mb-4">Company</h5>
+                <h5 className="mb-1 fs-17">Company</h5>
                 <ul className="footer-menu">
                   <li><Link to="/about">About us</Link></li>
                   <li><Link to="/contact">Terms & conditions</Link></li>
@@ -23,7 +23,7 @@ const Footer = () => {
 
             <div className="col-md-6 col-xl-3">
               <div className="footer-widget">
-                <h5 className="mb-4">Customers</h5>
+                <h5 className="mb-1 fs-17">Customers</h5>
                 <ul className="footer-menu">
                   <li><Link to="/getting-started">GI Team reviews</Link></li>
                   <li><Link to="/help">Services near you</Link></li>
@@ -35,7 +35,7 @@ const Footer = () => {
 
             <div className="col-md-6 col-xl-3">
               <div className="footer-widget">
-                <h5 className="mb-4">Partners</h5>
+                <h5 className="mb-1 fs-17">Partners</h5>
                 <ul className="footer-menu">
                   <li><Link to="/features">Sign Up as a professional</Link></li>
                 </ul>
@@ -45,6 +45,7 @@ const Footer = () => {
             {/* Newsletter */}
             <div className="col-md-12 col-xl-3">
               <div className="footer-widget">
+                <h5 className="mb-1 fs-17">Keep In Touch</h5>
                 
                     <ul className="social-icon mb-3">
                       <li><Link to="#"><img src="/assets/img/icons/fb.svg" alt="facebook" /></Link></li>
@@ -70,8 +71,8 @@ const Footer = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-12">
-              <div className="d-flex align-items-center justify-content-between flex-wrap">
-                <p className="mb-2">Copyright © 2024 - All Rights Reserved Green India Team</p>
+              <div className="d-flex align-items-center justify-content-center flex-wrap">
+                <p className="mb-2"> Copyright 2025 Sarv Laxmi Green India Pvt. Ltd. All Rights Reserved. CIN: U51909DL2022PTC406952</p>
               </div>
             </div>
           </div>

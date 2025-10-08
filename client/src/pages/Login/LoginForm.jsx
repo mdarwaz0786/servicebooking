@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 
 const LoginForm = () => {
@@ -13,6 +13,9 @@ const LoginForm = () => {
   const [sendOtpBtn, setsendOtpBtn] = useState(true);
   const [verifyOtpBtn, setverifyOtpBtn] = useState(false);
 
+  const otpInputRef = useRef(null);
+  const mobileInputRef = useRef(null);
+
   const handleSendOtp = async () => {
     if (!mobile) {
       toast.error("Enter Mobile No.");
@@ -26,6 +29,9 @@ const LoginForm = () => {
         setmobileField(false);
         setsendOtpBtn(false);
         setverifyOtpBtn(true);
+        setTimeout(() => {
+          otpInputRef.current?.focus();
+        }, 100);
       }
     } catch (error) {
       console.error("Login Error:", error);
@@ -59,6 +65,9 @@ const LoginForm = () => {
     setmobileField(true);
     setsendOtpBtn(true);
     setverifyOtpBtn(false);
+    setTimeout(() => {
+        mobileInputRef.current?.focus();
+      }, 100);
   };
 
   return (
@@ -66,10 +75,10 @@ const LoginForm = () => {
       <div className="card shadow-lg border-0 m-0 p-4 rounded-4" style={{  width: "100%" }}>
         
         {/* Logo Section */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-1">
           <img src="/assets/img/logo.png" alt="Green India Team" style={{ height: "60px" }} />
-          <h4 className="mt-3 fw-bold text-success">Welcome</h4>
-          <p className="text-muted">{formTitle}</p>
+          {/* <h4 className="mt-3 fw-bold text-success">Welcome</h4> */}
+          {/* <p className="text-muted">{formTitle}</p> */}
         </div>
 
         {/* Show Mobile for verification */}
@@ -95,7 +104,13 @@ const LoginForm = () => {
             className="form-control form-control-lg rounded-3"
             placeholder="Enter mobile number"
             value={mobile}
+            ref={mobileInputRef} 
             onChange={(e) => setmobile(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSendOtp(); // 🔹 Run function on Enter
+              }
+            }}
           />
         </div>
 
@@ -107,7 +122,13 @@ const LoginForm = () => {
             className="form-control form-control-lg rounded-3"
             placeholder="Enter OTP"
             value={otp}
+            ref={otpInputRef} 
             onChange={(e) => setOtp(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleVerifyOtp(); // 🔹 Run function on Enter
+              }
+            }}
           />
         </div>
 

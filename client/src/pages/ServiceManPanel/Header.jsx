@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 const Header = () => {
+
+    const { toggleModal, handleLogout, user, imageCheck } = useContext(AppContext);
+
   return (
     <>
         {/* Header */}
@@ -8,10 +13,10 @@ const Header = () => {
             {/* Logo */}
             <div className="header-left active">
             <Link to="index.html" className="logo logo-normal">
-                <img src="assets/img/logo.svg" alt="Logo" />
+                <img src="/assets/img/logo.png" alt="Logo" />
             </Link>
             <Link to="index.html" className="logo-small">
-                <img src="assets/img/logo-small.svg" alt="Logo" />
+                <img src="/assets/img/logo-small.png" alt="Logo" />
             </Link>
             <Link id="toggle_btn">
                 <i className="ti ti-menu-deep" />
@@ -36,7 +41,7 @@ const Header = () => {
                     <Link data-bs-toggle="dropdown">
                     <div className="booking-user d-flex align-items-center">
                         <span className="user-img">
-                        <img src="assets/img/profiles/avatar-02.jpg" alt="user" />
+                        <img src={imageCheck(user.image, 'user.png')} alt="user" />
                         </span>
                     </div>
                     </Link>

@@ -98,7 +98,8 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                 </Swiper>
                 </div>
 
-                <div className="card card-body mt-3 shadow-none bg-transparent">
+                <div className="card card-body mt-3 shadow-none bg-transparent" style={{paddingBottom: '7px'}}>
+                  <h3 className="text-start hero-category-title">Explore our services</h3>
                   <div className="row hero-category">
                       <>
                         <CategoryMiniCard3 data={categoryData} handleSubCategory={handleSubCategory} className={'col-md-2 hero-category hero-category-item'} />

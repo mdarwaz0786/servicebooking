@@ -17,7 +17,7 @@ const CategoryMiniCard3 = ({ data = [], handleSubCategory, className='' }) => {
                   <div className="mx-auto mb-1">
                     <img src={imageCheck(value.icon)} className="img-fluid" alt="img" />
                   </div>
-                  <h6 className="fs-10 mb-1">{value.name}</h6>              
+                  <h6 className="fs-12 mb-1">{value.name}</h6>              
                 </div>
               </div> 
       ))}

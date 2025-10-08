@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 
 
 const ServiceManJoinForm = () => {
-  const { Urls, postData, toggleModa, toast } = useContext(AppContext);
+  const { Urls, postData, toggleModal, toast } = useContext(AppContext);
 
   const [mobile, setmobile] = useState("");
   const [otp, setOtp] = useState("");
@@ -13,6 +13,9 @@ const ServiceManJoinForm = () => {
 
   const [sendOtpBtn, setsendOtpBtn] = useState(true);
   const [verifyOtpBtn, setverifyOtpBtn] = useState(false);
+
+  const otpInputRef = useRef(null);
+  const mobileInputRef = useRef(null);
 
   const handleSendOtp = async () => {
     if (!mobile) {
@@ -27,6 +30,9 @@ const ServiceManJoinForm = () => {
         setmobileField(false);
         setsendOtpBtn(false);
         setverifyOtpBtn(true);
+        setTimeout(() => {
+          otpInputRef.current?.focus();
+        }, 100);
       }
     } catch (error) {
       console.error("Send OTP Error:", error);
@@ -49,6 +55,7 @@ const ServiceManJoinForm = () => {
         setmobile("");
         setOtp("");
         toggleModal("serviceManJoinModal", false);
+        
       }
     } catch (error) {
       console.error("Verify OTP Error:", error);
@@ -61,6 +68,9 @@ const ServiceManJoinForm = () => {
     setmobileField(true);
     setsendOtpBtn(true);
     setverifyOtpBtn(false);
+    setTimeout(() => {
+      mobileInputRef.current?.focus();
+    }, 100);
   };
 
   return (
@@ -70,10 +80,10 @@ const ServiceManJoinForm = () => {
         style={{ width: "100%" }}
       >
         {/* Logo Section */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-1">
           <img src="/assets/img/logo.png" alt="Green India Team" style={{ height: "55px" }} />
-          <h4 className="mt-3 fw-bold text-success">Join as Service Man</h4>
-          <p className="text-muted">{formTitle}</p>
+          <h4 className="mt-1 fw-bold text-success">Join As Expert Team</h4>
+          {/* <p className="text-muted">{formTitle}</p> */}
         </div>
 
         {/* Show Mobile after OTP sent */}
@@ -99,7 +109,13 @@ const ServiceManJoinForm = () => {
             className="form-control form-control-lg rounded-3"
             placeholder="Enter mobile number"
             value={mobile}
+            ref={mobileInputRef} 
             onChange={(e) => setmobile(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSendOtp(); // 🔹 Run function on Enter
+              }
+            }}
           />
         </div>
 
@@ -111,7 +127,13 @@ const ServiceManJoinForm = () => {
             className="form-control form-control-lg rounded-3"
             placeholder="Enter OTP"
             value={otp}
+            ref={otpInputRef} 
             onChange={(e) => setOtp(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleVerifyOtp(); // 🔹 Run function on Enter
+              }
+            }}
           />
         </div>
 

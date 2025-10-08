@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { toast } from "react-toastify";
 import ServiceManJoinModal from "../components/Modal/ServiceManJoinModal";
+import ServiceDetailModal from "../components/Modal/ServiceDetailModal";
 
 
 
@@ -119,6 +120,8 @@ export const AppProvider = ({ children }) => {
 
       serviceManProfileDetail: `${servicemanUrl}profile/detail`,
       serviceManProfileUpdate: `${servicemanUrl}profile`,
+
+      serviceManReview: `${userUrl}review`,
 
       serviceManBooking: `${servicemanUrl}booking`,
       serviceManBookingAccept: `${servicemanUrl}booking/accept`,
@@ -384,6 +387,7 @@ const imageCheck = (path, defaultImg = null) => {
     serviceManJoinModal: false,
     addressModal: false,
     BookignStartModal: false,
+    ServiceDetailModal: false,
   });
   const toggleModal = (modalName, isOpen) => {
     setModals((prev) => ({
@@ -467,11 +471,19 @@ const imageCheck = (path, defaultImg = null) => {
     {
       setcategoryModalItemData(item)
       try {
-        const response = await postData({categoryId:item._id}, Urls.subCategoryList, "GET", 0, 1);
-        if (response?.data.length > 0) {
-          setcategoryModalListData(response.data);
+        if(item.subSubCategoryCount)
+          {
+          const response = await postData({categoryId:item._id,sort:'asc'}, Urls.subCategoryList, "GET", 0, 1);
+          if (response?.data.length > 0) {
+            setcategoryModalListData(response.data);
+          }
+          toggleModal("homeCategoryModal",true);
         }
-        toggleModal("homeCategoryModal",true)
+        else{
+          toggleModal("homeCategoryModal", false); 
+          navigate("/services/"+item.slug);
+        }
+
       } catch (error) {
         console.error("Cart API Error:", error);
       }
@@ -480,11 +492,18 @@ const imageCheck = (path, defaultImg = null) => {
       toggleModal("homeCategoryModal",false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({subCategoryId:item._id}, Urls.subSubCategoryList, "GET", 0, 1);
-        if (response?.data.length > 0) {
-          setcategoryModalListData(response.data);
-        }        
-        toggleModal("homeCategoryModal",true)
+        if(item.subSubSubCategoryCount)
+          {
+          const response = await postData({subCategoryId:item._id,sort:'asc'}, Urls.subSubCategoryList, "GET", 0, 1);
+          if (response?.data.length > 0) {
+            setcategoryModalListData(response.data);
+          }        
+          toggleModal("homeCategoryModal",true);
+        }
+        else{
+          toggleModal("homeCategoryModal", false); 
+          navigate("/services/"+item.slug);
+        }
       } catch (error) {
         console.error("Cart API Error:", error);
       }
@@ -493,10 +512,12 @@ const imageCheck = (path, defaultImg = null) => {
       toggleModal("homeCategoryModal",false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({subSubCategoryId:item._id}, Urls.subSubSubCategoryList, "GET", 0, 1);
-        if (response?.data.length > 0) {
-          setcategoryModalListData(response.data);
-        }        
+        const response = await postData({subSubCategoryId:item._id,sort:'asc'}, Urls.subSubSubCategoryList, "GET", 0, 1);
+        // if (response?.data.length > 0) {
+        //   setcategoryModalListData(response.data);
+        // }  
+        toggleModal("homeCategoryModal", false); 
+        navigate("/services/"+item.slug);      
         toggleModal("homeCategoryModal",true)
       } catch (error) {
         console.error("Cart API Error:", error);
@@ -504,7 +525,7 @@ const imageCheck = (path, defaultImg = null) => {
     }
     else{
       toggleModal("homeCategoryModal", false); 
-      navigate("/services/"+categoryModalItemData.slug);
+      navigate("/services/"+item.slug);
     }
   }
 
@@ -667,6 +688,7 @@ const imageCheck = (path, defaultImg = null) => {
       <BodyLoader />
       <LoginModal />
       <ServiceManJoinModal />
+      <ServiceDetailModal />
       <ToastContainer 
       position="bottom-right"   // you can change to "top-right", "top-center", etc.
       autoClose={3000}          // close after 3s

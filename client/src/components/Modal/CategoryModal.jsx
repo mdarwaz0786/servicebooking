@@ -46,12 +46,12 @@ const CategoryModal = () => {
               </div>
 
               {/* Title */}
-              <div className="p-3 text-center" style={{marginBottom: '30px'}}>
-                <h4 className="fw-bold text-success">{categoryModalItemData.name}</h4>
+              <div className="p-3 pb-2 text-center fs-17" >
+                <h4 className="fw-bold fs-18" style={{color:'#198754'}}>{categoryModalItemData.name}</h4>
               </div>
 
               {/* Categories List */}
-              <div className="px-3 pb-3">
+              <div className="row">
                 <Categories categoryData={categoryModalListData} />
               </div>
             </div>
