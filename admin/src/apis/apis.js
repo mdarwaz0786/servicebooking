@@ -87,6 +87,18 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/home-page-service`,
     delete: `${BASE_URL}/api/v1/admin/home-page-service`,
   },
+  serviceIncluded: {
+    create: `${BASE_URL}/api/v1/admin/service-included`,
+    get: `${BASE_URL}/api/v1/admin/service-included`,
+    update: `${BASE_URL}/api/v1/admin/service-included`,
+    delete: `${BASE_URL}/api/v1/admin/service-included`,
+  },
+  requirementFromCustomer: {
+    create: `${BASE_URL}/api/v1/admin/requirement-from-customer`,
+    get: `${BASE_URL}/api/v1/admin/requirement-from-customer`,
+    update: `${BASE_URL}/api/v1/admin/requirement-from-customer`,
+    delete: `${BASE_URL}/api/v1/admin/requirement-from-customer`,
+  },
   user: {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,

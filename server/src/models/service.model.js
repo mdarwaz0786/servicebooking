@@ -30,6 +30,10 @@ const serviceSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  taxablePrice: {
+    type: Number,
+    required: false,
+  },
   timeTaking: {
     type: String,
     required: false,
@@ -66,6 +70,17 @@ const serviceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubSubSubCategory",
     required: false,
+  },
+  repairingDiagnostic: {
+    type: Boolean,
+    default: false,
+  },
+  offerContent: {
+    type: String,
+  },
+  maxBookingQuantity: {
+    type: Number,
+    default: 1,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

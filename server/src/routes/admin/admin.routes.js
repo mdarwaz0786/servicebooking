@@ -21,6 +21,12 @@ import transactionRoutes from "./transaction.routes.js";
 import homePageBannerRoutes from "./homePageBanner.routes.js";
 import homePageSeviceRoutes from "./homePageService.routes.js";
 import homePageSliderRoutes from "./homePageSlider.routes.js";
+import brandLogoRoutes from "./brandLogo.routes.js";
+import expertTechnicianRoutes from "./expertTechnician.routes.js";
+import giPromiseRoutes from "./giPromise.routes.js";
+import requirementFromCustomerRoutes from "./requirementFromCustomer.routes.js";
+import serviceIncludedRoutes from "./serviceIncluded.routes.js";
+import whyChooseUsRoutes from "./whyChooseUs.routes.js";
 
 const router = express.Router();
 
@@ -46,5 +52,11 @@ router.use("/transaction", transactionRoutes);
 router.use("/home-page-banner", homePageBannerRoutes);
 router.use("/home-page-service", homePageSeviceRoutes);
 router.use("/home-page-slider", homePageSliderRoutes);
+router.use("/brand-logo", brandLogoRoutes);
+router.use("/expert-technician", expertTechnicianRoutes);
+router.use("/gi-promise", giPromiseRoutes);
+router.use("/requirement-from-customer", requirementFromCustomerRoutes);
+router.use("/service-included", serviceIncludedRoutes);
+router.use("/why-choose-us", whyChooseUsRoutes);
 
 export default router;

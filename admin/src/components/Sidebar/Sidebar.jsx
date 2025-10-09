@@ -51,49 +51,113 @@ const Sidebar = () => {
             <li className="menu-title">
               <h6>Services</h6>
             </li>
+
             <li>
-              <Link
-                to="/services"
-                className={currentPath === "/services" ? "active" : ""}
-              >
-                <i className="fe fe-briefcase" />
-                <span>Services</span>
+              <Link to="#"><i class="fe fe-briefcase"></i>
+                <span>Master</span>
+                <span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
               </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/categories"
+                    className={currentPath === "/categories" ? "active" : ""}
+                  >
+                    <span>Products</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/sub-categories"
+                    className={currentPath === "/sub-categories" ? "active" : ""}
+                  >
+                    <span>Variants</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/sub-sub-categories"
+                    className={currentPath === "/sub-sub-categories" ? "active" : ""}
+                  >
+                    <span>Service Process</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/sub-sub-sub-categories"
+                    className={currentPath === "/sub-sub-sub-categories" ? "active" : ""}
+                  >
+                    <span>Nested Service Process</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services"
+                    className={currentPath === "/services" ? "active" : ""}
+                  >
+                    <span>Services</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
 
             <li>
-              <Link
-                to="/categories"
-                className={currentPath === "/categories" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" />
-                <span>Categories</span>
+              <Link to="#"><i class="fe fe-briefcase"></i>
+                <span>Service Master</span>
+                <span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
               </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="#"
+                    className={currentPath === "/service-included" ? "active" : ""}
+                  >
+                    <span>Service Included</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="#"
+                    className={currentPath === "/requirement-from-customer" ? "active" : ""}
+                  >
+                    <span>Requirement From Customer</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/why-choose-us"
+                    className={currentPath === "/why-choose-us" ? "active" : ""}
+                  >
+                    <span>Why Choose Us</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/expert-technician"
+                    className={currentPath === "/expert-technician" ? "active" : ""}
+                  >
+                    <span>Expert Technician</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/brand-logo"
+                    className={currentPath === "/brand-logo" ? "active" : ""}
+                  >
+                    <span>Brand Logo</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/gi-promise"
+                    className={currentPath === "/gi-promise" ? "active" : ""}
+                  >
+                    <span>GI Promise</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
-            <li>
-              <Link
-                to="/sub-categories"
-                className={currentPath === "/sub-categories" ? "active" : ""}
-              >
-                <i className="fe fe-clipboard" /> <span>Sub Categories</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/sub-sub-categories"
-                className={currentPath === "/sub-sub-categories" ? "active" : ""}
-              >
-                <i className="fe fe-layers" /> <span>Sub Sub Categories</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/sub-sub-sub-categories"
-                className={currentPath === "/sub-sub-sub-categories" ? "active" : ""}
-              >
-                <i className="fe fe-grid" /> <span>Sub Sub Sub Categories</span>
-              </Link>
-            </li>
+
             <li>
               <Link
                 to="/time-slots"
@@ -187,7 +251,7 @@ const Sidebar = () => {
                 to="/home-banner"
                 className={currentPath === "/home-banner" ? "active" : ""}
               >
-                <i className="fe fe-image" /> <span>Banner</span>
+                <i className="fe fe-image" /> <span>Wide Banner</span>
               </Link>
             </li>
             <li>
@@ -203,7 +267,7 @@ const Sidebar = () => {
                 to="/home-slider"
                 className={currentPath === "/home-slider" ? "active" : ""}
               >
-                <i className="fe fe-sliders" /> <span>Slider</span>
+                <i className="fe fe-sliders" /> <span>Front Banner</span>
               </Link>
             </li>
           </ul>
@@ -214,3 +278,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

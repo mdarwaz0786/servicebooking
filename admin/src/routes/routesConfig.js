@@ -43,6 +43,12 @@ import HomeSliderListPage from "../pages/HomeSlider/HomePageSliderListPage";
 import AddHomeSliderPage from "../pages/HomeSlider/AddHomeSliderPage";
 import UpdateHomeSliderPage from "../pages/HomeSlider/UpdateHomeSliderPage";
 import TransactionListPage from "../pages/Transaction/TransactionListPage";
+import AddServiceIncludedPage from "../pages/ServiceIncluded/AddServiceIncludedPage";
+import UpdateServiceIncludedPage from "../pages/ServiceIncluded/UpdateServiceIncludedPage";
+import ServiceIncludedListPage from "../pages/ServiceIncluded/ServiceIncludedListPage";
+import RequirementFromCustomerListPage from "../pages/RequirementFromCustomer/RequirementFromCustomerListPage";
+import AddRequirementFromCustomerPage from "../pages/RequirementFromCustomer/AddRequirementFromCustomerPage";
+import UpdateRequirementFromCustomerPage from "../pages/RequirementFromCustomer/UpdateRequirementFromCustomerPage";
 
 const routesConfig = {
   private: [
@@ -101,6 +107,14 @@ const routesConfig = {
     { path: "/home-service", element: HomeServiceListPage },
     { path: "/add-home-service", element: AddHomeServicePage },
     { path: "/update-home-service/:id", element: UpdateHomeServicePage },
+
+    { path: "/service-included", element: ServiceIncludedListPage },
+    { path: "/add-service-included", element: AddServiceIncludedPage },
+    { path: "/update-service-included/:id", element: UpdateServiceIncludedPage },
+
+    { path: "/requirement-from-customer", element: RequirementFromCustomerListPage },
+    { path: "/add-requirement-from-customer", element: AddRequirementFromCustomerPage },
+    { path: "/update-requirement-from-customer/:id", element: UpdateRequirementFromCustomerPage },
 
     { path: "/users", element: UserListPage },
   ],

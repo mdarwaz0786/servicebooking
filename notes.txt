@@ -33,3 +33,12 @@ service man
 
 // home page service table = services, title, status
 // home page banner = image, title, link
+
+// service table me new fields: taxablePrice, repairingDiagnostic, offerContent,
+
+// service included: title(main), title(multiple),
+// requirement from customer (what we need): title(main) [(icon, name)](multiple)
+// why choose us: title(main), [title, description](multiple)
+// expert technician: title(main), [(iocn, title) multiple], image
+// brand logo: title(main), icon (multiple), description
+// GI promise (service excluded): title(main), title(multiple)
