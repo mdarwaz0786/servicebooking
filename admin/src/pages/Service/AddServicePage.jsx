@@ -155,7 +155,10 @@ const AddServicePage = () => {
           data.append(key, value);
         }
       });
+<<<<<<< HEAD
 
+=======
+>>>>>>> c5120398c3ab0193868252c9220c4918b2c06d14
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
 

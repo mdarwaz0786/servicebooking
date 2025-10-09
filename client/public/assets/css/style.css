@@ -19966,6 +19966,7 @@ fieldset.booking-content#first-field {
   display: flex;
   justify-content: space-between;
   margin-bottom: 21px;
+  align-items: center;
 }
 
 .order-summary .ord-summary .order-amt .order-info {
