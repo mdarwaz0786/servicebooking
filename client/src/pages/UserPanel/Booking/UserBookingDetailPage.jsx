@@ -111,6 +111,13 @@ const UserBookingDetailPage = () => {
         <div className="col-md-3">
           <div className="slot-action">
             <h6>Booking Status</h6>
+            <div className="booking-otp">
+                  {data?.otp?.split("").map((digit, index) => (
+                  <span key={index} className="otp-box">
+                  {digit}
+                  </span>
+              ))}
+            </div>
             {/* <span className="badge badge-success-100 p-2 me-3">Completed</span> */}
 
             <span className="badge badge-skyblue p-2">Pending</span>
@@ -166,8 +173,8 @@ const UserBookingDetailPage = () => {
                 {items.map((value, index)=>(
                     <div className="order-amt" key={index}>
                     <div className="order-info">
-                        <div className="order-img">
-                        <img src="/assets/img/providers/provider-26.jpg" alt="img" />
+                        <div className="order-img" style={{width: '182px'}}>
+                        <img src={imageCheck(value?.service?.image)} className="img-thumbnail w-20" alt="img" style={{width: '80px'}} />
                         </div>
                         <div className="order-profile">
                         <h6>{value?.service?.name}</h6>

@@ -178,7 +178,12 @@ const UpdateServicePage = () => {
     try {
       setLoading(true);
       const data = new FormData();
-      Object.keys(formData).forEach((key) => data.append(key, formData[key]));
+      Object.keys(formData).forEach((key) => {
+        const value = formData[key];
+        if (value !== null && value !== "" && value !== undefined) {
+          data.append(key, value);
+        }
+      });
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
 
