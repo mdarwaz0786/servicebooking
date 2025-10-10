@@ -14,6 +14,7 @@ const UpdateServiceIncludedPage = () => {
   const [mainTitle, setMainTitle] = useState("");
   const [titles, setTitles] = useState([""]);
   const [loading, setLoading] = useState(false);
+  const [Services, setServices] = useState([""]);
 
   const fetchData = async () => {
     try {
@@ -44,6 +45,22 @@ const UpdateServiceIncludedPage = () => {
 
   const addTitleField = () => setTitles([...titles, ""]);
   const removeTitleField = (index) => setTitles(titles.filter((_, i) => i !== index));
+
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await axios.get(apis.service.get, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success) setServices(res?.data?.data || []);
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to load services");
+      };
+    };
+    fetchServices();
+  }, [validToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,6 +112,8 @@ const UpdateServiceIncludedPage = () => {
                   required
                 />
               </div>
+
+              
 
               {/* Titles */}
               <div className="mb-3">

@@ -109,7 +109,7 @@ const Sidebar = () => {
               <ul>
                 <li>
                   <Link
-                    to="#"
+                    to="/service-included"
                     className={currentPath === "/service-included" ? "active" : ""}
                   >
                     <span>Service Included</span>
