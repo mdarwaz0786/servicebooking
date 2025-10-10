@@ -73,14 +73,54 @@ const serviceSchema = new mongoose.Schema({
   },
   repairingDiagnostic: {
     type: Boolean,
-    default: false,
   },
   offerContent: {
     type: String,
   },
   maxBookingQuantity: {
+    type: String,
+  },
+  taxPercent: {
+    type: String,
+  },
+  creditPoint: {
+    type: String,
+  },
+  transactionCharge: {
     type: Number,
-    default: 1,
+  },
+  heightImage: {
+    type: String,
+  },
+  squareImage: {
+    type: String,
+  },
+  popupImage: {
+    type: String,
+  },
+  serviceIncluded: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceIncluded",
+  },
+  requirementFromCustomer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RequirementFromCustomer",
+  },
+  whyChooseUs: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "WhyChooseUs",
+  },
+  expertTechnician: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ExpertTechnician",
+  },
+  brandLogo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BrandLogo",
+  },
+  gIPromise: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "GIPromise",
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

@@ -18,13 +18,26 @@ export const createService = asyncHandler(async (req, res) => {
     name,
     mrpPrice,
     salePrice,
+    taxablePrice,
     timeTaking,
     shortDescription,
     fullDescription,
     categoryId,
     subCategoryId,
     subSubCategoryId,
-    subSubSubCategoryId
+    subSubSubCategoryId,
+    repairingDiagnostic,
+    offerContent,
+    maxBookingQuantity,
+    taxPercent,
+    creditPoint,
+    transactionCharge,
+    serviceIncluded,
+    requirementFromCustomer,
+    whyChooseUs,
+    expertTechnician,
+    brandLogo,
+    gIPromise,
   } = req.body;
 
   if (!name || !name.trim()) throw new ApiError(400, "Service name is required");
@@ -32,6 +45,9 @@ export const createService = asyncHandler(async (req, res) => {
 
   let imagePath = null;
   let iconPath = null;
+  let heightImagePath = null;
+  let squareImagePath = null;
+  let popupImagePath = null;
 
   try {
     if (req.files?.image?.[0]) {
@@ -42,10 +58,23 @@ export const createService = asyncHandler(async (req, res) => {
       iconPath = await compressImage(req.files.icon[0].buffer, "service");
     };
 
+    if (req.files?.heightImage?.[0]) {
+      heightImagePath = await compressImage(req.files.heightImage[0].buffer, "service");
+    };
+
+    if (req.files?.squareImage?.[0]) {
+      squareImagePath = await compressImage(req.files.squareImage[0].buffer, "service");
+    };
+
+    if (req.files?.popupImage?.[0]) {
+      popupImagePath = await compressImage(req.files.popupImage[0].buffer, "service");
+    };
+
     const service = await ServiceModel.create({
       name,
       mrpPrice,
       salePrice,
+      taxablePrice,
       timeTaking,
       shortDescription,
       fullDescription,
@@ -56,6 +85,21 @@ export const createService = asyncHandler(async (req, res) => {
       createdBy: req.user?._id,
       image: imagePath,
       icon: iconPath,
+      heightImage: heightImagePath,
+      squareImage: squareImagePath,
+      popupImage: popupImagePath,
+      repairingDiagnostic,
+      offerContent,
+      maxBookingQuantity,
+      taxPercent,
+      creditPoint,
+      transactionCharge,
+      serviceIncluded,
+      requirementFromCustomer,
+      whyChooseUs,
+      expertTechnician,
+      brandLogo,
+      gIPromise,
     });
 
     const slug = await generateUniqueSlug(name, "Service", service._id, "services");
@@ -69,6 +113,15 @@ export const createService = asyncHandler(async (req, res) => {
     };
     if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
       fs.unlinkSync(path.join(process.cwd(), iconPath));
+    };
+    if (heightImagePath && fs.existsSync(path.join(process.cwd(), heightImagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), heightImagePath));
+    };
+    if (squareImagePath && fs.existsSync(path.join(process.cwd(), squareImagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), squareImagePath));
+    };
+    if (popupImagePath && fs.existsSync(path.join(process.cwd(), popupImagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), popupImagePath));
     };
     throw new ApiError(500, error.message || "Something went wrong");
   };
@@ -151,6 +204,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
   const services = await ServiceModel
     .find(filters)
+    .populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise")
     .sort(sortOption)
     .skip(skip)
     .limit(limit);
@@ -177,7 +231,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await ServiceModel.findById(req.params.id);
+  const service = await ServiceModel.findById(req.params.id).populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise");
   if (!service) throw new ApiError(404, "Service not found");
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: service });
 });
@@ -243,15 +297,27 @@ export const deleteService = asyncHandler(async (req, res) => {
   const service = await ServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
 
-  if (service.image && fs.existsSync(path.join(process.cwd(), service.image))) {
-    fs.unlinkSync(path.join(process.cwd(), service.image));
+  if (service?.image && fs.existsSync(path.join(process.cwd(), service?.image))) {
+    fs.unlinkSync(path.join(process.cwd(), service?.image));
   };
 
-  if (service.icon && fs.existsSync(path.join(process.cwd(), service.icon))) {
-    fs.unlinkSync(path.join(process.cwd(), service.icon));
+  if (service?.icon && fs.existsSync(path.join(process.cwd(), service?.icon))) {
+    fs.unlinkSync(path.join(process.cwd(), service?.icon));
   };
 
-  await SlugModel.deleteOne({ collectionName: "Service", documentId: service._id });
+  if (service?.heightImage && fs.existsSync(path.join(process.cwd(), service?.heightImage))) {
+    fs.unlinkSync(path.join(process.cwd(), service?.heightImage));
+  };
+
+  if (service?.squareImage && fs.existsSync(path.join(process.cwd(), service?.squareImage))) {
+    fs.unlinkSync(path.join(process.cwd(), service?.squareImage));
+  };
+
+  if (service?.popupImage && fs.existsSync(path.join(process.cwd(), service?.squareImage))) {
+    fs.unlinkSync(path.join(process.cwd(), service?.squareImage));
+  };
+
+  await SlugModel.deleteOne({ collectionName: "Service", documentId: service?._id });
   await service.deleteOne();
 
   return res.status(200).json({ success: true, message: "Deleted successfully" });

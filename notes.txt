@@ -34,7 +34,7 @@ service man
 // home page service table = services, title, status
 // home page banner = image, title, link
 
-// service table me new fields: taxablePrice, repairingDiagnostic, offerContent,
+// service table me new fields: taxablePrice, repairingDiagnostic, offerContent, maxBookingQuantity
 
 // service included: title(main), title(multiple),
 // requirement from customer (what we need): title(main) [(icon, name)](multiple)

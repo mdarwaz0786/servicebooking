@@ -77,6 +77,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
   const services = await ServiceModel
     .find(filters)
+    .populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise")
     .sort(sort)
     .skip(skip)
     .limit(limit)
@@ -118,7 +119,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await ServiceModel.findById(req.params.id);
+  const service = await ServiceModel.findById(req.params.id).populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise");
   if (!service) throw new ApiError(404, "Service not found");
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: service });
 });

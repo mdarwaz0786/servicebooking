@@ -11,6 +11,10 @@ const whyChooseUsSchema = new mongoose.Schema({
       description: { type: String, trim: true },
     },
   ],
+  status: {
+    type: Boolean,
+    default: true,
+  },
 }, { timestamps: true });
 
 export default mongoose.model("WhyChooseUs", whyChooseUsSchema);
