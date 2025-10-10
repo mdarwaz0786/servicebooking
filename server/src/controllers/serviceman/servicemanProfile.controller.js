@@ -46,7 +46,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
       };
 
       const updatedData = {
-        ...req.body,
+        ...req.body, 
         updatedBy: userId,
       };
 
