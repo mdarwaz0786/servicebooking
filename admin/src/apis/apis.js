@@ -99,6 +99,30 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/requirement-from-customer`,
     delete: `${BASE_URL}/api/v1/admin/requirement-from-customer`,
   },
+  whyChooseUs: {
+    create: `${BASE_URL}/api/v1/admin/why-choose-us`,
+    get: `${BASE_URL}/api/v1/admin/why-choose-us`,
+    update: `${BASE_URL}/api/v1/admin/why-choose-us`,
+    delete: `${BASE_URL}/api/v1/admin/why-choose-us`,
+  },
+  expertTechnician: {
+    create: `${BASE_URL}/api/v1/admin/expert-technician`,
+    get: `${BASE_URL}/api/v1/admin/expert-technician`,
+    update: `${BASE_URL}/api/v1/admin/expert-technician`,
+    delete: `${BASE_URL}/api/v1/admin/expert-technician`,
+  },
+  brandLogo: {
+    create: `${BASE_URL}/api/v1/admin/brand-logo`,
+    get: `${BASE_URL}/api/v1/admin/brand-logo`,
+    update: `${BASE_URL}/api/v1/admin/brand-logo`,
+    delete: `${BASE_URL}/api/v1/admin/brand-logo`,
+  },
+  giPromise: {
+    create: `${BASE_URL}/api/v1/admin/gi-promise`,
+    get: `${BASE_URL}/api/v1/admin/gi-promise`,
+    update: `${BASE_URL}/api/v1/admin/gi-promise`,
+    delete: `${BASE_URL}/api/v1/admin/gi-promise`,
+  },
   user: {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,

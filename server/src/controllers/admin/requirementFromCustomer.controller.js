@@ -8,9 +8,9 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE REQUIREMENT FROM CUSTOMER ---------------------
 export const createRequirementFromCustomer = asyncHandler(async (req, res) => {
-  const { mainTitle, requirements } = req.body;
+  const { mainTitle, requirements, services } = req.body;
 
-  if (!mainTitle || !mainTitle.trim()) {
+  if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
   };
 
@@ -32,6 +32,7 @@ export const createRequirementFromCustomer = asyncHandler(async (req, res) => {
   const requirement = await RequirementFromCustomerModel.create({
     mainTitle,
     requirements: requirementsArray,
+    services,
   });
 
   return res.status(201).json({ success: true, message: "Created successfully", data: requirement });
@@ -53,6 +54,7 @@ export const getRequirementsFromCustomer = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const requirements = await RequirementFromCustomerModel.find(filters)
+    .populate("services")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -77,7 +79,7 @@ export const getRequirementsFromCustomer = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE REQUIREMENT ---------------------
 export const getRequirementFromCustomerById = asyncHandler(async (req, res) => {
-  const requirement = await RequirementFromCustomerModel.findById(req.params.id).lean();
+  const requirement = await RequirementFromCustomerModel.findById(req.params.id).populate("services").lean();
   if (!requirement) {
     throw new ApiError(404, "Requirement not found");
   };

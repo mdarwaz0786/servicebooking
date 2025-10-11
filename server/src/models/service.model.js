@@ -98,30 +98,6 @@ const serviceSchema = new mongoose.Schema({
   popupImage: {
     type: String,
   },
-  serviceIncluded: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ServiceIncluded",
-  },
-  requirementFromCustomer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "RequirementFromCustomer",
-  },
-  whyChooseUs: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "WhyChooseUs",
-  },
-  expertTechnician: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ExpertTechnician",
-  },
-  brandLogo: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "BrandLogo",
-  },
-  gIPromise: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "GIPromise",
-  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -162,6 +138,48 @@ serviceSchema.virtual("subSubSubCategory", {
   ref: "SubSubSubCategory",
   localField: "subSubSubCategoryId",
   foreignField: "_id",
+  justOne: true,
+});
+
+serviceSchema.virtual("serviceIncluded", {
+  ref: "ServiceIncluded",
+  localField: "_id",
+  foreignField: "services",
+  justOne: true,
+});
+
+serviceSchema.virtual("requirementFromCustomer", {
+  ref: "RequirementFromCustomer",
+  localField: "_id",
+  foreignField: "services",
+  justOne: true,
+});
+
+serviceSchema.virtual("whyChooseUs", {
+  ref: "WhyChooseUs",
+  localField: "_id",
+  foreignField: "services",
+  justOne: true,
+});
+
+serviceSchema.virtual("expertTechnician", {
+  ref: "ExpertTechnician",
+  localField: "_id",
+  foreignField: "services",
+  justOne: true,
+});
+
+serviceSchema.virtual("brandLogo", {
+  ref: "BrandLogo",
+  localField: "_id",
+  foreignField: "services",
+  justOne: true,
+});
+
+serviceSchema.virtual("gIPromise", {
+  ref: "GIPromise",
+  localField: "_id",
+  foreignField: "services",
   justOne: true,
 });
 

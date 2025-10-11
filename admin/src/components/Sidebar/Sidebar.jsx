@@ -109,48 +109,48 @@ const Sidebar = () => {
               <ul>
                 <li>
                   <Link
-                    to="/service-included"
-                    className={currentPath === "/service-included" ? "active" : ""}
+                    to="/add-service-included"
+                    className={currentPath === "/add-service-included" ? "active" : ""}
                   >
                     <span>Service Included</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="#"
-                    className={currentPath === "/requirement-from-customer" ? "active" : ""}
+                    to="/add-requirement-from-customer"
+                    className={currentPath === "/add-requirement-from-customer" ? "active" : ""}
                   >
                     <span>Requirement From Customer</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/why-choose-us"
-                    className={currentPath === "/why-choose-us" ? "active" : ""}
+                    to="/add-why-choose-us"
+                    className={currentPath === "/add-why-choose-us" ? "active" : ""}
                   >
                     <span>Why Choose Us</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/expert-technician"
-                    className={currentPath === "/expert-technician" ? "active" : ""}
+                    to="/add-expert-technician"
+                    className={currentPath === "/add-expert-technician" ? "active" : ""}
                   >
                     <span>Expert Technician</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/brand-logo"
-                    className={currentPath === "/brand-logo" ? "active" : ""}
+                    to="/add-brand-logo"
+                    className={currentPath === "/add-brand-logo" ? "active" : ""}
                   >
                     <span>Brand Logo</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/gi-promise"
-                    className={currentPath === "/gi-promise" ? "active" : ""}
+                    to="/add-gi-promise"
+                    className={currentPath === "/add-gi-promise" ? "active" : ""}
                   >
                     <span>GI Promise</span>
                   </Link>

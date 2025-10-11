@@ -16,4 +16,4 @@ router.get("/:id", isLoggedIn, getServiceIncludedById)
 router.patch("/:id", isLoggedIn, updateServiceIncluded)
 router.delete("/:id", isLoggedIn, deleteServiceIncluded)
 
-export default router
+export default router;

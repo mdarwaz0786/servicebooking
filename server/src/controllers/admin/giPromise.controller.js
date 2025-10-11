@@ -5,9 +5,9 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE GI PROMISE ---------------------
 export const createGIPromise = asyncHandler(async (req, res) => {
-  const { mainTitle, titles } = req.body;
+  const { mainTitle, titles, services } = req.body;
 
-  if (!mainTitle || !mainTitle.trim()) {
+  if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
   };
 
@@ -19,6 +19,7 @@ export const createGIPromise = asyncHandler(async (req, res) => {
   const giPromise = await GIPromiseModel.create({
     mainTitle,
     titles: titlesArray,
+    services,
   });
 
   return res.status(201).json({ success: true, data: giPromise });
@@ -40,6 +41,7 @@ export const getGIPromises = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const giPromises = await GIPromiseModel.find(filters)
+    .populate("services")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -64,7 +66,7 @@ export const getGIPromises = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE GI PROMISE ---------------------
 export const getGIPromiseById = asyncHandler(async (req, res) => {
-  const giPromise = await GIPromiseModel.findById(req.params.id).lean();
+  const giPromise = await GIPromiseModel.findById(req.params.id).populate("services").lean();
   if (!giPromise) {
     throw new ApiError(404, "GI Promise not found");
   };

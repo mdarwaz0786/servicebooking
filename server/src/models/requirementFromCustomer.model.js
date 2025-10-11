@@ -11,6 +11,12 @@ const requirementFromCustomerSchema = new mongoose.Schema({
       name: { type: String, trim: true },
     },
   ],
+  services: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+    },
+  ],
   status: {
     type: Boolean,
     default: true,

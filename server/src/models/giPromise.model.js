@@ -15,6 +15,12 @@ const giPromiseSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  services: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+    },
+  ],
 }, { timestamps: true });
 
 export default mongoose.model("GIPromise", giPromiseSchema);

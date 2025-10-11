@@ -8,9 +8,9 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE EXPERT TECHNICIAN ---------------------
 export const createExpertTechnician = asyncHandler(async (req, res) => {
-  const { mainTitle, points } = req.body;
+  const { mainTitle, points, services } = req.body;
 
-  if (!mainTitle || !mainTitle.trim()) {
+  if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
   };
 
@@ -27,6 +27,7 @@ export const createExpertTechnician = asyncHandler(async (req, res) => {
       mainTitle,
       points: pointsArray,
       image: imagePath,
+      services,
     });
 
     return res.status(201).json({ success: true, message: "Created successfully", data: expertTechnician });
@@ -54,6 +55,7 @@ export const getExpertTechnicians = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const experts = await ExpertTechnicianModel.find(filters)
+    .populate("services")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -78,7 +80,7 @@ export const getExpertTechnicians = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE EXPERT TECHNICIAN ---------------------
 export const getExpertTechnicianById = asyncHandler(async (req, res) => {
-  const expertTechnician = await ExpertTechnicianModel.findById(req.params.id).lean();
+  const expertTechnician = await ExpertTechnicianModel.findById(req.params.id).populate("services").lean();
   if (!expertTechnician) {
     throw new ApiError(404, "Expert technician not found");
   };

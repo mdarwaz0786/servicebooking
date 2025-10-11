@@ -5,6 +5,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
+import SelectMultipleService from "../../components/Form/SelectMultipleService";
 
 const UpdateServiceIncludedPage = () => {
   const { validToken } = useAuth();
@@ -14,7 +15,9 @@ const UpdateServiceIncludedPage = () => {
   const [mainTitle, setMainTitle] = useState("");
   const [titles, setTitles] = useState([""]);
   const [loading, setLoading] = useState(false);
-  const [Services, setServices] = useState([""]);
+
+  const [services, setServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -23,8 +26,9 @@ const UpdateServiceIncludedPage = () => {
         headers: { Authorization: validToken },
       });
       if (res?.data?.success) {
-        setMainTitle(res.data.data.mainTitle || "");
-        setTitles(res.data.data.titles.length > 0 ? res.data.data.titles : [""]);
+        setMainTitle(res?.data?.data?.mainTitle || "");
+        setTitles(res?.data?.data?.titles?.length > 0 ? res?.data?.data?.titles : [""]);
+        setSelectedServices(res?.data?.data.services?.map(s => s?._id) || []);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch data");
@@ -33,8 +37,24 @@ const UpdateServiceIncludedPage = () => {
     }
   };
 
+  // Fetch all available services
+  const fetchServices = async () => {
+    try {
+      const res = await axios.get(apis.service.get, {
+        headers: { Authorization: validToken },
+      });
+      if (res?.data?.success) {
+        setServices(Array.isArray(res.data.data) ? res.data.data : []);
+      }
+    } catch (error) {
+      console.error(error.message);
+      toast.error("Failed to load services");
+    }
+  };
+
   useEffect(() => {
     if (id) fetchData();
+    fetchServices();
   }, [id]);
 
   const handleTitleChange = (index, value) => {
@@ -73,7 +93,7 @@ const UpdateServiceIncludedPage = () => {
       setLoading(true);
       const res = await axios.patch(
         `${apis.serviceIncluded.update}/${id}`,
-        { mainTitle, titles: titles.filter(t => t.trim() !== "") },
+        { mainTitle, titles: titles.filter(t => t.trim() !== ""), services: selectedServices, },
         { headers: { Authorization: validToken } }
       );
       if (res?.data?.success) {
@@ -113,12 +133,22 @@ const UpdateServiceIncludedPage = () => {
                 />
               </div>
 
-              
+              {/* Multiple Service Selector */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Select Services <span className="text-danger">*</span>
+                </label>
+                <SelectMultipleService
+                  optionsList={services}
+                  value={selectedServices}
+                  onChange={setSelectedServices}
+                />
+              </div>
 
               {/* Titles */}
               <div className="mb-3">
                 <label className="form-label">Titles</label>
-                {titles.map((title, index) => (
+                {titles?.map((title, index) => (
                   <div key={index} className="d-flex mb-2">
                     <input
                       type="text"

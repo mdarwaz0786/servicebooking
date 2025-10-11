@@ -5,20 +5,16 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE SERVICE INCLUDED ---------------------
 export const createServiceIncluded = asyncHandler(async (req, res) => {
-  const { mainTitle, titles } = req.body;
+  const { mainTitle, titles, services } = req.body;
 
-  if (!mainTitle || !mainTitle.trim()) {
+  if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
-  };
-
-  let titlesArray = [];
-  if (titles) {
-    titlesArray = typeof titles === "string" ? JSON.parse(titles) : titles;
   };
 
   const serviceIncluded = await ServiceIncludedModel.create({
     mainTitle,
-    titles: titlesArray,
+    services,
+    titles,
   });
 
   return res.status(201).json({ success: true, data: serviceIncluded });
@@ -40,6 +36,7 @@ export const getServiceIncludedList = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const serviceIncludedList = await ServiceIncludedModel.find(filters)
+    .populate("services")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -64,7 +61,7 @@ export const getServiceIncludedList = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE SERVICE INCLUDED ---------------------
 export const getServiceIncludedById = asyncHandler(async (req, res) => {
-  const serviceIncluded = await ServiceIncludedModel.findById(req.params.id).lean();
+  const serviceIncluded = await ServiceIncludedModel.findById(req.params.id).populate("services").lean();
   if (!serviceIncluded) {
     throw new ApiError(404, "Service included entry not found");
   };

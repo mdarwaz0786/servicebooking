@@ -8,7 +8,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE BRAND LOGO ---------------------
 export const createBrandLogo = asyncHandler(async (req, res) => {
-  const { mainTitle, description } = req.body;
+  const { mainTitle, description, services } = req.body;
 
   if (!mainTitle || !mainTitle.trim()) {
     throw new ApiError(400, "Main title is required");
@@ -27,6 +27,7 @@ export const createBrandLogo = asyncHandler(async (req, res) => {
     const brandLogo = await BrandLogoModel.create({
       mainTitle,
       description,
+      services,
       icons: iconsPaths,
     });
 
@@ -57,6 +58,7 @@ export const getBrandLogos = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const brandLogos = await BrandLogoModel.find(filters)
+    .populate("services")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -81,7 +83,7 @@ export const getBrandLogos = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE BRAND LOGO ---------------------
 export const getBrandLogoById = asyncHandler(async (req, res) => {
-  const brandLogo = await BrandLogoModel.findById(req.params.id).lean();
+  const brandLogo = await BrandLogoModel.findById(req.params.id).populate("services").lean();
   if (!brandLogo) {
     throw new ApiError(404, "Brand logo not found");
   };
@@ -90,7 +92,7 @@ export const getBrandLogoById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE BRAND LOGO ---------------------
 export const updateBrandLogo = asyncHandler(async (req, res) => {
-  const { mainTitle, description } = req.body;
+  const { mainTitle, description, services } = req.body;
 
   let existingIcons = [];
   if (req.body.existingIcons) {

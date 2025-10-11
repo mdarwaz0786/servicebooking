@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
-import { useEffect } from "react";
 import SelectMultipleService from "../../components/Form/SelectMultipleService";
 
-const AddServiceIncludedPage = () => {
+const AddGIPromisePage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
@@ -17,18 +16,21 @@ const AddServiceIncludedPage = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Fetch services for multi-select
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await axios.get(apis.service.get);
+        const res = await axios.get(apis.service.get, {
+          headers: { Authorization: validToken },
+        });
         setServices(res?.data?.data || []);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
         toast.error("Failed to load services");
-      };
+      }
     };
     fetchServices();
-  }, []);
+  }, [validToken]);
 
   const handleTitleChange = (index, value) => {
     const updated = [...titles];
@@ -53,19 +55,24 @@ const AddServiceIncludedPage = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        apis.serviceIncluded.create,
-        { mainTitle, titles: titles.filter(t => t.trim() !== ""), services: selectedServices },
-        { headers: { Authorization: validToken } }
-      );
+      const payload = {
+        mainTitle,
+        titles: titles.filter((t) => t.trim() !== ""),
+        services: selectedServices,
+      };
 
-      if (response?.data?.success) {
-        toast.success("Service included created successfully");
+      const res = await axios.post(apis.giPromise.create, payload, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        toast.success("GI Promise created successfully");
         setMainTitle("");
         setTitles([""]);
-        selectedServices([""]);
-      };
+        setSelectedServices([]);
+      }
     } catch (error) {
+      console.error(error);
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -77,7 +84,7 @@ const AddServiceIncludedPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Create Service Included</h5>
+            <h5 className="mb-0">Add GI Promise</h5>
             <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate(-1)}>
               ← Back
             </button>
@@ -98,10 +105,10 @@ const AddServiceIncludedPage = () => {
                 />
               </div>
 
-              {/* Multiple Service Selector */}
+              {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Services <span className="text-danger">*</span>
+                  Select Services <span style={{ color: "red" }}>*</span>
                 </label>
                 <SelectMultipleService
                   optionsList={services}
@@ -110,7 +117,7 @@ const AddServiceIncludedPage = () => {
                 />
               </div>
 
-              {/* Titles */}
+              {/* Multiple Titles */}
               <div className="mb-3">
                 <label className="form-label">Titles</label>
                 {titles.map((title, index) => (
@@ -146,4 +153,4 @@ const AddServiceIncludedPage = () => {
   );
 };
 
-export default AddServiceIncludedPage;
+export default AddGIPromisePage;

@@ -9,6 +9,16 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 
+// Helper to remove `services` from populated virtual
+const removeServices = (doc) => {
+  if (!doc) return;
+  if (Array.isArray(doc)) {
+    doc.forEach(d => { if (d.services) d.services = undefined; });
+  } else {
+    if (doc.services) doc.services = undefined;
+  };
+};
+
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
   let { search, status, sort = "-createdAt", page = 1, limit = 10, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
@@ -77,7 +87,6 @@ export const getServices = asyncHandler(async (req, res) => {
 
   const services = await ServiceModel
     .find(filters)
-    .populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise")
     .sort(sort)
     .skip(skip)
     .limit(limit)
@@ -119,7 +128,15 @@ export const getServices = asyncHandler(async (req, res) => {
 
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await ServiceModel.findById(req.params.id).populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise");
+  const service = await ServiceModel.findById(req.params.id).populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise").lean();
+
+  removeServices(service.serviceIncluded);
+  removeServices(service.requirementFromCustomer);
+  removeServices(service.whyChooseUs);
+  removeServices(service.expertTechnician);
+  removeServices(service.brandLogo);
+  removeServices(service.gIPromise);
+
   if (!service) throw new ApiError(404, "Service not found");
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: service });
 });

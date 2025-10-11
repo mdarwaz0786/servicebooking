@@ -5,16 +5,16 @@ const serviceIncludedSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  sserviceId: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
-    },
-  ],
   titles: [
     {
       type: String,
       trim: true,
+    },
+  ],
+  services: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
     },
   ],
   status: {

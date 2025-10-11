@@ -49,6 +49,10 @@ import ServiceIncludedListPage from "../pages/ServiceIncluded/ServiceIncludedLis
 import RequirementFromCustomerListPage from "../pages/RequirementFromCustomer/RequirementFromCustomerListPage";
 import AddRequirementFromCustomerPage from "../pages/RequirementFromCustomer/AddRequirementFromCustomerPage";
 import UpdateRequirementFromCustomerPage from "../pages/RequirementFromCustomer/UpdateRequirementFromCustomerPage";
+import AddWhyChooseUsPage from "../pages/WhyChooseUs/AddWhyChooseUsPage";
+import AddExpertTechnicianPage from "../pages/ExportTechnician/AddExpertTechnicianPage";
+import AddBrandLogoPage from "../pages/BrandLogo/AddBrandLogoPage";
+import AddGIPromisePage from "../pages/GiPromise/AddGiPromisePage";
 
 const routesConfig = {
   private: [
@@ -115,6 +119,14 @@ const routesConfig = {
     { path: "/requirement-from-customer", element: RequirementFromCustomerListPage },
     { path: "/add-requirement-from-customer", element: AddRequirementFromCustomerPage },
     { path: "/update-requirement-from-customer/:id", element: UpdateRequirementFromCustomerPage },
+
+    { path: "/add-why-choose-us", element: AddWhyChooseUsPage },
+
+    { path: "/add-expert-technician", element: AddExpertTechnicianPage },
+
+    { path: "/add-brand-logo", element: AddBrandLogoPage },
+
+    { path: "/add-gi-promise", element: AddGIPromisePage },
 
     { path: "/users", element: UserListPage },
   ],

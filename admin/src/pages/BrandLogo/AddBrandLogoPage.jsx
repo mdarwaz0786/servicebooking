@@ -6,55 +6,50 @@ import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import SelectMultipleService from "../../components/Form/SelectMultipleService";
 
-const AddRequirementFromCustomerPage = () => {
+const AddBrandLogoPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
   const [mainTitle, setMainTitle] = useState("");
-  const [requirements, setRequirements] = useState([{ name: "", icon: null, preview: null }]);
-  const [loading, setLoading] = useState(false);
-
+  const [description, setDescription] = useState("");
+  const [icons, setIcons] = useState([{ file: null, preview: null }]);
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch services for the multi-select
   useEffect(() => {
     const fetchServices = async () => {
       try {
         const res = await axios.get(apis.service.get, {
           headers: { Authorization: validToken },
         });
-        if (res?.data?.success) {
-          setServices(res.data.data || []);
-        }
-      } catch (error) {
-        console.error(error);
+        setServices(res?.data?.data || []);
+      } catch (err) {
+        console.error(err);
         toast.error("Failed to load services");
       }
     };
     fetchServices();
   }, [validToken]);
 
-  const handleRequirementChange = (index, field, value) => {
-    const updated = [...requirements];
-    updated[index][field] = value;
-    setRequirements(updated);
-  };
-
+  // Handle icon change
   const handleIconChange = (index, file) => {
-    const updated = [...requirements];
+    const updated = [...icons];
     if (updated[index].preview) URL.revokeObjectURL(updated[index].preview);
-    updated[index].icon = file;
+    updated[index].file = file;
     updated[index].preview = URL.createObjectURL(file);
-    setRequirements(updated);
+    setIcons(updated);
   };
 
-  const addRequirementField = () => setRequirements([...requirements, { name: "", icon: null, preview: null }]);
-  const removeRequirementField = (index) => {
-    const updated = [...requirements];
+  const addIconField = () => setIcons([...icons, { file: null, preview: null }]);
+  const removeIconField = (index) => {
+    const updated = [...icons];
     if (updated[index].preview) URL.revokeObjectURL(updated[index].preview);
-    setRequirements(updated.filter((_, i) => i !== index));
+    setIcons(updated.filter((_, i) => i !== index));
   };
 
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!mainTitle.trim()) {
@@ -62,37 +57,33 @@ const AddRequirementFromCustomerPage = () => {
       return;
     }
 
-    if (selectedServices.length === 0) {
-      toast.error("Please select at least one service");
-      return;
-    }
-
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append("mainTitle", mainTitle);
+      formData.append("description", description);
 
-      selectedServices.forEach((id, index) => {
-        console.log(id);
-        formData.append(`services[${index}]`, id);
+      // Append selected service IDs
+      selectedServices.forEach((id) => formData.append("services[]", id));
+
+      // Append icon files
+      icons.forEach((iconObj) => {
+        if (iconObj.file) formData.append("icons", iconObj.file);
       });
 
-      requirements.forEach((req, idx) => {
-        formData.append(`requirements[${idx}][name]`, req.name);
-        if (req.icon) formData.append("icons", req.icon);
-      });
-
-      const res = await axios.post(apis.requirementFromCustomer.create, formData, {
+      const res = await axios.post(apis.brandLogo.create, formData, {
         headers: { Authorization: validToken, "Content-Type": "multipart/form-data" },
       });
 
       if (res?.data?.success) {
-        toast.success("Requirement created successfully");
+        toast.success("Brand logo created successfully");
         setMainTitle("");
-        setRequirements([{ name: "", icon: null, preview: null }]);
+        setDescription("");
+        setIcons([{ file: null, preview: null }]);
         setSelectedServices([]);
       }
     } catch (error) {
+      console.error(error);
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -104,7 +95,7 @@ const AddRequirementFromCustomerPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Create Requirement From Customer</h5>
+            <h5 className="mb-0">Add Brand Logo</h5>
             <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate(-1)}>
               ← Back
             </button>
@@ -125,10 +116,21 @@ const AddRequirementFromCustomerPage = () => {
                 />
               </div>
 
+              {/* Description */}
+              <div className="mb-3">
+                <label className="form-label">Description</label>
+                <textarea
+                  className="form-control"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                />
+              </div>
+
               {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Services <span style={{ color: "red" }}>*</span>
+                  Select Services
                 </label>
                 <SelectMultipleService
                   optionsList={services}
@@ -137,32 +139,29 @@ const AddRequirementFromCustomerPage = () => {
                 />
               </div>
 
-              {/* Requirements */}
+              {/* Icons */}
               <div className="mb-3">
-                <label className="form-label">Requirements</label>
-                {requirements.map((req, index) => (
+                <label className="form-label">Icons</label>
+                {icons.map((iconObj, index) => (
                   <div key={index} className="d-flex align-items-center mb-2">
-                    <input
-                      type="text"
-                      className="form-control me-2"
-                      placeholder="Title"
-                      value={req.name}
-                      onChange={(e) => handleRequirementChange(index, "name", e.target.value)}
-                    />
                     <input
                       type="file"
                       className="form-control me-2"
                       onChange={(e) => handleIconChange(index, e.target.files[0])}
                       accept="image/*"
                     />
-                    {req.preview && (
-                      <img src={req.preview} alt="Icon Preview" style={{ width: "50px", height: "50px", marginRight: "5px", borderRadius: "4px" }} />
+                    {iconObj.preview && (
+                      <img
+                        src={iconObj.preview}
+                        alt="Preview"
+                        style={{ width: "50px", height: "50px", marginRight: "5px", borderRadius: "4px" }}
+                      />
                     )}
-                    <button type="button" className="btn btn-danger me-1" onClick={() => removeRequirementField(index)} disabled={requirements.length === 1}>
+                    <button type="button" className="btn btn-danger me-1" onClick={() => removeIconField(index)} disabled={icons.length === 1}>
                       -
                     </button>
-                    {index === requirements.length - 1 && (
-                      <button type="button" className="btn btn-success" onClick={addRequirementField}>
+                    {index === icons.length - 1 && (
+                      <button type="button" className="btn btn-success" onClick={addIconField}>
                         +
                       </button>
                     )}
@@ -183,4 +182,4 @@ const AddRequirementFromCustomerPage = () => {
   );
 };
 
-export default AddRequirementFromCustomerPage;
+export default AddBrandLogoPage;

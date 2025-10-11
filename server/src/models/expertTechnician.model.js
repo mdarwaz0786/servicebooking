@@ -15,6 +15,12 @@ const expertTechnicianSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  services: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+    },
+  ],
   status: {
     type: Boolean,
     default: true,

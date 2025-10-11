@@ -5,9 +5,9 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE WHY CHOOSE US ---------------------
 export const createWhyChooseUs = asyncHandler(async (req, res) => {
-  const { mainTitle, reasons } = req.body;
+  const { mainTitle, reasons, services } = req.body;
 
-  if (!mainTitle || !mainTitle.trim()) {
+  if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
   };
 
@@ -19,6 +19,7 @@ export const createWhyChooseUs = asyncHandler(async (req, res) => {
   const whyChooseUs = await WhyChooseUsModel.create({
     mainTitle,
     reasons: reasonsArray,
+    services,
   });
 
   return res.status(201).json({ success: true, data: whyChooseUs });
@@ -40,6 +41,7 @@ export const getWhyChooseUsList = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const whyChooseUsList = await WhyChooseUsModel.find(filters)
+    .populate("services")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -64,7 +66,7 @@ export const getWhyChooseUsList = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE WHY CHOOSE US ---------------------
 export const getWhyChooseUsById = asyncHandler(async (req, res) => {
-  const whyChooseUs = await WhyChooseUsModel.findById(req.params.id).lean();
+  const whyChooseUs = await WhyChooseUsModel.findById(req.params.id).populate("services").lean();
   if (!whyChooseUs) {
     throw new ApiError(404, "Entry not found");
   };
