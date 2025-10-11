@@ -4,6 +4,8 @@ import HomePageServiceModel from "../../models/homePageService.model.js";
 import HomePageBannerModel from "../../models/homePageBanner.model.js";
 import HomePageSliderModel from "../../models/homePageSlider.model.js";
 import { getCartData } from "../../utils/cart.utils.js";
+import BookingItemModel from "../../models/bookingItem.model.js";
+import ServiceModel from "../../models/service.model.js";
 
 // Get home page data
 export const getHomePageData = asyncHandler(async (req, res) => {
@@ -73,6 +75,25 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
+  // -------------------- MOST BOOKED SERVICES --------------------
+  const mostBookedServicesAgg = await BookingItemModel.aggregate([
+    { $group: { _id: "$serviceId", totalBooked: { $sum: "$quantity" } } },
+    { $sort: { totalBooked: -1 } },
+    { $limit: 5 },
+  ]);
+
+  // Populate service details for the aggregated services
+  const mostBookedServiceIds = mostBookedServicesAgg.map((item) => item?._id);
+  const mostBookedServices = await ServiceModel.find({ _id: { $in: mostBookedServiceIds } })
+    .select("name slug image mrpPrice salePrice")
+    .lean();
+
+  // Map totalBooked count to service
+  const mostBooked = mostBookedServicesAgg.map((item) => {
+    const service = mostBookedServices.find((s) => s?._id?.toString() === item?._id?.toString());
+    return service ? { ...service, totalBooked: item?.totalBooked } : null;
+  }).filter(Boolean);
+
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
@@ -82,6 +103,7 @@ export const getHomePageData = asyncHandler(async (req, res) => {
       services: services,
       banners: banners,
       sliders: sliders,
+      mostBookedServices: mostBooked,
       customer: 215292,
       serviceCompleted: 90000,
       review: 2390968,
