@@ -52,7 +52,7 @@ import UpdateRequirementFromCustomerPage from "../pages/RequirementFromCustomer/
 import AddWhyChooseUsPage from "../pages/WhyChooseUs/AddWhyChooseUsPage";
 import AddExpertTechnicianPage from "../pages/ExportTechnician/AddExpertTechnicianPage";
 import AddBrandLogoPage from "../pages/BrandLogo/AddBrandLogoPage";
-import AddGIPromisePage from "../pages/GiPromise/AddGiPromisePage";
+import AddGIPromisePage from "../pages/GiPromise/AddGIPromisePage";
 
 const routesConfig = {
   private: [
