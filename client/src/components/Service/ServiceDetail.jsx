@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 const ServiceDetail = () => {
-  return (
-   
-   
+  const { serviceDetailData, PriceFormat, imageCheck, toggleModal } = useContext(AppContext);
+  const data = serviceDetailData;
+
+  return (   
         
     <div className="row">
       <div className="col-xl-12">
@@ -16,12 +19,11 @@ const ServiceDetail = () => {
                 <div className="nav-center mb-3" id="large-img">
                   
                   <div className="service-img">
-                    <img src="/assets/img/services/service-slider-01.jpg" className="img-fluid" alt="Slider Img" />
+                    <img src={imageCheck(data.image)} className="img-fluid" alt="Slider Img" />
                   </div>
                  
                 </div>
               </div>
-              
             </div>
             {/* /Slider */}
 
@@ -32,7 +34,13 @@ const ServiceDetail = () => {
               <div className="d-flex align-items-center justify-content-between flex-wrap mb-2">
                 <div className=" align-items-center flex-wrap">
                   <p className="mb-2"><i className="ti ti-star-filled text-warning me-2" /><span className="text-gray-9">4.9</span>(255 reviews)</p>
-                  <p className="me-3 mb-2">₹ 1299 (1 Hour 30 Minutes)</p>
+                  <p className="m-0">
+                    {PriceFormat(data.salePrice)}&nbsp;
+                    <span className="fs-12">
+                        <span className="old-price text-muted text-decoration-line-through">{PriceFormat(data.mrpPrice)}</span>
+                        &nbsp;(Approximate time {data.timeTaking} hrs)
+                    </span>
+                </p>
                 </div>
                 
               </div>
@@ -61,7 +69,7 @@ const ServiceDetail = () => {
                 </div>
               </div>
 
-
+            {(data.serviceIncluded)?(
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
@@ -71,15 +79,17 @@ const ServiceDetail = () => {
                 <div id="include" className="accordion-collapse collapse show">
                   <div className="accordion-body border-0 p-0 pt-3">
                     <div className="bg-light-200 p-3 pb-2 br-10">
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Haircut &amp; Hair Styles</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Shampoo &amp; Conditioning</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Beard Trim/Shave</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Neck Shave</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Hot Towel Treatment</p>
+                    {data.serviceIncluded.titles.map((item, index) => (
+                      <p key={index} className="d-inline-flex align-items-center mb-2 me-4">
+                        <i className="feather-check-circle text-success me-2" />
+                        {item}
+                      </p>
+                    ))}
                     </div>
                   </div>
                 </div>
               </div>
+              ):(null)}
 
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
@@ -92,18 +102,10 @@ const ServiceDetail = () => {
                     
                     <div className="bg-light-200 p-3 offer-wrap row">
                       
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
+                    
+                      
+
+
                       <div className="col-md-2">
                         <div className="offer-item bg-white mb-2 pb-1">
                           <div className="text-center mb-2">

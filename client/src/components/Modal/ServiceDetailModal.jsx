@@ -33,7 +33,7 @@ const ServiceDetailModal = () => {
               <i className="ti ti-circle-x-filled fs-20"></i>
             </Link>
 
-            <ServiceDetail/>
+            <ServiceDetail />
             
            
             

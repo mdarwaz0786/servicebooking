@@ -40,6 +40,8 @@ export const AppProvider = ({ children }) => {
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
 
+  const [serviceDetailData, setserviceDetailData] = useState([]);
+
   const [myserviceListData, setmyserviceListData] = useState([]);
 
   const [categoryModalImage, setcategoryModalImage] = useState([]);
@@ -93,6 +95,7 @@ export const AppProvider = ({ children }) => {
       subSubCategoryList: `${commurl}sub-sub-category`,
       subSubSubCategoryList: `${commurl}sub-sub-sub-category`,
       serviceList: `${commurl}service`,
+      serviceDetail: `${commurl}service`,
 
       addressList: `${userUrl}address`,
       addAddress: `${userUrl}address/create-address`,
@@ -529,6 +532,21 @@ const imageCheck = (path, defaultImg = null) => {
     }
   }
 
+  const handleServiceDetail = async (id) => {
+    try {
+      const response = await postData({}, Urls.serviceDetail+'/'+id, "GET", 0, 1);
+      if(response.success)
+      {
+        if (response?.success) {
+          setserviceDetailData(response.data);
+          toggleModal("ServiceDetailModal",true)
+        }
+      }
+    } catch (error) {
+      console.error("Cart API Error:", error);
+    }
+  }
+
 
     const handleHome = async () => {
       try {
@@ -600,6 +618,7 @@ const imageCheck = (path, defaultImg = null) => {
       setpagination,
       
       handleCategoryClick,
+      handleServiceDetail,
 
       handleCartAddRemove,
 
@@ -628,6 +647,9 @@ const imageCheck = (path, defaultImg = null) => {
       setsubsubsubcategoryListData,
       subsubsubcategoryItemData,
       setsubsubsubcategoryItemData,
+
+      serviceDetailData,
+      setserviceDetailData,
 
       categoryModalImage,
       setcategoryModalImage,

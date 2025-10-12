@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 
 
 const ServiceListCard = () => {
-    const { serviceListData, PriceFormat, handleCartAddRemove, imageCheck, toggleModal } = useContext(AppContext);
+    const { handleServiceDetail, serviceListData, PriceFormat, handleCartAddRemove, imageCheck, toggleModal } = useContext(AppContext);
 
     
     
@@ -26,7 +26,9 @@ const ServiceListCard = () => {
                 <div className="d-flex mt-1 justify-content-around align-items-center service-item-add-btn-section m-3 mb-0 mt-0">                
                     <button 
                     className="btn btn-light border cart-item-btn"
-                    onClick={() => toggleModal("ServiceDetailModal",true)}
+                    onClick={() => 
+                        handleServiceDetail(value._id)
+                    }
                     >
                         <i className="fa fa-info"></i></button>
                     
@@ -63,7 +65,7 @@ const ServiceListCard = () => {
                     {PriceFormat(value.salePrice)}&nbsp;
                     <span className="fs-12">
                         <span className="old-price text-muted text-decoration-line-through">{PriceFormat(value.mrpPrice)}</span>
-                        &nbsp;(Approximate time 3 hrs)
+                        &nbsp;(Approximate time {value.timeTaking} hrs)
                     </span>
                 </p>
                 <p><i className="fa fa-tag" />499 per AC</p>
