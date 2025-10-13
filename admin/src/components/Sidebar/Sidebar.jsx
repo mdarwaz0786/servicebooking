@@ -155,6 +155,14 @@ const Sidebar = () => {
                     <span>GI Promise</span>
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/add-service-faq"
+                    className={currentPath === "/add-service-fad" ? "active" : ""}
+                  >
+                    <span>FAQ</span>
+                  </Link>
+                </li>
               </ul>
             </li>
 

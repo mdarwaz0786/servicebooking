@@ -8,35 +8,54 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE EXPERT TECHNICIAN ---------------------
 export const createExpertTechnician = asyncHandler(async (req, res) => {
-  const { mainTitle, points, services } = req.body;
+  const { mainTitle, services, points } = req.body;
 
   if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
-  };
+  }
 
   let imagePath = null;
 
   try {
+    // Main image
     if (req.files?.image?.[0]) {
       imagePath = await compressImage(req.files.image[0].buffer, "service");
-    };
+    }
 
-    const pointsArray = points ? JSON.parse(points) : [];
+    // Points (with icon image uploads)
+    let parsedPoints = points ? JSON.parse(points) : [];
+    const uploadedIcons = [];
+
+    if (req.files?.icons?.length) {
+      for (let i = 0; i < req.files.icons.length; i++) {
+        const file = req.files.icons[i];
+        const compressedPath = await compressImage(file.buffer, "service");
+        uploadedIcons.push(compressedPath);
+      }
+    }
+
+    // Merge icon image paths with their titles
+    const finalPoints = parsedPoints.map((p, i) => ({
+      title: p.title,
+      icon: uploadedIcons[i] || "",
+    }));
 
     const expertTechnician = await ExpertTechnicianModel.create({
       mainTitle,
-      points: pointsArray,
+      points: finalPoints,
       image: imagePath,
       services,
     });
 
-    return res.status(201).json({ success: true, message: "Created successfully", data: expertTechnician });
+    return res
+      .status(201)
+      .json({ success: true, message: "Created successfully", data: expertTechnician });
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
-    };
+    }
     throw new ApiError(500, error.message || "Something went wrong");
-  };
+  }
 });
 
 // --------------------- GET ALL EXPERT TECHNICIANS ---------------------
