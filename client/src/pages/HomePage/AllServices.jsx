@@ -1,55 +1,101 @@
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 
-const AllServices = ({ value=[] }) => {
-  const { PriceFormat, imageCheck, handleServiceDetail } = useContext(AppContext);
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+
+const AllServices = ({ value = [] }) => {
+  const { imageCheck, handleServiceDetail } = useContext(AppContext);
+
+  // ✅ Create refs for custom buttons
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
   return (
     <section className="section popular-section m-0 pb-0">
-      <div className="container">
+      <div className="container position-relative">
         <div className="row justify-content-center">
-          <div className="col-lg-12 text-center wow fadeInUp" data-wow-delay="0.2s">
-            <div className="section-header text-center mb-4">
+          <div
+            className="col-lg-12 text-center wow fadeInUp"
+            data-wow-delay="0.2s"
+          >
+            <div className="section-header text-center mb-4 d-flex justify-content-between align-items-center">
               <h2 className="mb-1 text-start">{value.title}</h2>
+
+              {/* ✅ Custom Navigation Buttons */}
+              <div className="d-flex gap-2">
+                <button
+                  ref={prevRef}
+                  className="custom-prev btn btn-light rounded-circle shadow-sm"
+                >
+                  <i className="fa fa-chevron-left"></i>
+                </button>
+                <button
+                  ref={nextRef}
+                  className="custom-next btn btn-light rounded-circle shadow-sm"
+                >
+                  <i className="fa fa-chevron-right"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className=" row">
-              
-          {value.services && value.services.length > 0 ? (
-            value.services.map((item, index2) => (
-            
-                <div className="col-md-2 w-20" key={index2} onClick={() => handleServiceDetail(item._id)} >
-                  <div className="service-item">
-                    <div className="service-img">
-                      <div className=" nav-center">
-                        <div className="">
-                          <Link >
-                            <img src={imageCheck(item.image)} className="img-fluid" alt="img" />
-                          </Link>
-                        </div>                      
-                      </div>
+
+        {/* ✅ Swiper Slider */}
+        <div className="service-slider-wrapper">
+          <Swiper
+            modules={[Navigation, Autoplay]}
+            spaceBetween={20}
+            slidesPerView={5}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            onInit={(swiper) => {
+              // ✅ Assign the navigation buttons AFTER Swiper is initialized
+              swiper.params.navigation.prevEl = prevRef.current;
+              swiper.params.navigation.nextEl = nextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }}
+            speed={800}
+            centeredSlides={false}
+            grabCursor={true}
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 5 },
+            }}
+          >
+            {value.services &&
+              value.services.length > 0 &&
+              value.services.map((item, index2) => (
+                <SwiperSlide key={index2}>
+                  <div
+                    className="service-item text-center"
+                    onClick={() => handleServiceDetail(item._id)}
+                  >
+                    <div className="service-img mb-2">
+                      <Link>
+                        <img
+                          src={imageCheck(item.image)}
+                          className="img-fluid rounded"
+                          alt={item.name}
+                        />
+                      </Link>
                     </div>
-                    <div className="service-content">
-                      <h6 className="mb-1 text-truncate"><Link >{item.name}</Link></h6>
-                      
-                    </div>
+                    <h6 className="mb-1 text-truncate">
+                      <Link>{item.name}</Link>
+                    </h6>
                   </div>
-                </div>
-            
-            ))
-          ) : (
-            null
-          )}
-            
-
-
-
-          
-          
+                </SwiperSlide>
+              ))}
+          </Swiper>
         </div>
-        
       </div>
     </section>
   );
