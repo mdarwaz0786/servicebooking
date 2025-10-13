@@ -1,0 +1,121 @@
+import ServiceFaqModel from "../../models/serviceFaq.model.js";
+import ApiError from "../../helpers/apiError.js";
+import asyncHandler from "../../helpers/asyncHandler.js";
+import { buildPagination } from "../../utils/pagination.js";
+
+// --------------------- CREATE SERVICE FAQ ---------------------
+export const createServiceFaq = asyncHandler(async (req, res) => {
+  const { mainTitle, services, faqs } = req.body;
+
+  if (!mainTitle) {
+    throw new ApiError(400, "Main title is required");
+  }
+
+  const serviceFaq = await ServiceFaqModel.create({
+    mainTitle,
+    services,
+    faqs: faqs,
+  });
+
+  return res
+    .status(201)
+    .json({ success: true, message: "Created successfully", data: serviceFaq });
+});
+
+// --------------------- GET ALL SERVICE FAQS ---------------------
+export const getServiceFaqs = asyncHandler(async (req, res) => {
+  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+
+  page = parseInt(page, 10);
+  limit = parseInt(limit, 10);
+  const skip = (page - 1) * limit;
+
+  const filters = {};
+  if (search) {
+    filters.mainTitle = { $regex: search, $options: "i" };
+  }
+
+  const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
+
+  const faqs = await ServiceFaqModel.find(filters)
+    .populate("services")
+    .sort(sortOption)
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const total = await ServiceFaqModel.countDocuments(filters);
+  const totalPages = Math.ceil(total / limit);
+
+  return res.status(200).json({
+    success: true,
+    message: "Data fetched successfully",
+    total,
+    page,
+    limit,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
+    data: faqs,
+    pagination: buildPagination({ page, limit, total }),
+  });
+});
+
+// --------------------- GET SINGLE SERVICE FAQ ---------------------
+export const getServiceFaqById = asyncHandler(async (req, res) => {
+  const serviceFaq = await ServiceFaqModel.findById(req.params.id)
+    .populate("services")
+    .lean();
+
+  if (!serviceFaq) {
+    throw new ApiError(404, "Service FAQ not found");
+  }
+
+  return res.status(200).json({ success: true, data: serviceFaq });
+});
+
+// --------------------- UPDATE SERVICE FAQ ---------------------
+export const updateServiceFaq = asyncHandler(async (req, res) => {
+  const { mainTitle, status, services, faqs } = req.body;
+
+  const serviceFaq = await ServiceFaqModel.findById(req.params.id);
+  if (!serviceFaq) {
+    throw new ApiError(404, "Service FAQ not found");
+  }
+
+  let faqsArray = [];
+  if (faqs) {
+    try {
+      faqsArray = JSON.parse(faqs);
+    } catch (error) {
+      throw new ApiError(400, "Invalid faqs format (must be JSON array)");
+    }
+  }
+
+  serviceFaq.mainTitle = mainTitle || serviceFaq.mainTitle;
+  serviceFaq.status = status !== undefined ? status : serviceFaq.status;
+  serviceFaq.services = services || serviceFaq.services;
+  if (faqsArray.length) serviceFaq.faqs = faqsArray;
+
+  await serviceFaq.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Service FAQ updated successfully",
+    data: serviceFaq,
+  });
+});
+
+// --------------------- DELETE SERVICE FAQ ---------------------
+export const deleteServiceFaq = asyncHandler(async (req, res) => {
+  const serviceFaq = await ServiceFaqModel.findById(req.params.id);
+  if (!serviceFaq) {
+    throw new ApiError(404, "Service FAQ not found");
+  }
+
+  await serviceFaq.deleteOne();
+
+  return res
+    .status(200)
+    .json({ success: true, message: "Deleted successfully" });
+});

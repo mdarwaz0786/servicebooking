@@ -123,6 +123,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/gi-promise`,
     delete: `${BASE_URL}/api/v1/admin/gi-promise`,
   },
+  serviceFaq: {
+    create: `${BASE_URL}/api/v1/admin/service-faq`,
+    get: `${BASE_URL}/api/v1/admin/service-faq`,
+    update: `${BASE_URL}/api/v1/admin/service-faq`,
+    delete: `${BASE_URL}/api/v1/admin/service-faq`,
+  },
   user: {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,

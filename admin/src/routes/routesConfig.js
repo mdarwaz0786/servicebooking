@@ -53,6 +53,7 @@ import AddWhyChooseUsPage from "../pages/WhyChooseUs/AddWhyChooseUsPage";
 import AddExpertTechnicianPage from "../pages/ExportTechnician/AddExpertTechnicianPage";
 import AddBrandLogoPage from "../pages/BrandLogo/AddBrandLogoPage";
 import AddGIPromisePage from "../pages/GiPromise/AddGIPromisePage";
+import AddServiceFaqPage from "../pages/ServiceFaq/AddServiceFaqpage";
 
 const routesConfig = {
   private: [
@@ -127,6 +128,8 @@ const routesConfig = {
     { path: "/add-brand-logo", element: AddBrandLogoPage },
 
     { path: "/add-gi-promise", element: AddGIPromisePage },
+
+    { path: "/add-service-faq", element: AddServiceFaqPage },
 
     { path: "/users", element: UserListPage },
   ],

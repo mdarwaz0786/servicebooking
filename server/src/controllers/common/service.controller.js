@@ -5,6 +5,8 @@ import SubCategoryModel from "../../models/subCategory.model.js";
 import SubSubCategoryModel from "../../models/subSubCategory.model.js";
 import SubSubSubCategoryModel from "../../models/subSubSubCategory.model.js";
 import SlugModel from "../../models/slug.model.js";
+import ReviewModel from "../../models/review.model.js";
+import BookingItemModel from "../../models/bookingItem.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -128,7 +130,13 @@ export const getServices = asyncHandler(async (req, res) => {
 
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await ServiceModel.findById(req.params.id).populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise").lean();
+  const serviceId = req.params.id;
+
+  const service = await ServiceModel.findById(serviceId)
+    .populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise serviceFaq")
+    .lean();
+
+  if (!service) throw new ApiError(404, "Service not found");
 
   removeServices(service.serviceIncluded);
   removeServices(service.requirementFromCustomer);
@@ -136,7 +144,59 @@ export const getServiceById = asyncHandler(async (req, res) => {
   removeServices(service.expertTechnician);
   removeServices(service.brandLogo);
   removeServices(service.gIPromise);
+  removeServices(service.serviceFaq);
 
-  if (!service) throw new ApiError(404, "Service not found");
-  return res.status(200).json({ success: true, message: "Data fetched successfully", data: service });
+  const bookingItems = await BookingItemModel.find({ serviceId: serviceId }).select("bookingId");
+  const bookingIds = bookingItems.map((b) => b.bookingId);
+
+  const ratingStats = await ReviewModel.aggregate([
+    { $match: { bookingId: { $in: bookingIds }, status: true } },
+    {
+      $group: {
+        _id: "$rating",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const ratingCount = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  };
+
+  let totalRatings = 0;
+  let sumRatings = 0;
+
+  ratingStats.forEach((item) => {
+    ratingCount[item._id] = item.count;
+    totalRatings += item.count;
+    sumRatings += item._id * item.count;
+  });
+
+  const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
+
+  const latestReviews = await ReviewModel.find({
+    bookingId: { $in: bookingIds },
+    status: true,
+  })
+    .populate("userId", "-password")
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .lean();
+
+  service.ratings = {
+    ratingCount,
+    totalRatings,
+    averageRating: Number(averageRating),
+    latestReviews,
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: "Service fetched successfully",
+    data: service,
+  });
 });

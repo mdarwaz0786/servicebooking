@@ -66,7 +66,6 @@ const UpdateServiceIncludedPage = () => {
   const addTitleField = () => setTitles([...titles, ""]);
   const removeTitleField = (index) => setTitles(titles.filter((_, i) => i !== index));
 
-
   useEffect(() => {
     const fetchServices = async () => {
       try {

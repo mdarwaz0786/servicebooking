@@ -183,6 +183,13 @@ serviceSchema.virtual("gIPromise", {
   justOne: true,
 });
 
+serviceSchema.virtual("serviceFaq", {
+  ref: "ServiceFaq",
+  localField: "_id",
+  foreignField: "services",
+  justOne: true,
+});
+
 const ServiceModel = mongoose.model("Service", serviceSchema);
 
 export default ServiceModel;

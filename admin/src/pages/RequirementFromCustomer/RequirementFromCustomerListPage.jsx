@@ -8,7 +8,7 @@ import apis from "../../apis/apis";
 
 const RequirementFromCustomerListPage = () => {
   const { validToken } = useAuth();
-  const [serviceIncludes, setServiceIncludes] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPrevPage, setHasPrevPage] = useState();
@@ -31,7 +31,7 @@ const RequirementFromCustomerListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const fetchServiceIncludes = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(apis.requirementFromCustomer.get, {
@@ -45,7 +45,7 @@ const RequirementFromCustomerListPage = () => {
       });
 
       if (response?.data?.success) {
-        setServiceIncludes(response?.data?.data || []);
+        setData(response?.data?.data || []);
         setTotalPages(response?.data?.totalPages || 1);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
@@ -72,21 +72,21 @@ const RequirementFromCustomerListPage = () => {
   const toggleStatus = async (id, currentStatus) => {
     try {
       const response = await axios.patch(
-        `${apis.serviceIncluded.update}/${id}`,
+        `${apis.requirementFromCustomer.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
 
       if (response?.data?.success) {
-        fetchServiceIncludes();
+        fetchData();
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to update status");
     };
   };
 
-  const deleteServiceIncluded = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this serviceIncluded?")) return;
+  const deleteData = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this?")) return;
 
     try {
       const response = await axios.delete(`${apis.requirementFromCustomer.delete}/${id}`, {
@@ -94,23 +94,23 @@ const RequirementFromCustomerListPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("ServiceIncluded deleted successfully");
-        fetchServiceIncludes();
+        toast.success("Deleted successfully");
+        fetchData();
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete serviceIncluded");
+      toast.error(error?.response?.data?.message || "Failed to delete");
     };
   };
 
   useEffect(() => {
-    fetchServiceIncludes();
+    fetchData();
   }, [page, limit, debouncedSearch, sort]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Service Included {serviceIncludes?.length}</h5>
+          <h5>Service Included {data?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -148,7 +148,7 @@ const RequirementFromCustomerListPage = () => {
               <option value={total}>All</option>
             </select>
             <div>
-              <Link to="/add-service-included">
+              <Link to="/add-requirement-from-customer">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
                   <span>Add</span>
@@ -172,8 +172,8 @@ const RequirementFromCustomerListPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {serviceIncludes?.length > 0 ? (
-                    serviceIncludes?.map((d, index) => (
+                  {data?.length > 0 ? (
+                    data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.mainTitle}</td>
@@ -191,7 +191,7 @@ const RequirementFromCustomerListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-service-included/${d?._id}`}>
+                            <Link to={`/update-requirement-from-customer/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-edit" />
                               </button>
@@ -199,7 +199,7 @@ const RequirementFromCustomerListPage = () => {
                             <button
                               className="btn delete-table"
                               type="button"
-                              onClick={() => deleteServiceIncluded(d?._id)}
+                              onClick={() => deleteData(d?._id)}
                             >
                               <i className="fe fe-trash-2" />
                             </button>
@@ -210,7 +210,7 @@ const RequirementFromCustomerListPage = () => {
                   ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No serviceIncludes found
+                        No  Data
                       </td>
                     </tr>
                   ) : null}

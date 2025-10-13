@@ -27,6 +27,7 @@ import giPromiseRoutes from "./giPromise.routes.js";
 import requirementFromCustomerRoutes from "./requirementFromCustomer.routes.js";
 import serviceIncludedRoutes from "./serviceIncluded.routes.js";
 import whyChooseUsRoutes from "./whyChooseUs.routes.js";
+import serviceFaqRoutes from "./serviceFaq.routes.js";
 
 const router = express.Router();
 
@@ -58,5 +59,6 @@ router.use("/gi-promise", giPromiseRoutes);
 router.use("/requirement-from-customer", requirementFromCustomerRoutes);
 router.use("/service-included", serviceIncludedRoutes);
 router.use("/why-choose-us", whyChooseUsRoutes);
+router.use("/service-faq", serviceFaqRoutes);
 
 export default router;
