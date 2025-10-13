@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const AllServices = ({ value=[] }) => {
-  const { PriceFormat, imageCheck } = useContext(AppContext);
+  const { PriceFormat, imageCheck, handleServiceDetail } = useContext(AppContext);
   return (
     <section className="section popular-section m-0 pb-0">
       <div className="container">
@@ -20,19 +20,19 @@ const AllServices = ({ value=[] }) => {
           {value.services && value.services.length > 0 ? (
             value.services.map((item, index2) => (
             
-                <div className="col-md-2 w-20" key={index2}>
+                <div className="col-md-2 w-20" key={index2} onClick={() => handleServiceDetail(item._id)} >
                   <div className="service-item">
                     <div className="service-img">
                       <div className=" nav-center">
                         <div className="">
-                          <Link to="/service-details">
+                          <Link >
                             <img src={imageCheck(item.image)} className="img-fluid" alt="img" />
                           </Link>
                         </div>                      
                       </div>
                     </div>
                     <div className="service-content">
-                      <h6 className="mb-1 text-truncate"><Link to="/service-details">{item.name}</Link></h6>
+                      <h6 className="mb-1 text-truncate"><Link >{item.name}</Link></h6>
                       
                     </div>
                   </div>

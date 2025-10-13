@@ -41,7 +41,9 @@ useEffect(() => {
   return ( 
     <>
       <HeroSection categoryData={categoryListData}   />
-      <PopularServices />
+      {homePageData.mostBookedServices && homePageData.mostBookedServices.length > 0 ? (
+        <PopularServices />
+      ) : null}
       <HowWorks />
       
 

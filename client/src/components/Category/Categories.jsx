@@ -8,7 +8,7 @@ const Categories = ({categoryData = []}) => {
         <div className="container-fluid">
             <div className="row p-4 pt-0">
                 {categoryData.map((cat, index) => (
-               <>
+               <div key={index}>
                     {cat.subcategories?.length > 0 ? (
                     <>
                         <h5 className="text-center fw-bold text-dark mb-3">{cat.name}</h5>
@@ -36,7 +36,7 @@ const Categories = ({categoryData = []}) => {
                         <CategoryModalCard key={cat.id} value={cat} />
                     
                     )}
-                </>
+                </div>
                 ))}
             </div>
             </div>

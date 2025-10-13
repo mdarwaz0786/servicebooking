@@ -57,13 +57,9 @@ const ServiceDetail = () => {
                 <div id="overview" className="accordion-collapse collapse show">
                   <div className="accordion-body border-0 p-0 pt-3">
                     <div className="more-text">
-                      <ul>
-                        <li>Certified technicians</li>
-                        <li>Outdoor and indoor unit setup</li>
-                        <li>Copper pipe connection (up to standard length)</li>
-                        <li>Wall bracket fitting & basic wiring</li>
-                        <li>Warranty: 30-day post-installation support</li>
-                      </ul>                      
+                      {data.shortDescription}
+                      <br/>
+                      {data.fullDescription}
                     </div>
                   </div>
                 </div>
@@ -91,65 +87,40 @@ const ServiceDetail = () => {
               </div>
               ):(null)}
 
+
+              {(data.requirementFromCustomer)?(
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
                     What we need
                   </button>
-                </h2>
+                </h2>                
                 <div id="what-we-need" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    
-                    <div className="bg-light-200 p-3 offer-wrap row">
-                      
-                    
-                      
+                  <div className="accordion-body border-0 p-0 pt-3">                    
+                    <div className="bg-light-200 p-3 offer-wrap row">                      
 
-
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
-                      
+                      {data.requirementFromCustomer.requirements.map((item, index) => (
+                        <div className="col-md-2" key={index}>
+                          <div className="offer-item bg-white mb-2 pb-1">
+                            <div className="text-center mb-2">
+                              <span className="">
+                                <img src={imageCheck(item.icon)} alt="img" className="br-10" />
+                              </span>
+                              <div className="mb-2 mt-2">
+                                <h6 className="fs-16 fw-medium">{item.name}</h6>
+                              </div>
+                            </div>                        
+                          </div>
+                        </div> 
+                      ))}                      
 
                     </div>
-
                   </div>
                 </div>
               </div>
+              ):(null)}
 
+              {(data.whyChooseUs)?(
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
@@ -161,18 +132,22 @@ const ServiceDetail = () => {
                     <div className="bg-light-200 p-3 offer-wrap row">                      
 
                       <ol>
-                        <li>Certified technicians</li>
-                        <li>Outdoor and indoor unit setup</li>
-                        <li>Copper pipe connection (up to standard length)</li>
-                        <li>Wall bracket fitting & basic wiring</li>
-                        <li>Warranty: 30-day post-installation support</li>
+                        {data.whyChooseUs.reasons.map((item, index) => (
+                          <li key={index}>
+                            {item.title}
+                            {item.description}
+                          </li>
+                        ))}  
                       </ol>
 
                     </div>
                   </div>
                 </div>
               </div>
+              ):(null)}
 
+              
+              {(data.expertTechnician)?(
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
@@ -182,16 +157,19 @@ const ServiceDetail = () => {
                 <div id="include" className="accordion-collapse collapse show">
                   <div className="accordion-body border-0 p-0 pt-3">
                     <div className="bg-light-200 p-3 pb-2 br-10">
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Haircut &amp; Hair Styles</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Shampoo &amp; Conditioning</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Beard Trim/Shave</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Neck Shave</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Hot Towel Treatment</p>
+                      {data.expertTechnician.points.map((item, index) => (
+                        <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
+                          <img src={imageCheck(item.icon)} alt="img" className="br-10" />
+                          {item.title}</p>
+                      ))}  
                     </div>
                   </div>
                 </div>
               </div>
+              ):(null)}
 
+
+              {(data.brandLogo)?(
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
@@ -202,63 +180,28 @@ const ServiceDetail = () => {
                   <div className="accordion-body border-0 p-0 pt-3">
                     
                     <div className="bg-light-200 p-3 offer-wrap row">
-                      
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
+                      {data.brandLogo.icons.map((item, index) => (
+                        <div className="col-md-2" key={index}>
+                          <div className="offer-item bg-white mb-2 pb-1">
+                            <div className="text-center mb-2">
+                              <span className="">
+                                <img src={imageCheck(item)} alt="img" className="br-10" />
+                              </span>
+                            </div>                        
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
-                      <div className="col-md-2">
-                        <div className="offer-item bg-white mb-2 pb-1">
-                          <div className="text-center mb-2">
-                            <span className="">
-                              <img src="/assets/img/services/service-thumb-03.jpg" alt="img" className="br-10" />
-                            </span>
-                            <div className="mb-2 mt-2">
-                              <h6 className="fs-16 fw-medium">Electrical Repairs</h6>
-                            </div>
-                          </div>                        
-                        </div>
-                      </div>
-                      
+                        ))} 
+                     
 
                     </div>
 
                   </div>
                 </div>
               </div>
+              ):(null)}
 
+
+              {(data.gIPromise)?(
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
@@ -268,15 +211,15 @@ const ServiceDetail = () => {
                 <div id="include" className="accordion-collapse collapse show">
                   <div className="accordion-body border-0 p-0 pt-3">
                     <div className="bg-light-200 p-3 pb-2 br-10">
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Haircut &amp; Hair Styles</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Shampoo &amp; Conditioning</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Beard Trim/Shave</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Neck Shave</p>
-                      <p className="d-inline-flex align-items-center mb-2 me-4"><i className="feather-check-circle text-success me-2" />Hot Towel Treatment</p>
+                      {data.gIPromise.titles.map((item, index) => (
+                        <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
+                          <i className="feather-check-circle text-success me-2" />{item}</p>
+                      ))}
                     </div>
                   </div>
                 </div>
               </div>
+              ):(null)}
 
 
               
