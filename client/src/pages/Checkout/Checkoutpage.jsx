@@ -38,7 +38,7 @@ const Checkoutpage = () => {
 
 				
 				<div className="row">
-					<div className="col-xxl-9 col-xl-11 mx-auto">
+					<div className={`${user?'col-xxl-9 col-xl-11':'col-md-4'} mx-auto`}>
 						<div className="card border-0 mb-0">
 							<div className="card-body p-3 fieldset-wizard ">
 								<div className="row">

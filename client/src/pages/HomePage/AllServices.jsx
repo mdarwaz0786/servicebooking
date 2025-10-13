@@ -12,21 +12,21 @@ const AllServices = ({ value = [] }) => {
 
   // ✅ Create refs for custom buttons
   const prevRef = useRef(null);
-  const nextRef = useRef(null);
+  const nextRef = useRef(null); 
 
   return (
-    <section className="section popular-section m-0 pb-0">
+    <section className={`section popular-section m-0 p-0`}>
       <div className="container position-relative">
         <div className="row justify-content-center">
           <div
             className="col-lg-12 text-center wow fadeInUp"
             data-wow-delay="0.2s"
           >
-            <div className="section-header text-center mb-4 d-flex justify-content-between align-items-center">
-              <h2 className="mb-1 text-start">{value.title}</h2>
+            <div className="section-header text-center mb-2 d-flex justify-content-between align-items-center">
+              <h2 className="mb-3 text-start">{value.title}</h2>
 
               {/* ✅ Custom Navigation Buttons */}
-              <div className="d-flex gap-2">
+              <div className="d-flex gap-0">
                 <button
                   ref={prevRef}
                   className="custom-prev btn btn-light rounded-circle shadow-sm"
@@ -45,7 +45,7 @@ const AllServices = ({ value = [] }) => {
         </div>
 
         {/* ✅ Swiper Slider */}
-        <div className="service-slider-wrapper">
+        <div className="service-slider-wrapper all-service">
           <Swiper
             modules={[Navigation, Autoplay]}
             spaceBetween={20}

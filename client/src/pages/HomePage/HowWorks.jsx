@@ -1,28 +1,28 @@
 
 const HowWorks = () => {
   return (
-    <section className="section" style={{background:'#F5F5F5'}}>
+    <section className="section work-section-bg" >
       <div className="container">
-        <div className="work-section bg-black m-0">
+        <div className="work-section m-0">
           
           <div className="row gx-0">
             
-            <div className="col-lg-8 d-flex p-3">
+            <div className="col-lg-7 work-section-first d-flex p-3" >
 
               <div className="row gx-0">
                 <div className="col-12 m-0">
-                  <h2 className="fs-22 mb-2 text-white" style={{fontWeight: '100'}}>Why Choose Us</h2>
+                  <h2 className="fs-22 mb-2 text-green" style={{fontWeight: '100'}}>Why Choose Us</h2>
                 </div>
               
-                <div className="text-start flex-fill">
-                  <h6 className="text-white mb-2 fs-23">Green India Team: Your Trusted Team, Anytime</h6>
+                <div className="text-start flex-fill text-green">
+                  <h6 className="text-green mb-2 fs-23">Green India Team: Your Trusted Team, Anytime</h6>
                   <p className="fs-13" style={{textAlign: 'justify'}}>At Green India Team, we believe in impeccably doing our work. That’s what produce us from other companies. We concentrate on doing our job in a good way, Whether it’s a regular day or a breaking point, we’re just a call out. We try to be there when our client need us most.</p>
                   <div className="row">
 
-                    <div className="col-6">
+                    <div className="col-6 ">
                         <div className="why-icon-div">
                           <div><i className="fa fa-star"></i></div>
-                          <div>
+                          <div className="">
                             <p>4.8</p>
                             <span className="why-rating-text">Star Rating</span>
                           </div>
@@ -41,7 +41,7 @@ const HowWorks = () => {
                         <div className="why-icon-div">
                           <div><i className="fa fa-arrow-right-arrow-left"></i></div>
                           <div>
-                            <p>upto 180</p>
+                            <p>Upto 180</p>
                             <span className="why-rating-text">Day Warrenty</span>
                           </div>
                         </div>
@@ -64,7 +64,7 @@ const HowWorks = () => {
               </div>
 
             </div>
-            <div className="col-lg-4 d-flex">
+            <div className="col-lg-5 d-flex">
               <img src="assets/img/home/why-choose-us.jpg" alt="img" />
             </div>
           </div>

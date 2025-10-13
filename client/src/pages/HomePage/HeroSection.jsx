@@ -30,12 +30,12 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                       <form action="#">
                         <div className="d-md-flex align-items-center">
                           <div className="input-group mb-2">
-                            <span className="input-group-text px-1"><i className="ti ti-search" /></span>
+                            <span className="input-group-text px-1"><i className="ti ti-search serach-icon-hero" /></span>
                             <input type="text" className="form-control" placeholder="Search for Service" />
                           </div>
                           <div className="mb-2">
                             <Link to="/search" className="btn btn-linear-primary d-inline-flex align-items-center w-100">
-                              <i className="feather-search me-2" />
+                              <i className="feather-search me-2 " />
                               Search
                             </Link>
                           </div>

@@ -53,12 +53,12 @@ useEffect(() => {
           let bannerIndex = Math.floor((index + 1) / 2) - 1; 
 
           return (
-            <div key={index}>
-              <AllServices value={value} />
+            <div key={index} className={`${(index + 1) % 2 !=0?'mt-4 mb-4':'mb-5'}`}>
+              <AllServices value={value} position={(index + 1) % 2} />
 
               {/* Har 2 service ke baad banner dikhana */}
               {(index + 1) % 2 === 0 && homePageData.banners && homePageData.banners[bannerIndex] && (
-                <div className="container">
+                <div className="container mt-4">
                   <img
                     src={imageCheck(homePageData.banners[bannerIndex].image)}
                     className="img-fluid"

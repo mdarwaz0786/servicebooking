@@ -5,7 +5,7 @@ import { useContext } from "react";
 const PopularServices = () => {
   const { categoryListData, handleHome, toggleModal, homePageData, imageCheck, handleServiceDetail } = useContext(AppContext);
   return (
-    <section className="section popular-section">
+    <section className="section popular-section pt-0">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-12  wow fadeInUp" data-wow-delay="0.2s">
