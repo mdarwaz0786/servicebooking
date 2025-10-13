@@ -100,11 +100,52 @@ export const getServices = asyncHandler(async (req, res) => {
     cartItems = await CartModel.find({ userId }).lean();
   };
 
-  const servicesWithQty = services.map((service) => {
-    const cartItem = cartItems.find((item) => item.serviceId.toString() === service._id.toString());
+  // Fetch booking items for these services
+  const serviceIds = services.map((s) => s?._id);
+  const bookingItems = await BookingItemModel.find({ serviceId: { $in: serviceIds } }).select("serviceId _id");
+
+  const serviceToBookingIds = {};
+  bookingItems.forEach((b) => {
+    const sid = b?.serviceId?.toString();
+    if (!serviceToBookingIds[sid]) serviceToBookingIds[sid] = [];
+    serviceToBookingIds[sid].push(b?._id);
+  });
+
+  // Fetch reviews for all booking IDs
+  const allBookingIds = bookingItems.map((b) => b?._id);
+  const reviews = await ReviewModel.find({ bookingId: { $in: allBookingIds }, status: true }).select("bookingId rating");
+
+  // Map bookingId -> rating
+  const bookingRatings = {};
+  reviews.forEach((r) => (bookingRatings[r?.bookingId?.toString()] = r?.rating));
+
+  // Add average rating & total ratings to each service
+  const servicesWithRatings = services.map((service) => {
+    const sid = service?._id?.toString();
+    const bookingIds = serviceToBookingIds[sid] || [];
+    let sum = 0;
+    let count = 0;
+
+    bookingIds.forEach((bid) => {
+      const rating = bookingRatings[bid?.toString()];
+      if (rating) {
+        sum += rating;
+        count++;
+      }
+    });
+
+    const averageRating = count > 0 ? Number((sum / count).toFixed(1)) : 0;
+
+    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
+    const quantity = cartItem ? cartItem?.quantity : 0;
+
     return {
       ...service,
-      quantity: cartItem ? cartItem.quantity : 0,
+      ratings: {
+        totalRatings: count,
+        averageRating,
+      },
+      quantity,
     };
   });
 
@@ -123,7 +164,7 @@ export const getServices = asyncHandler(async (req, res) => {
     slug,
     name,
     categoryList: categoryList,
-    data: servicesWithQty,
+    data: servicesWithRatings,
     pagination: buildPagination({ page, limit, total }),
   });
 });
@@ -182,7 +223,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
     bookingId: { $in: bookingIds },
     status: true,
   })
-    .populate("userId", "-password")
+    .populate("user", "-password")
     .sort({ createdAt: -1 })
     .limit(5)
     .lean();
