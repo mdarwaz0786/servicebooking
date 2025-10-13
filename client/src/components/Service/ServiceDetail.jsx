@@ -5,6 +5,44 @@ import { useContext } from "react";
 const ServiceDetail = () => {
   const { serviceDetailData, PriceFormat, imageCheck, toggleModal } = useContext(AppContext);
   const data = serviceDetailData;
+  const rating = data.ratings;
+  const ratingCount = rating?.ratingCount;
+  let ratingArray = [1,2,3,4,5];
+
+  const count1 = 0;
+  const count2 = 0;
+  const count3 = 0;
+  const count4 = 0;
+  const count5 = 0;
+
+  const percent1 = 0;
+  const percent2 = 0;
+  const percent3 = 0;
+  const percent4 = 0;
+  const percent5 = 0;
+
+  if(ratingCount)
+  {
+    const count1 = ratingCount["1"] || 0;
+    const count2 = ratingCount["2"] || 0;
+    const count3 = ratingCount["3"] || 0;
+    const count4 = ratingCount["4"] || 0;
+    const count5 = ratingCount["5"] || 0;
+
+    // Step 2: Total ratings
+    const totalRatings = count1 + count2 + count3 + count4 + count5 || 1; // prevent division by 0
+
+    // Step 3: Calculate percentage for each
+    const percent1 = ((count1 / totalRatings) * 100).toFixed(1);
+    const percent2 = ((count2 / totalRatings) * 100).toFixed(1);
+    const percent3 = ((count3 / totalRatings) * 100).toFixed(1);
+    const percent4 = ((count4 / totalRatings) * 100).toFixed(1);
+    const percent5 = ((count5 / totalRatings) * 100).toFixed(1);
+
+    console.log(percent5);
+  }
+
+  
 
   return (   
         
@@ -222,7 +260,7 @@ const ServiceDetail = () => {
               ):(null)}
 
 
-              
+              {(data.serviceFaq)?(
               <div className="accordion-item mb-0">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq" aria-expanded="false">
@@ -232,69 +270,38 @@ const ServiceDetail = () => {
                 <div id="faq" className="accordion-collapse collapse show">
                   <div className="accordion-body border-0 p-0 pt-3">
                     <div className="accordion accordion-customicon1 faq-accordion" id="accordionfaq">
+                      
+                      {data.serviceFaq.faqs.map((item, index) => (
                       <div className="accordion-item bg-light-200 mb-3">
                         <h2 className="accordion-header">
-                          <button className="accordion-button bg-light-200 br-10 fs-16 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false">
-                            What is included in a Classic Cut?
+                          <button className={`accordion-button bg-light-200 br-10 fs-16 fw-medium ${index==0?'collapsed':''}`} type="button" data-bs-toggle="collapse" data-bs-target={`#faq${index}`} aria-expanded="false">
+                            {item.question}
                           </button>
                         </h2>
-                        <div id="faq1" className="accordion-collapse collapse show" data-bs-parent="#accordionfaq">
+                        <div id={`faq${index}`} className={`accordion-collapse collapse ${index==0?'show':''}`} data-bs-parent="#accordionfaq">
                           <div className="accordion-body border-0 pt-0">
-                            <p>The Classic Cut includes a consultation with your barber, a haircut tailored to your
-                              style, and final styling with product. It does not include a hair wash or beard trim.
+                            <p>{item.answer}
                             </p>
                           </div>
                         </div>
                       </div>
-                      <div className="accordion-item bg-light-200 mb-3">
-                        <h2 className="accordion-header">
-                          <button className="accordion-button bg-light-200 br-10 fs-16 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false">
-                            Do you offer services for children?
-                          </button>
-                        </h2>
-                        <div id="faq2" className="accordion-collapse collapse" data-bs-parent="#accordionfaq">
-                          <div className="accordion-body border-0 pt-0">
-                            <p>The Classic Cut includes a consultation with your barber, a haircut tailored to your
-                              style, and final styling with product. It does not include a hair wash or beard trim.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="accordion-item bg-light-200 mb-3">
-                        <h2 className="accordion-header">
-                          <button className="accordion-button bg-light-200 br-10 fs-16 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false">
-                            What is the difference between a Hot Towel Shave and a regular shave?
-                          </button>
-                        </h2>
-                        <div id="faq3" className="accordion-collapse collapse" data-bs-parent="#accordionfaq">
-                          <div className="accordion-body border-0 pt-0">
-                            <p>The Classic Cut includes a consultation with your barber, a haircut tailored to your
-                              style, and final styling with product. It does not include a hair wash or beard trim.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="accordion-item bg-light-200">
-                        <h2 className="accordion-header">
-                          <button className="accordion-button bg-light-200 br-10 fs-16 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false">
-                            Can I get a haircut and beard trim together?
-                          </button>
-                        </h2>
-                        <div id="faq4" className="accordion-collapse collapse" data-bs-parent="#accordionfaq">
-                          <div className="accordion-body border-0 pt-0">
-                            <p>The Classic Cut includes a consultation with your barber, a haircut tailored to your
-                              style, and final styling with product. It does not include a hair wash or beard trim.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
+
+
+                      
+                      
                     </div>
                   </div>
                 </div>
               </div>
+              ):(null)}
+
+
             </div>
           </div>
         </div>
+
+
         <div className="card border-0 mb-xl-0 mb-4">
           <div className="card-body">
             <div className="row align-items-center">
@@ -302,14 +309,18 @@ const ServiceDetail = () => {
                 <div className="rating-item bg-light-500 text-center mb-3">
                   <h5 className="mb-3">Customer Reviews &amp; Ratings</h5>
                   <div className="d-inline-flex align-items-center justify-content-center">
-                    <i className="ti ti-star-filled text-warning me-1" />
-                    <i className="ti ti-star-filled text-warning me-1" />
-                    <i className="ti ti-star-filled text-warning me-1" />
-                    <i className="ti ti-star-filled text-warning me-1" />
-                    <i className="ti ti-star-filled text-warning" />
+
+                    {ratingArray.map((item, index) =>
+                        <span key={index+''+item}>
+                            {(item<=data?.averageRating)?(
+                                <i className="ti ti-star-filled text-warning me-1" key={index} />
+                            ):(<i className="ti ti-star text-warning me-1" key={index} />)}
+                        </span>
+                    )}
+
                   </div>
-                  <p className="mb-3">(4.9 out of 5.0)</p>
-                  <p className="text-gray-9">Based On 2,459 Reviews</p>
+                  <p className="mb-3">({rating?.averageRating} out of 5.0)</p>
+                  <p className="text-gray-9">Based On {data?.totalRatings} Reviews</p>
                 </div>
               </div>
               <div className="col-md-7">
@@ -317,37 +328,37 @@ const ServiceDetail = () => {
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">5 Star Ratings</p>
                     <div className="progress w-100" role="progressbar" aria-valuenow={90} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: '90%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent5+'%' }} />
                     </div>
-                    <p className="progress-count ms-2">2,547</p>
+                    <p className="progress-count ms-2">{count5}</p>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">4 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={80} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: '80%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent4+'%' }} />
                     </div>
-                    <p className="progress-count ms-2">1,245</p>
+                    <p className="progress-count ms-2">{count4}</p>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">3 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={70} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: '70%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent3+'%' }} />
                     </div>
-                    <p className="progress-count ms-2">600</p>
+                    <p className="progress-count ms-2">{count3}</p>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">2 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={90} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: '60%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent2+'%' }} />
                     </div>
-                    <p className="progress-count ms-2">560</p>
+                    <p className="progress-count ms-2">{count2}</p>
                   </div>
                   <div className="d-flex align-items-center">
                     <p className="me-2 text-nowrap mb-0">1 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={40} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: '40%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent1+'%' }} />
                     </div>
-                    <p className="progress-count ms-2">400</p>
+                    <p className="progress-count ms-2">{count1}</p>
                   </div>
                 </div>
               </div>
