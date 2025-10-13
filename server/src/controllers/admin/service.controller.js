@@ -1,8 +1,4 @@
 import ServiceModel from "../../models/service.model.js";
-import CategoryModel from "../../models/category.model.js";
-import SubCategoryModel from "../../models/subCategory.model.js";
-import SubSubCategoryModel from "../../models/subSubCategory.model.js";
-import SubSubSubCategoryModel from "../../models/subSubSubCategory.model.js";
 import SlugModel from "../../models/slug.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -39,8 +35,6 @@ export const createService = asyncHandler(async (req, res) => {
 
   let imagePath = null;
   let iconPath = null;
-  let heightImagePath = null;
-  let squareImagePath = null;
   let popupImagePath = null;
 
   try {
@@ -50,14 +44,6 @@ export const createService = asyncHandler(async (req, res) => {
 
     if (req.files?.icon?.[0]) {
       iconPath = await compressImage(req.files.icon[0].buffer, "service");
-    };
-
-    if (req.files?.heightImage?.[0]) {
-      heightImagePath = await compressImage(req.files.heightImage[0].buffer, "service");
-    };
-
-    if (req.files?.squareImage?.[0]) {
-      squareImagePath = await compressImage(req.files.squareImage[0].buffer, "service");
     };
 
     if (req.files?.popupImage?.[0]) {
@@ -79,8 +65,6 @@ export const createService = asyncHandler(async (req, res) => {
       createdBy: req.user?._id,
       image: imagePath,
       icon: iconPath,
-      heightImage: heightImagePath,
-      squareImage: squareImagePath,
       popupImage: popupImagePath,
       repairingDiagnostic,
       offerContent,
@@ -102,12 +86,6 @@ export const createService = asyncHandler(async (req, res) => {
     if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
       fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
-    if (heightImagePath && fs.existsSync(path.join(process.cwd(), heightImagePath))) {
-      fs.unlinkSync(path.join(process.cwd(), heightImagePath));
-    };
-    if (squareImagePath && fs.existsSync(path.join(process.cwd(), squareImagePath))) {
-      fs.unlinkSync(path.join(process.cwd(), squareImagePath));
-    };
     if (popupImagePath && fs.existsSync(path.join(process.cwd(), popupImagePath))) {
       fs.unlinkSync(path.join(process.cwd(), popupImagePath));
     };
@@ -117,7 +95,7 @@ export const createService = asyncHandler(async (req, res) => {
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10, slug, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
+  let { search, status, sort = "desc", page = 1, limit = 10, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -152,46 +130,12 @@ export const getServices = asyncHandler(async (req, res) => {
     sortOption = sort;
   };
 
-  let data, name, categoryList;
-
-  if (slug) {
-    const slugData = await SlugModel.findOne({ slug });
-
-    if (!slugData) {
-      return res.status(404).json({
-        success: false,
-        message: `No resource found for slug: ${slug}`,
-      });
-    };
-
-    if (slugData.collectionName === "Category") {
-      filters.categoryId = slugData.documentId;
-      data = await CategoryModel.findById(slugData.documentId);
-      categoryList = await SubCategoryModel.find({ categoryId: data._id });
-      name = data.name;
-    } else if (slugData.collectionName === "SubCategory") {
-      filters.subCategoryId = slugData.documentId;
-      data = await SubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubCategoryModel.find({ subCategoryId: data._id });
-      name = data.name;
-    } else if (slugData.collectionName === "SubSubCategory") {
-      filters.subSubCategoryId = slugData.documentId;
-      data = await SubSubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubSubCategoryModel.find({ subSubCategoryId: data._id });
-      name = data.name;
-    } else if (slugData.collectionName === "SubSubSubCategory") {
-      filters.subSubSubCategoryId = slugData.documentId;
-      data = await SubSubSubCategoryModel.findById(slugData.documentId);
-      name = data.name;
-    } else if (slugData.collectionName === "Service") {
-      filters._id = slugData.documentId;
-      data = await ServiceModel.findById(slugData.documentId);
-      name = data.name;
-    };
-  };
-
   const services = await ServiceModel
     .find(filters)
+    .populate("category", "name")
+    .populate("subCategory", "name")
+    .populate("subSubCategory", "name")
+    .populate("subSubSubCategory", "name")
     .sort(sortOption)
     .skip(skip)
     .limit(limit);
@@ -208,9 +152,6 @@ export const getServices = asyncHandler(async (req, res) => {
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    slug,
-    name,
-    categoryList: categoryList,
     data: services,
     pagination: buildPagination({ page, limit, total }),
   });
@@ -218,7 +159,13 @@ export const getServices = asyncHandler(async (req, res) => {
 
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await ServiceModel.findById(req.params.id).lean();
+  const service = await ServiceModel
+    .findById(req.params.id)
+    .populate("category", "image name")
+    .populate("subCategory", "image name")
+    .populate("subSubCategory", "image name")
+    .populate("subSubSubCategory", "image name")
+    .lean();
 
   if (!service) throw new ApiError(404, "Service not found");
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: service });
@@ -230,6 +177,7 @@ export const updateService = asyncHandler(async (req, res) => {
     name,
     mrpPrice,
     salePrice,
+    taxablePrice,
     timeTaking,
     shortDescription,
     fullDescription,
@@ -237,7 +185,13 @@ export const updateService = asyncHandler(async (req, res) => {
     categoryId,
     subCategoryId,
     subSubCategoryId,
-    subSubSubCategoryId
+    subSubSubCategoryId,
+    repairingDiagnostic,
+    offerContent,
+    maxBookingQuantity,
+    taxPercent,
+    creditPoint,
+    transactionCharge,
   } = req.body;
 
   const service = await ServiceModel.findById(req.params.id);
@@ -257,6 +211,13 @@ export const updateService = asyncHandler(async (req, res) => {
     service.icon = await compressImage(req.files.icon[0].buffer, "service");
   };
 
+  if (req.files?.popupImage?.[0]) {
+    if (service.popupImage && fs.existsSync(path.join(process.cwd(), service.popupImage))) {
+      fs.unlinkSync(path.join(process.cwd(), service.popupImage));
+    };
+    service.popupImage = await compressImage(req.files.popupImage[0].buffer, "service");
+  };
+
   if (name && name !== service.name) {
     await SlugModel.deleteOne({ collectionName: "Service", documentId: service._id });
     const newSlug = await generateUniqueSlug(name, "Service", service._id, "services");
@@ -274,6 +235,13 @@ export const updateService = asyncHandler(async (req, res) => {
   service.subCategoryId = subCategoryId || service.subCategoryId;
   service.subSubCategoryId = subSubCategoryId || service.subSubCategoryId;
   service.subSubSubCategoryId = subSubSubCategoryId || service.subSubSubCategoryId;
+  service.repairingDiagnostic = repairingDiagnostic || service.repairingDiagnostic;
+  service.offerContent = offerContent || service.offerContent;
+  service.maxBookingQuantity = maxBookingQuantity !== undefined ? maxBookingQuantity : service.maxBookingQuantity;
+  service.taxPercent = taxPercent !== undefined ? taxPercent : service.taxPercent;
+  service.creditPoint = creditPoint !== undefined ? creditPoint : service.creditPoint;
+  service.transactionCharge = transactionCharge !== undefined ? transactionCharge : service.transactionCharge;
+  service.taxablePrice = taxablePrice !== undefined ? taxablePrice : service.taxablePrice;
   service.updatedBy = req.user?._id;
 
   await service.save();
@@ -293,16 +261,8 @@ export const deleteService = asyncHandler(async (req, res) => {
     fs.unlinkSync(path.join(process.cwd(), service?.icon));
   };
 
-  if (service?.heightImage && fs.existsSync(path.join(process.cwd(), service?.heightImage))) {
-    fs.unlinkSync(path.join(process.cwd(), service?.heightImage));
-  };
-
-  if (service?.squareImage && fs.existsSync(path.join(process.cwd(), service?.squareImage))) {
-    fs.unlinkSync(path.join(process.cwd(), service?.squareImage));
-  };
-
-  if (service?.popupImage && fs.existsSync(path.join(process.cwd(), service?.squareImage))) {
-    fs.unlinkSync(path.join(process.cwd(), service?.squareImage));
+  if (service?.popupImage && fs.existsSync(path.join(process.cwd(), service?.popupImage))) {
+    fs.unlinkSync(path.join(process.cwd(), service?.popupImage));
   };
 
   await SlugModel.deleteOne({ collectionName: "Service", documentId: service?._id });

@@ -13,8 +13,6 @@ export const createReview = asyncHandler(async (req, res) => {
 
   const servicemanId = await ServiceManBookingModel.findOne({ bookingId }).sort({ createdAt: -1 }).select("servicemanId");
 
-  if (!servicemanId) throw new ApiError(400, "Service man not found");
-
   const review = await ReviewModel.create({
     userId: req.user?._id,
     bookingId,

@@ -355,6 +355,10 @@ const ServiceListPage = () => {
                     <th>Image</th>
                     <th>Name</th>
                     <th>Price</th>
+                    <th>Category</th>
+                    <th>Sub Category</th>
+                    <th>2 Sub Category</th>
+                    <th>3 Sub Category</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -374,6 +378,10 @@ const ServiceListPage = () => {
                         </td>
                         <td>{d?.name}</td>
                         <td>{d?.salePrice}</td>
+                        <td>{d?.category?.name || "None"}</td>
+                        <td>{d?.subCategory?.name || "None"}</td>
+                        <td>{d?.subSubCategory?.name || "None"}</td>
+                        <td>{d?.subSubSubCategory?.name || "None"}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

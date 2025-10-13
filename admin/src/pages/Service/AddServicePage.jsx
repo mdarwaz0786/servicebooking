@@ -17,8 +17,10 @@ const AddServicePage = () => {
 
   const [image, setImage] = useState(null);
   const [icon, setIcon] = useState(null);
+  const [popupImage, setPopupImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
+  const [popupImagePreview, setPopupImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -27,9 +29,16 @@ const AddServicePage = () => {
     subSubCategoryId: "",
     subSubSubCategoryId: "",
     name: "",
+    timeTaking: "",
     mrpPrice: "",
     salePrice: "",
-    timeTaking: "",
+    taxablePrice: "",
+    repairingDiagnostic: true,
+    offerContent: "",
+    maxBookingQuantity: "",
+    taxPercent: "",
+    creditPoint: "",
+    transactionCharge: "",
     shortDescription: "",
     fullDescription: "",
   });
@@ -140,6 +149,23 @@ const AddServicePage = () => {
     multiple: false,
   });
 
+  const onDropPopupImage = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setPopupImage(file);
+      setPopupImagePreview(URL.createObjectURL(file));
+    };
+  }, []);
+
+  const { getRootProps: getPopupImageRootProps,
+    getInputProps: getPopupImageInputProps,
+    isDragActive: isPopupImageActive
+  } = useDropzone({
+    onDrop: onDropPopupImage,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -153,10 +179,11 @@ const AddServicePage = () => {
         const value = formData[key];
         if (value !== null && value !== "" && value !== undefined) {
           data.append(key, value);
-        }
+        };
       });
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
+      if (popupImage) data.append("popupImage", popupImage);
 
       const response = await axios.post(apis.service.create, data, {
         headers: {
@@ -173,6 +200,13 @@ const AddServicePage = () => {
           mrpPrice: "",
           salePrice: "",
           timeTaking: "",
+          taxablePrice: "",
+          repairingDiagnostic: true,
+          offerContent: "",
+          maxBookingQuantity: "",
+          taxPercent: "",
+          creditPoint: "",
+          transactionCharge: "",
           shortDescription: "",
           fullDescription: "",
         }));
@@ -180,6 +214,8 @@ const AddServicePage = () => {
         setPreview(null);
         setIcon(null);
         setIconPreview(null);
+        setPopupImage(null);
+        setPopupImagePreview(null);
       };
     } catch (error) {
       toast.error(
@@ -194,8 +230,9 @@ const AddServicePage = () => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
       if (iconPreview) URL.revokeObjectURL(iconPreview);
+      if (popupImagePreview) URL.revokeObjectURL(popupImagePreview);
     };
-  }, [preview, iconPreview]);
+  }, [preview, iconPreview, popupImagePreview]);
 
   return (
     <div className="page-wrapper">
@@ -333,6 +370,7 @@ const AddServicePage = () => {
                     value={formData.mrpPrice}
                     onChange={handleChange}
                     className="form-control"
+                    placeholder="0"
                   />
                 </div>
                 <div className="col-md-4 mb-3">
@@ -343,6 +381,7 @@ const AddServicePage = () => {
                     value={formData.salePrice}
                     onChange={handleChange}
                     className="form-control"
+                    placeholder="0"
                   />
                 </div>
                 <div className="col-md-4 mb-3">
@@ -353,8 +392,50 @@ const AddServicePage = () => {
                     value={formData.timeTaking}
                     onChange={handleChange}
                     className="form-control"
-                    placeholder="e.g. 30 mins"
+                    placeholder="30 mins"
                   />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Taxable Price</label>
+                  <input type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Repairing Diagnostic</label>
+                  <select
+                    name="repairingDiagnostic"
+                    value={formData.repairingDiagnostic}
+                    onChange={handleChange}
+                    className="form-control"
+                  >
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                  </select>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Offer Content</label>
+                  <input type="text" placeholder="Add more and save upto 10%" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Max Booking Quantity</label>
+                  <input type="number" placeholder="0" name="maxBookingQuantity" value={formData.maxBookingQuantity} onChange={handleChange} className="form-control" />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Tax Percent</label>
+                  <input type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Credit Point</label>
+                  <input type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Transaction Charge</label>
+                  <input type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
                 </div>
               </div>
 
@@ -442,6 +523,36 @@ const AddServicePage = () => {
                 )}
               </div>
 
+              {/* Popup Image */}
+              <div className="mb-3">
+                <label className="form-label">Popup Image</label>
+                <div
+                  {...getPopupImageRootProps()}
+                  className={`border p-4 text-center rounded ${isPopupImageActive ? "bg-light" : ""
+                    }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input {...getPopupImageInputProps()} />
+                  {isPopupImageActive ? (
+                    <p>Drop the popup image here...</p>
+                  ) : (
+                    <p>
+                      Drag & drop popup image here, or{" "}
+                      <span className="text-primary">browse</span>
+                    </p>
+                  )}
+                </div>
+                {popupImagePreview && (
+                  <div className="mt-3 text-center">
+                    <img
+                      src={popupImagePreview}
+                      alt="Popup image Preview"
+                      style={{ maxWidth: "100px", borderRadius: "8px" }}
+                    />
+                  </div>
+                )}
+              </div>
+
               {/* Buttons */}
               <div className="text-end">
                 <button
@@ -457,6 +568,13 @@ const AddServicePage = () => {
                       mrpPrice: "",
                       salePrice: "",
                       timeTaking: "",
+                      taxablePrice: "",
+                      repairingDiagnostic: true,
+                      offerContent: "",
+                      maxBookingQuantity: "",
+                      taxPercent: "",
+                      creditPoint: "",
+                      transactionCharge: "",
                       shortDescription: "",
                       fullDescription: "",
                     });
@@ -464,6 +582,8 @@ const AddServicePage = () => {
                     setPreview(null);
                     setIcon(null);
                     setIconPreview(null);
+                    setPopupImage(null);
+                    setPopupImagePreview(null);
                     setSubCategories([]);
                     setSubSubCategories([]);
                     setSubSubSubCategories([]);
