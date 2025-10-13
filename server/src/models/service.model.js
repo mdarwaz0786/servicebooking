@@ -87,12 +87,6 @@ const serviceSchema = new mongoose.Schema({
     type: String,
   },
   transactionCharge: {
-    type: Number,
-  },
-  heightImage: {
-    type: String,
-  },
-  squareImage: {
     type: String,
   },
   popupImage: {

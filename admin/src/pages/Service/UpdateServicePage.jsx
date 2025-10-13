@@ -18,8 +18,10 @@ const UpdateServicePage = () => {
 
   const [image, setImage] = useState(null);
   const [icon, setIcon] = useState(null);
+  const [popupImage, setPopupImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
+  const [popupImagePreview, setPopupImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -28,9 +30,16 @@ const UpdateServicePage = () => {
     subSubCategoryId: "",
     subSubSubCategoryId: "",
     name: "",
+    timeTaking: "",
     mrpPrice: "",
     salePrice: "",
-    timeTaking: "",
+    taxablePrice: "",
+    repairingDiagnostic: true,
+    offerContent: "",
+    maxBookingQuantity: "",
+    taxPercent: "",
+    creditPoint: "",
+    transactionCharge: "",
     shortDescription: "",
     fullDescription: "",
   });
@@ -42,21 +51,29 @@ const UpdateServicePage = () => {
           headers: { Authorization: validToken },
         });
         if (res?.data?.success) {
-          const service = res.data.data;
+          const s = res?.data?.data;
           setFormData({
-            categoryId: service.categoryId || "",
-            subCategoryId: service.subCategoryId || "",
-            subSubCategoryId: service.subSubCategoryId || "",
-            subSubSubCategoryId: service.subSubSubCategoryId || "",
-            name: service.name || "",
-            mrpPrice: service.mrpPrice || "",
-            salePrice: service.salePrice || "",
-            timeTaking: service.timeTaking || "",
-            shortDescription: service.shortDescription || "",
-            fullDescription: service.fullDescription || "",
+            categoryId: s?.categoryId || "",
+            subCategoryId: s.subCategoryId || "",
+            subSubCategoryId: s?.subSubCategoryId || "",
+            subSubSubCategoryId: s?.subSubSubCategoryId || "",
+            name: s?.name || "",
+            timeTaking: s?.timeTaking || "",
+            mrpPrice: s?.mrpPrice || "",
+            salePrice: s?.salePrice || "",
+            taxablePrice: s?.taxablePrice || "",
+            repairingDiagnostic: s?.repairingDiagnostic ?? true,
+            offerContent: s?.offerContent || "",
+            maxBookingQuantity: s?.maxBookingQuantity || "",
+            taxPercent: s?.taxPercent || "",
+            creditPoint: s?.creditPoint || "",
+            transactionCharge: s?.transactionCharge || "",
+            shortDescription: s?.shortDescription || "",
+            fullDescription: s?.fullDescription || "",
           });
-          if (service?.image) setPreview(`${BASE_URL}/${service?.image}`);
-          if (service?.icon) setIconPreview(`${BASE_URL}/${service?.icon}`);
+          if (s?.image) setPreview(`${BASE_URL}/${s?.image}`);
+          if (s?.icon) setIconPreview(`${BASE_URL}/${s?.icon}`);
+          if (s?.popupImage) setPopupImagePreview(`${BASE_URL}/${s?.popupImage}`);
         };
       } catch (error) {
         console.log(error.message);
@@ -170,6 +187,23 @@ const UpdateServicePage = () => {
     multiple: false,
   });
 
+  const onDropPopupImage = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setPopupImage(file);
+      setPopupImagePreview(URL.createObjectURL(file));
+    };
+  }, []);
+
+  const { getRootProps: getPopupImageRootProps,
+    getInputProps: getPopupImageInputProps,
+    isDragActive: isPopupImageActive
+  } = useDropzone({
+    onDrop: onDropPopupImage,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.categoryId) return toast.error("Please select a category");
@@ -186,6 +220,7 @@ const UpdateServicePage = () => {
       });
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
+      if (popupImage) data.append("popupImage", popupImage);
 
       const response = await axios.patch(`${apis.service.update}/${id}`, data, {
         headers: {
@@ -373,6 +408,48 @@ const UpdateServicePage = () => {
                 </div>
               </div>
 
+              <div className="row">
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Taxable Price</label>
+                  <input type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Repairing Diagnostic</label>
+                  <select
+                    name="repairingDiagnostic"
+                    value={formData.repairingDiagnostic}
+                    onChange={handleChange}
+                    className="form-control"
+                  >
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                  </select>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Offer Content</label>
+                  <input type="text" placeholder="Add more and save upto 10%" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label className="form-label">Max Booking Quantity</label>
+                  <input type="number" placeholder="0" name="maxBookingQuantity" value={formData.maxBookingQuantity} onChange={handleChange} className="form-control" />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Tax Percent</label>
+                  <input type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Credit Point</label>
+                  <input type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Transaction Charge</label>
+                  <input type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
+                </div>
+              </div>
+
               {/* Short Description */}
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
@@ -451,6 +528,36 @@ const UpdateServicePage = () => {
                     <img
                       src={iconPreview}
                       alt="Icon Preview"
+                      style={{ maxWidth: "100px", borderRadius: "8px" }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Popup Image */}
+              <div className="mb-3">
+                <label className="form-label">Popup Image</label>
+                <div
+                  {...getPopupImageRootProps()}
+                  className={`border p-4 text-center rounded ${isPopupImageActive ? "bg-light" : ""
+                    }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input {...getPopupImageInputProps()} />
+                  {isPopupImageActive ? (
+                    <p>Drop the popup image here...</p>
+                  ) : (
+                    <p>
+                      Drag & drop popup image here, or{" "}
+                      <span className="text-primary">browse</span>
+                    </p>
+                  )}
+                </div>
+                {popupImagePreview && (
+                  <div className="mt-3 text-center">
+                    <img
+                      src={popupImagePreview}
+                      alt="Popup image Preview"
                       style={{ maxWidth: "100px", borderRadius: "8px" }}
                     />
                   </div>

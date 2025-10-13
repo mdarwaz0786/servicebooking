@@ -19,8 +19,6 @@ router.post(
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "icon", maxCount: 1 },
-    { name: "heightImage", maxCount: 1 },
-    { name: "squareImage", maxCount: 1 },
     { name: "popupImage", maxCount: 1 },
   ]),
   validateFileSize,
@@ -40,8 +38,6 @@ router.patch(
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "icon", maxCount: 1 },
-    { name: "heightImage", maxCount: 1 },
-    { name: "squareImage", maxCount: 1 },
     { name: "popupImage", maxCount: 1 },
   ]),
   validateFileSize,
