@@ -70,48 +70,45 @@ export const getServiceIncludedById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE SERVICE INCLUDED ---------------------
 export const updateServiceIncluded = asyncHandler(async (req, res) => {
-  const { mainTitle } = req.body;
+  const { mainTitle, status, titles, services } = req.body;
 
-  let existingTitles = []
-  if (req.body.existingTitles) {
-    try {
-      existingTitles =
-        typeof req.body.existingTitles === "string"
-          ? JSON.parse(req.body.existingTitles)
-          : req.body.existingTitles
-    } catch (err) {
-      throw new ApiError(400, "Invalid existingTitles format")
-    };
-  };
-
-  const serviceIncluded = await ServiceIncludedModel.findById(req.params.id)
+  const serviceIncluded = await ServiceIncludedModel.findById(req.params.id);
   if (!serviceIncluded) {
-    throw new ApiError(404, "Service included entry not found")
+    throw new ApiError(404, "Service included not found");
   };
 
-  let updatedTitles = [];
-
-  if (existingTitles.length > 0) {
-    updatedTitles = serviceIncluded.titles.filter((t) =>
-      existingTitles.includes(t)
-    );
+  let updatedTitles = serviceIncluded?.titles || [];
+  if (titles !== undefined) {
+    let parsedTitles = typeof titles === "string" ? JSON.parse(titles) : titles;
+    if (!Array.isArray(parsedTitles)) {
+      throw new ApiError(400, "titles must be an array");
+    };
+    updatedTitles = parsedTitles;
   };
 
-  if (req.body.titles) {
-    const newTitles =
-      typeof req.body.titles === "string" ? JSON.parse(req.body.titles) : req.body.titles
-    updatedTitles = [...updatedTitles, ...newTitles]
+  let updatedServices = serviceIncluded.services || [];
+  if (services !== undefined) {
+    let parsedServices = typeof services === "string" ? JSON.parse(services) : services;
+    if (!Array.isArray(parsedServices)) {
+      throw new ApiError(400, "services must be an array");
+    };
+    updatedServices = parsedServices;
   };
 
-  serviceIncluded.titles = updatedTitles
-  serviceIncluded.mainTitle = mainTitle || serviceIncluded.mainTitle
+  serviceIncluded.mainTitle = mainTitle || serviceIncluded.mainTitle;
+  if (typeof status === "boolean") {
+    serviceIncluded.status = status;
+  };
+  serviceIncluded.titles = updatedTitles;
+  serviceIncluded.services = updatedServices;
+  serviceIncluded.updatedAt = new Date();
 
-  await serviceIncluded.save()
+  await serviceIncluded.save();
 
   return res.status(200).json({
     success: true,
     message: "Service included updated successfully",
-    data: serviceIncluded
+    data: serviceIncluded,
   });
 });
 

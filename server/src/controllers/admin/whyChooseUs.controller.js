@@ -75,7 +75,7 @@ export const getWhyChooseUsById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE WHY CHOOSE US ---------------------
 export const updateWhyChooseUs = asyncHandler(async (req, res) => {
-  const { mainTitle } = req.body
+  const { mainTitle, status } = req.body;
 
   let existingReasons = [];
   if (req.body.existingReasons) {
@@ -110,8 +110,9 @@ export const updateWhyChooseUs = asyncHandler(async (req, res) => {
     updatedReasons = [...updatedReasons, ...newReasons]
   };
 
-  whyChooseUs.reasons = updatedReasons
-  whyChooseUs.mainTitle = mainTitle || whyChooseUs.mainTitle
+  whyChooseUs.reasons = updatedReasons;
+  whyChooseUs.mainTitle = mainTitle || whyChooseUs.mainTitle;
+  whyChooseUs.status = status || whyChooseUs.status;
 
   await whyChooseUs.save()
 

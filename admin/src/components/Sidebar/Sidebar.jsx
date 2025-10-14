@@ -109,56 +109,56 @@ const Sidebar = () => {
               <ul>
                 <li>
                   <Link
-                    to="/add-service-included"
-                    className={currentPath === "/add-service-included" ? "active" : ""}
+                    to="/service-included"
+                    className={currentPath === "/service-included" ? "active" : ""}
                   >
                     <span>Service Included</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-requirement-from-customer"
-                    className={currentPath === "/add-requirement-from-customer" ? "active" : ""}
+                    to="/requirement-from-customer"
+                    className={currentPath === "/requirement-from-customer" ? "active" : ""}
                   >
-                    <span>Requirement From Customer</span>
+                    <span>Requirement Customer</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-why-choose-us"
-                    className={currentPath === "/add-why-choose-us" ? "active" : ""}
+                    to="/why-choose-us"
+                    className={currentPath === "/why-choose-us" ? "active" : ""}
                   >
                     <span>Why Choose Us</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-expert-technician"
-                    className={currentPath === "/add-expert-technician" ? "active" : ""}
+                    to="/expert-technician"
+                    className={currentPath === "/expert-technician" ? "active" : ""}
                   >
                     <span>Expert Technician</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-brand-logo"
-                    className={currentPath === "/add-brand-logo" ? "active" : ""}
+                    to="/brand-logo"
+                    className={currentPath === "/brand-logo" ? "active" : ""}
                   >
                     <span>Brand Logo</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-gi-promise"
-                    className={currentPath === "/add-gi-promise" ? "active" : ""}
+                    to="/gi-promise"
+                    className={currentPath === "/gi-promise" ? "active" : ""}
                   >
                     <span>GI Promise</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-service-faq"
-                    className={currentPath === "/add-service-fad" ? "active" : ""}
+                    to="/service-faq"
+                    className={currentPath === "/service-fad" ? "active" : ""}
                   >
                     <span>FAQ</span>
                   </Link>

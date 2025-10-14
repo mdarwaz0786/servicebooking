@@ -1,62 +1,63 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import SelectMultipleService from "../../components/Form/SelectMultipleService";
 
 const UpdateServiceIncludedPage = () => {
   const { validToken } = useAuth();
-  const { id } = useParams();
   const navigate = useNavigate();
+  const { id } = useParams(); // serviceIncluded ID from route
 
   const [mainTitle, setMainTitle] = useState("");
   const [titles, setTitles] = useState([""]);
+  const [services, setServices] = useState([]); // all available services
+  const [selectedServices, setSelectedServices] = useState([]); // selected ones
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  const [services, setServices] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${apis.serviceIncluded.get}/${id}`, {
-        headers: { Authorization: validToken },
-      });
-      if (res?.data?.success) {
-        setMainTitle(res?.data?.data?.mainTitle || "");
-        setTitles(res?.data?.data?.titles?.length > 0 ? res?.data?.data?.titles : [""]);
-        setSelectedServices(res?.data?.data.services?.map(s => s?._id) || []);
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch all available services
-  const fetchServices = async () => {
-    try {
-      const res = await axios.get(apis.service.get, {
-        headers: { Authorization: validToken },
-      });
-      if (res?.data?.success) {
-        setServices(Array.isArray(res.data.data) ? res.data.data : []);
-      }
-    } catch (error) {
-      console.error(error.message);
-      toast.error("Failed to load services");
-    }
-  };
-
+  // -------- Fetch all services --------
   useEffect(() => {
-    if (id) fetchData();
+    const fetchServices = async () => {
+      try {
+        const res = await axios.get(apis.service.get, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success) setServices(res.data.data || []);
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to load services");
+      }
+    };
     fetchServices();
-  }, [id]);
+  }, [validToken]);
 
+  // -------- Fetch existing serviceIncluded --------
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${apis.serviceIncluded.getSingle}/${id}`, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success && res.data.data) {
+          const data = res.data.data;
+          setMainTitle(data.mainTitle || "");
+          setTitles(data.titles?.length ? data.titles : [""]);
+          setSelectedServices(data.services?.map((s) => s._id) || []);
+        }
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to load service included data");
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+    fetchData();
+  }, [id, validToken]);
+
+  // -------- Handle title fields --------
   const handleTitleChange = (index, value) => {
     const updated = [...titles];
     updated[index] = value;
@@ -64,47 +65,47 @@ const UpdateServiceIncludedPage = () => {
   };
 
   const addTitleField = () => setTitles([...titles, ""]);
-  const removeTitleField = (index) => setTitles(titles.filter((_, i) => i !== index));
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await axios.get(apis.service.get, {
-          headers: { Authorization: validToken },
-        });
-        if (res?.data?.success) setServices(res?.data?.data || []);
-      } catch (error) {
-        console.log(error.message);
-        toast.error("Failed to load services");
-      };
-    };
-    fetchServices();
-  }, [validToken]);
+  const removeTitleField = (index) => {
+    if (titles.length === 1) return;
+    setTitles(titles.filter((_, i) => i !== index));
+  };
 
+  // -------- Handle Submit --------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!mainTitle.trim()) {
-      toast.error("Main title is required");
-      return;
-    }
+
+    if (!mainTitle.trim()) return toast.error("Main title is required");
+    if (selectedServices.length === 0) return toast.error("Select at least one service");
 
     try {
       setLoading(true);
-      const res = await axios.patch(
-        `${apis.serviceIncluded.update}/${id}`,
-        { mainTitle, titles: titles.filter(t => t.trim() !== ""), services: selectedServices, },
-        { headers: { Authorization: validToken } }
-      );
+
+      const payload = {
+        mainTitle,
+        titles,
+        services: selectedServices,
+      };
+
+      const res = await axios.put(`${apis.serviceIncluded.update}/${id}`, payload, {
+        headers: {
+          Authorization: validToken,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       if (res?.data?.success) {
-        toast.success("Service included updated successfully");
+        toast.success("Service Included updated successfully");
         navigate(-1);
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update data");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
+
+  if (initialLoading) return <div className="text-center mt-5">Loading...</div>;
 
   return (
     <div className="page-wrapper">
@@ -112,27 +113,65 @@ const UpdateServiceIncludedPage = () => {
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
             <h5 className="mb-0">Update Service Included</h5>
-            <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate(-1)}>
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => navigate(-1)}
+            >
               ← Back
             </button>
           </div>
+
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               {/* Main Title */}
               <div className="mb-3">
                 <label className="form-label">
-                  Main Title <span style={{ color: "red" }}>*</span>
+                  Main Title <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
                   className="form-control"
                   value={mainTitle}
                   onChange={(e) => setMainTitle(e.target.value)}
-                  required
                 />
               </div>
 
-              {/* Multiple Service Selector */}
+              {/* Titles */}
+              <div className="mb-3">
+                <label className="form-label">Titles</label>
+                {titles.map((title, index) => (
+                  <div key={index} className="d-flex align-items-center mb-2">
+                    <input
+                      type="text"
+                      className="form-control me-2"
+                      placeholder="Enter title"
+                      value={title}
+                      onChange={(e) =>
+                        handleTitleChange(index, e.target.value)
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-danger me-1"
+                      onClick={() => removeTitleField(index)}
+                      disabled={titles.length === 1}
+                    >
+                      -
+                    </button>
+                    {index === titles.length - 1 && (
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={addTitleField}
+                      >
+                        +
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
                   Select Services <span className="text-danger">*</span>
@@ -144,31 +183,13 @@ const UpdateServiceIncludedPage = () => {
                 />
               </div>
 
-              {/* Titles */}
-              <div className="mb-3">
-                <label className="form-label">Titles</label>
-                {titles?.map((title, index) => (
-                  <div key={index} className="d-flex mb-2">
-                    <input
-                      type="text"
-                      className="form-control me-2"
-                      value={title}
-                      onChange={(e) => handleTitleChange(index, e.target.value)}
-                    />
-                    <button type="button" className="btn btn-danger me-1" onClick={() => removeTitleField(index)} disabled={titles.length === 1}>
-                      -
-                    </button>
-                    {index === titles.length - 1 && (
-                      <button type="button" className="btn btn-success" onClick={addTitleField}>
-                        +
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
+              {/* Submit */}
               <div className="text-end">
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? "Updating..." : "Update"}
                 </button>
               </div>

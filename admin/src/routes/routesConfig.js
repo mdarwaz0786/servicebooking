@@ -54,6 +54,16 @@ import AddExpertTechnicianPage from "../pages/ExportTechnician/AddExpertTechnici
 import AddBrandLogoPage from "../pages/BrandLogo/AddBrandLogoPage";
 import AddGIPromisePage from "../pages/GiPromise/AddGIPromisePage";
 import AddServiceFaqPage from "../pages/ServiceFaq/AddServiceFaqpage";
+import ServiceFaqListPage from "../pages/ServiceFaq/ServiceFaqListPage";
+import UpdateServiceFaqPage from "../pages/ServiceFaq/UpdateServiceFaqPage";
+import GIPromiseListPage from "../pages/GiPromise/GIPromiseListPage";
+import UpdateGIPromisePage from "../pages/GiPromise/UpdateGIPromisePage";
+import WhyChooseUsListPage from "../pages/WhyChooseUs/WhyChooseUsListPage";
+import UpdateWhyChooseUsPage from "../pages/WhyChooseUs/UpdateWhyChooseUsPage";
+import UpdateExpertTechnicianPage from "../pages/ExportTechnician/UpdateExpertTechnicianPage";
+import ExpertTechnicianListPage from "../pages/ExportTechnician/ExpertTechnicianListPage";
+import UpdateBrandLogoPage from "../pages/BrandLogo/UpdateBrandLogoPage";
+import BrandLogoListPage from "../pages/BrandLogo/BrandLogoListPage";
 
 const routesConfig = {
   private: [
@@ -121,15 +131,25 @@ const routesConfig = {
     { path: "/add-requirement-from-customer", element: AddRequirementFromCustomerPage },
     { path: "/update-requirement-from-customer/:id", element: UpdateRequirementFromCustomerPage },
 
+    { path: "/why-choose-us", element: WhyChooseUsListPage },
     { path: "/add-why-choose-us", element: AddWhyChooseUsPage },
+    { path: "/update-why-choose-us", element: UpdateWhyChooseUsPage },
 
+    { path: "/expert-technician", element: ExpertTechnicianListPage },
     { path: "/add-expert-technician", element: AddExpertTechnicianPage },
+    { path: "/update-expert-technician/:id", element: UpdateExpertTechnicianPage },
 
+    { path: "/brand-logo", element: BrandLogoListPage },
     { path: "/add-brand-logo", element: AddBrandLogoPage },
+    { path: "/update-brand-logo/:id", element: UpdateBrandLogoPage },
 
+    { path: "/gi-promise", element: GIPromiseListPage },
     { path: "/add-gi-promise", element: AddGIPromisePage },
+    { path: "/update-gi-promise/:id", element: UpdateGIPromisePage },
 
+    { path: "/service-faq", element: ServiceFaqListPage },
     { path: "/add-service-faq", element: AddServiceFaqPage },
+    { path: "/update-service-faq/:id", element: UpdateServiceFaqPage },
 
     { path: "/users", element: UserListPage },
   ],

@@ -16,7 +16,7 @@ router.post(
   "/",
   isLoggedIn,
   upload.fields([
-    { name: "icons", maxCount: 10 },
+    { name: "icons", maxCount: 100 },
   ]),
   validateFileSize,
   createRequirementFromCustomer
@@ -27,7 +27,7 @@ router.patch(
   "/:id",
   isLoggedIn,
   upload.fields([
-    { name: "icons", maxCount: 10 },
+    { name: "icons", maxCount: 100 },
   ]),
   validateFileSize,
   updateRequirementFromCustomer

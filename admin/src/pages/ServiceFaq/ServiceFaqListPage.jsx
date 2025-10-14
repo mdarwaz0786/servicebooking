@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 
-const RequirementFromCustomerListPage = () => {
+const ServiceFaqListPage = () => {
   const { validToken } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const RequirementFromCustomerListPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.requirementFromCustomer.get, {
+      const response = await axios.get(apis.serviceFaq.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -52,7 +52,7 @@ const RequirementFromCustomerListPage = () => {
         setHasPrevPage(response?.data?.hasPrevPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch serviceIncludes");
+      toast.error(error?.response?.data?.message || "Failed to fetch data");
     } finally {
       setLoading(false);
     };
@@ -70,9 +70,10 @@ const RequirementFromCustomerListPage = () => {
   };
 
   const toggleStatus = async (id, currentStatus) => {
+
     try {
       const response = await axios.patch(
-        `${apis.requirementFromCustomer.update}/${id}`,
+        `${apis.serviceFaq.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
@@ -89,7 +90,7 @@ const RequirementFromCustomerListPage = () => {
     if (!window.confirm("Are you sure you want to delete this?")) return;
 
     try {
-      const response = await axios.delete(`${apis.requirementFromCustomer.delete}/${id}`, {
+      const response = await axios.delete(`${apis.serviceFaq.delete}/${id}`, {
         headers: { Authorization: validToken },
       });
 
@@ -110,7 +111,7 @@ const RequirementFromCustomerListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Requirement From Customer {data?.length}</h5>
+          <h5>Service FAQ {data?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -148,7 +149,7 @@ const RequirementFromCustomerListPage = () => {
               <option value={total}>All</option>
             </select>
             <div>
-              <Link to="/add-requirement-from-customer">
+              <Link to="/add-service-faq">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
                   <span>Add</span>
@@ -191,7 +192,7 @@ const RequirementFromCustomerListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-requirement-from-customer/${d?._id}`}>
+                            <Link to={`/update-service-faq/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-edit" />
                               </button>
@@ -269,4 +270,4 @@ const RequirementFromCustomerListPage = () => {
   );
 };
 
-export default RequirementFromCustomerListPage;
+export default ServiceFaqListPage;

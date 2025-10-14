@@ -12,7 +12,7 @@ const router = express.Router()
 router.post("/", isLoggedIn, createWhyChooseUs)
 router.get("/", isLoggedIn, getWhyChooseUsList)
 router.get("/:id", isLoggedIn, getWhyChooseUsById)
-router.put("/:id", isLoggedIn, updateWhyChooseUs)
+router.patch("/:id", isLoggedIn, updateWhyChooseUs)
 router.delete("/:id", isLoggedIn, deleteWhyChooseUs)
 
 export default router;
