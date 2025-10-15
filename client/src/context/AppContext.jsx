@@ -27,7 +27,7 @@ export const AppProvider = ({ children }) => {
 
   const [categoryListData, setcategoryListData] = useState([]);
   const [categoryItemData, setcategoryItemData] = useState([]);
-  
+
   const [subcategoryListData, setsubcategoryListData] = useState([]);
   const [subcategoryItemData, setsubcategoryItemData] = useState([]);
 
@@ -57,8 +57,8 @@ export const AppProvider = ({ children }) => {
   const [user, setuser] = useState();
 
   const [servicePageCartShow, setservicePageCartShow] = useState(false);
-  
-  
+
+
   // booking states
   const [bookingAddress, setbookingAddress] = useState(false);
   const [bookingDate, setbookingDate] = useState(false);
@@ -67,8 +67,8 @@ export const AppProvider = ({ children }) => {
   const [bookingItems, setbookingItems] = useState([]);
   const [bookingAmount, setbookingAmount] = useState([]);
 
-  
-    
+
+
 
 
 
@@ -78,16 +78,16 @@ export const AppProvider = ({ children }) => {
   // ✅ Base API URLs
   const apiUrl = () => {
     // const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/';
-    const apiUrl = SERVER_BASE_URL+'api/v1/';
-    const commurl = apiUrl+'common/';
+    const apiUrl = SERVER_BASE_URL + 'api/v1/';
+    const commurl = apiUrl + 'common/';
     const userUrl = apiUrl + 'user/';
     const servicemanUrl = apiUrl + 'serviceman/';
 
-    return { 
+    return {
       login: `${userUrl}auth/login`,
-      verifyOtp: `${userUrl}auth/verify-otp`,      
+      verifyOtp: `${userUrl}auth/verify-otp`,
       logout: `${userUrl}logout`,
-      
+
       homeDetail: `${commurl}home`,
 
       categoryList: `${commurl}category`,
@@ -107,11 +107,11 @@ export const AppProvider = ({ children }) => {
 
       createTransaction: `${commurl}payment/create-order`,
       verifyTransaction: `${commurl}payment/verify-payment`,
-      
+
       createBooking: `${userUrl}booking/create-booking`,
       myBooking: `${userUrl}booking`,
       myBookingDetail: `${userUrl}booking`,
-      
+
       myReview: `${userUrl}review`,
       myReviewRemove: `${userUrl}review`,
 
@@ -137,7 +137,7 @@ export const AppProvider = ({ children }) => {
 
 
 
-      };
+    };
   };
 
 
@@ -161,77 +161,77 @@ export const AppProvider = ({ children }) => {
   };
 
   // ✅ API call function
-const postData = async (
-  filedata,
-  url,
-  method,
-  loaderShowHide = null,
-  messageAlert = null,
-  isFileUpload = false // new flag for file uploads
-) => {
-  const deviceInfo = JSON.stringify(getDeviceInfo());
-  let bodyData = null;
+  const postData = async (
+    filedata,
+    url,
+    method,
+    loaderShowHide = null,
+    messageAlert = null,
+    isFileUpload = false // new flag for file uploads
+  ) => {
+    const deviceInfo = "" // JSON.stringify(getDeviceInfo());
+    let bodyData = null;
 
-  if (isFileUpload) {
-    // Use FormData for file uploads
-    bodyData = new FormData();
+    if (isFileUpload) {
+      // Use FormData for file uploads
+      bodyData = new FormData();
 
-    for (const key in filedata) {
-      const value = filedata[key];
+      for (const key in filedata) {
+        const value = filedata[key];
 
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          if (item instanceof File) {
-            // Append each file with the same key
-            bodyData.append(key, item);
-          } else if (typeof item === 'object') {
-            bodyData.append(`${key}[]`, JSON.stringify(item)); // objects in array
-          } else {
-            bodyData.append(`${key}[]`, item); // primitive array
-          }
-        });
-      } else if (value instanceof File) {
-        bodyData.append(key, value); // single file
-      } else if (typeof value === 'object' && value !== null) {
-        bodyData.append(key, JSON.stringify(value)); // nested object
-      } else {
-        bodyData.append(key, value); // primitive
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            if (item instanceof File) {
+              // Append each file with the same key
+              bodyData.append(key, item);
+            } else if (typeof item === 'object') {
+              bodyData.append(`${key}[]`, JSON.stringify(item)); // objects in array
+            } else {
+              bodyData.append(`${key}[]`, item); // primitive array
+            }
+          });
+        } else if (value instanceof File) {
+          bodyData.append(key, value); // single file
+        } else if (typeof value === 'object' && value !== null) {
+          bodyData.append(key, JSON.stringify(value)); // nested object
+        } else {
+          bodyData.append(key, value); // primitive
+        }
+      }
+
+      // Append device info
+      bodyData.append('device_detail', deviceInfo);
+    } else {
+      if (method === 'POST') bodyData = JSON.stringify({ ...filedata, device_detail: deviceInfo });
+      if (method === 'GET' && filedata) {
+        const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
+        url += `?${params}`;
+      }
+      if (method === 'DELETE' && filedata) {
+        const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
+        url += `?${params}`;
       }
     }
 
-    // Append device info
-    bodyData.append('device_detail', deviceInfo);
-  } else {
-    if (method === 'POST') bodyData = JSON.stringify({ ...filedata, device_detail: deviceInfo });
-    if (method === 'GET' && filedata) {
-      const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
-      url += `?${params}`;
+    if (!loaderShowHide) setbodyLoaderShow(true);
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          ...(isFileUpload ? {} : { 'Content-Type': 'application/json' }),
+          Authorization: 'Bearer ' + storage.get('token'),
+        },
+        body: method === 'POST' || method === 'PUT' ? bodyData : undefined,
+      });
+
+      return await responseCheck(response, messageAlert);
+    } catch (error) {
+      setbodyLoaderShow(false);
+      console.error('Failed to make API request:', error);
+      return error;
     }
-    if (method === 'DELETE' && filedata) {
-      const params = new URLSearchParams({ ...filedata, device_detail: deviceInfo }).toString();
-      url += `?${params}`;
-    }
-  }
-
-  if (!loaderShowHide) setbodyLoaderShow(true);
-
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: {
-        ...(isFileUpload ? {} : { 'Content-Type': 'application/json' }),
-        Authorization: 'Bearer ' + storage.get('token'),
-      },
-      body: method === 'POST' || method === 'PUT' ? bodyData : undefined,
-    });
-
-    return await responseCheck(response, messageAlert);
-  } catch (error) {
-    setbodyLoaderShow(false);
-    console.error('Failed to make API request:', error);
-    return error;
-  }
-};
+  };
 
 
 
@@ -239,7 +239,7 @@ const postData = async (
   const responseCheck = async (response, messageAlert) => {
     try {
       let result = [];
-      if ([200, 400, 401, 204, 201,500].includes(response.status)) {
+      if ([200, 400, 401, 204, 201, 500].includes(response.status)) {
         result = await response.json();
       } else {
         result = response;
@@ -249,25 +249,23 @@ const postData = async (
       setbodyLoaderShow(false);
 
       if (result.success === true) {
-        if(result?.pagination)
-        {
-          if(result.pagination.pages.length>0)
-          setpagination(result.pagination);
+        if (result?.pagination) {
+          if (result.pagination.pages.length > 0)
+            setpagination(result.pagination);
         }
-        if(!messageAlert && result.message) 
-        {
+        if (!messageAlert && result.message) {
           toast.success(result.message);
         }
-        
+
 
         if (result?.token) {
-          storage.set('token', result.token); 
+          storage.set('token', result.token);
           storage.set('user', JSON.stringify(result?.user));
           setuser(result?.user);
-          toggleModal("loginModal",false);
+          toggleModal("loginModal", false);
         }
       } else {
-        if(!messageAlert && result.message) 
+        if (!messageAlert && result.message)
           toast.error(result.message || 'Something went wrong');
       }
 
@@ -280,7 +278,7 @@ const postData = async (
   };
 
 
- 
+
 
   // ✅ Convert File to Base64
   const convertToBase64 = (file) => {
@@ -301,7 +299,7 @@ const postData = async (
     }).format(value);
     return formatted;
   };
- 
+
 
   const generateUniqueId = () => {
     let uniqueId = localStorage.getItem("uniqueId");
@@ -311,8 +309,7 @@ const postData = async (
         Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
       localStorage.setItem("uniqueId", uniqueId);
     }
-    if(user)
-    {
+    if (user) {
       user = JSON.parse(user);
       uniqueId = user._id;
     }
@@ -322,67 +319,66 @@ const postData = async (
 
 
 
-const formatDateTime = (isoString) => {
-  const date = new Date(isoString);
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
 
-const formatDate = (isoString) => {
-  const date = new Date(isoString);
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
 
-  return `${year}-${month}-${day}`;
-};
+    return `${year}-${month}-${day}`;
+  };
 
 
-const imageCheck = (path, defaultImg = null) => {
-  const baseUrl = SERVER_BASE_URL
-  let image = '';
-  if(!path)
-  {
-    if(defaultImg) image = `${baseUrl}${'uploads/'+defaultImg}`;
-    else image = `${baseUrl}${'uploads/default.jpg'}`;
-  }
-  else{
-    image = `${baseUrl}${path}`;
-  }
+  const imageCheck = (path, defaultImg = null) => {
+    const baseUrl = SERVER_BASE_URL
+    let image = '';
+    if (!path) {
+      if (defaultImg) image = `${baseUrl}${'uploads/' + defaultImg}`;
+      else image = `${baseUrl}${'uploads/default.jpg'}`;
+    }
+    else {
+      image = `${baseUrl}${path}`;
+    }
 
-  try {
-    const decoded = JSON.parse(path);
+    try {
+      const decoded = JSON.parse(path);
 
-    if (Array.isArray(decoded) || typeof decoded === "object") {
-      if (decoded?.[0]?.image_path) {
-        image = `${baseUrl}${decoded[0].image_path}`;
+      if (Array.isArray(decoded) || typeof decoded === "object") {
+        if (decoded?.[0]?.image_path) {
+          image = `${baseUrl}${decoded[0].image_path}`;
+        }
+      } else if (path && typeof path === "string") {
+        image = `${baseUrl}${path}`;
       }
-    } else if (path && typeof path === "string") {
-      image = `${baseUrl}${path}`;
+    } catch (e) {
+      if (path && typeof path === "string") {
+        image = `${baseUrl}${path}`;
+      }
     }
-  } catch (e) {
-    if (path && typeof path === "string") {
-      image = `${baseUrl}${path}`;
-    }
+
+    return image;
   }
 
-  return image;
-}
 
-  
 
   const [modals, setModals] = useState({
     homeCategoryModal: false,
@@ -419,127 +415,119 @@ const imageCheck = (path, defaultImg = null) => {
 
 
 
-  
-   const handleCartAddRemove = async (item, type) => {    
-      let quantity = item?.quantity;
-      let serviceId = item._id;
-      if(item.serviceId) serviceId = item.serviceId;
-      if(type==1)
-      {
-        quantity += 1;
-      }
-      else{
-        quantity = quantity > 0 ? quantity - 1 : 0;
-      }
-      try {
-        // generateUniqueId()
-        const response = await postData({serviceId:serviceId,quantity:quantity,userId:generateUniqueId()}, Urls.addRemoveCart, "POST", 0, 1);
-        
 
-        if(response.success)
-        {
-          setcartItems(response.data.cartProducts);
-          setcartAmount(response.data.amountData);
-          if(response.data?.cartProducts.length>0)
-          {
-            setservicePageCartShow(true)
-          }
-          else{
-            setservicePageCartShow(false)
-          }
-        }
-        else{
-          if(type==1)
-          {
-            if(quantity>0) quantity -= 1;
-          }
-          else{
-            quantity = quantity > 0 ? quantity + 1 : 0;
-          }
-          setcartItems([]);
-          setcartAmount([]);
-        }
-        item.quantity = quantity;
+  const handleCartAddRemove = async (item, type) => {
+    let quantity = item?.quantity;
+    let serviceId = item._id;
+    if (item.serviceId) serviceId = item.serviceId;
+    if (type == 1) {
+      quantity += 1;
+    }
+    else {
+      quantity = quantity > 0 ? quantity - 1 : 0;
+    }
+    try {
+      // generateUniqueId()
+      const response = await postData({ serviceId: serviceId, quantity: quantity, userId: generateUniqueId() }, Urls.addRemoveCart, "POST", 0, 1);
 
-      } catch (error) {
-        console.error("Cart API Error:", error);
+
+      if (response.success) {
+        setcartItems(response.data.cartProducts);
+        setcartAmount(response.data.amountData);
+        if (response.data?.cartProducts.length > 0) {
+          setservicePageCartShow(true)
+        }
+        else {
+          setservicePageCartShow(false)
+        }
       }
+      else {
+        if (type == 1) {
+          if (quantity > 0) quantity -= 1;
+        }
+        else {
+          quantity = quantity > 0 ? quantity + 1 : 0;
+        }
+        setcartItems([]);
+        setcartAmount([]);
+      }
+      item.quantity = quantity;
+
+    } catch (error) {
+      console.error("Cart API Error:", error);
+    }
   }
 
 
 
   const handleCategoryClick = async (item) => {
     setcategoryModalImage(item.image)
-    if(item.subCategoryCount)
-    {
+    if (item.subCategoryCount) {
       setcategoryModalItemData(item)
       try {
-        if(item.subSubCategoryCount)
-          {
-          const response = await postData({categoryId:item._id,sort:'asc'}, Urls.subCategoryList, "GET", 0, 1);
+        if (item.subSubCategoryCount) {
+          const response = await postData({ categoryId: item._id, sort: 'asc' }, Urls.subCategoryList, "GET", 0, 1);
           if (response?.data.length > 0) {
             setcategoryModalListData(response.data);
           }
-          toggleModal("homeCategoryModal",true);
+          toggleModal("homeCategoryModal", true);
         }
-        else{
-          toggleModal("homeCategoryModal", false); 
-          navigate("/services/"+item.slug);
+        else {
+          toggleModal("homeCategoryModal", false);
+          navigate("/services/" + item.slug);
         }
 
       } catch (error) {
         console.error("Cart API Error:", error);
       }
     }
-    else if(item.subSubCategoryCount){
-      toggleModal("homeCategoryModal",false)
+    else if (item.subSubCategoryCount) {
+      toggleModal("homeCategoryModal", false)
       setcategoryModalItemData(item)
       try {
-        if(item.subSubSubCategoryCount)
-          {
-          const response = await postData({subCategoryId:item._id,sort:'asc'}, Urls.subSubCategoryList, "GET", 0, 1);
+        if (item.subSubSubCategoryCount) {
+          const response = await postData({ subCategoryId: item._id, sort: 'asc' }, Urls.subSubCategoryList, "GET", 0, 1);
           if (response?.data.length > 0) {
             setcategoryModalListData(response.data);
-          }        
-          toggleModal("homeCategoryModal",true);
+          }
+          toggleModal("homeCategoryModal", true);
         }
-        else{
-          toggleModal("homeCategoryModal", false); 
-          navigate("/services/"+item.slug);
+        else {
+          toggleModal("homeCategoryModal", false);
+          navigate("/services/" + item.slug);
         }
       } catch (error) {
         console.error("Cart API Error:", error);
       }
     }
-    else if(item.subSubSubCategoryCount){
-      toggleModal("homeCategoryModal",false)
+    else if (item.subSubSubCategoryCount) {
+      toggleModal("homeCategoryModal", false)
       setcategoryModalItemData(item)
       try {
-        const response = await postData({subSubCategoryId:item._id,sort:'asc'}, Urls.subSubSubCategoryList, "GET", 0, 1);
+        const response = await postData({ subSubCategoryId: item._id, sort: 'asc' }, Urls.subSubSubCategoryList, "GET", 0, 1);
         // if (response?.data.length > 0) {
         //   setcategoryModalListData(response.data);
         // }  
-        toggleModal("homeCategoryModal", false); 
-        navigate("/services/"+item.slug);      
-        toggleModal("homeCategoryModal",true)
+        toggleModal("homeCategoryModal", false);
+        navigate("/services/" + item.slug);
+        toggleModal("homeCategoryModal", true)
       } catch (error) {
         console.error("Cart API Error:", error);
       }
     }
-    else{
-      toggleModal("homeCategoryModal", false); 
-      navigate("/services/"+item.slug);
+    else {
+      toggleModal("homeCategoryModal", false);
+      navigate("/services/" + item.slug);
     }
   }
 
   const handleServiceDetail = async (id) => {
     try {
-      const response = await postData({}, Urls.serviceDetail+'/'+id, "GET", 0, 1);
-      if(response.success)
-      {
+      const response = await postData({}, Urls.serviceDetail + '/' + id, "GET", 0, 1);
+      if (response.success) {
         if (response?.success) {
           setserviceDetailData(response.data);
-          toggleModal("ServiceDetailModal",true)
+          toggleModal("ServiceDetailModal", true)
         }
       }
     } catch (error) {
@@ -548,50 +536,49 @@ const imageCheck = (path, defaultImg = null) => {
   }
 
 
-    const handleHome = async () => {
-      try {
-        const response = await postData({userId:generateUniqueId()}, Urls.homeDetail, "GET", 0, 1);
-        if(response.success)
-        {
-          sethomePageData(response.data)
-          if (response?.data.category.length > 0) {
-            setcategoryListData(response.data.category);
-          }
-          if (response?.data.cart.cartProducts.length > 0) {
-            setservicePageCartShow(true);
-            setcartItems(response.data.cart.cartProducts);
-            setcartAmount(response.data.cart.amountData);
-          }
+  const handleHome = async () => {
+    try {
+      const response = await postData({ userId: generateUniqueId() }, Urls.homeDetail, "GET", 0, 1);
+      if (response.success) {
+        sethomePageData(response.data)
+        if (response?.data.category.length > 0) {
+          setcategoryListData(response.data.category);
         }
-      } catch (error) {
-        console.error("Cart API Error:", error);
+        if (response?.data.cart.cartProducts.length > 0) {
+          setservicePageCartShow(true);
+          setcartItems(response.data.cart.cartProducts);
+          setcartAmount(response.data.cart.amountData);
+        }
       }
+    } catch (error) {
+      console.error("Cart API Error:", error);
     }
+  }
 
-    useEffect(() => {
-      toggleModal("homeCategoryModal", false); 
-      handleHome();
-    }, []);  
+  useEffect(() => {
+    toggleModal("homeCategoryModal", false);
+    handleHome();
+  }, []);
 
-    const handleLogout = async () => {
-      storage.delete('user');
-      storage.delete('token');
-      setuser(null);
-    }
+  const handleLogout = async () => {
+    storage.delete('user');
+    storage.delete('token');
+    setuser(null);
+  }
 
-  
+
 
 
 
   const Urls = apiUrl();
-  
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setuser(JSON.parse(storedUser));
     }
   }, []);
-    
+
   return (
     <AppContext.Provider value={{
       SERVER_BASE_URL,
@@ -616,7 +603,7 @@ const imageCheck = (path, defaultImg = null) => {
       imageCheck,
       pagination,
       setpagination,
-      
+
       handleCategoryClick,
       handleServiceDetail,
 
@@ -664,7 +651,7 @@ const imageCheck = (path, defaultImg = null) => {
 
       servicePageCategoryData,
       setservicePageCategoryData,
-      
+
       servicePageName,
       setservicePageName,
 
@@ -684,7 +671,7 @@ const imageCheck = (path, defaultImg = null) => {
       PriceFormat,
       generateUniqueId,
 
-      
+
 
 
       bookingAddress,
@@ -695,13 +682,13 @@ const imageCheck = (path, defaultImg = null) => {
 
       bookingTime,
       setbookingTime,
-      
+
       bookingData,
       setbookingData,
-      
+
       bookingItems,
       setbookingItems,
-      
+
       bookingAmount,
       setbookingAmount,
 
@@ -711,19 +698,19 @@ const imageCheck = (path, defaultImg = null) => {
       <LoginModal />
       <ServiceManJoinModal />
       <ServiceDetailModal />
-      <ToastContainer 
-      position="bottom-right"   // you can change to "top-right", "top-center", etc.
-      autoClose={3000}          // close after 3s
-      hideProgressBar={false}
-      newestOnTop={true}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="colored"           // "light", "dark", or "colored"
-    />
+      <ToastContainer
+        position="bottom-right"   // you can change to "top-right", "top-center", etc.
+        autoClose={3000}          // close after 3s
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"           // "light", "dark", or "colored"
+      />
     </AppContext.Provider>
-    
+
   );
 };
