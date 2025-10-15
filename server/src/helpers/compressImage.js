@@ -12,7 +12,7 @@ const compressImage = async (
   width = 1200,
   minWidth = 200,
 ) => {
-  const uploadDir = path.join(process.cwd(), "uploads", folder);
+  const uploadDir = path.join(process.cwd(), "../../uploads", folder);
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   };

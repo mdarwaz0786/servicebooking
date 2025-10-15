@@ -10,7 +10,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 const compressVideo = async (buffer, folder = "videos", crf = 28, preset = "veryfast") => {
   return new Promise((resolve, reject) => {
     try {
-      const uploadDir = path.join(process.cwd(), "uploads", folder);
+      const uploadDir = path.join(process.cwd(), "../../uploads", folder);
       if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
       const baseName = `${Date.now()}-${Math.round(Math.random() * 1e9)}.mp4`;
