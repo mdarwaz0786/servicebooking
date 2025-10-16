@@ -24,7 +24,6 @@ const AddServiceIncludedPage = () => {
         setServices(res?.data?.data || []);
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load services");
       };
     };
     fetchServices();
@@ -44,18 +43,18 @@ const AddServiceIncludedPage = () => {
     if (!mainTitle.trim()) {
       toast.error("Main title is required");
       return;
-    }
+    };
 
-    if (selectedServices.length === 0) {
+    if (selectedServices?.length === 0) {
       toast.error("Please select at least one service");
       return;
-    }
+    };
 
     try {
       setLoading(true);
       const response = await axios.post(
         apis.serviceIncluded.create,
-        { mainTitle, titles: titles.filter(t => t.trim() !== ""), services: selectedServices },
+        { mainTitle, titles: titles.filter((t) => t?.trim() !== ""), services: selectedServices },
         { headers: { Authorization: validToken } }
       );
 
@@ -69,7 +68,7 @@ const AddServiceIncludedPage = () => {
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
-    }
+    };
   };
 
   return (
@@ -84,6 +83,18 @@ const AddServiceIncludedPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Services */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Select Services <span className="text-danger">*</span>
+                </label>
+                <SelectMultipleService
+                  optionsList={services}
+                  value={selectedServices}
+                  onChange={setSelectedServices}
+                />
+              </div>
+
               {/* Main Title */}
               <div className="mb-3">
                 <label className="form-label">
@@ -98,22 +109,10 @@ const AddServiceIncludedPage = () => {
                 />
               </div>
 
-              {/* Multiple Service Selector */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span className="text-danger">*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
-                />
-              </div>
-
               {/* Titles */}
               <div className="mb-3">
                 <label className="form-label">Titles</label>
-                {titles.map((title, index) => (
+                {titles?.map((title, index) => (
                   <div key={index} className="d-flex mb-2">
                     <input
                       type="text"
@@ -121,7 +120,7 @@ const AddServiceIncludedPage = () => {
                       value={title}
                       onChange={(e) => handleTitleChange(index, e.target.value)}
                     />
-                    <button type="button" className="btn btn-danger me-1" onClick={() => removeTitleField(index)} disabled={titles.length === 1}>
+                    <button type="button" className="btn btn-danger me-1" onClick={() => removeTitleField(index)} disabled={titles?.length === 1}>
                       -
                     </button>
                     {index === titles.length - 1 && (

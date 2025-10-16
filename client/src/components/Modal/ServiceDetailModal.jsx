@@ -9,34 +9,33 @@ import ServiceDetail from "../Service/ServiceDetail";
 
 const ServiceDetailModal = () => {
 
-  const { modals,toggleModal } = useContext(AppContext);
+  const { modals, toggleModal } = useContext(AppContext);
 
   return (
     <div
-        className={`modal fade ${modals.ServiceDetailModal ? "show" : ""}`}
-        id="provider"
+      className={`modal fade ${modals.ServiceDetailModal ? "show" : ""}`}
+      id="provider"
     >
-
-      <div className="modal-dialog modal-xl modal-dialog-centered">
-        <div className="modal-content" style={{ border: 0}}>
+      <div className="modal-dialog modal-lg modal-dialog-centered">
+        <div className="modal-content" style={{ border: 0 }}>
 
           <div className="wizard-fieldset">
-          <Link
+            <Link
               style={{
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
                 zIndex: 1,
               }}
-              onClick={() => toggleModal("ServiceDetailModal",false)}
+              onClick={() => toggleModal("ServiceDetailModal", false)}
             >
               <i className="ti ti-circle-x-filled fs-20"></i>
             </Link>
 
             <ServiceDetail />
-            
-           
-            
+
+
+
           </div>
         </div>
       </div>

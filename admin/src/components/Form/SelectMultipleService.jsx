@@ -4,14 +4,11 @@ import Select from "react-select";
 const SelectMultipleService = ({ optionsList, value = [], onChange }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  const options = useMemo(
-    () =>
-      optionsList?.map((item) => ({
-        value: item?._id,
-        label: item?.name || item?.title,
-      })) || [],
-    [optionsList]
-  );
+  const options = useMemo(() =>
+    optionsList?.map((item) => ({
+      value: item?._id,
+      label: item?.name,
+    })) || [], [optionsList]);
 
   useEffect(() => {
     const preSelected = options?.filter((opt) => value?.includes(opt?.value));

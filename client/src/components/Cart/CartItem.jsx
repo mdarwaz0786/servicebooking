@@ -3,34 +3,46 @@ import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 
 const CartItem = () => {
-  const { serviceListData, PriceFormat, handleCartAddRemove, cartItems } = useContext(AppContext);
+    const { serviceListData, PriceFormat, handleCartAddRemove, cartItems } = useContext(AppContext);
 
 
-  return (
-    <>
-        {cartItems.map((value, index)=>(
-            <div className="d-flex justify-content-between align-items-center mb-3" key={index}>
-                <div>
-                    <p className="mb-1 cart-item-name">{value.name} <br /></p>
-                </div>
-                
-                <div className="d-flex align-items-center mb-3">
-                    <button className="btn btn-light border cart-item-btn" onClick={()=> handleCartAddRemove(value,2)} >-</button>
-                    <span className="mx-3 item-qty">{value?.quantity?value?.quantity:0}</span>
-                    <button className="btn btn-light border cart-item-btn" onClick={()=> handleCartAddRemove(value,1)}>+</button>
-                </div>
+    return (
+        <>
+            <div className="cart-wrapper">
+                <div className="cart-container">
+                    {/* Header */}
+                    <div className="cart-header d-flex fw-semibold mb-2">
+                        <div className="cart-header-item">Item</div>
+                        <div className="cart-header-qty text-center">Quantity</div>
+                        <div className="cart-header-price text-end">Price</div>
+                    </div>
 
-                <div className="text-end">
-                    <p className="text-decoration-line-through small text-muted mb-0 cart-item-price">
-                        {PriceFormat(value.mrpPrice*value.quantity)}
-                    </p>
-                    <p className="fw-bold text-dark mb-0 cart-item-price">{PriceFormat(value.salePrice*value.quantity)}</p>
+                    {/* Cart Items */}
+                    {cartItems.map((value, index) => (
+                        <div
+                            key={index}
+                            className="cart-item d-flex align-items-start mb-2"
+                        >
+                            {/* Item name */}
+                            <div className="cart-item-name">
+                                <p className="mb-0 fw-semibold">{value.name}</p>
+                            </div>
+
+                            {/* Quantity */}
+                            <div className="cart-item-qty text-center">
+                                <span>{value?.quantity ? value?.quantity : 0}</span>
+                            </div>
+
+                            {/* Price */}
+                            <div className="cart-item-price text-end fw-bold text-dark">
+                                {PriceFormat(value.salePrice * value.quantity)}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
-        ))}
-        
-    </>
-  );
+        </>
+    );
 };
 
 export default CartItem;

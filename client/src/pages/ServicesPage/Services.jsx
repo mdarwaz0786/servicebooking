@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 
 const Services = () => {
 
-  const { servicePageCategoryData, servicePageName, cartAmount,cartItems, servicePageCartShow } = useContext(AppContext);
+  const { servicePageCategoryData, servicePageName, cartAmount, cartItems, servicePageCartShow } = useContext(AppContext);
   return (
     <div className="page-wrapper m-0">
       <div className="content">
@@ -22,16 +22,16 @@ const Services = () => {
                   <h4><span className="text-primary">{servicePageName}</span></h4>
                 </div>
                 <div className="row m-0">
-                {servicePageCategoryData.map((item, index)=>(
-                  <CategoryMiniCard2 value={item} key={item._id} />
-                ))}
-              </div>
+                  {servicePageCategoryData.map((item, index) => (
+                    <CategoryMiniCard2 value={item} key={item._id} />
+                  ))}
+                </div>
 
               </div>
             </div>
 
             {/* -- 2nd  box- */}
-            <div className={`${cartItems.length>0?'col-xl-6 col-lg-6':'col-xl-8'}`}>
+            <div className={`${cartItems.length > 0 ? 'col-xl-6 col-lg-6' : 'col-xl-8'}`}>
 
               <div className="row justify-content-center align-items-center">
 
@@ -42,11 +42,11 @@ const Services = () => {
             </div>
 
             {/* 3rd box */}
-            {(cartItems.length>0)?(
+            {(cartItems.length > 0) ? (
               <div className="col-xl-3 col-lg-2">
                 <CartSidebar />
               </div>
-              ):(null)}
+            ) : (null)}
 
 
           </div>

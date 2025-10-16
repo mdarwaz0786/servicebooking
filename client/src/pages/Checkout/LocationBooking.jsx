@@ -66,9 +66,8 @@ const LocationBooking = () => {
           {addresses.map((value, index) => (
             <div className="col-lg-4 col-md-6" key={index} onClick={() => selectAddress(value._id)}>
               <div
-                className={`card location-card mb-0 shadow-sm rounded-4 position-relative ${
-                  selectedaddress === value._id ? "border border-2 border-success" : ""
-                }`}
+                className={`card location-card mb-0 shadow-sm rounded-4 position-relative ${selectedaddress === value._id ? "border border-2 border-success" : ""
+                  }`}
               >
                 {/* Remove Icon */}
                 <i

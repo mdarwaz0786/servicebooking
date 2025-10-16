@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const BookingDateTime = () => {
   const [selectedTime, setSelectedTime] = useState(null);
-  const [selectedMyDate, setSelectedMyDate] = useState(null);
+  const [selectedMyDate, setSelectedMyDate] = useState(new Date().toISOString().split("T")[0]);
   const [timeSlots, settimeSlots] = useState([]);
   const {
     steps,
@@ -69,9 +69,8 @@ const BookingDateTime = () => {
               {timeSlots.map((slot, index) => (
                 <div className="col-lg-4 col-md-6" key={index}>
                   <div
-                    className={`time-item p-2 text-center rounded-3 shadow-sm ${
-                      slot.disabled ? "bg-light text-muted" : "bg-white cursor-pointer"
-                    } ${selectedTime === slot.time ? "border border-3 border-success bg-success text-white" : ""}`}
+                    className={`time-item p-2 text-center rounded-3 shadow-sm ${slot.disabled ? "bg-light text-muted" : "bg-white cursor-pointer"
+                      } ${selectedTime === slot.time ? "border border-3 border-success bg-success text-white" : ""}`}
                     onClick={() => {
                       if (!slot.disabled) {
                         setSelectedTime(slot.time);

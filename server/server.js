@@ -43,7 +43,7 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/serviceman", servicemanRoutes);
 
 // Serve uploads file
-app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Serve dist file of client
 app.use("/", express.static(path.join(__dirname, "../client", "dist")));

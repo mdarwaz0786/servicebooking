@@ -35,7 +35,8 @@ export const getServiceIncludedList = asyncHandler(async (req, res) => {
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const serviceIncludedList = await ServiceIncludedModel.find(filters)
+  const serviceIncludedList = await ServiceIncludedModel
+    .find(filters)
     .populate("services")
     .sort(sortOption)
     .skip(skip)
@@ -61,10 +62,15 @@ export const getServiceIncludedList = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE SERVICE INCLUDED ---------------------
 export const getServiceIncludedById = asyncHandler(async (req, res) => {
-  const serviceIncluded = await ServiceIncludedModel.findById(req.params.id).populate("services").lean();
+  const serviceIncluded = await ServiceIncludedModel
+    .findById(req.params.id)
+    .populate("services")
+    .lean();
+
   if (!serviceIncluded) {
     throw new ApiError(404, "Service included entry not found");
   };
+
   return res.status(200).json({ success: true, data: serviceIncluded });
 });
 
@@ -79,23 +85,23 @@ export const updateServiceIncluded = asyncHandler(async (req, res) => {
 
   let updatedTitles = serviceIncluded?.titles || [];
   if (titles !== undefined) {
-    let parsedTitles = typeof titles === "string" ? JSON.parse(titles) : titles;
+    let parsedTitles = titles;
     if (!Array.isArray(parsedTitles)) {
       throw new ApiError(400, "titles must be an array");
     };
     updatedTitles = parsedTitles;
   };
 
-  let updatedServices = serviceIncluded.services || [];
+  let updatedServices = serviceIncluded?.services || [];
   if (services !== undefined) {
-    let parsedServices = typeof services === "string" ? JSON.parse(services) : services;
+    let parsedServices = services;
     if (!Array.isArray(parsedServices)) {
       throw new ApiError(400, "services must be an array");
     };
     updatedServices = parsedServices;
   };
 
-  serviceIncluded.mainTitle = mainTitle || serviceIncluded.mainTitle;
+  serviceIncluded.mainTitle = mainTitle || serviceIncluded?.mainTitle;
   if (typeof status === "boolean") {
     serviceIncluded.status = status;
   };
@@ -107,7 +113,7 @@ export const updateServiceIncluded = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Service included updated successfully",
+    message: "Updated successfully",
     data: serviceIncluded,
   });
 });

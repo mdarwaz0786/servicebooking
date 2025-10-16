@@ -7,7 +7,7 @@ const ServiceDetail = () => {
   const data = serviceDetailData;
   const rating = data.ratings;
   const ratingCount = rating?.ratingCount;
-  let ratingArray = [1,2,3,4,5];
+  let ratingArray = [1, 2, 3, 4, 5];
 
   const count1 = 0;
   const count2 = 0;
@@ -21,8 +21,7 @@ const ServiceDetail = () => {
   const percent4 = 0;
   const percent5 = 0;
 
-  if(ratingCount)
-  {
+  if (ratingCount) {
     const count1 = ratingCount["1"] || 0;
     const count2 = ratingCount["2"] || 0;
     const count3 = ratingCount["3"] || 0;
@@ -42,25 +41,26 @@ const ServiceDetail = () => {
     console.log(percent5);
   }
 
-  
 
-  return (   
-        
+
+  return (
+
     <div className="row">
       <div className="col-xl-12">
         <div className="card border-0">
           <div className="card-body">
-            
+
             {/* Slider */}
             <div className="service-wrap mb-4">
-              <div className="slider-wrap">
-                <div className="nav-center mb-3" id="large-img">
-                  
-                  <div className="service-img">
-                    <img src={imageCheck(data.image)} className="img-fluid" alt="Slider Img" />
-                  </div>
-                 
-                </div>
+              <div
+                className="service-img position-relative overflow-hidden rounded mb-3"
+                style={{ height: "220px" }}
+              >
+                <img
+                  src={imageCheck(data.image)}
+                  className="w-100 h-100"
+                  alt="Service"
+                />
               </div>
             </div>
             {/* /Slider */}
@@ -75,17 +75,17 @@ const ServiceDetail = () => {
                   <p className="m-0">
                     {PriceFormat(data.salePrice)}&nbsp;
                     <span className="fs-12">
-                        <span className="old-price text-muted text-decoration-line-through">{PriceFormat(data.mrpPrice)}</span>
-                        &nbsp;(Approximate time {data.timeTaking} hrs)
+                      <span className="old-price text-muted text-decoration-line-through">{PriceFormat(data.mrpPrice)}</span>
+                      &nbsp;(Approximate time {data.timeTaking} hrs)
                     </span>
-                </p>
+                  </p>
                 </div>
-                
+
               </div>
             </div>
 
             <div className="accordion service-accordion">
-              
+
               <div className="accordion-item mb-4">
                 <h2 className="accordion-header">
                   <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#overview" aria-expanded="false">
@@ -96,205 +96,214 @@ const ServiceDetail = () => {
                   <div className="accordion-body border-0 p-0 pt-3">
                     <div className="more-text">
                       {data.shortDescription}
-                      <br/>
+                      <br />
                       {data.fullDescription}
                     </div>
                   </div>
                 </div>
               </div>
 
-            {(data.serviceIncluded)?(
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
-                    Includes
-                  </button>
-                </h2>
-                <div id="include" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    <div className="bg-light-200 p-3 pb-2 br-10">
-                    {data.serviceIncluded.titles.map((item, index) => (
-                      <p key={index} className="d-inline-flex align-items-center mb-2 me-4">
-                        <i className="feather-check-circle text-success me-2" />
-                        {item}
-                      </p>
-                    ))}
+              {data.serviceIncluded && (
+                <div className="mb-5">
+                  <div className="bg-light-500 p-5 pb-5 br-10">
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <h3
+                        style={{
+                          fontSize: "28px",
+                          fontWeight: "600",
+                          color: "#00522c",
+                          marginBottom: "30px",
+                          backgroundColor: "#c7d7cd",
+                          padding: "15px 25px",
+                          borderRadius: "12px",
+                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                          display: "inline-block",
+                        }}
+                      >
+                        {data.serviceIncluded?.mainTitle}
+                      </h3>
+                    </div>
+                    <div>
+                      {data.serviceIncluded.titles.map((item, index) => (
+                        <div key={index} className="d-flex mb-3">
+                          <i className="feather-check-circle text-success me-2" style={{ fontSize: "30px" }} />
+                          <span style={{ fontSize: "20px", color: "#00522c" }}>{item}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
-              ):(null)}
+              )}
 
+              {(data.requirementFromCustomer) ? (
+                <div className="accordion-item mb-4">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
+                      What we need
+                    </button>
+                  </h2>
+                  <div id="what-we-need" className="accordion-collapse collapse show">
+                    <div className="accordion-body border-0 p-0 pt-3">
+                      <div className="bg-light-200 p-3 offer-wrap row">
 
-              {(data.requirementFromCustomer)?(
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
-                    What we need
-                  </button>
-                </h2>                
-                <div id="what-we-need" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">                    
-                    <div className="bg-light-200 p-3 offer-wrap row">                      
-
-                      {data.requirementFromCustomer.requirements.map((item, index) => (
-                        <div className="col-md-2" key={index}>
-                          <div className="offer-item bg-white mb-2 pb-1">
-                            <div className="text-center mb-2">
-                              <span className="">
-                                <img src={imageCheck(item.icon)} alt="img" className="br-10" />
-                              </span>
-                              <div className="mb-2 mt-2">
-                                <h6 className="fs-16 fw-medium">{item.name}</h6>
+                        {data.requirementFromCustomer.requirements.map((item, index) => (
+                          <div className="col-md-2" key={index}>
+                            <div className="offer-item bg-white mb-2 pb-1">
+                              <div className="text-center mb-2">
+                                <span className="">
+                                  <img src={imageCheck(item.icon)} alt="img" className="br-10" />
+                                </span>
+                                <div className="mb-2 mt-2">
+                                  <h6 className="fs-16 fw-medium">{item.name}</h6>
+                                </div>
                               </div>
-                            </div>                        
+                            </div>
                           </div>
-                        </div> 
-                      ))}                      
+                        ))}
 
-                    </div>
-                  </div>
-                </div>
-              </div>
-              ):(null)}
-
-              {(data.whyChooseUs)?(
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
-                    Why Go for This
-                  </button>
-                </h2>
-                <div id="what-we-need" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">                    
-                    <div className="bg-light-200 p-3 offer-wrap row">                      
-
-                      <ol>
-                        {data.whyChooseUs.reasons.map((item, index) => (
-                          <li key={index}>
-                            {item.title}
-                            {item.description}
-                          </li>
-                        ))}  
-                      </ol>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-              ):(null)}
-
-              
-              {(data.expertTechnician)?(
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
-                    Expert Technicians
-                  </button>
-                </h2>
-                <div id="include" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    <div className="bg-light-200 p-3 pb-2 br-10">
-                      {data.expertTechnician.points.map((item, index) => (
-                        <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
-                          <img src={imageCheck(item.icon)} alt="img" className="br-10" />
-                          {item.title}</p>
-                      ))}  
-                    </div>
-                  </div>
-                </div>
-              </div>
-              ):(null)}
-
-
-              {(data.brandLogo)?(
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
-                    Brands
-                  </button>
-                </h2>
-                <div id="what-we-need" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    
-                    <div className="bg-light-200 p-3 offer-wrap row">
-                      {data.brandLogo.icons.map((item, index) => (
-                        <div className="col-md-2" key={index}>
-                          <div className="offer-item bg-white mb-2 pb-1">
-                            <div className="text-center mb-2">
-                              <span className="">
-                                <img src={imageCheck(item)} alt="img" className="br-10" />
-                              </span>
-                            </div>                        
-                          </div>
-                        </div>
-                        ))} 
-                     
-
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-              ):(null)}
-
-
-              {(data.gIPromise)?(
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
-                    Excludes
-                  </button>
-                </h2>
-                <div id="include" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    <div className="bg-light-200 p-3 pb-2 br-10">
-                      {data.gIPromise.titles.map((item, index) => (
-                        <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
-                          <i className="feather-check-circle text-success me-2" />{item}</p>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              ):(null)}
-
-
-              {(data.serviceFaq)?(
-              <div className="accordion-item mb-0">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq" aria-expanded="false">
-                    FAQ’s
-                  </button>
-                </h2>
-                <div id="faq" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    <div className="accordion accordion-customicon1 faq-accordion" id="accordionfaq">
-                      
-                      {data.serviceFaq.faqs.map((item, index) => (
-                      <div className="accordion-item bg-light-200 mb-3">
-                        <h2 className="accordion-header">
-                          <button className={`accordion-button bg-light-200 br-10 fs-16 fw-medium ${index==0?'collapsed':''}`} type="button" data-bs-toggle="collapse" data-bs-target={`#faq${index}`} aria-expanded="false">
-                            {item.question}
-                          </button>
-                        </h2>
-                        <div id={`faq${index}`} className={`accordion-collapse collapse ${index==0?'show':''}`} data-bs-parent="#accordionfaq">
-                          <div className="accordion-body border-0 pt-0">
-                            <p>{item.answer}
-                            </p>
-                          </div>
-                        </div>
                       </div>
-                      ))}
-
-
-                      
-                      
                     </div>
                   </div>
                 </div>
-              </div>
-              ):(null)}
+              ) : (null)}
+
+              {(data.whyChooseUs) ? (
+                <div className="accordion-item mb-4">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
+                      Why Go for This
+                    </button>
+                  </h2>
+                  <div id="what-we-need" className="accordion-collapse collapse show">
+                    <div className="accordion-body border-0 p-0 pt-3">
+                      <div className="bg-light-200 p-3 offer-wrap row">
+
+                        <ol>
+                          {data.whyChooseUs.reasons.map((item, index) => (
+                            <li key={index}>
+                              {item.title}
+                              {item.description}
+                            </li>
+                          ))}
+                        </ol>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (null)}
+
+
+              {(data.expertTechnician) ? (
+                <div className="accordion-item mb-4">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
+                      Expert Technicians
+                    </button>
+                  </h2>
+                  <div id="include" className="accordion-collapse collapse show">
+                    <div className="accordion-body border-0 p-0 pt-3">
+                      <div className="bg-light-200 p-3 pb-2 br-10">
+                        {data.expertTechnician.points.map((item, index) => (
+                          <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
+                            <img src={imageCheck(item.icon)} alt="img" className="br-10" />
+                            {item.title}</p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (null)}
+
+
+              {(data.brandLogo) ? (
+                <div className="accordion-item mb-4">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
+                      Brands
+                    </button>
+                  </h2>
+                  <div id="what-we-need" className="accordion-collapse collapse show">
+                    <div className="accordion-body border-0 p-0 pt-3">
+
+                      <div className="bg-light-200 p-3 offer-wrap row">
+                        {data.brandLogo.icons.map((item, index) => (
+                          <div className="col-md-2" key={index}>
+                            <div className="offer-item bg-white mb-2 pb-1">
+                              <div className="text-center mb-2">
+                                <span className="">
+                                  <img src={imageCheck(item)} alt="img" className="br-10" />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              ) : (null)}
+
+
+              {(data.gIPromise) ? (
+                <div className="accordion-item mb-4">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
+                      Excludes
+                    </button>
+                  </h2>
+                  <div id="include" className="accordion-collapse collapse show">
+                    <div className="accordion-body border-0 p-0 pt-3">
+                      <div className="bg-light-200 p-3 pb-2 br-10">
+                        {data.gIPromise.titles.map((item, index) => (
+                          <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
+                            <i className="feather-check-circle text-success me-2" />{item}</p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (null)}
+
+
+              {(data.serviceFaq) ? (
+                <div className="accordion-item mb-0">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq" aria-expanded="false">
+                      FAQ’s
+                    </button>
+                  </h2>
+                  <div id="faq" className="accordion-collapse collapse show">
+                    <div className="accordion-body border-0 p-0 pt-3">
+                      <div className="accordion accordion-customicon1 faq-accordion" id="accordionfaq">
+
+                        {data.serviceFaq.faqs.map((item, index) => (
+                          <div className="accordion-item bg-light-200 mb-3">
+                            <h2 className="accordion-header">
+                              <button className={`accordion-button bg-light-200 br-10 fs-16 fw-medium ${index == 0 ? 'collapsed' : ''}`} type="button" data-bs-toggle="collapse" data-bs-target={`#faq${index}`} aria-expanded="false">
+                                {item.question}
+                              </button>
+                            </h2>
+                            <div id={`faq${index}`} className={`accordion-collapse collapse ${index == 0 ? 'show' : ''}`} data-bs-parent="#accordionfaq">
+                              <div className="accordion-body border-0 pt-0">
+                                <p>{item.answer}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (null)}
 
 
             </div>
@@ -311,11 +320,11 @@ const ServiceDetail = () => {
                   <div className="d-inline-flex align-items-center justify-content-center">
 
                     {ratingArray.map((item, index) =>
-                        <span key={index+''+item}>
-                            {(item<=data?.averageRating)?(
-                                <i className="ti ti-star-filled text-warning me-1" key={index} />
-                            ):(<i className="ti ti-star text-warning me-1" key={index} />)}
-                        </span>
+                      <span key={index + '' + item}>
+                        {(item <= data?.averageRating) ? (
+                          <i className="ti ti-star-filled text-warning me-1" key={index} />
+                        ) : (<i className="ti ti-star text-warning me-1" key={index} />)}
+                      </span>
                     )}
 
                   </div>
@@ -328,35 +337,35 @@ const ServiceDetail = () => {
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">5 Star Ratings</p>
                     <div className="progress w-100" role="progressbar" aria-valuenow={90} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: percent5+'%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent5 + '%' }} />
                     </div>
                     <p className="progress-count ms-2">{count5}</p>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">4 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={80} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: percent4+'%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent4 + '%' }} />
                     </div>
                     <p className="progress-count ms-2">{count4}</p>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">3 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={70} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: percent3+'%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent3 + '%' }} />
                     </div>
                     <p className="progress-count ms-2">{count3}</p>
                   </div>
                   <div className="d-flex align-items-center mb-2">
                     <p className="me-2 text-nowrap mb-0">2 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={90} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: percent2+'%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent2 + '%' }} />
                     </div>
                     <p className="progress-count ms-2">{count2}</p>
                   </div>
                   <div className="d-flex align-items-center">
                     <p className="me-2 text-nowrap mb-0">1 Star Ratings</p>
                     <div className="progress mb-0 w-100" role="progressbar" aria-valuenow={40} aria-valuemin={0} aria-valuemax={100}>
-                      <div className="progress-bar bg-warning" style={{ width: percent1+'%' }} />
+                      <div className="progress-bar bg-warning" style={{ width: percent1 + '%' }} />
                     </div>
                     <p className="progress-count ms-2">{count1}</p>
                   </div>
@@ -385,22 +394,22 @@ const ServiceDetail = () => {
                   </div>
                   <p className="mb-2">The electricians were prompt, professional, and resolved our issues quickly.did a
                     fantastic job upgrading our electrical panel. Highly recommend them for any electrical work.</p>
-                  
+
                 </div>
-                
+
               </div>
             </div>
-            
+
             <div className="text-center">
               <Link className="btn btn-light btn-sm">Load More</Link>
             </div>
           </div>
         </div>
-      </div>      
+      </div>
     </div>
-        
-     
-    
+
+
+
   );
 };
 

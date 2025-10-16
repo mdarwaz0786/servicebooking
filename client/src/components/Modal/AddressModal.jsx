@@ -63,22 +63,21 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
 
   return (
     <div className={`modal fade ${modals.addressModal ? "show" : ""}`} id="provider">
-      <div className="modal-dialog modal-xl modal-dialog-centered">
-        <div className="modal-content" style={{background: 'transparent', border: 0}}>
-          
+      <div className="modal-dialog modal-lg modal-dialog-centered">
+        <div className="modal-content" style={{ background: 'transparent', border: 0 }}>
 
-          <div className="card shadow-lg border-0 m-0 p-4 rounded-4" style={{  width: "100%" }}>
+          <div className="card shadow-lg border-0 m-0 p-4 rounded-4" style={{ width: "100%" }}>
             <Link
-                style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  zIndex: 1,
-                }}
-                onClick={() => toggleModal("addressModal",false)}
-              >
-                <i className="ti ti-circle-x-filled fs-20"></i>
-              </Link>
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                zIndex: 1,
+              }}
+              onClick={() => toggleModal("addressModal", false)}
+            >
+              <i className="ti ti-circle-x-filled fs-20"></i>
+            </Link>
             {/* Use Current Location */}
             <div className="mb-3">
               <button className="btn btn-outline-primary" onClick={handleUseCurrentLocation}>
