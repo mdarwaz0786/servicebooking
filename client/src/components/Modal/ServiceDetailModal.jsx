@@ -16,26 +16,21 @@ const ServiceDetailModal = () => {
       className={`modal fade ${modals.ServiceDetailModal ? "show" : ""}`}
       id="provider"
     >
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content" style={{ border: 0 }}>
-
+      <div className="modal-dialog modal-lg modal-dialog-centered pt-5">
+        <div className="modal-content" style={{ border: 0, paddingTop: "30px" }}>
           <div className="wizard-fieldset">
             <Link
               style={{
                 position: 'absolute',
-                top: '10px',
-                right: '10px',
+                top: '5px',
+                right: '5px',
                 zIndex: 1,
               }}
               onClick={() => toggleModal("ServiceDetailModal", false)}
             >
-              <i className="ti ti-circle-x-filled fs-20"></i>
+              <i className="ti ti-circle-x-filled fs-25"></i>
             </Link>
-
             <ServiceDetail />
-
-
-
           </div>
         </div>
       </div>

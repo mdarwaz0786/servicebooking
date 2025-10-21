@@ -34,24 +34,38 @@ import ServiceManBookingPage from "./pages/ServiceManPanel/Booking/ServiceManBoo
 import KycForm from "./pages/ServiceManPanel/Kyc/KycForm";
 import ProfileForm from "./pages/ServiceManPanel/Profile/ProfileForm";
 import ServiceManDashboard from "./pages/ServiceManPanel/Dashboard/ServiceManDashboard";
-
 import ServiceManReviewPage from "./pages/ServiceManPanel/Review/ServiceManReviewPage";
+
+import TermsConditionsPage from "./pages/TermsConditions/TermsConditionsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicy/PrivacyPolicyPage";
+import RefundPolicyPage from "./pages/RefundPolicy/RefundPolicyPage";
+import GreenIndiaTeamImpactPage from "./pages/GreenIndiaTeamImpact/GreenIndiaTeamImpactPage";
+import CareerPage from "./pages/Career/CareerPage";
+import BlogPage from "./pages/Blog/BlogPage";
+import GreenIndiaTeamReviewPage from "./pages/GreenIndiaTeamReview/GreenIndiaTeamReviewPage"
 
 
 
 
 
 const App = () => {
- 
+
 
   return (
-    
+    <>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/contact" element={<ContactUsPage />} />
+          <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/term-condition" element={<TermsConditionsPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/refund-policy" element={<RefundPolicyPage />} />
+          <Route path="/green-india-team-impact" element={<GreenIndiaTeamImpactPage />} />
+          <Route path="/career" element={<CareerPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/green-india-team-review" element={<GreenIndiaTeamReviewPage />} />
           <Route path="/services/:slug" element={<ServicesPage />} />
           <Route path="/service-details" element={<ServicesDetailsPage />} />
           <Route path="/booking" element={<BookingPage />} />
@@ -64,7 +78,7 @@ const App = () => {
           <Route path="/test" element={<Test />} />
         </Route>
 
-        
+
         <Route element={<UserLayout />}>
           <Route path="/user" element={<UserBookingPage />} />
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
@@ -93,9 +107,8 @@ const App = () => {
 
       </Routes>
 
-      
 
-    
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const ServiceDetail = () => {
-  const { serviceDetailData, PriceFormat, imageCheck, toggleModal } = useContext(AppContext);
+  const { serviceDetailData, PriceFormat, imageCheck, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
   const data = serviceDetailData;
   const rating = data.ratings;
   const ratingCount = rating?.ratingCount;
@@ -47,7 +47,7 @@ const ServiceDetail = () => {
 
     <div className="row">
       <div className="col-xl-12">
-        <div className="card border-0">
+        <div className="card border-0 shadow-none">
           <div className="card-body">
 
             {/* Slider */}
@@ -67,39 +67,29 @@ const ServiceDetail = () => {
 
             <div className="service-head mb-2">
               <div className="d-flex align-items-center justify-content-between flex-wrap">
-                <h3 className="mb-2">Lighting Services</h3>
+                <h3 className="mb-2">{data?.name}</h3>
               </div>
               <div className="d-flex align-items-center justify-content-between flex-wrap mb-2">
                 <div className=" align-items-center flex-wrap">
-                  <p className="mb-2"><i className="ti ti-star-filled text-warning me-2" /><span className="text-gray-9">4.9</span>(255 reviews)</p>
+                  <p className="mb-2"><i className="ti ti-star-filled text-warning me-2" /><span className="text-gray-9">{data?.ratings?.averageRating} </span>({data?.ratings?.totalRatings} reviews)</p>
                   <p className="m-0">
-                    {PriceFormat(data.salePrice)}&nbsp;
+                    {PriceFormat(data?.salePrice)}&nbsp;
                     <span className="fs-12">
-                      <span className="old-price text-muted text-decoration-line-through">{PriceFormat(data.mrpPrice)}</span>
-                      &nbsp;(Approximate time {data.timeTaking} hrs)
+                      <span className="old-price text-muted text-decoration-line-through">{PriceFormat(data?.mrpPrice)}</span>
+                      &nbsp;(Approximate time {data?.timeTaking})
                     </span>
                   </p>
                 </div>
-
               </div>
             </div>
 
-            <div className="accordion service-accordion">
-
-              <div className="accordion-item mb-4">
-                <h2 className="accordion-header">
-                  <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#overview" aria-expanded="false">
-                    Service Overview
-                  </button>
-                </h2>
-                <div id="overview" className="accordion-collapse collapse show">
-                  <div className="accordion-body border-0 p-0 pt-3">
-                    <div className="more-text">
-                      {data.shortDescription}
-                      <br />
-                      {data.fullDescription}
-                    </div>
-                  </div>
+            <div>
+              <div className="mb-5 mt-5">
+                <h4 className="fw-bold mb-2">Service Overview</h4>
+                <div>
+                  {data?.shortDescription}
+                  <br />
+                  {data?.fullDescription}
                 </div>
               </div>
 
@@ -135,155 +125,267 @@ const ServiceDetail = () => {
                 </div>
               )}
 
-              {(data.requirementFromCustomer) ? (
-                <div className="accordion-item mb-4">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
-                      What we need
-                    </button>
-                  </h2>
-                  <div id="what-we-need" className="accordion-collapse collapse show">
-                    <div className="accordion-body border-0 p-0 pt-3">
-                      <div className="bg-light-200 p-3 offer-wrap row">
+              {data?.requirementFromCustomer && (
+                <div className="mb-5">
+                  <div className="bg-light-500 p-5 br-10 text-center">
+                    {/* Title */}
+                    <h3
+                      style={{
+                        fontSize: "32px",
+                        fontWeight: "600",
+                        color: "#00522c",
+                        marginBottom: "30px",
+                      }}
+                    >
+                      {data.requirementFromCustomer.mainTitle}
+                    </h3>
 
-                        {data.requirementFromCustomer.requirements.map((item, index) => (
-                          <div className="col-md-2" key={index}>
-                            <div className="offer-item bg-white mb-2 pb-1">
-                              <div className="text-center mb-2">
-                                <span className="">
-                                  <img src={imageCheck(item.icon)} alt="img" className="br-10" />
-                                </span>
-                                <div className="mb-2 mt-2">
-                                  <h6 className="fs-16 fw-medium">{item.name}</h6>
-                                </div>
-                              </div>
+                    {/* Requirements*/}
+                    <div className="row justify-content-center g-4">
+                      {data?.requirementFromCustomer?.requirements?.map((req) => (
+                        <div
+                          key={req?._id}
+                          className="col-6 col-sm-6 col-md-3 d-flex justify-content-center"
+                        >
+                          <div
+                            className="d-flex flex-column align-items-center justify-content-center bg-gray-100 shadow-md"
+                            style={{
+                              borderRadius: "12px",
+                              width: "100px",
+                              height: "100px",
+                              objectFit: "contain"
+                            }}
+                          >
+                            <img
+                              src={`${SERVER_BASE_URL}${req?.icon}`}
+                              alt={req?.name}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                objectFit: "contain",
+                              }}
+                            />
+                            <span style={{ fontSize: "14px", fontWeight: "500", color: "#00522c" }}>
+                              {req?.name}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {
+                (data?.whyChooseUs) && (
+                  <div className="container bg-light-500 p-3 mb-5 rounded-3">
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <h3
+                        style={{
+                          fontSize: "28px",
+                          fontWeight: "600",
+                          color: "#00522c",
+                          marginBottom: "30px",
+                          backgroundColor: "#c7d7cd",
+                          padding: "15px 25px",
+                          borderRadius: "12px",
+                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                          display: "inline-block",
+                          marginTop: "16px"
+                        }}
+                      >
+                        {data?.whyChooseUs?.mainTitle}
+                      </h3>
+                    </div>
+
+                    <div className="row">
+                      {data?.whyChooseUs?.reasons?.map((reason, index) => (
+                        <div className="col-md-6 mb-4" key={reason?._id}>
+                          <div className="d-flex">
+                            <div className="me-3">
+                              <span className="">
+                                {index + 1}.
+                              </span>
+                            </div>
+                            <div>
+                              <h6 className="fw-bold text-primary mb-1">{reason?.title}</h6>
+                              <p className="mb-0">{reason?.description}</p>
                             </div>
                           </div>
-                        ))}
-
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
-              ) : (null)}
+                )
+              }
 
-              {(data.whyChooseUs) ? (
-                <div className="accordion-item mb-4">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
-                      Why Go for This
-                    </button>
-                  </h2>
-                  <div id="what-we-need" className="accordion-collapse collapse show">
-                    <div className="accordion-body border-0 p-0 pt-3">
-                      <div className="bg-light-200 p-3 offer-wrap row">
+              {data?.expertTechnician && (
+                <div className="mb-5">
+                  <div className="bg-light-500 p-5 pb-5 br-10">
+                    <div className="row align-items-stretch">
+                      {/* Left Section*/}
+                      <div className="col-md-7 d-flex flex-column justify-content-center">
+                        <h3
+                          style={{
+                            fontSize: "40px",
+                            fontWeight: "700",
+                            color: "#00522c",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          {data?.expertTechnician?.mainTitle}
+                        </h3>
 
-                        <ol>
-                          {data.whyChooseUs.reasons.map((item, index) => (
-                            <li key={index}>
-                              {item.title}
-                              {item.description}
-                            </li>
-                          ))}
-                        </ol>
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (null)}
-
-
-              {(data.expertTechnician) ? (
-                <div className="accordion-item mb-4">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
-                      Expert Technicians
-                    </button>
-                  </h2>
-                  <div id="include" className="accordion-collapse collapse show">
-                    <div className="accordion-body border-0 p-0 pt-3">
-                      <div className="bg-light-200 p-3 pb-2 br-10">
-                        {data.expertTechnician.points.map((item, index) => (
-                          <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
-                            <img src={imageCheck(item.icon)} alt="img" className="br-10" />
-                            {item.title}</p>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (null)}
-
-
-              {(data.brandLogo) ? (
-                <div className="accordion-item mb-4">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#what-we-need" aria-expanded="false">
-                      Brands
-                    </button>
-                  </h2>
-                  <div id="what-we-need" className="accordion-collapse collapse show">
-                    <div className="accordion-body border-0 p-0 pt-3">
-
-                      <div className="bg-light-200 p-3 offer-wrap row">
-                        {data.brandLogo.icons.map((item, index) => (
-                          <div className="col-md-2" key={index}>
-                            <div className="offer-item bg-white mb-2 pb-1">
-                              <div className="text-center mb-2">
-                                <span className="">
-                                  <img src={imageCheck(item)} alt="img" className="br-10" />
-                                </span>
-                              </div>
-                            </div>
+                        {data?.expertTechnician?.points?.map((item, index) => (
+                          <div key={index} className="d-flex align-items-center mb-3">
+                            <img
+                              src={`${SERVER_BASE_URL}${item?.icon}`}
+                              alt="icon"
+                              className="me-3"
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                objectFit: "contain",
+                              }}
+                            />
+                            <span style={{ fontSize: "20px", color: "#00522c" }}>
+                              {item?.title}
+                            </span>
                           </div>
                         ))}
-
-
                       </div>
 
-                    </div>
-                  </div>
-                </div>
-              ) : (null)}
-
-
-              {(data.gIPromise) ? (
-                <div className="accordion-item mb-4">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#include" aria-expanded="false">
-                      Excludes
-                    </button>
-                  </h2>
-                  <div id="include" className="accordion-collapse collapse show">
-                    <div className="accordion-body border-0 p-0 pt-3">
-                      <div className="bg-light-200 p-3 pb-2 br-10">
-                        {data.gIPromise.titles.map((item, index) => (
-                          <p className="d-inline-flex align-items-center mb-2 me-4" key={index}>
-                            <i className="feather-check-circle text-success me-2" />{item}</p>
-                        ))}
+                      {/* Right Section */}
+                      <div className="col-md-5 p-0">
+                        <div
+                          style={{
+                            height: "100%",
+                            width: "100%",
+                            borderRadius: "12px",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <img
+                            src={`${SERVER_BASE_URL}${data?.expertTechnician?.image}`}
+                            alt="technician"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              ) : (null)}
+              )}
+
+              {data?.brandLogo && (
+                <div className="mb-5">
+                  <div className="bg-light-500 p-5 pb-4 br-10 text-center">
+                    {/* Title */}
+                    <h3
+                      style={{
+                        fontSize: "40px",
+                        fontWeight: "600",
+                        color: "#00522c",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      {data?.brandLogo?.mainTitle}
+                    </h3>
+
+                    {/* Logos Grid */}
+                    <div className="row justify-content-center g-1">
+                      {data?.brandLogo?.icons?.map((icon, index) => (
+                        <div
+                          key={index}
+                          className="col-6 col-sm-6 col-md-3 d-flex justify-content-center"
+                        >
+                          <div
+                            className="d-flex align-items-center justify-content-center"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "15px 25px",
+                              height: "70px",
+                              width: "150px",
+                            }}
+                          >
+                            <img
+                              src={`${SERVER_BASE_URL}${icon}`}
+                              alt={`brand-${index}`}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "contain",
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Description */}
+                    <p
+                      className="mt-4 mb-0"
+                      style={{
+                        fontSize: "14px",
+                        color: "#555",
+                      }}
+                    >
+                      * {data?.brandLogo?.description}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {data?.gIPromise && (
+                <div className="mb-5">
+                  <div className="bg-light-500 p-5 pb-5 br-10">
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <h3
+                        style={{
+                          fontSize: "28px",
+                          fontWeight: "600",
+                          color: "#00522c",
+                          marginBottom: "30px",
+                          backgroundColor: "#c7d7cd",
+                          padding: "15px 25px",
+                          borderRadius: "12px",
+                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                          display: "inline-block",
+                        }}
+                      >
+                        {data?.gIPromise?.mainTitle}
+                      </h3>
+                    </div>
+                    <div>
+                      {data?.gIPromise?.titles?.map((item, index) => (
+                        <div key={index} className="d-flex mb-3">
+                          <i className="feather-x-circle text-danger me-2" style={{ fontSize: "30px" }} />
+                          <span style={{ fontSize: "20px", color: "#00522c" }}>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
 
-              {(data.serviceFaq) ? (
-                <div className="accordion-item mb-0">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button p-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq" aria-expanded="false">
-                      FAQ’s
-                    </button>
+              {(data?.serviceFaq) ? (
+                <>
+                  <h2 className="">
+                    {data?.serviceFaq?.mainTitle}
                   </h2>
                   <div id="faq" className="accordion-collapse collapse show">
                     <div className="accordion-body border-0 p-0 pt-3">
                       <div className="accordion accordion-customicon1 faq-accordion" id="accordionfaq">
 
                         {data.serviceFaq.faqs.map((item, index) => (
-                          <div className="accordion-item bg-light-200 mb-3">
+                          <div className="accordion-item bg-light-500 mb-3">
                             <h2 className="accordion-header">
-                              <button className={`accordion-button bg-light-200 br-10 fs-16 fw-medium ${index == 0 ? 'collapsed' : ''}`} type="button" data-bs-toggle="collapse" data-bs-target={`#faq${index}`} aria-expanded="false">
+                              <button className={`accordion-button bg-light-500 br-10 fs-16 fw-medium ${index == 0 ? 'collapsed' : ''}`} type="button" data-bs-toggle="collapse" data-bs-target={`#faq${index}`} aria-expanded="false">
                                 {item.question}
                               </button>
                             </h2>
@@ -295,17 +397,11 @@ const ServiceDetail = () => {
                             </div>
                           </div>
                         ))}
-
-
-
-
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               ) : (null)}
-
-
             </div>
           </div>
         </div>
@@ -329,7 +425,7 @@ const ServiceDetail = () => {
 
                   </div>
                   <p className="mb-3">({rating?.averageRating} out of 5.0)</p>
-                  <p className="text-gray-9">Based On {data?.totalRatings} Reviews</p>
+                  <p className="text-gray-9">Based On {data?.totalRatings || 0} Reviews</p>
                 </div>
               </div>
               <div className="col-md-7">
@@ -372,7 +468,7 @@ const ServiceDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="card review-item mb-3">
+            {/* <div className="card review-item mb-3">
               <div className="card-body p-3">
                 <div className="review-info">
                   <div className="d-flex align-items-center justify-content-between flex-wrap">
@@ -402,14 +498,11 @@ const ServiceDetail = () => {
 
             <div className="text-center">
               <Link className="btn btn-light btn-sm">Load More</Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
-    </div>
-
-
-
+    </div >
   );
 };
 

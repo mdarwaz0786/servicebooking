@@ -1,134 +1,111 @@
-import BreadCrumb from "../BreadCrumb/BreadCrumb";
+import { useState } from "react";
+import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 
 const ContactUsPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Submitted:", formData);
+  };
+
   return (
-    <>
-      <BreadCrumb />
-      {/* Page Wrapper */}
-      <div className="page-wrapper">
-        <div className="content">
-          <div className="container">
-            <div className="contacts">
-              <div className="contacts-overlay-img d-none d-lg-block">
-                <img src="assets/img/bg/bg-07.png" alt="img" className="img-fluid" />
-              </div>
-              <div className="contacts-overlay-sm d-none d-lg-block">
-                <img src="assets/img/bg/bg-08.png" alt="img" className="img-fluid" />
-              </div>
-              {/* Contact Details */}
-              <div className="contact-details">
-                <div className="row justify-content-center">
-                  <div className="col-md-6 col-lg-4 d-flex">
-                    <div className="card flex-fill">
-                      <div className="card-body">
-                        <div className="d-flex align-items-center">
-                          <span className="rounded-circle"><i className="ti ti-phone text-primary" /></span>
-                          <div>
-                            <h6 className="fs-18 mb-1">Phone Number</h6>
-                            <p className="fs-14">(888) 888-8888</p>
-                            <p className="fs-14">(123) 456-7890</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6 col-lg-4 d-flex">
-                    <div className="card flex-fill">
-                      <div className="card-body">
-                        <div className="d-flex align-items-center">
-                          <span className="rounded-circle"><i className="ti ti-mail text-primary" /></span>
-                          <div>
-                            <h6 className="fs-18 mb-1">Email Address</h6>
-                            <p className="fs-14"><a href="https://truelysell.dreamstechnologies.com/cdn-cgi/l/email-protection" className="__cf_email__" data-cfemail="a0d4d2d5c5ccd9d3c5cccce0c5d8c1cdd0ccc58ec3cfcd">[email&nbsp;protected]</a></p>
-                            <p className="fs-14"><a href="https://truelysell.dreamstechnologies.com/cdn-cgi/l/email-protection" className="__cf_email__" data-cfemail="fc969394928f91958894bc99849d918c9099d29f9391">[email&nbsp;protected]</a></p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6 col-lg-4 d-flex">
-                    <div className="card flex-fill">
-                      <div className="card-body">
-                        <div className="d-flex align-items-center">
-                          <span className="rounded-circle"><i className="ti ti-map-pin text-primary" /></span>
-                          <div>
-                            <h6 className="fs-18 mb-1">Address</h6>
-                            <p className="fs-14">367 Hillcrest Lane, Irvine, California,
-                              United States</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* /Contact Details */}
-              {/* Get In Touch */}
-              <div className="row">
-                <div className="col-md-6 d-flex align-items-center">
-                  <div className="contact-img flex-fill">
-                    <img src="assets/img/services/service-76.jpg" className="img-fluid" alt="img" />
-                  </div>
-                </div>
-                <div className="col-md-6 d-flex align-items-center justify-content-center">
-                  <div className="contact-queries flex-fill">
-                    <h2>Get In Touch</h2>
-                    <form action="https://truelysell.dreamstechnologies.com/html/template/contact-us.html">
-                      <div className="row">
-                        <div className="col-md-12">
-                          <div className="mb-3">
-                            <div className="form-group">
-                              <input className="form-control" type="text" placeholder="Your Name" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="mb-3">
-                            <div className="form-group">
-                              <input className="form-control" type="email" placeholder="Your Email Address" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="mb-3">
-                            <div className="form-group">
-                              <input className="form-control" type="text" placeholder="Your Phone Number" />
-                            </div>
-                          </div>
-                          <div className="mb-3">
-                            <select className="select">
-                              <option>Select Services</option>
-                              <option>Car Repair</option>
-                              <option>Interior Designing</option>
-                              <option>House Cleaning</option>
-                            </select>
-                          </div>
-                          <div className="mb-3">
-                            <div className="form-group">
-                              <textarea className="form-control" placeholder="Type Message" id="floatingTextarea" defaultValue={""} />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-md-12 submit-btn">
-                          <button className="btn btn-dark d-flex align-items-center " type="submit">Send Message<i className="feather-arrow-right-circle ms-2" /></button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-              {/* /Get In Touch */}
+    <div className="container py-5">
+      <div className="row align-items-start">
+        {/* Left Side - Contact Form */}
+        <div className="col-md-6 mb-4">
+          <h4 className="fw-bold mb-4">Contact us</h4>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control rounded-1"
+                placeholder="Your Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
             </div>
+            <div className="mb-3">
+              <input
+                type="email"
+                className="form-control rounded-1"
+                placeholder="Your Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control rounded-1"
+                placeholder="Subject"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <textarea
+                className="form-control rounded-1"
+                rows="4"
+                placeholder="Message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              className="btn btn-dark text-uppercase px-4 py-2"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        {/* Right Side - Map & Info */}
+        <div className="col-md-6">
+          <div className="mb-3">
+            <iframe
+              title="Green India Team Map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2771.3665711897197!2d77.15764397428771!3d28.496384690252437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1ffa1978b437%3A0xe38d18a0f1ae45b5!2sGreen%20India%20Team!5e1!3m2!1sen!2sin!4v1761026597772!5m2!1sen!2sin"
+              width="100%"
+              height="250"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+          <div className="d-flex align-items-start mb-2">
+            <FaMapMarkerAlt className="me-2 mt-1 text-dark" />
+            <p className="mb-0 text-muted">
+              365, Lotus Building, Sultanpur, Delhi-110030
+            </p>
+          </div>
+
+          <div className="d-flex align-items-start">
+            <FaEnvelope className="me-2 mt-1 text-dark" />
+            <p className="mb-0 text-muted">info@greenindiateam.com</p>
           </div>
         </div>
-        {/* Map */}
-        <div className="map-grid">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6509170.989457427!2d-123.80081967108484!3d37.192957227641294!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fb9fe5f285e3d%3A0x8b5109a227086f55!2sCalifornia%2C%20USA!5e0!3m2!1sen!2sin!4v1669181581381!5m2!1sen!2sin" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="contact-map" />
-        </div>
-        {/* /Map */}
       </div>
-      {/* /Page Wrapper */}
-    </>
+    </div>
   );
 };
 
