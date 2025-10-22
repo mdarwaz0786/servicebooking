@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
 import "./App.css";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";
@@ -15,7 +14,6 @@ import SearchPage from "./pages/Search/SearchPage";
 import ProvidersPage from "./pages/Providers/ProvidersPage";
 import ProviderDetailsPage from "./pages/ProviderDetails/ProviderDetailsPage";
 
-
 import UserLayout from "./pages/UserPanel/UserLayout";
 import UserDashboard from "./pages/UserPanel/UserDashboard";
 import UserBookingPage from "./pages/UserPanel/Booking/UserBookingPage";
@@ -27,7 +25,6 @@ import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
 import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
 import Checkoutpage from "./pages/Checkout/Checkoutpage";
 import Test from "../Test";
-
 
 import ServiceManLayout from "./pages/ServiceManPanel/ServiceManLayout";
 import ServiceManBookingPage from "./pages/ServiceManPanel/Booking/ServiceManBookingPage";
@@ -44,19 +41,14 @@ import CareerPage from "./pages/Career/CareerPage";
 import BlogPage from "./pages/Blog/BlogPage";
 import GreenIndiaTeamReviewPage from "./pages/GreenIndiaTeamReview/GreenIndiaTeamReviewPage"
 
-
-
-
-
 const App = () => {
-
-
   return (
     <>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
           <Route path="/term-condition" element={<TermsConditionsPage />} />
@@ -88,7 +80,6 @@ const App = () => {
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
           <Route path="/user-wallet" element={<UserWalletPage />} />
         </Route>
-        <Route path="/register" element={<RegisterPage />} />
 
 
         <Route element={<ServiceManLayout />}>
@@ -97,17 +88,11 @@ const App = () => {
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
           <Route path="/serviceman/profile" element={<ProfileForm />} />
           <Route path="/serviceman/kyc" element={<KycForm />} />
-
           <Route path="/serviceman/reviews" element={<ServiceManReviewPage />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
           <Route path="/user-wallet" element={<UserWalletPage />} />
         </Route>
-
-
-
       </Routes>
-
-
     </>
   );
 };

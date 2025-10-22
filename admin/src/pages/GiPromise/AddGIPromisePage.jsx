@@ -16,7 +16,6 @@ const AddGIPromisePage = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch services for multi-select
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -55,9 +54,10 @@ const AddGIPromisePage = () => {
 
     try {
       setLoading(true);
+
       const payload = {
         mainTitle,
-        titles: titles.filter((t) => t.trim() !== ""),
+        titles: titles.filter((t) => t?.trim() !== ""),
         services: selectedServices,
       };
 
@@ -91,6 +91,18 @@ const AddGIPromisePage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Services */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Select Services <span style={{ color: "red" }}>*</span>
+                </label>
+                <SelectMultipleService
+                  optionsList={services}
+                  value={selectedServices}
+                  onChange={setSelectedServices}
+                />
+              </div>
+
               {/* Main Title */}
               <div className="mb-3">
                 <label className="form-label">
@@ -102,18 +114,6 @@ const AddGIPromisePage = () => {
                   value={mainTitle}
                   onChange={(e) => setMainTitle(e.target.value)}
                   required
-                />
-              </div>
-
-              {/* Services */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span style={{ color: "red" }}>*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
                 />
               </div>
 

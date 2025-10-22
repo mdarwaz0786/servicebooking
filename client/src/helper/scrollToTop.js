@@ -6,3 +6,14 @@ export const scrollToTop = (behavior = "instant") => {
     });
   };
 };
+
+export const scrollToService = (behavior = "smooth") => {
+  if (typeof window !== "undefined") {
+    console.log(window.innerHeight)
+    window.scrollTo({
+      top: window.innerHeight / 1.5,
+      behavior,
+    });
+  };
+};
+

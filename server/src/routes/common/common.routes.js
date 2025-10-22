@@ -9,6 +9,14 @@ import slugRoutes from "./slug.routes.js";
 import timeSlotRoutes from "./timeSlot.routes.js";
 import homeRoutes from "./home.routes.js";
 import paymentRoutes from "./payment.routes.js";
+import blogRoutes from "./blog.routes.js";
+import blogCategoryRoutes from "./blogCategory.routes.js";
+import termsConditionsRoutes from "./termsConditions.routes.js";
+import privacyPolicyRoutes from "./privacyPolicy.routes.js";
+import refundRoutes from "./refundPolicy.routes.js";
+import impactRoutes from "./impact.routes.js";
+import contactEnquiryRoutes from "./contactEnquiry.routes.js";
+import jobPostingRoutes from "./jobPosting.routes.js";
 
 const router = express.Router();
 
@@ -22,5 +30,13 @@ router.use("/slug", slugRoutes);
 router.use("/time-slot", timeSlotRoutes);
 router.use("/home", homeRoutes);
 router.use("/payment", paymentRoutes);
+router.use("/blog-category", blogCategoryRoutes);
+router.use("/blog", blogRoutes);
+router.use("/terms-conditions", termsConditionsRoutes);
+router.use("/privacy-policy", privacyPolicyRoutes);
+router.use("/refund-policy", refundRoutes);
+router.use("/impact", impactRoutes);
+router.use("/contact-enquiry", contactEnquiryRoutes);
+router.use("/job-posting", jobPostingRoutes);
 
 export default router;

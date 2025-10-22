@@ -16,7 +16,6 @@ const AddWhyChooseUsPage = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch services for multi-select
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -67,8 +66,6 @@ const AddWhyChooseUsPage = () => {
         headers: { Authorization: validToken },
       });
 
-      console.log(res)
-
       if (res?.data?.success) {
         toast.success("Why Choose Us entry created successfully");
         setMainTitle("");
@@ -94,6 +91,18 @@ const AddWhyChooseUsPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Services */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Select Services <span style={{ color: "red" }}>*</span>
+                </label>
+                <SelectMultipleService
+                  optionsList={services}
+                  value={selectedServices}
+                  onChange={setSelectedServices}
+                />
+              </div>
+
               {/* Main Title */}
               <div className="mb-3">
                 <label className="form-label">
@@ -105,18 +114,6 @@ const AddWhyChooseUsPage = () => {
                   value={mainTitle}
                   onChange={(e) => setMainTitle(e.target.value)}
                   required
-                />
-              </div>
-
-              {/* Services */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span style={{ color: "red" }}>*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
                 />
               </div>
 

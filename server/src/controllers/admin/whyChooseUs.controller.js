@@ -11,14 +11,9 @@ export const createWhyChooseUs = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Main title is required");
   };
 
-  let reasonsArray = [];
-  if (reasons) {
-    reasonsArray = typeof reasons === "string" ? JSON.parse(reasons) : reasons;
-  };
-
   const whyChooseUs = await WhyChooseUsModel.create({
     mainTitle,
-    reasons: reasonsArray,
+    reasons,
     services,
   });
 
@@ -40,7 +35,8 @@ export const getWhyChooseUsList = asyncHandler(async (req, res) => {
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const whyChooseUsList = await WhyChooseUsModel.find(filters)
+  const whyChooseUsList = await WhyChooseUsModel
+    .find(filters)
     .populate("services")
     .sort(sortOption)
     .skip(skip)
@@ -75,50 +71,23 @@ export const getWhyChooseUsById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE WHY CHOOSE US ---------------------
 export const updateWhyChooseUs = asyncHandler(async (req, res) => {
-  const { mainTitle, status } = req.body;
-
-  let existingReasons = [];
-  if (req.body.existingReasons) {
-    try {
-      existingReasons =
-        typeof req.body.existingReasons === "string"
-          ? JSON.parse(req.body.existingReasons)
-          : req.body.existingReasons
-    } catch (err) {
-      throw new ApiError(400, "Invalid existingReasons format")
-    };
-  };
+  const { mainTitle, reasons, services, status } = req.body;
 
   const whyChooseUs = await WhyChooseUsModel.findById(req.params.id)
   if (!whyChooseUs) {
-    throw new ApiError(404, "Entry not found")
+    throw new ApiError(404, "Why choose us not found")
   };
 
-  let updatedReasons = [];
-
-  if (existingReasons.length > 0) {
-    updatedReasons = whyChooseUs.reasons.filter((r) =>
-      existingReasons.some((er) => er.title === r.title && er.description === r.description)
-    );
-  };
-
-  if (req.body.reasons) {
-    const newReasons =
-      typeof req.body.reasons === "string"
-        ? JSON.parse(req.body.reasons)
-        : req.body.reasons
-    updatedReasons = [...updatedReasons, ...newReasons]
-  };
-
-  whyChooseUs.reasons = updatedReasons;
-  whyChooseUs.mainTitle = mainTitle || whyChooseUs.mainTitle;
-  whyChooseUs.status = status || whyChooseUs.status;
+  whyChooseUs.reasons = reasons || whyChooseUs?.reasons;
+  whyChooseUs.mainTitle = mainTitle || whyChooseUs?.mainTitle;
+  whyChooseUs.status = status !== undefined ? status : whyChooseUs.status;
+  whyChooseUs.services = services || whyChooseUs?.services;
 
   await whyChooseUs.save()
 
   return res.status(200).json({
     success: true,
-    message: "Why Choose Us entry updated successfully",
+    message: "Updated successfully",
     data: whyChooseUs,
   });
 });

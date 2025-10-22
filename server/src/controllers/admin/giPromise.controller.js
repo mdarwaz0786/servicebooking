@@ -11,14 +11,9 @@ export const createGIPromise = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Main title is required");
   };
 
-  let titlesArray = [];
-  if (titles) {
-    titlesArray = typeof titles === "string" ? JSON.parse(titles) : titles;
-  };
-
   const giPromise = await GIPromiseModel.create({
     mainTitle,
-    titles: titlesArray,
+    titles,
     services,
   });
 
@@ -75,36 +70,44 @@ export const getGIPromiseById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE GI PROMISE ---------------------
 export const updateGIPromise = asyncHandler(async (req, res) => {
-  const { mainTitle } = req.body;
-
-  let updatedTitles = [];
-  if (req.body.titles) {
-    try {
-      updatedTitles =
-        typeof req.body.titles === "string"
-          ? JSON.parse(req.body.titles)
-          : req.body.titles;
-    } catch (err) {
-      throw new ApiError(400, "Invalid titles format");
-    };
-  };
+  const { mainTitle, status, titles, services } = req.body;
 
   const giPromise = await GIPromiseModel.findById(req.params.id);
   if (!giPromise) {
     throw new ApiError(404, "GI Promise not found");
   };
 
-  giPromise.mainTitle = mainTitle || giPromise.mainTitle;
-
-  if (Array.isArray(updatedTitles) && updatedTitles.length > 0) {
-    giPromise.titles = updatedTitles;
+  let updatedTitles = giPromise?.titles || [];
+  if (titles !== undefined) {
+    let parsedTitles = titles;
+    if (!Array.isArray(parsedTitles)) {
+      throw new ApiError(400, "titles must be an array");
+    };
+    updatedTitles = parsedTitles;
   };
+
+  let updatedServices = giPromise?.services || [];
+  if (services !== undefined) {
+    let parsedServices = services;
+    if (!Array.isArray(parsedServices)) {
+      throw new ApiError(400, "services must be an array");
+    };
+    updatedServices = parsedServices;
+  };
+
+  giPromise.mainTitle = mainTitle || giPromise?.mainTitle;
+  if (typeof status === "boolean") {
+    giPromise.status = status;
+  };
+  giPromise.titles = updatedTitles;
+  giPromise.services = updatedServices;
+  giPromise.updatedAt = new Date();
 
   await giPromise.save();
 
   return res.status(200).json({
     success: true,
-    message: "GI Promise updated successfully",
+    message: "Updated successfully",
     data: giPromise,
   });
 });

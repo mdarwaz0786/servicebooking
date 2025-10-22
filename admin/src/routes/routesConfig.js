@@ -64,6 +64,14 @@ import UpdateExpertTechnicianPage from "../pages/ExportTechnician/UpdateExpertTe
 import ExpertTechnicianListPage from "../pages/ExportTechnician/ExpertTechnicianListPage";
 import UpdateBrandLogoPage from "../pages/BrandLogo/UpdateBrandLogoPage";
 import BrandLogoListPage from "../pages/BrandLogo/BrandLogoListPage";
+import AddBlogPage from "../pages/Blog/AddBlogPage";
+import AddBlogCategoryPage from "../pages/BlogCategory/AddBlogCategoryPage";
+import AddTermsConditionsPage from "../pages/TermsConditions/AddTermsConditionsPage";
+import AddPrivacyPolicyPage from "../pages/PrivacyPolicy/AddPrivacyPolicyPage";
+import AddRefundPolicyPage from "../pages/RefundPolicy/AddRefundPolicyPage";
+import AddImpactPage from "../pages/Impact/AddImpactPage";
+import ContactEnquiryListPage from "../pages/ContactEnquiry/ContactEnquiryListPage";
+import AddJobPostingPage from "../pages/JobPosting/AddJobPostingPage";
 
 const routesConfig = {
   private: [
@@ -133,7 +141,7 @@ const routesConfig = {
 
     { path: "/why-choose-us", element: WhyChooseUsListPage },
     { path: "/add-why-choose-us", element: AddWhyChooseUsPage },
-    { path: "/update-why-choose-us", element: UpdateWhyChooseUsPage },
+    { path: "/update-why-choose-us/:id", element: UpdateWhyChooseUsPage },
 
     { path: "/expert-technician", element: ExpertTechnicianListPage },
     { path: "/add-expert-technician", element: AddExpertTechnicianPage },
@@ -150,6 +158,22 @@ const routesConfig = {
     { path: "/service-faq", element: ServiceFaqListPage },
     { path: "/add-service-faq", element: AddServiceFaqPage },
     { path: "/update-service-faq/:id", element: UpdateServiceFaqPage },
+
+    { path: "/add-blog", element: AddBlogPage },
+
+    { path: "/add-blog-category", element: AddBlogCategoryPage },
+
+    { path: "/add-terms-conditions", element: AddTermsConditionsPage },
+
+    { path: "/add-privacy-policy", element: AddPrivacyPolicyPage },
+
+    { path: "/add-refund-policy", element: AddRefundPolicyPage },
+
+    { path: "/add-impact", element: AddImpactPage },
+
+    { path: "/contact-enquiry", element: ContactEnquiryListPage },
+
+    { path: "/add-job", element: AddJobPostingPage },
 
     { path: "/users", element: UserListPage },
   ],

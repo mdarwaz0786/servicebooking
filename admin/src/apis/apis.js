@@ -129,6 +129,52 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/service-faq`,
     delete: `${BASE_URL}/api/v1/admin/service-faq`,
   },
+  blog: {
+    create: `${BASE_URL}/api/v1/admin/blog`,
+    get: `${BASE_URL}/api/v1/admin/blog`,
+    update: `${BASE_URL}/api/v1/admin/blog`,
+    delete: `${BASE_URL}/api/v1/admin/blog`,
+  },
+  blogCategory: {
+    create: `${BASE_URL}/api/v1/admin/blog-category`,
+    get: `${BASE_URL}/api/v1/admin/blog-category`,
+    update: `${BASE_URL}/api/v1/admin/blog-category`,
+    delete: `${BASE_URL}/api/v1/admin/blog-category`,
+  },
+  termsConditions: {
+    create: `${BASE_URL}/api/v1/admin/terms-conditions`,
+    get: `${BASE_URL}/api/v1/admin/terms-conditions`,
+    update: `${BASE_URL}/api/v1/admin/terms-conditions`,
+    delete: `${BASE_URL}/api/v1/admin/terms-conditions`,
+  },
+  privacyPolicy: {
+    create: `${BASE_URL}/api/v1/admin/privacy-policy`,
+    get: `${BASE_URL}/api/v1/admin/privacy-policy`,
+    update: `${BASE_URL}/api/v1/admin/privacy-policy`,
+    delete: `${BASE_URL}/api/v1/admin/privacy-policy`,
+  },
+  refundPolicy: {
+    create: `${BASE_URL}/api/v1/admin/refund-policy`,
+    get: `${BASE_URL}/api/v1/admin/refund-policy`,
+    update: `${BASE_URL}/api/v1/admin/refund-policy`,
+    delete: `${BASE_URL}/api/v1/admin/refund-policy`,
+  },
+  impact: {
+    create: `${BASE_URL}/api/v1/admin/impact`,
+    get: `${BASE_URL}/api/v1/admin/impact`,
+    update: `${BASE_URL}/api/v1/admin/impact`,
+    delete: `${BASE_URL}/api/v1/admin/impact`,
+  },
+  contactEnquiry: {
+    get: `${BASE_URL}/api/v1/admin/contact-enquiry`,
+    delete: `${BASE_URL}/api/v1/admin/contact-enquiry`,
+  },
+  jobPosting: {
+    create: `${BASE_URL}/api/v1/admin/job-posting`,
+    get: `${BASE_URL}/api/v1/admin/job-posting`,
+    update: `${BASE_URL}/api/v1/admin/job-posting`,
+    delete: `${BASE_URL}/api/v1/admin/job-posting`,
+  },
   user: {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,

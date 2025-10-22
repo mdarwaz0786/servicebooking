@@ -16,7 +16,6 @@ const AddServiceFaqPage = () => {
   const [faqs, setFaqs] = useState([{ question: "", answer: "" }]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch services
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -32,7 +31,6 @@ const AddServiceFaqPage = () => {
     fetchServices();
   }, [validToken]);
 
-  // Handle FAQ input changes
   const handleFaqChange = (index, field, value) => {
     const updatedFaqs = [...faqs];
     updatedFaqs[index][field] = value;
@@ -40,10 +38,8 @@ const AddServiceFaqPage = () => {
   };
 
   const addFaqField = () => setFaqs([...faqs, { question: "", answer: "" }]);
-
   const removeFaqField = (index) => setFaqs(faqs.filter((_, i) => i !== index));
 
-  // Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,8 +66,6 @@ const AddServiceFaqPage = () => {
         services: selectedServices,
         faqs,
       };
-
-      console.log(faqs)
 
       const res = await axios.post(apis.serviceFaq.create, payload, {
         headers: { Authorization: validToken },
@@ -107,6 +101,18 @@ const AddServiceFaqPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Services */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Select Services <span style={{ color: "red" }}>*</span>
+                </label>
+                <SelectMultipleService
+                  optionsList={services}
+                  value={selectedServices}
+                  onChange={setSelectedServices}
+                />
+              </div>
+
               {/* Main Title */}
               <div className="mb-3">
                 <label className="form-label">
@@ -118,18 +124,6 @@ const AddServiceFaqPage = () => {
                   value={mainTitle}
                   onChange={(e) => setMainTitle(e.target.value)}
                   required
-                />
-              </div>
-
-              {/* Services */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span style={{ color: "red" }}>*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
                 />
               </div>
 

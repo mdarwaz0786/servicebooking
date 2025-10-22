@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
-import { scrollToTop } from "../../helper/scrollToTop";
+import { scrollToService, scrollToTop } from "../../helper/scrollToTop";
 
 const Footer = () => {
   const handleLinkClick = () => {
     scrollToTop("instant");
+  };
+
+  const handleLinkClickService = () => {
+    scrollToService("instant");
   };
 
   return (
@@ -30,7 +34,7 @@ const Footer = () => {
                 <h5 className="mb-1 fs-17">Customers</h5>
                 <ul className="footer-menu">
                   <li><Link to="/green-india-team-review" onClick={handleLinkClick}>GI Team reviews</Link></li>
-                  <li><Link to="/" onClick={handleLinkClick}>Services near you</Link></li>
+                  <li><Link to="/" onClick={handleLinkClickService}>Services near you</Link></li>
                   <li><Link to="/blog" onClick={handleLinkClick}>Blog</Link></li>
                   <li><Link to="/contact-us" onClick={handleLinkClick}>Contact us</Link></li>
                 </ul>
@@ -41,7 +45,7 @@ const Footer = () => {
               <div className="footer-widget">
                 <h5 className="mb-1 fs-17">Partners</h5>
                 <ul className="footer-menu">
-                  <li><Link to="/register" onClick={handleLinkClick}>Sign Up as a professional</Link></li>
+                  <li><Link to="/" onClick={handleLinkClick}>Sign up as a professional</Link></li>
                 </ul>
               </div>
             </div>

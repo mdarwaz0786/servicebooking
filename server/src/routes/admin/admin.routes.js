@@ -28,6 +28,14 @@ import requirementFromCustomerRoutes from "./requirementFromCustomer.routes.js";
 import serviceIncludedRoutes from "./serviceIncluded.routes.js";
 import whyChooseUsRoutes from "./whyChooseUs.routes.js";
 import serviceFaqRoutes from "./serviceFaq.routes.js";
+import blogRoutes from "./blog.routes.js";
+import blogCategoryRoutes from "./blogCategory.routes.js";
+import termsConditionsRoutes from "./termsConditions.routes.js";
+import privacyPolicyRoutes from "./privacyPolicy.routes.js";
+import refundPolicyRoutes from "./refundPolicy.routes.js";
+import impactRoutes from "./impact.routes.js";
+import contactEnquiryRoutes from "./contactEnquiry.routes.js";
+import jobPostingRoutes from "./jobPosting.routes.js";
 
 const router = express.Router();
 
@@ -60,5 +68,13 @@ router.use("/requirement-from-customer", requirementFromCustomerRoutes);
 router.use("/service-included", serviceIncludedRoutes);
 router.use("/why-choose-us", whyChooseUsRoutes);
 router.use("/service-faq", serviceFaqRoutes);
+router.use("/blog-category", blogCategoryRoutes);
+router.use("/blog", blogRoutes);
+router.use("/terms-conditions", termsConditionsRoutes);
+router.use("/privacy-policy", privacyPolicyRoutes);
+router.use("/refund-policy", refundPolicyRoutes);
+router.use("/impact", impactRoutes);
+router.use("/contact-enquiry", contactEnquiryRoutes);
+router.use("/job-posting", jobPostingRoutes);
 
 export default router;

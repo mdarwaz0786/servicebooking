@@ -17,9 +17,7 @@ export const createServiceFaq = asyncHandler(async (req, res) => {
     faqs: faqs,
   });
 
-  return res
-    .status(201)
-    .json({ success: true, message: "Created successfully", data: serviceFaq });
+  return res.status(201).json({ success: true, message: "Created successfully", data: serviceFaq });
 });
 
 // --------------------- GET ALL SERVICE FAQS ---------------------
@@ -37,7 +35,8 @@ export const getServiceFaqs = asyncHandler(async (req, res) => {
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const faqs = await ServiceFaqModel.find(filters)
+  const faqs = await ServiceFaqModel
+    .find(filters)
     .populate("services")
     .sort(sortOption)
     .skip(skip)
@@ -63,7 +62,8 @@ export const getServiceFaqs = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE SERVICE FAQ ---------------------
 export const getServiceFaqById = asyncHandler(async (req, res) => {
-  const serviceFaq = await ServiceFaqModel.findById(req.params.id)
+  const serviceFaq = await ServiceFaqModel
+    .findById(req.params.id)
     .populate("services")
     .lean();
 
@@ -83,19 +83,10 @@ export const updateServiceFaq = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Service FAQ not found");
   }
 
-  let faqsArray = [];
-  if (faqs) {
-    try {
-      faqsArray = JSON.parse(faqs);
-    } catch (error) {
-      throw new ApiError(400, "Invalid faqs format (must be JSON array)");
-    }
-  }
-
-  serviceFaq.mainTitle = mainTitle || serviceFaq.mainTitle;
-  serviceFaq.status = status !== undefined ? status : serviceFaq.status;
-  serviceFaq.services = services || serviceFaq.services;
-  if (faqsArray.length) serviceFaq.faqs = faqsArray;
+  serviceFaq.mainTitle = mainTitle || serviceFaq?.mainTitle;
+  serviceFaq.status = status !== undefined ? status : serviceFaq?.status;
+  serviceFaq.services = services || serviceFaq?.services;
+  serviceFaq.faqs = faqs || serviceFaq?.faqs;
 
   await serviceFaq.save();
 
@@ -115,7 +106,5 @@ export const deleteServiceFaq = asyncHandler(async (req, res) => {
 
   await serviceFaq.deleteOne();
 
-  return res
-    .status(200)
-    .json({ success: true, message: "Deleted successfully" });
+  return res.status(200).json({ success: true, message: "Deleted successfully" });
 });

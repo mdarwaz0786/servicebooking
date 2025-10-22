@@ -29,15 +29,15 @@ const GreenIndiaTeamReviewPage = () => {
           <ul className="list-unstyled">
             <li className="mb-2">
               <i className="bi bi-geo-alt-fill me-2"></i>
-              123 Street, New York, USA
+              365, Lotus Building, Sultanpur, Delhi-110030
             </li>
             <li className="mb-2">
               <i className="bi bi-envelope-fill me-2"></i>
-              info@example.com
+              info@greenindiateam.com
             </li>
             <li>
               <i className="bi bi-telephone-fill me-2"></i>
-              +012 345 67890
+              +91 0123456789
             </li>
           </ul>
         </div>

@@ -5,6 +5,7 @@ const ContactUsPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    mobile: "",
     subject: "",
     message: "",
   });
@@ -22,8 +23,8 @@ const ContactUsPage = () => {
     <div className="container py-5">
       <div className="row align-items-start">
         {/* Left Side - Contact Form */}
+        <h4 className="fw-bold mb-4">Contact us</h4>
         <div className="col-md-6 mb-4">
-          <h4 className="fw-bold mb-4">Contact us</h4>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <input
@@ -43,6 +44,17 @@ const ContactUsPage = () => {
                 placeholder="Your Email"
                 name="email"
                 value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control rounded-1"
+                placeholder="Your Mobile"
+                name="mobile"
+                value={formData.mobile}
                 onChange={handleChange}
                 required
               />
@@ -98,7 +110,6 @@ const ContactUsPage = () => {
               365, Lotus Building, Sultanpur, Delhi-110030
             </p>
           </div>
-
           <div className="d-flex align-items-start">
             <FaEnvelope className="me-2 mt-1 text-dark" />
             <p className="mb-0 text-muted">info@greenindiateam.com</p>

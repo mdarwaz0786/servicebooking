@@ -30,32 +30,40 @@ const AboutUsPage = () => {
           excellence, ensuring an experience like never before."
         </p>
 
-        <div className="row text-center mt-4">
-          <div className="col-md-3 col-6 mb-3">
-            <FaUserTie size={28} className="mb-2" />
-            <h6 className="fw-bold">500+</h6>
-            <p className="text-muted mb-0">Trained Professionals</p>
+        <div className="row mt-4">
+          <div className="col-md-3 col-6 mb-3 d-flex">
+            <FaUserTie size={30} />
+            <div className="ms-4">
+              <h6 className="fw-bold">500+</h6>
+              <p className="text-muted mb-0">Trained Professionals</p>
+            </div>
           </div>
-          <div className="col-md-3 col-6 mb-3">
-            <FaSmile size={28} className="mb-2" />
-            <h6 className="fw-bold">5000+</h6>
-            <p className="text-muted mb-0">Happy Customers</p>
+          <div className="col-md-3 col-6 mb-3 d-flex">
+            <FaSmile size={30} />
+            <div className="ms-4">
+              <h6 className="fw-bold">5000+</h6>
+              <p className="text-muted mb-0">Happy Customers</p>
+            </div>
           </div>
-          <div className="col-md-3 col-6 mb-3">
-            <FaMapMarkerAlt size={28} className="mb-2" />
-            <h6 className="fw-bold">6</h6>
-            <p className="text-muted mb-0">Cities</p>
+          <div className="col-md-3 col-6 mb-3 d-flex ">
+            <FaMapMarkerAlt size={30} />
+            <div className="ms-4">
+              <h6 className="fw-bold">6</h6>
+              <p className="text-muted mb-0">Cities</p>
+            </div>
           </div>
-          <div className="col-md-3 col-6 mb-3">
-            <FaGlobe size={28} className="mb-2" />
-            <h6 className="fw-bold">1</h6>
-            <p className="text-muted mb-0">Country</p>
+          <div className="col-md-3 col-6 mb-3 d-flex">
+            <FaGlobe size={30} />
+            <div className="ms-4">
+              <h6 className="fw-bold">1</h6>
+              <p className="text-muted mb-0">Country</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Leadership Team */}
-      <div>
+      <div className="mt-1">
         <h4 className="fw-bold mb-4">Our Leadership Team</h4>
         <div className="row">
           {/* Leader Card 1 */}
