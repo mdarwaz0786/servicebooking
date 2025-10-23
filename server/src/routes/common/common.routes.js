@@ -17,6 +17,7 @@ import refundRoutes from "./refundPolicy.routes.js";
 import impactRoutes from "./impact.routes.js";
 import contactEnquiryRoutes from "./contactEnquiry.routes.js";
 import jobPostingRoutes from "./jobPosting.routes.js";
+import jobApplicationRoutes from "./jobApplication.routes.js";
 
 const router = express.Router();
 
@@ -38,5 +39,6 @@ router.use("/refund-policy", refundRoutes);
 router.use("/impact", impactRoutes);
 router.use("/contact-enquiry", contactEnquiryRoutes);
 router.use("/job-posting", jobPostingRoutes);
+router.use("/job-application", jobApplicationRoutes);
 
 export default router;
