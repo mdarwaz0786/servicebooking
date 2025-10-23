@@ -1,9 +1,17 @@
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+
 
 const PopularServices = () => {
   const { categoryListData, handleHome, toggleModal, homePageData, imageCheck, handleServiceDetail } = useContext(AppContext);
+  const prevRef = useRef(null);
+    const nextRef = useRef(null); 
   return (
     <section className="section popular-section pt-0">
       <div className="container">
@@ -19,25 +27,52 @@ const PopularServices = () => {
           
             <div className=" row">
 
-
+              <Swiper
+            modules={[Navigation, Autoplay]}
+            spaceBetween={20}
+            slidesPerView={5}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            onInit={(swiper) => {
+              // ✅ Assign the navigation buttons AFTER Swiper is initialized
+              swiper.params.navigation.prevEl = prevRef.current;
+              swiper.params.navigation.nextEl = nextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }}
+            speed={800}
+            centeredSlides={false}
+            grabCursor={true}
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 5 },
+            }}
+          >
               {homePageData.mostBookedServices.map((item, index) => (
-                <div className="col-md-3" key={index} onClick={() => handleServiceDetail(item._id)}>
-                  <div className="service-item">
-                    <div className="service-img">
-                      <div className=" nav-center">
-                        <div className="">
-                          <Link>
-                            <img src={imageCheck(item.image)} className="img-fluid" alt="img" />
-                          </Link>
-                        </div>                      
+                <SwiperSlide key={index}>
+                  <div className="col-md-12" key={index} onClick={() => handleServiceDetail(item._id)}>
+                    <div className="service-item">
+                      <div className="service-img">
+                        <div className=" nav-center">
+                          <div className="">
+                            <Link>
+                              <img src={imageCheck(item.image)} className="img-fluid" alt="img" />
+                            </Link>
+                          </div>                      
+                        </div>
+                      </div>
+                      <div className="service-content">
+                        <h6 className="mb-1 text-truncate text-center"><Link>{item.name}</Link></h6>
                       </div>
                     </div>
-                    <div className="service-content">
-                      <h6 className="mb-1 text-truncate text-center"><Link>{item.name}</Link></h6>
-                    </div>
                   </div>
-                </div>
+                </SwiperSlide>
               ))}
+          </Swiper>
               
               
             </div>

@@ -39,6 +39,7 @@ import RefundPolicyPage from "./pages/RefundPolicy/RefundPolicyPage";
 import GreenIndiaTeamImpactPage from "./pages/GreenIndiaTeamImpact/GreenIndiaTeamImpactPage";
 import CareerPage from "./pages/Career/CareerPage";
 import BlogPage from "./pages/Blog/BlogPage";
+import BlogDetailPage from "./pages/Blog/BlogDetailPage";
 import GreenIndiaTeamReviewPage from "./pages/GreenIndiaTeamReview/GreenIndiaTeamReviewPage"
 
 const App = () => {
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="/green-india-team-impact" element={<GreenIndiaTeamImpactPage />} />
           <Route path="/career" element={<CareerPage />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogDetailPage />} />
           <Route path="/green-india-team-review" element={<GreenIndiaTeamReviewPage />} />
           <Route path="/services/:slug" element={<ServicesPage />} />
           <Route path="/service-details" element={<ServicesDetailsPage />} />

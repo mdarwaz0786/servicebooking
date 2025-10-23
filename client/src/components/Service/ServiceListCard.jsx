@@ -62,26 +62,20 @@ const ServiceListCard = () => {
                             <div className="service-pro-img">
                                 <span>
                                     <i className="fas fa-star filled" />
-                                    4.9 (100k reviews)
+                                    {value?.ratings?.averageRating} ({value?.ratings?.totalRatings} reviews)
                                 </span>
                             </div>
                             <p className="m-0"><i className="fa fa-inr" />
                                 {PriceFormat(value.salePrice)}&nbsp;
                                 <span className="fs-12">
                                     <span className="old-price text-muted text-decoration-line-through">{PriceFormat(value.mrpPrice)}</span>
-                                    &nbsp;(Approximate time {value.timeTaking} hrs)
+                                    &nbsp;(Approximate time {value.timeTaking} )
                                 </span>
                             </p>
-                            <p><i className="fa fa-tag" />499 per AC</p>
+                            {/* <p><i className="fa fa-tag" />499 per AC</p> */}
                             <p className="m-0"><span className="badge badge-success fs-15 mb-2">{PriceFormat(value.salePrice)} OFF</span></p>
 
-                            <ul className="list-disc fs-13">
-                                <li>Technician visit & sound source check</li>
-                                <li>Fan, motor, or loose part inspection</li>
-                                <li>Minor fixes done during visit</li>
-                                <li>Major repairs quoted separately</li>
-                                <li>30-day service warranty</li>
-                            </ul>
+                            {value.shortDescription}
 
                         </div>
                     </div>

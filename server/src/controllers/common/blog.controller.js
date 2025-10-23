@@ -55,7 +55,7 @@ export const getBlogs = asyncHandler(async (req, res) => {
 // --------------------- GET SINGLE BLOG ---------------------
 export const getBlogById = asyncHandler(async (req, res) => {
   const blog = await BlogModel
-    .findById(req.params.id)
+    .findOne({slug:req.query.slug})
     .populate("category", "name")
     .populate("createdBy updatedBy", "name");
 

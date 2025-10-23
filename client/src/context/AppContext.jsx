@@ -97,6 +97,18 @@ export const AppProvider = ({ children }) => {
       serviceList: `${commurl}service`,
       serviceDetail: `${commurl}service`,
 
+      blog: `${commurl}blog`,
+      blogDetail: `${commurl}blog/detail`,
+
+      career: `${commurl}job-posting`,
+
+      termCondition: `${commurl}terms-conditions/68f9c1b3d21c16a35f074cc1`, 
+      privacyPolicy: `${commurl}privacy-policy/68f9c40128f9e5ad117c82a1`,
+      refundPolicy: `${commurl}refund-policy/68f9c555819007e42b718e67`,
+      GreenIndiaTeamImpact: `${commurl}impact/68f9c71c3cb87f459f74c3d7`,
+
+      contactEnquiry: `${commurl}contact-enquiry`,
+
       addressList: `${userUrl}address`,
       addAddress: `${userUrl}address/create-address`,
       removeAddress: `${userUrl}address/delete-address`,
@@ -426,6 +438,13 @@ export const AppProvider = ({ children }) => {
     else {
       quantity = quantity > 0 ? quantity - 1 : 0;
     }
+
+    if(quantity>item.maxBookingQuantity)
+    {
+      toast.error(`Max Quantity ${item.maxBookingQuantity}` || 'Something went wrong');
+      return false;
+    }
+
     try {
       // generateUniqueId()
       const response = await postData({ serviceId: serviceId, quantity: quantity, userId: generateUniqueId() }, Urls.addRemoveCart, "POST", 0, 1);

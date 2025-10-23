@@ -1,6 +1,34 @@
 import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { useContext, useEffect, useState } from "react";
+import Pagination from "../../components/Pagination/Pagination";
 
 const CareerPage = () => {
+
+    
+  const { Urls, postData, imageCheck, formatDate} = useContext(AppContext);
+  const [page, setpage] = useState(1);
+  const [limit, setlimit] = useState(10);
+  const [data, setdata] = useState([]);
+  const fetchData = async () => {
+      try { 
+        const response = await postData({page:page,limit:limit}, Urls.career, "GET", 0, 1);    
+        setdata(response.data?response.data:[]);
+      
+      } catch (error) { 
+      console.error("Cart API Error:", error);
+      }
+  }
+
+  const handlePagination = async (page, limit) => {
+    setpage(page);
+    if(limit) setlimit(limit);
+}
+  
+  useEffect(() => {  
+  fetchData(); 
+  }, [page, limit]);  
+
   const jobOpenings = [
     {
       title: "Front-End Developer",
@@ -37,19 +65,20 @@ const CareerPage = () => {
       <section className="mb-5">
         <h4 className="mb-4 fw-semibold">Current Job Openings</h4>
         <div className="row">
-          {jobOpenings.map((job, index) => (
+          {data.map((job, index) => (
             <div key={index} className="col-md-4 mb-4">
               <div className="card h-100 shadow-sm">
                 <div className="card-body">
                   <h5 className="card-title">{job.title}</h5>
-                  <p className="card-subtitle text-muted mb-2">{job.location} | {job.type}</p>
-                  <p className="card-text">{job.description}</p>
+                  <p className="card-subtitle text-muted mb-2">{job.location} | {job.employmentType}</p>
+                  <p className="card-text">{job.shortDescription}</p>
                   <Link to="#" className="btn btn-primary btn-sm mt-auto">Apply Now</Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
+        <Pagination handlePagination={handlePagination} />
       </section>
 
       {/* Benefits Section */}

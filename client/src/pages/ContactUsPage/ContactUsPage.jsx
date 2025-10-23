@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
+import { AppContext } from "../../context/AppContext";
 
 const ContactUsPage = () => {
+  const { Urls, postData, toast } = useContext(AppContext);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,9 +16,28 @@ const ContactUsPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+    if (!formData.mobile) {
+      toast.error("Enter Mobile No.");
+      return false;
+    }
+    try {
+      const response = await postData(formData, Urls.contactEnquiry, "POST");
+      if (response.success) {
+        setFormData({
+            name: "",
+            email: "",
+            mobile: "",
+            subject: "",
+            message: "",
+          });
+        // setformTitle("Enter Otp");
+        
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+    }
   };
 
   return (
@@ -25,7 +46,7 @@ const ContactUsPage = () => {
         {/* Left Side - Contact Form */}
         <h4 className="fw-bold mb-4">Contact us</h4>
         <div className="col-md-6 mb-4">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} >
             <div className="mb-3">
               <input
                 type="text"
