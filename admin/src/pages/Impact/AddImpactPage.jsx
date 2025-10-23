@@ -12,47 +12,21 @@ const AddImpactPage = () => {
 
   const [formData, setFormData] = useState({
     title: "Green India Team Impact",
-    introduction: "",
-    contentSections: [{ heading: "", content: "" }],
-    status: true,
+    description: "",
   });
 
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleContentChange = (index, value) => {
-    const updatedSections = [...formData.contentSections];
-    updatedSections[index].content = value;
-    setFormData({ ...formData, contentSections: updatedSections });
-  };
-
-  const handleHeadingChange = (index, value) => {
-    const updatedSections = [...formData.contentSections];
-    updatedSections[index].heading = value;
-    setFormData({ ...formData, contentSections: updatedSections });
-  };
-
-  const addSection = () => {
-    setFormData({
-      ...formData,
-      contentSections: [...formData.contentSections, { heading: "", content: "" }],
-    });
-  };
-
-  const removeSection = (index) => {
-    const updatedSections = formData.contentSections.filter((_, i) => i !== index);
-    setFormData({ ...formData, contentSections: updatedSections });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.introduction.trim()) {
-      toast.error("Introduction is required");
+    if (!formData.description.trim()) {
+      toast.error("Description is required");
       return;
     }
 
@@ -63,7 +37,7 @@ const AddImpactPage = () => {
       });
 
       if (res.data.success) {
-        toast.success("Impact page created successfully");
+        toast.success("Impact created successfully");
         navigate(-1);
       }
     } catch (error) {
@@ -71,6 +45,13 @@ const AddImpactPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      title: "Green India Team Impact",
+      description: "",
+    });
   };
 
   return (
@@ -90,7 +71,6 @@ const AddImpactPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Title */}
               <div className="mb-3">
                 <label className="form-label">Title</label>
                 <input
@@ -99,69 +79,35 @@ const AddImpactPage = () => {
                   value={formData.title}
                   onChange={handleChange}
                   className="form-control"
+                  placeholder="Enter title"
                 />
               </div>
 
-              {/* Introduction */}
               <div className="mb-3">
-                <label className="form-label">Introduction</label>
+                <label className="form-label">Description</label>
                 <TextEditor
-                  value={formData.introduction}
-                  onChange={(value) => setFormData({ ...formData, introduction: value })}
-                  placeholder="Enter introduction..."
-                  height="200px"
+                  value={formData.description}
+                  onChange={(value) =>
+                    setFormData((prev) => ({ ...prev, description: value }))
+                  }
+                  placeholder="Enter impact description..."
+                  height={300}
                 />
               </div>
 
-              {/* Dynamic Content Sections */}
-              {formData.contentSections.map((section, index) => (
-                <div key={index} className="mb-3 border p-3 rounded">
-                  <label className="form-label">Section Heading</label>
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    value={section.heading}
-                    onChange={(e) => handleHeadingChange(index, e.target.value)}
-                    placeholder="Enter heading"
-                  />
-                  <label className="form-label">Content</label>
-                  <TextEditor
-                    value={section.content}
-                    onChange={(value) => handleContentChange(index, value)}
-                    placeholder="Enter content..."
-                    height="150px"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-danger mt-2"
-                    onClick={() => removeSection(index)}
-                  >
-                    Remove Section
-                  </button>
-                </div>
-              ))}
-
-              <button type="button" className="btn btn-secondary mb-3" onClick={addSection}>
-                + Add Section
-              </button>
-
-              {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="reset"
+                  type="button"
                   className="btn btn-secondary me-2"
-                  onClick={() =>
-                    setFormData({
-                      title: "Green India Team Impact",
-                      introduction: "",
-                      contentSections: [{ heading: "", content: "" }],
-                      status: true,
-                    })
-                  }
+                  onClick={handleCancel}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? "Saving..." : "Save"}
                 </button>
               </div>

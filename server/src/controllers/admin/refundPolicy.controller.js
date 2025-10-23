@@ -5,18 +5,12 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE REFUND POLICY ---------------------
 export const createRefundPolicy = asyncHandler(async (req, res) => {
-  const { title, introduction, effectiveDate, contentSections, contact } = req.body;
-
-  if (!introduction || !effectiveDate) {
-    throw new ApiError(400, "Introduction and Effective Date are required");
-  }
+  const { title, description, effectiveDate } = req.body;
 
   const refundPolicy = await RefundPolicyModel.create({
     title,
-    introduction,
+    description,
     effectiveDate,
-    contentSections,
-    contact,
   });
 
   return res.status(201).json({ success: true, message: "Created successfully", data: refundPolicy });
@@ -74,7 +68,7 @@ export const getRefundPolicyById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE REFUND POLICY ---------------------
 export const updateRefundPolicy = asyncHandler(async (req, res) => {
-  const { title, introduction, effectiveDate, contentSections, contact, status } = req.body;
+  const { title, description, effectiveDate, status } = req.body;
 
   const refundPolicy = await RefundPolicyModel.findById(req.params.id);
   if (!refundPolicy) {
@@ -82,10 +76,8 @@ export const updateRefundPolicy = asyncHandler(async (req, res) => {
   }
 
   refundPolicy.title = title || refundPolicy.title;
-  refundPolicy.introduction = introduction || refundPolicy.introduction;
+  refundPolicy.description = description || refundPolicy.description;
   refundPolicy.effectiveDate = effectiveDate || refundPolicy.effectiveDate;
-  refundPolicy.contentSections = contentSections || refundPolicy.contentSections;
-  refundPolicy.contact = contact || refundPolicy.contact;
   refundPolicy.status = status !== undefined ? status : refundPolicy.status;
 
   await refundPolicy.save();

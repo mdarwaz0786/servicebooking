@@ -5,19 +5,12 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE TERMS & CONDITIONS ---------------------
 export const createTerms = asyncHandler(async (req, res) => {
-  const { title, introduction, effectiveDate, contentSections, contact, status } = req.body;
-
-  if (!introduction || !effectiveDate) {
-    throw new ApiError(400, "Introduction and effective date are required");
-  }
+  const { title, effectiveDate, description } = req.body;
 
   const terms = await TermsConditionsModel.create({
     title: title || "Terms and Conditions",
-    introduction,
     effectiveDate,
-    contentSections,
-    contact,
-    status,
+    description,
   });
 
   return res.status(201).json({ success: true, message: "Created successfully", data: terms });
@@ -33,7 +26,7 @@ export const getTermsList = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (search) {
-    filters.introduction = { $regex: search, $options: "i" };
+    filters.title = { $regex: search, $options: "i" };
   }
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
@@ -71,16 +64,14 @@ export const getTermsById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE TERMS ---------------------
 export const updateTerms = asyncHandler(async (req, res) => {
-  const { title, introduction, effectiveDate, contentSections, contact, status } = req.body;
+  const { title, effectiveDate, description, status } = req.body;
 
   const terms = await TermsConditionsModel.findById(req.params.id);
   if (!terms) throw new ApiError(404, "Terms not found");
 
   terms.title = title || terms.title;
-  terms.introduction = introduction || terms.introduction;
   terms.effectiveDate = effectiveDate || terms.effectiveDate;
-  terms.contentSections = contentSections || terms.contentSections;
-  terms.contact = contact || terms.contact;
+  terms.description = description || terms.description;
   if (status !== undefined) terms.status = status;
 
   await terms.save();

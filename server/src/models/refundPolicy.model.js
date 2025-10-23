@@ -7,24 +7,13 @@ const refundPolicySchema = new mongoose.Schema({
     default: "Refund Policy",
     trim: true,
   },
-  introduction: {
+  description: {
     type: String,
     required: true,
   },
   effectiveDate: {
     type: Date,
     required: true,
-  },
-  contentSections: [
-    {
-      heading: { type: String, required: true },
-      content: { type: String, required: true },
-    },
-  ],
-  contact: {
-    companyName: { type: String },
-    address: { type: String },
-    email: { type: String },
   },
   status: {
     type: Boolean,

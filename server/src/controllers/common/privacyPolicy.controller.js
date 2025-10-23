@@ -16,6 +16,8 @@ export const getPrivacyPolicies = asyncHandler(async (req, res) => {
     filters.title = { $regex: search, $options: "i" };
   }
 
+  filters.status = true;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const policies = await PrivacyPolicyModel.find(filters)

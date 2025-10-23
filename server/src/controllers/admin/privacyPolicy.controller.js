@@ -5,22 +5,12 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE PRIVACY POLICY ---------------------
 export const createPrivacyPolicy = asyncHandler(async (req, res) => {
-  const { title, introduction, effectiveDate, contentSections, contact } = req.body;
-
-  if (!introduction) {
-    throw new ApiError(400, "Introduction is required");
-  }
-
-  if (!effectiveDate) {
-    throw new ApiError(400, "Effective date is required");
-  }
+  const { title, description, effectiveDate } = req.body;
 
   const privacyPolicy = await PrivacyPolicyModel.create({
     title,
-    introduction,
+    description,
     effectiveDate,
-    contentSections,
-    contact,
   });
 
   return res.status(201).json({ success: true, message: "Created successfully", data: privacyPolicy });
@@ -77,7 +67,7 @@ export const getPrivacyPolicyById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE PRIVACY POLICY ---------------------
 export const updatePrivacyPolicy = asyncHandler(async (req, res) => {
-  const { title, introduction, effectiveDate, contentSections, contact, status } = req.body;
+  const { title, description, effectiveDate, status } = req.body;
 
   const policy = await PrivacyPolicyModel.findById(req.params.id);
   if (!policy) {
@@ -85,10 +75,8 @@ export const updatePrivacyPolicy = asyncHandler(async (req, res) => {
   }
 
   policy.title = title || policy.title;
-  policy.introduction = introduction || policy.introduction;
+  policy.description = description || policy.description;
   policy.effectiveDate = effectiveDate || policy.effectiveDate;
-  policy.contentSections = contentSections || policy.contentSections;
-  policy.contact = contact || policy.contact;
   policy.status = status !== undefined ? status : policy.status;
 
   await policy.save();

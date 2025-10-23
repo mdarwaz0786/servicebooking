@@ -5,16 +5,11 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE IMPACT ---------------------
 export const createImpact = asyncHandler(async (req, res) => {
-  const { title, introduction, contentSections } = req.body;
-
-  if (!introduction || !contentSections || contentSections.length === 0) {
-    throw new ApiError(400, "Introduction and at least one content section are required");
-  }
+  const { title, description } = req.body;
 
   const impact = await ImpactModel.create({
     title,
-    introduction,
-    contentSections,
+    description,
   });
 
   return res.status(201).json({ success: true, message: "Created successfully", data: impact });
@@ -71,7 +66,7 @@ export const getImpactById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE IMPACT ---------------------
 export const updateImpact = asyncHandler(async (req, res) => {
-  const { title, introduction, contentSections, status } = req.body;
+  const { title, description, status } = req.body;
 
   const impact = await ImpactModel.findById(req.params.id);
   if (!impact) {
@@ -79,8 +74,7 @@ export const updateImpact = asyncHandler(async (req, res) => {
   }
 
   impact.title = title || impact.title;
-  impact.introduction = introduction || impact.introduction;
-  impact.contentSections = contentSections || impact.contentSections;
+  impact.description = description || impact.description;
   impact.status = status !== undefined ? status : impact.status;
 
   await impact.save();

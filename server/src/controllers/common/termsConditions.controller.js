@@ -13,8 +13,10 @@ export const getTermsList = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (search) {
-    filters.introduction = { $regex: search, $options: "i" };
+    filters.title = { $regex: search, $options: "i" };
   }
+
+  filters.status = true;
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
@@ -46,5 +48,5 @@ export const getTermsById = asyncHandler(async (req, res) => {
   const terms = await TermsConditionsModel.findById(req.params.id).lean();
   if (!terms) throw new ApiError(404, "Terms not found");
 
-  return res.status(200).json({ success: true, data: terms });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: terms });
 });
