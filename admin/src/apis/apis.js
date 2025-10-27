@@ -87,6 +87,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/home-page-service`,
     delete: `${BASE_URL}/api/v1/admin/home-page-service`,
   },
+  rateCard: {
+    create: `${BASE_URL}/api/v1/admin/rate-card`,
+    get: `${BASE_URL}/api/v1/admin/rate-card`,
+    update: `${BASE_URL}/api/v1/admin/rate-card`,
+    delete: `${BASE_URL}/api/v1/admin/rate-card`,
+  },
   serviceIncluded: {
     create: `${BASE_URL}/api/v1/admin/service-included`,
     get: `${BASE_URL}/api/v1/admin/service-included`,

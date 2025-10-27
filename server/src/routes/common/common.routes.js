@@ -18,6 +18,7 @@ import impactRoutes from "./impact.routes.js";
 import contactEnquiryRoutes from "./contactEnquiry.routes.js";
 import jobPostingRoutes from "./jobPosting.routes.js";
 import jobApplicationRoutes from "./jobApplication.routes.js";
+import rateCardRoutes from "./rateCard.routes.js";
 
 const router = express.Router();
 
@@ -40,5 +41,6 @@ router.use("/impact", impactRoutes);
 router.use("/contact-enquiry", contactEnquiryRoutes);
 router.use("/job-posting", jobPostingRoutes);
 router.use("/job-application", jobApplicationRoutes);
+router.use("/rate-card", rateCardRoutes);
 
 export default router;

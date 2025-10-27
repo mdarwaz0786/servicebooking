@@ -72,6 +72,9 @@ import AddRefundPolicyPage from "../pages/RefundPolicy/AddRefundPolicyPage";
 import AddImpactPage from "../pages/Impact/AddImpactPage";
 import ContactEnquiryListPage from "../pages/ContactEnquiry/ContactEnquiryListPage";
 import AddJobPostingPage from "../pages/JobPosting/AddJobPostingPage";
+import AddRateCardPage from "../pages/RateCard/AddRateCardPage";
+import UpdateRateCardPage from "../pages/RateCard/UpdateRateCardPage";
+import RateCardListPage from "../pages/RateCard/RateCardListPage";
 
 const routesConfig = {
   private: [
@@ -130,6 +133,10 @@ const routesConfig = {
     { path: "/home-service", element: HomeServiceListPage },
     { path: "/add-home-service", element: AddHomeServicePage },
     { path: "/update-home-service/:id", element: UpdateHomeServicePage },
+
+    { path: "/rate-card", element: RateCardListPage },
+    { path: "/add-rate-card", element: AddRateCardPage },
+    { path: "/update-rate-card/:id", element: UpdateRateCardPage },
 
     { path: "/service-included", element: ServiceIncludedListPage },
     { path: "/add-service-included", element: AddServiceIncludedPage },

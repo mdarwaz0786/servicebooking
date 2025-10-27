@@ -163,6 +163,14 @@ const Sidebar = () => {
                     <span>FAQ</span>
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/rate-card"
+                    className={currentPath === "/rate-card" ? "active" : ""}
+                  >
+                    <span>Rate Card</span>
+                  </Link>
+                </li>
               </ul>
             </li>
 
