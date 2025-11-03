@@ -17,19 +17,15 @@ const ServiceDetailModal = () => {
       id="provider"
     >
       <div className="modal-dialog modal-lg modal-dialog-centered pt-5">
-        <div className="modal-content" style={{ border: 0, paddingTop: "30px" }}>
-          <div className="wizard-fieldset">
+        <div className="modal-content" style={{ border: 0, paddingTop: "0px" }}>
             <Link
-              style={{
-                position: 'absolute',
-                top: '5px',
-                right: '5px',
-                zIndex: 1,
-              }}
+              className="modal-close-btn"
               onClick={() => toggleModal("ServiceDetailModal", false)}
             >
-              <i className="ti ti-circle-x-filled fs-25"></i>
+              <i className="fa fa-times"></i>
             </Link>
+          <div className="wizard-fieldset">
+
             <ServiceDetail />
           </div>
         </div>

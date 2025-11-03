@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 
 import AddressModal from "../../components/Modal/AddressModal";
-import GoogleMapPicker from "../../components/Google/GoogleMapPicker";
+
 
 const LocationBooking = () => {
   const { steps, toggleStep, Urls, postData, toast, generateUniqueId, toggleModal, setbookingAddress } =
@@ -16,6 +16,10 @@ const LocationBooking = () => {
       let userId = generateUniqueId();
       const response = await postData({ userId: userId }, Urls.addressList, "GET", 0, 1);
       setaddresses(response.data);
+      if(response?.data)
+      {
+        setselectedaddress(response.data[0]._id)
+      }
     } catch (error) {
       console.error("Address API Error:", error);
     }

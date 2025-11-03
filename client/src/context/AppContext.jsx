@@ -41,6 +41,7 @@ export const AppProvider = ({ children }) => {
   const [serviceItemData, setserviceItemData] = useState([]);
 
   const [serviceDetailData, setserviceDetailData] = useState([]);
+  const [serviceDetailDataItem, setserviceDetailDataItem] = useState();
 
   const [myserviceListData, setmyserviceListData] = useState([]);
 
@@ -399,6 +400,7 @@ export const AppProvider = ({ children }) => {
     addressModal: false,
     BookignStartModal: false,
     ServiceDetailModal: false,
+    paymentModeModal: false,
   });
   const toggleModal = (modalName, isOpen) => {
     setModals((prev) => ({
@@ -470,12 +472,15 @@ export const AppProvider = ({ children }) => {
         setcartItems([]);
         setcartAmount([]);
       }
-      item.quantity = quantity;
+      item.quantity = quantity;      
+      toggleModal("ServiceDetailModal", false);
 
     } catch (error) {
       console.error("Cart API Error:", error);
     }
   }
+
+  
 
 
 
@@ -540,13 +545,14 @@ export const AppProvider = ({ children }) => {
     }
   }
 
-  const handleServiceDetail = async (id) => {
+  const handleServiceDetail = async (id, item) => {
     try {
-      const response = await postData({}, Urls.serviceDetail + '/' + id, "GET", 0, 1);
+      const response = await postData({userId:generateUniqueId()}, Urls.serviceDetail + '/' + id, "GET", 0, 1);
       if (response.success) {
         if (response?.success) {
           setserviceDetailData(response.data);
           toggleModal("ServiceDetailModal", true)
+          setserviceDetailDataItem(item);
         }
       }
     } catch (error) {
@@ -656,6 +662,8 @@ export const AppProvider = ({ children }) => {
 
       serviceDetailData,
       setserviceDetailData,
+      serviceDetailDataItem,
+      setserviceDetailDataItem,
 
       categoryModalImage,
       setcategoryModalImage,

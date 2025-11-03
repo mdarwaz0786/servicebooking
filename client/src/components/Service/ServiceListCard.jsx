@@ -30,7 +30,7 @@ const ServiceListCard = () => {
                                     data-bs-toggle="modal"
                                     data-bs-target="#serviceDetailModal"
                                     onClick={() =>
-                                        handleServiceDetail(value._id)
+                                        handleServiceDetail(value._id,value)
                                     }
                                 >
                                     <i className="fa fa-info"></i>
@@ -50,7 +50,6 @@ const ServiceListCard = () => {
                                         <i className="fa fa-shopping-cart"></i>&nbsp;Add
                                     </button>
                                 )}
-
                             </div>
 
                         </div>

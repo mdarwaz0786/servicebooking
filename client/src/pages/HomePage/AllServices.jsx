@@ -50,11 +50,11 @@ const AllServices = ({ value = [] }) => {
             modules={[Navigation, Autoplay]}
             spaceBetween={20}
             slidesPerView={5}
-            loop={true}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
+            loop={false}
+            // autoplay={{
+            //   delay: 2500,
+            //   disableOnInteraction: false,
+            // }}
             onInit={(swiper) => {
               // ✅ Assign the navigation buttons AFTER Swiper is initialized
               swiper.params.navigation.prevEl = prevRef.current;

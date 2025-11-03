@@ -57,8 +57,7 @@ const BookingDateTime = () => {
         {/* Date & Time */}
         <div className="row g-4">
           {/* Date Picker */}
-          <div className="col-md-5">
-            <h6 className="fs-13 fw-medium mb-2">Select Date</h6>
+          <div className="col-md-12">
             <InlineCalendar setSelectedMyDate={setSelectedMyDate} />
           </div>
 
@@ -67,7 +66,7 @@ const BookingDateTime = () => {
             <h6 className="fs-13 fw-medium mb-2">Select Time</h6>
             <div className="row g-2">
               {timeSlots.map((slot, index) => (
-                <div className="col-lg-4 col-md-6" key={index}>
+                <div className="col-lg-3 col-md-4" key={index}>
                   <div
                     className={`time-item p-2 text-center rounded-3 shadow-sm ${slot.disabled ? "bg-light text-muted" : "bg-white cursor-pointer"
                       } ${selectedTime === slot.time ? "border border-3 border-success bg-success text-white" : ""}`}
@@ -80,7 +79,7 @@ const BookingDateTime = () => {
                     style={{ cursor: slot.disabled ? "not-allowed" : "pointer" }}
                   >
                     <p className="fs-12 fw-medium mb-0">{slot.time}</p>
-                    <p className="fs-10 mb-0">{slot.slots} Slots</p>
+                    {/* <p className="fs-10 mb-0">{slot.slots} Slots</p> */}
                   </div>
                 </div>
               ))}

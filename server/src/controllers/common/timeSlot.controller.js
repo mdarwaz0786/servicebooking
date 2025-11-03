@@ -29,12 +29,19 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
   } else {
     // Future date → all slots are available
     availableSlots = allSlots;
-  };
+  }
+
+  // ✅ Sort slots so AM comes first, then PM
+  availableSlots.sort((a, b) => {
+    const timeA = moment(a.time, "hh:mm A");
+    const timeB = moment(b.time, "hh:mm A");
+    return timeA - timeB; // this ensures AM slots come before PM
+  });
 
   // Format time in 12-hour AM/PM
   const slotsWithFormattedTime = availableSlots.map(slot => ({
     ...slot.toObject(),
-    time: moment.tz(slot.time, "hh:mm A", "Asia/Kolkata").format("hh:mm A")
+    time: moment(slot.time, "hh:mm A").format("hh:mm A"),
   }));
 
   return res.status(200).json({
@@ -46,6 +53,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     data: slotsWithFormattedTime,
   });
 });
+
 
 // Single time slot
 export const getSingleTimeSlot = asyncHandler(async (req, res) => {

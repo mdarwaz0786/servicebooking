@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const ServiceDetail = () => {
-  const { serviceDetailData, PriceFormat, imageCheck, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
+  const { serviceDetailData, PriceFormat, imageCheck, handleCartAddRemove, serviceDetailDataItem, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
   const data = serviceDetailData;
   const rating = data.ratings;
   const ratingCount = rating?.ratingCount;
@@ -38,7 +38,7 @@ const ServiceDetail = () => {
     const percent4 = ((count4 / totalRatings) * 100).toFixed(1);
     const percent5 = ((count5 / totalRatings) * 100).toFixed(1);
 
-    console.log(percent5);
+    // console.log(percent5);
   }
 
 
@@ -47,9 +47,6 @@ const ServiceDetail = () => {
 
     <div className="row">
       <div className="col-xl-12">
-        <div className="card border-0 shadow-none">
-          <div className="card-body">
-
             {/* Slider */}
             <div className="service-wrap mb-4">
               <div
@@ -64,6 +61,9 @@ const ServiceDetail = () => {
               </div>
             </div>
             {/* /Slider */}
+        <div className="card border-0 shadow-none">
+          <div className="card-body">
+
 
             <div className="service-head mb-2">
               <div className="d-flex align-items-center justify-content-between flex-wrap">
@@ -83,11 +83,33 @@ const ServiceDetail = () => {
               </div>
             </div>
 
-            <div>
+            
+
+            <div style={{    marginTop: '-30px'}}> 
               <div className="mb-5 mt-5">
                 <h4 className="fw-bold mb-2">Service Overview</h4>
                 <div>
                   {data?.shortDescription}
+                  
+                  <div className="col-md-2">
+                    <div className=" mt-1 justify-content-around align-items-center service-item-add-btn-section mb-0 mt-0">
+                        {(serviceDetailDataItem?.quantity) ? (
+                            <>
+                              <button className="btn btn-light border cart-item-btn" onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)} >-</button>
+                              <span className="mx-3 item-qty">{serviceDetailDataItem?.quantity ? serviceDetailDataItem?.quantity : 0}</span>
+                              <button className="btn btn-light border cart-item-btn" onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}>+</button>
+                            </>
+                        ) : (
+                            <button
+                              className="btn btn-light border cart-item-btn"
+                              onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
+                            >
+                              <i className="fa fa-shopping-cart"></i>&nbsp;Add
+                            </button>
+                        )}
+                    </div>
+                  </div>
+
                   <br />
                   {data?.fullDescription}
                 </div>
@@ -117,7 +139,7 @@ const ServiceDetail = () => {
                       {data.serviceIncluded.titles.map((item, index) => (
                         <div key={index} className="d-flex mb-3">
                           <i className="feather-check-circle text-success me-2" style={{ fontSize: "30px" }} />
-                          <span style={{ fontSize: "20px", color: "#00522c" }}>{item}</span>
+                          <span style={{ fontSize: "15px", color: "#00522c" }}>{item}</span>
                         </div>
                       ))}
                     </div>
@@ -148,12 +170,13 @@ const ServiceDetail = () => {
                           className="col-6 col-sm-6 col-md-3 d-flex justify-content-center"
                         >
                           <div
-                            className="d-flex flex-column align-items-center justify-content-center bg-gray-100 shadow-md"
+                            className="d-flex flex-column align-items-center justify-content-center bg-gray-100 "
                             style={{
                               borderRadius: "12px",
                               width: "100px",
                               height: "100px",
-                              objectFit: "contain"
+                              objectFit: "contain",
+                              boxShadow: '3px 3px 0px rgb(0 0 0 / 22%)',
                             }}
                           >
                             <img
@@ -287,7 +310,7 @@ const ServiceDetail = () => {
                     {/* Title */}
                     <h3
                       style={{
-                        fontSize: "40px",
+                        fontSize: "28px",
                         fontWeight: "600",
                         color: "#00522c",
                         marginBottom: "20px",
@@ -319,6 +342,10 @@ const ServiceDetail = () => {
                                 width: "100%",
                                 height: "100%",
                                 objectFit: "contain",
+                                boxShadow: '3px 3px 0px rgb(0 0 0 / 22%)',
+                                borderRadius: '5px',
+                                background: 'white',
+                                padding: '5px 5px',
                               }}
                             />
                           </div>
@@ -364,7 +391,7 @@ const ServiceDetail = () => {
                       {data?.gIPromise?.titles?.map((item, index) => (
                         <div key={index} className="d-flex mb-3">
                           <i className="feather-x-circle text-danger me-2" style={{ fontSize: "30px" }} />
-                          <span style={{ fontSize: "20px", color: "#00522c" }}>{item}</span>
+                          <span style={{ fontSize: "15px", color: "#00522c" }}>{item}</span>
                         </div>
                       ))}
                     </div>
@@ -383,7 +410,7 @@ const ServiceDetail = () => {
                       <div className="accordion accordion-customicon1 faq-accordion" id="accordionfaq">
 
                         {data.serviceFaq.faqs.map((item, index) => (
-                          <div className="accordion-item bg-light-500 mb-3">
+                          <div className="accordion-item bg-light-500 mb-3" key={index}>
                             <h2 className="accordion-header">
                               <button className={`accordion-button bg-light-500 br-10 fs-16 fw-medium ${index == 0 ? 'collapsed' : ''}`} type="button" data-bs-toggle="collapse" data-bs-target={`#faq${index}`} aria-expanded="false">
                                 {item.question}

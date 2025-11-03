@@ -6,7 +6,7 @@ const CategoryCard = ({ value = [] }) => {
 
   return (
     <div 
-      className="col-2 p-1 mb-1" 
+      className=" p-1 mb-1 modal-category-card-mini" 
       onClick={() => handleCategoryClick(value)}
     >
       

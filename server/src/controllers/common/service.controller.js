@@ -176,6 +176,9 @@ export const getServices = asyncHandler(async (req, res) => {
 // Get single service
 export const getServiceById = asyncHandler(async (req, res) => {
   const serviceId = req.params.id;
+  
+  let { userId = "" } = req.query;
+
 
   const service = await ServiceModel.findById(serviceId)
     .populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise serviceFaq")
@@ -234,12 +237,21 @@ export const getServiceById = asyncHandler(async (req, res) => {
     .limit(5)
     .lean();
 
+    let cartItems = [];
+
+    if (userId) {
+      cartItems = await CartModel.find({ userId }).lean();
+    };
+    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === serviceId);
+    const quantity = cartItem ? cartItem?.quantity : 0;
+
   service.ratings = {
     ratingCount,
     totalRatings,
     averageRating: Number(averageRating),
     latestReviews,
   };
+  service.quantity=quantity;
 
   return res.status(200).json({
     success: true,

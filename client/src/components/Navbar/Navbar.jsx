@@ -70,6 +70,11 @@ const Navbar = () => {
           <ul className="nav header-navbar-rht">
             <li className="nav-item pe-1">
               <>
+              {/* <Link to={'/cart'} className="btn btn-linear-primary me-1" 
+              // onClick={handleLinkClick}
+               >
+                <i className="ti ti-shopping-bag me-0" />
+              </Link> */}
                 {(localStorage.getItem("user")) ? (
                   <>
                     {(user?.role == 'user') ? (

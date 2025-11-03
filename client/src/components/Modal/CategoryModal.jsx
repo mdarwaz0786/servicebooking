@@ -21,16 +21,12 @@ const CategoryModal = () => {
           
 
           <div className="wizard-fieldset">
+           
             <Link
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                zIndex: 1,
-              }}
-              onClick={() => toggleModal("homeCategoryModal",false)}
+              className="modal-close-btn"
+              onClick={() => toggleModal("homeCategoryModal", false)}
             >
-              <i className="ti ti-circle-x-filled fs-20"></i>
+              <i className="fa fa-times"></i>
             </Link>
 
 

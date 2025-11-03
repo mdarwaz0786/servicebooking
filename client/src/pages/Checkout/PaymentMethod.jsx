@@ -1,12 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Link, useNavigate } from "react-router-dom";
 
 import CartItem from "../../components/Cart/CartItem";
 import { handlePayment } from "../../components/Payment/Razorpay";
+import PaymentModeModal from "../../components/Modal/PaymentModeModal ";
 
 const PaymentMethod = () => {
   const navigate = useNavigate();
+  const { modals, toggleModal } = useContext(AppContext);
 
    const { Urls,
      postData,
@@ -25,6 +27,9 @@ const PaymentMethod = () => {
      toast
      } = useContext(AppContext);
 
+     const [paymentMode, setpaymentMode] = useState('online')
+     const [paymentModeTemp, setpaymentModeTemp] = useState('')
+
 
    const handleBooking = async () => {
       try {
@@ -33,7 +38,7 @@ const PaymentMethod = () => {
           scheduleType:2,
           scheduleDate:bookingDate,
           scheduleTime:bookingTime,
-          paymentMode:"online",
+          paymentMode:paymentMode,
           paymentBy:'',
           isCouponUsed:0,
         }, Urls.createBooking, "POST",0,1);
@@ -72,6 +77,13 @@ const PaymentMethod = () => {
    }
 
 
+   const handlePaymentSelect = (mode) => {
+    console.log("Selected Payment Mode:", mode);
+    setpaymentMode(mode);
+    setpaymentModeTemp(mode);
+    toggleModal('paymentModeModal',false)
+  };
+
 
      const handleNext = () => {
         toggleStep('confirmation',false)
@@ -91,6 +103,19 @@ const PaymentMethod = () => {
             <h5 className="fw-bold text-success">Payment Method</h5>
           </div>
           <div className="d-flex align-items-center mb-2">
+
+            <Link className="btn btn-sm btn-success d-inline-flex align-items-center prev_btn mb-2 me-2"
+            onClick={() => toggleModal("paymentModeModal", true)}
+            >
+              <i className="fa fa-money-bill-alt me-1"></i>
+              {paymentModeTemp === 'online'
+                ? 'Online'
+                : paymentModeTemp === 'cod'
+                ? 'Cash'
+                : 'Payment Mode'}
+            </Link>
+
+
             <Link
               onClick={handlePre}
               className="btn btn-sm btn-success d-inline-flex align-items-center prev_btn mb-2"
@@ -105,7 +130,7 @@ const PaymentMethod = () => {
           {/* Total & Payment Button */}
           <div className="col-md-12">
             <div className="card total-card">
-              <div className="card-body p-3 d-flex justify-content-between flex-column">
+              <div className="card-body p-3 d-flex flex-column">
                 <div>
                   <CartItem/>
                 </div>
@@ -138,15 +163,30 @@ const PaymentMethod = () => {
                   <Link  className="btn btn-light w-100 next_btn mt-3"
                   onClick={handleBooking}
                   >
-                    Pay {PriceFormat(cartAmount.payableAmount)}
+                    {(paymentMode=='online')
+                    ?
+                    (
+                      <>Pay {PriceFormat(cartAmount.payableAmount)}</>
+                    )
+                    :
+                    (
+                      <>Book Now </>
+                    )
+                    }
+                    
                     
                   </Link>
+                  
+                  <h5 className="mt-2 fs-15">Cancellation Policy (Timing & Charges)</h5>
+                  <p > Free cancellations if done more than 24 hrs before the service or if a professional isn’t assigned. A fee will be charged otherwise.</p>
+
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <PaymentModeModal onSelect={handlePaymentSelect} />
     </fieldset>
   );
 };

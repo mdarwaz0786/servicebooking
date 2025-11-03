@@ -20,16 +20,12 @@ const LoginModal = () => {
         <div className="modal-content" style={{background: 'transparent', border: 0}}>
 
           <div className="wizard-fieldset">
-          <Link
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                zIndex: 1,
-              }}
-              onClick={() => toggleModal("loginModal",false)}
+          
+            <Link
+              className="modal-close-btn"
+              onClick={() => toggleModal("loginModal", false)}
             >
-              <i className="ti ti-circle-x-filled fs-20"></i>
+              <i className="fa fa-times"></i>
             </Link>
             
             <LoginForm />

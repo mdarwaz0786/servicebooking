@@ -8,12 +8,11 @@ const CategoryMiniCard = ({ value = [] }) => {
 
     <>
       {/* style={{boxShadow: '0px 0px 17px -9px rgba(0, 0, 0, 0.5)'}} */}
-      <div className="category p-0 rounded-3 overflow-hidden cursor-pointer mb-2" style={{ cursor: 'pointer' }} >
+      <div className="category-service rounded-3 cursor-pointer " style={{ cursor: 'pointer' }} >
         {/* card-body d-flex align-items-center gap-3 modal-category-card */}
-        <div className=" ">
 
           {/* Right Side Content */}
-          <div className="row align-items-center mb-2">
+          <div className="row align-items-center ">
             <div className="col-3">
               <img
                 src={imageCheck(value.icon)}
@@ -37,7 +36,7 @@ const CategoryMiniCard = ({ value = [] }) => {
               >{value.sort_description}</p> */}
             </div>
           </div>
-        </div>
+        
       </div>
     </>
 

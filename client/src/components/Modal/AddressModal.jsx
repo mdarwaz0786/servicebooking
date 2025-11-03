@@ -67,16 +67,12 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         <div className="modal-content" style={{ background: 'transparent', border: 0 }}>
 
           <div className="card shadow-lg border-0 m-0 p-4 rounded-4" style={{ width: "100%" }}>
+            
             <Link
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                zIndex: 1,
-              }}
+              className="modal-close-btn"
               onClick={() => toggleModal("addressModal", false)}
             >
-              <i className="ti ti-circle-x-filled fs-20"></i>
+              <i className="fa fa-times"></i>
             </Link>
             {/* Use Current Location */}
             <div className="mb-3">
