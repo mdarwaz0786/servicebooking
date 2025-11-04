@@ -16,7 +16,7 @@ export const getCartData = async (userId) => {
   let gst = 10;
   let gstAmount = 0;
   let gstPercent = '18%';
-  let discountAmount = 40;
+  let discountAmount = 0;
   let payableAmount = 0;
 
   cartItems.forEach((item) => {
