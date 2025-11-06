@@ -32,6 +32,9 @@ const PaymentMethod = () => {
 
 
    const handleBooking = async () => {
+
+   
+
       try {
         const response = await postData({
           addressId:bookingAddress,
@@ -51,19 +54,26 @@ const PaymentMethod = () => {
           toggleStep('payment', false);
           setcartItems([]);
           setcartAmount([]);
+          let success;
+          if(paymentMode=='online')
+          {
+            success = await handlePayment({
+              pId: response.data.booking._id,
+              type: "booking",
+              createUrl: Urls.createTransaction,
+              verifyUrl: Urls.verifyTransaction,
+              toast: toast
+            });
+          }
+          else{
+            success = true;
+          }
           
-          const success = await handlePayment({
-            pId: response.data.booking._id,
-            type: "booking",
-            createUrl: Urls.createTransaction,
-            verifyUrl: Urls.verifyTransaction,
-            toast: toast
-          });
-
-
+          
           if (success) {
-            toggleStep('confirmation', true);   // ✅ move forward
+            // toggleStep('confirmation', true);   // ✅ move forward
             toggleStep('payment', false);
+            navigate("/user/booking/"+response.data.booking._id);
           }
           else{
             navigate("/");

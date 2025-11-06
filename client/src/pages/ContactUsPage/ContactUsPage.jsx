@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 import { AppContext } from "../../context/AppContext";
+import BreadCrumb from "../BreadCrumb/BreadCrumb";
 
 const ContactUsPage = () => {
   const { Urls, postData, toast } = useContext(AppContext);
@@ -41,7 +42,68 @@ const ContactUsPage = () => {
   };
 
   return (
+    <>
+    <BreadCrumb data={{title:'Contact us'}} />
+    
     <div className="container py-5">
+      <div className="contact-details">
+        <div className="row justify-content-center">
+          {/* Phone Number */}
+          <div className="col-md-6 col-lg-4 d-flex">
+            <div className="card flex-fill">
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <span className="rounded-circle">
+                    <i className="ti ti-phone text-primary"></i>
+                  </span>
+                  <div className="ms-3">
+                    <h6 className="fs-18 mb-1">Phone Number</h6>
+                    <p className="fs-14 mb-0">(888) 888-8888</p>
+                    <p className="fs-14 mb-0">(123) 456-7890</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Email Address */}
+          <div className="col-md-6 col-lg-4 d-flex">
+            <div className="card flex-fill">
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <span className="rounded-circle">
+                    <i className="ti ti-mail text-primary"></i>
+                  </span>
+                  <div className="ms-3">
+                    <h6 className="fs-18 mb-1">Email Address</h6>
+                    <p className="fs-14 mb-0">truelysell@example.com</p>
+                    <p className="fs-14 mb-0">johnsmith@example.com</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Address */}
+          <div className="col-md-6 col-lg-4 d-flex">
+            <div className="card flex-fill">
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <span className="rounded-circle">
+                    <i className="ti ti-map-pin text-primary"></i>
+                  </span>
+                  <div className="ms-3">
+                    <h6 className="fs-18 mb-1">Address</h6>
+                    <p className="fs-14 mb-0">
+                      367 Hillcrest Lane, Irvine, California, United States
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="row align-items-start">
         {/* Left Side - Contact Form */}
         <h4 className="fw-bold mb-4">Contact us</h4>
@@ -138,6 +200,7 @@ const ContactUsPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

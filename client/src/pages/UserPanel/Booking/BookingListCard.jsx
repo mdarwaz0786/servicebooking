@@ -5,7 +5,7 @@ import { useContext } from "react";
 import Pagination from '../../../components/Pagination/Pagination';
 
 const BookingListCard = ({handlePagination}) => {
-    const { PriceFormat, myserviceListData, formatDateTime, imageCheck } = useContext(AppContext);
+    const { PriceFormat, myserviceListData, formatDateTime, formatDate, imageCheck } = useContext(AppContext);
   return ( 
     <>  
       {myserviceListData.map((value, index)=>(
@@ -30,7 +30,15 @@ const BookingListCard = ({handlePagination}) => {
                         <span className="book-item">Booking Date</span> <small className="me-2">: </small>{formatDateTime(value.createdAt)}
                         </li>
                         <li className="d-flex align-items-center mb-2">
-                        <span className="book-item">Amount</span> <small className="me-2">: </small> {PriceFormat(value.payableAmount)}<span className="badge badge-soft-primary ms-2">{value.paymentBy}</span>
+                        <span className="book-item">Schedule Date</span> <small className="me-2">: </small>{formatDate(value.scheduleDate)+' '+value.scheduleTime}
+                        </li>
+                        <li className="d-flex align-items-center mb-2">
+                        <span className="book-item">Amount</span> <small className="me-2">: </small> {PriceFormat(value.payableAmount)}
+                        {(value.paymentMode=='online')?(
+                            <><span className="badge badge-soft-success ms-2">Online</span></>
+                            ):(
+                                <><span className="badge badge-soft-success ms-2">COD</span></>
+                            )}
                         </li>
                         <li className="d-flex align-items-center mb-2">
                         <span className="book-item">Location</span> <small className="me-2">: </small>{value?.address?.houseNumber}, {value?.address?.landmark}
@@ -49,11 +57,21 @@ const BookingListCard = ({handlePagination}) => {
                         ):(null)
                         }
 
+                        <li className="d-flex align-items-center mb-2">
+                        <span className="book-item">Booking Status</span> <small className="me-2">: </small>
+                        
+                            {(value.status=='new')?(
+                                <><span className="badge badge-soft-info ms-2">Confirm</span></>
+                            ):(
+                                <><span className="badge badge-soft-info ms-2">{value?.status}</span></>
+                            )}
+                            
+                        </li>
+
                     </ul>
                     </div>
                 </div>
                 <div className="text-center">
-                    <span className="badge badge-soft-info ms-2">{value?.status}</span>
                     <div className="booking-otp">
                         {value?.otp?.split("").map((digit, index) => (
                         <span key={index} className="otp-box">

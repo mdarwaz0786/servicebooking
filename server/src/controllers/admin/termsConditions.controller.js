@@ -56,32 +56,60 @@ export const getTermsList = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE TERMS ---------------------
 export const getTermsById = asyncHandler(async (req, res) => {
-  const terms = await TermsConditionsModel.findById(req.params.id).lean();
+  // Find the first Terms & Conditions document
+  const terms = await TermsConditionsModel.findOne();
+
   if (!terms) throw new ApiError(404, "Terms not found");
 
-  return res.status(200).json({ success: true, data: terms });
+  return res.status(200).json({
+    success: true,
+    data: terms,
+  });
 });
 
 // --------------------- UPDATE TERMS ---------------------
 export const updateTerms = asyncHandler(async (req, res) => {
   const { title, effectiveDate, description, status } = req.body;
 
-  const terms = await TermsConditionsModel.findById(req.params.id);
-  if (!terms) throw new ApiError(404, "Terms not found");
+  // Check if any Terms & Conditions record already exists
+  let terms = await TermsConditionsModel.findOne();
+  
 
-  terms.title = title || terms.title;
-  terms.effectiveDate = effectiveDate || terms.effectiveDate;
-  terms.description = description || terms.description;
-  if (status !== undefined) terms.status = status;
+  if (terms) {
+    // ------------------ UPDATE EXISTING ------------------
+    terms.title = title || terms.title;
+    terms.effectiveDate = effectiveDate || terms.effectiveDate;
+    terms.description = description || terms.description;
+    if (status !== undefined) terms.status = status;
 
-  await terms.save();
+    await terms.save();
 
-  return res.status(200).json({
-    success: true,
-    message: "Terms updated successfully",
-    data: terms,
-  });
+    return res.status(200).json({
+      success: true,
+      message: "Terms & Conditions updated successfully",
+      data: terms,
+    });
+  } else {
+    // ------------------ CREATE NEW ------------------
+    const newTerms = await TermsConditionsModel.create({
+      title: title || "Terms and Conditions",
+      effectiveDate: effectiveDate || new Date(),
+      description: description || "",
+      status: status !== undefined ? status : true,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Terms & Conditions created successfully",
+      data: newTerms,
+    });
+  }
 });
+
+
+
+
+
 
 // --------------------- DELETE TERMS ---------------------
 export const deleteTerms = asyncHandler(async (req, res) => {

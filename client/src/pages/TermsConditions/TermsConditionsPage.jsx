@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
+import BreadCrumb from "../BreadCrumb/BreadCrumb";
 
 const TermsConditionsPage = () => {
 
@@ -36,17 +37,19 @@ const TermsConditionsPage = () => {
 
 
   return (
+    <>
+    <BreadCrumb data={{title:data.title}} />
     <div className="container my-5">
       <div className="col-md-10 mx-auto">
-        <h4 className="fw-bold mb-3">{data.title}</h4>
         <p className="text-muted mb-4">Effective Date: {formatDate(data.effectiveDate)}</p>
 
         <div
             className="mt-1"
             dangerouslySetInnerHTML={{ __html: data.description }}
-          ></div>
+            ></div>
       </div>
     </div>
+    </>
   );
 };
 

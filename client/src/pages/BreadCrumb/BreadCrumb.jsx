@@ -1,14 +1,14 @@
-const BreadCrumb = () => {
+const BreadCrumb = ({data}) => {
     return (
       <div className="breadcrumb-bar text-center">
         <div className="container">
           <div className="row">
             <div className="col-md-12 col-12">
-              <h2 className="breadcrumb-title mb-2">Categories</h2>
+              <h2 className="breadcrumb-title mb-2">{data?.title}</h2>
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb justify-content-center mb-0">
-                  <li className="breadcrumb-item"><a href="index.html"><i className="ti ti-home-2" /></a></li>
-                  <li className="breadcrumb-item active" aria-current="page">Categories</li>
+                  <li className="breadcrumb-item"><a href="/"><i className="ti ti-home-2" /></a></li>
+                  <li className="breadcrumb-item active" aria-current="page">{data?.title}</li>
                 </ol>
               </nav>
             </div>

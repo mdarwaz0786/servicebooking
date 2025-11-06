@@ -21,45 +21,45 @@ export const AppProvider = ({ children }) => {
 
   const [bodyLoaderShow, setbodyLoaderShow] = useState(false);
   const [pagination, setpagination] = useState([]);
-
+  
   const [categoryModalListData, setcategoryModalListData] = useState([]);
   const [categoryModalItemData, setcategoryModalItemData] = useState([]);
-
+  
   const [categoryListData, setcategoryListData] = useState([]);
   const [categoryItemData, setcategoryItemData] = useState([]);
-
+  
   const [subcategoryListData, setsubcategoryListData] = useState([]);
   const [subcategoryItemData, setsubcategoryItemData] = useState([]);
-
+  
   const [subsubcategoryListData, setsubsubcategoryListData] = useState([]);
   const [subsubcategoryItemData, setsubsubcategoryItemData] = useState([]);
-
+  
   const [subsubsubcategoryListData, setsubsubsubcategoryListData] = useState([]);
   const [subsubsubcategoryItemData, setsubsubsubcategoryItemData] = useState([]);
-
+  
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
-
+  
   const [serviceDetailData, setserviceDetailData] = useState([]);
   const [serviceDetailDataItem, setserviceDetailDataItem] = useState();
-
+  
   const [myserviceListData, setmyserviceListData] = useState([]);
-
+  
   const [categoryModalImage, setcategoryModalImage] = useState([]);
-
+  
   const [servicePageCategoryData, setservicePageCategoryData] = useState([]);
   const [servicePageName, setservicePageName] = useState([]);
   const [homePageData, sethomePageData] = useState([]);
-
-
+  
+  
   const [cartItems, setcartItems] = useState([]);
   const [cartAmount, setcartAmount] = useState([]);
-
+  
   const [user, setuser] = useState();
-
+  
   const [servicePageCartShow, setservicePageCartShow] = useState(false);
-
-
+  
+  
   // booking states
   const [bookingAddress, setbookingAddress] = useState(false);
   const [bookingDate, setbookingDate] = useState(false);
@@ -67,15 +67,15 @@ export const AppProvider = ({ children }) => {
   const [bookingData, setbookingData] = useState([]);
   const [bookingItems, setbookingItems] = useState([]);
   const [bookingAmount, setbookingAmount] = useState([]);
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
   const SERVER_BASE_URL = import.meta.env.VITE_API_SERVER_BASE_URL;
   const VITE_APP_NAME = import.meta.env.VITE_APP_NAME;
-
+  
   // ✅ Base API URLs
   const apiUrl = () => {
     // const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/';
@@ -83,13 +83,14 @@ export const AppProvider = ({ children }) => {
     const commurl = apiUrl + 'common/';
     const userUrl = apiUrl + 'user/';
     const servicemanUrl = apiUrl + 'serviceman/';
-
+    
     return {
       login: `${userUrl}auth/login`,
       verifyOtp: `${userUrl}auth/verify-otp`,
       logout: `${userUrl}logout`,
-
+      
       homeDetail: `${commurl}home`,
+      
 
       categoryList: `${commurl}category`,
       subCategoryList: `${commurl}sub-category`,
@@ -411,6 +412,7 @@ export const AppProvider = ({ children }) => {
 
 
   // checkFormSteps
+  const [checkoutpageloading, setcheckoutpageloading] = useState(true);
   const [steps, setsteps] = useState({
     location: true,
     additionalservice: false,
@@ -610,8 +612,11 @@ export const AppProvider = ({ children }) => {
       VITE_APP_NAME,
       toggleModal,
       modals,
-      toggleStep,
+      
+      checkoutpageloading,
+      setcheckoutpageloading,
       steps,
+      toggleStep,
       setsteps,
       Urls,
       postData,

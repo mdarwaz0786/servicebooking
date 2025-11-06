@@ -6,7 +6,7 @@ import AddressModal from "../../components/Modal/AddressModal";
 
 
 const LocationBooking = () => {
-  const { steps, toggleStep, Urls, postData, toast, generateUniqueId, toggleModal, setbookingAddress } =
+  const { steps, toggleStep, Urls, postData, toast, generateUniqueId, toggleModal, setbookingAddress  } =
     useContext(AppContext);
   const [addresses, setaddresses] = useState([]);
   const [selectedaddress, setselectedaddress] = useState();
@@ -19,6 +19,7 @@ const LocationBooking = () => {
       if(response?.data)
       {
         setselectedaddress(response.data[0]._id)
+        setbookingAddress(response.data[0]._id)
       }
     } catch (error) {
       console.error("Address API Error:", error);
@@ -59,7 +60,7 @@ const LocationBooking = () => {
         {/* Header */}
         <div className="d-flex align-items-center justify-content-between flex-wrap mb-3">
           <h5 className="fw-bold text-success">Select Location</h5>
-          <span className="badge bg-light text-success">Total: {addresses.length}</span>
+          {/* <span className="badge bg-light text-success">Total: {addresses.length}</span> */}
           <button className="btn btn-success btn-sm" onClick={() => toggleModal("addressModal", true)}>
             Add New Address
           </button>

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 import Pagination from "../../components/Pagination/Pagination";
+import BreadCrumb from "../BreadCrumb/BreadCrumb";
 
 const CareerPage = () => {
 
@@ -51,10 +52,12 @@ const CareerPage = () => {
   ];
 
   return (
+
+    <>
+    <BreadCrumb data={{title:'Join Our Team'}} />
     <div className="container py-5">
       {/* Hero Section */}
       <section className="text-center mb-5">
-        <h2 className="fw-bold">Join Our Team</h2>
         <p className="lead mt-3">
           We're looking for passionate individuals who want to make a real difference.
           Explore opportunities to grow, learn, and innovate with us.
@@ -118,6 +121,7 @@ const CareerPage = () => {
         <p>We’re always on the lookout for talented people. Email us at <a href="mailto:careers@company.com">careers@company.com</a> with your resume and we’ll get in touch!</p>
       </section>
     </div>
+    </>
   );
 };
 

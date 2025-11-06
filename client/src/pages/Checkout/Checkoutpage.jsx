@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 
 const Checkoutpage = () => {
 
-  const { Urls, postData, user, toggleStep, cartAmount, bookingAmount } = useContext(AppContext);
+  const { Urls, postData, user, steps, toggleStep, cartAmount, bookingAmount, checkoutpageloading, setcheckoutpageloading } = useContext(AppContext);
 
   useEffect(() => {
     toggleStep('location', true);
@@ -26,8 +26,12 @@ const Checkoutpage = () => {
     toggleStep('cart', false);
     toggleStep('payment', false);
     toggleStep('confirmation', false);
-  }, []);  
 
+    
+    
+  }, []);  
+  
+  if(cartAmount.amount) setcheckoutpageloading(false);
   
 
 
@@ -44,42 +48,53 @@ const Checkoutpage = () => {
 								<div className="row">
                   
                     <>
-                    {(user)?(
-                      <>
-                      {(cartAmount.amount)?(
+                      {(!checkoutpageloading)?(
+                        
                         <>
-                            <BookingSidebar />
-                            <div className="col-lg-9">
-                              <LocationBooking />
-                              <AdditionalServices />
-                              <BookingDateTime />
-                              <PersonalInformation />
-                              <Cart />
-                              <PaymentMethod />
-                            </div>
-                          </>
-                          ):(
+                        {(user)?(
+                          <>
+                          {(cartAmount.amount)?(
                             <>
-                            {(bookingAmount.amount)?(
-                              <>
                                 <BookingSidebar />
                                 <div className="col-lg-9">
-                                  <Confirmation />
+                                  <LocationBooking />
+                                  <AdditionalServices />
+                                  <BookingDateTime />
+                                  <PersonalInformation />
+                                  <Cart />
+                                  <PaymentMethod />
                                 </div>
                               </>
-                            ):(
-                              <>
-                                <h1 className="text-center mb-2">Cart is empty!</h1>
-                                <Link to={'/'} className="btn btn-primary" style={{width: 'fit-content',margin: '0 auto'}}>Go Home</Link>
-                              </>
-                            )}
-                            </>
-                          )}
-                        
+                              ):(
+                                <>
+                                {(bookingAmount.amount)?(
+                                  <>
+                                    <BookingSidebar />
+                                    <div className="col-lg-9">
+                                      <Confirmation />
+                                    </div>
+                                  </>
+                                ):(
+                                  <>
+                                    <h1 className="text-center mb-2">Cart is empty!</h1>
+                                    <Link to={'/'} className="btn btn-primary" style={{width: 'fit-content',margin: '0 auto'}}>Go Home</Link>
+                                  </>
+                                )}
+                                </>
+                              )}
+                            
+                          </>
+                          ):(
+                          <LoginForm/>
+                      )}
                       </>
-                      ):(
-                      <LoginForm/>
+                      
+                    ):(
+                    <div>
+
+                    </div>
                     )}
+
                     </>
 
 
