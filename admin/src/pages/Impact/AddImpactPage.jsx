@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,9 @@ import apis from "../../apis/apis";
 const AddImpactPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+
+  let id = 'fdgfd';
+  const [descriptionKey, setdescriptionKey] = useState(1);
 
   const [formData, setFormData] = useState({
     title: "Green India Team Impact",
@@ -32,7 +35,7 @@ const AddImpactPage = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(apis.impact.create, formData, {
+      const res = await axios.patch(`${apis.impact.update}/${id}`, formData, {
         headers: { Authorization: validToken },
       });
 
@@ -53,6 +56,29 @@ const AddImpactPage = () => {
       description: "",
     });
   };
+
+
+  useEffect(() => { 
+    if (id || id=='') {
+      setLoading(true);
+      axios.get(`${apis.impact.get}/${id}`, { headers: { Authorization: validToken } })
+        .then(res => {
+          if (res.data?.success) {
+            const { title, description, effectiveDate } = res.data.data;
+            setFormData({
+              title: title || 'Green India Team Impact', // Ensure title has a default if missing
+              description: description || '', // Ensure description is not null
+              effectiveDate: effectiveDate
+              ? effectiveDate.split("T")[0]
+              : "", // format YYYY-MM-DD
+            });
+            setdescriptionKey(2)            
+          };
+        })
+        .catch(err => toast.error(err?.response?.data?.message || err.message))
+        .finally(() => setLoading(false));
+    };
+  }, []);
 
   return (
     <div className="page-wrapper">
@@ -86,6 +112,7 @@ const AddImpactPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <TextEditor
+                  key={descriptionKey}
                   value={formData.description}
                   onChange={(value) =>
                     setFormData((prev) => ({ ...prev, description: value }))

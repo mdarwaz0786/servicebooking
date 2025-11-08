@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 
 
 const ServiceListCard = () => {
-    const { handleServiceDetail, serviceListData, PriceFormat, handleCartAddRemove, imageCheck, toggleModal } = useContext(AppContext);
+    const { handleRateCardDetail, handleServiceDetail, serviceListData, PriceFormat, handleCartAddRemove, imageCheck, toggleModal } = useContext(AppContext);
 
 
 
@@ -64,7 +64,7 @@ const ServiceListCard = () => {
                                     {value?.ratings?.averageRating} ({value?.ratings?.totalRatings} reviews)
                                 </span>
                             </div>
-                            <p className="m-0"><i className="fa fa-inr" />
+                            <p className="m-0">
                                 {PriceFormat(value.salePrice)}&nbsp;
                                 <span className="fs-12">
                                     <span className="old-price text-muted text-decoration-line-through">{PriceFormat(value.mrpPrice)}</span>
@@ -74,7 +74,23 @@ const ServiceListCard = () => {
                             {/* <p><i className="fa fa-tag" />499 per AC</p> */}
                             <p className="m-0"><span className="badge badge-success fs-15 mb-2">{PriceFormat(value.salePrice)} OFF</span></p>
 
-                            {value.shortDescription}
+                            <div
+                            className="mt-1"
+                            dangerouslySetInnerHTML={{ __html: value.shortDescription }}
+                            ></div>
+
+                            {(value?.rateCard)?(
+                                <button 
+                                className="btn btn-primary-ghost w-75 d-flex justify-content-between align-items-center"
+                                onClick={() =>
+                                    handleRateCardDetail(value._id,value)
+                                }
+                                >
+                                    Standard rate card
+                                    <i className="fa fa-angle-right"></i>
+                                </button>
+                            ):(null)}
+
 
                         </div>
                     </div>

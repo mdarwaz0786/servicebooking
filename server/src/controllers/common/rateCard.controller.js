@@ -75,3 +75,20 @@ export const getRateCardById = asyncHandler(async (req, res) => {
     data: rateCard,
   });
 });
+
+export const getRateCardByServiceId = asyncHandler(async (req, res) => {
+  const { serviceId } = req.params;
+
+  // Find all rate cards that contain this service ID in the 'services' array
+  const rateCards = await RateCardModel.findOne({ services: serviceId }).populate("services");
+
+  if (!rateCards || rateCards.length === 0) {
+    throw new ApiError(404, "No rate card found for this service");
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Data fetched successfully",
+    data: rateCards,
+  });
+});

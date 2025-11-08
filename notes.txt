@@ -1,3 +1,6 @@
+https://truelysell.dreamstechnologies.com/html/template/index.html
+
+
 // after otp (Earning  Screen => hour - amount)
 // service category choose karega (multiple), name, email, DOB, working history(Fresher, or Experience(compnay, number of year)), permanenet address, current address, reference name 1, reference name 2,
 // reference 1 mobile , reference 2 mobile, profile image.

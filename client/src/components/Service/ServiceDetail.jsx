@@ -89,7 +89,10 @@ const ServiceDetail = () => {
               <div className="mb-5 mt-5">
                 <h4 className="fw-bold mb-2">Service Overview</h4>
                 <div>
-                  {data?.shortDescription}
+                  <div
+                  className="mt-1"
+                  dangerouslySetInnerHTML={{ __html: data?.shortDescription }}
+                  ></div>
                   
                   <div className="col-md-2">
                     <div className=" mt-1 justify-content-around align-items-center service-item-add-btn-section mb-0 mt-0">
@@ -111,7 +114,11 @@ const ServiceDetail = () => {
                   </div>
 
                   <br />
-                  {data?.fullDescription}
+                  
+                  <div
+                  className="mt-1"
+                  dangerouslySetInnerHTML={{ __html: data?.fullDescription }}
+                  ></div>
                 </div>
               </div>
 

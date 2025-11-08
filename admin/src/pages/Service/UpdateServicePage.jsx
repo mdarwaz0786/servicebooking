@@ -5,12 +5,14 @@ import { useDropzone } from "react-dropzone";
 import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate, useParams } from "react-router-dom";
+import TextEditor from "../../components/Form/TextEditor";
 
 const UpdateServicePage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const [descriptionKey, setdescriptionKey] = useState(1);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subSubCategories, setSubSubCategories] = useState([]);
@@ -74,6 +76,9 @@ const UpdateServicePage = () => {
           if (s?.image) setPreview(`${BASE_URL}/${s?.image}`);
           if (s?.icon) setIconPreview(`${BASE_URL}/${s?.icon}`);
           if (s?.popupImage) setPopupImagePreview(`${BASE_URL}/${s?.popupImage}`);
+
+          setdescriptionKey(2)
+
         };
       } catch (error) {
         console.log(error.message);
@@ -453,25 +458,27 @@ const UpdateServicePage = () => {
               {/* Short Description */}
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
-                <input
-                  type="text"
+                <TextEditor
+                  key={descriptionKey}
                   name="shortDescription"
                   value={formData.shortDescription}
                   onChange={handleChange}
-                  className="form-control"
+                  placeholder="Enter impact Short Description..."
+                  height={300}
                 />
               </div>
 
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <textarea
-                  name="fullDescription"
+                <TextEditor
+                  key={descriptionKey}
                   value={formData.fullDescription}
+                  name="fullDescription"
                   onChange={handleChange}
-                  className="form-control"
-                  rows="3"
-                ></textarea>
+                  placeholder="Enter impact Full Description..."
+                  height={300}
+                />
               </div>
 
               {/* Image */}

@@ -5,6 +5,7 @@ import Services from "./Services";
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import RateCardModal from "../../components/Modal/RateCardModal";
 
 const ServicesPage = () => {    
  const { slug } = useParams();
@@ -36,6 +37,7 @@ useEffect(() => {
     <>
       {/* <BreadCrumb /> */}
       <Services />
+      <RateCardModal />
     </>
   );
 };

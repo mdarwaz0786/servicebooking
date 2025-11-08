@@ -7,6 +7,7 @@ import SubSubSubCategoryModel from "../../models/subSubSubCategory.model.js";
 import SlugModel from "../../models/slug.model.js";
 import ReviewModel from "../../models/review.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
+import RateCardModel from "../../models/rateCard.model.js"; // 🔹 Added
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -18,16 +19,16 @@ const removeServices = (doc) => {
     doc?.forEach((d) => {
       if (d?.services) {
         d.services = undefined;
-      };
+      }
     });
   } else {
     if (doc?.services) {
       doc.services = undefined;
-    };
-  };
+    }
+  }
 };
 
-// Get all services
+// ==================== GET ALL SERVICES ====================
 export const getServices = asyncHandler(async (req, res) => {
   let { search, status, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
@@ -39,21 +40,10 @@ export const getServices = asyncHandler(async (req, res) => {
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
   if (status !== undefined) filters.status = status === "true";
 
-  if (categoryId) {
-    filters.categoryId = categoryId;
-  };
-
-  if (subCategoryId) {
-    filters.subCategoryId = subCategoryId;
-  };
-
-  if (subSubCategoryId) {
-    filters.subSubCategoryId = subSubCategoryId;
-  };
-
-  if (subSubSubCategoryId) {
-    filters.subSubSubCategoryId = subSubSubCategoryId;
-  };
+  if (categoryId) filters.categoryId = categoryId;
+  if (subCategoryId) filters.subCategoryId = subCategoryId;
+  if (subSubCategoryId) filters.subSubCategoryId = subSubCategoryId;
+  if (subSubSubCategoryId) filters.subSubSubCategoryId = subSubSubCategoryId;
 
   let data, name, categoryList;
 
@@ -65,7 +55,7 @@ export const getServices = asyncHandler(async (req, res) => {
         success: false,
         message: `No resource found for slug: ${slug}`,
       });
-    };
+    }
 
     if (slugData.collectionName === "Category") {
       filters.categoryId = slugData.documentId;
@@ -90,8 +80,8 @@ export const getServices = asyncHandler(async (req, res) => {
       filters._id = slugData.documentId;
       data = await ServiceModel.findById(slugData.documentId);
       name = data.name;
-    };
-  };
+    }
+  }
 
   const services = await ServiceModel
     .find(filters)
@@ -100,21 +90,23 @@ export const getServices = asyncHandler(async (req, res) => {
     .limit(limit)
     .lean();
 
-  let cartItems = [];
+  // 🔹 Fetch rate cards related to these services
+  const serviceIds = services.map((s) => s._id);
+  const rateCards = await RateCardModel.find({ services: { $in: serviceIds } }).select("services");
+  const serviceIdsWithRateCards = new Set(rateCards.flatMap(r => r.services.map(id => id.toString())));
 
+  let cartItems = [];
   if (userId) {
     cartItems = await CartModel.find({ userId }).lean();
-  };
+  }
 
-  const serviceIds = services?.map((s) => s?._id);
   const bookingItems = await BookingItemModel.find({ serviceId: { $in: serviceIds } }).select("serviceId bookingId");
-
   const serviceToBookingIds = {};
   bookingItems.forEach((b) => {
     const sid = b?.serviceId?.toString();
     if (!serviceToBookingIds[sid]) {
       serviceToBookingIds[sid] = [];
-    };
+    }
     serviceToBookingIds[sid].push(b?.bookingId);
   });
 
@@ -135,11 +127,10 @@ export const getServices = asyncHandler(async (req, res) => {
       if (rating) {
         sum += rating;
         count++;
-      };
+      }
     });
 
     const averageRating = count > 0 ? Number((sum / count).toFixed(1)) : 0;
-
     const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
     const quantity = cartItem ? cartItem?.quantity : 0;
 
@@ -150,6 +141,7 @@ export const getServices = asyncHandler(async (req, res) => {
         averageRating,
       },
       quantity,
+      rateCard: serviceIdsWithRateCards.has(sid), // 🔹 true/false
     };
   });
 
@@ -173,18 +165,21 @@ export const getServices = asyncHandler(async (req, res) => {
   });
 });
 
-// Get single service
+// ==================== GET SINGLE SERVICE ====================
 export const getServiceById = asyncHandler(async (req, res) => {
   const serviceId = req.params.id;
-  
   let { userId = "" } = req.query;
-
 
   const service = await ServiceModel.findById(serviceId)
     .populate("serviceIncluded requirementFromCustomer whyChooseUs expertTechnician brandLogo gIPromise serviceFaq")
     .lean();
 
   if (!service) throw new ApiError(404, "Service not found");
+
+  // 🔹 Fetch full rate card for this service
+  const rateCard = await RateCardModel.findOne({ services: serviceId })
+    .populate("services")
+    .lean();
 
   removeServices(service?.serviceIncluded);
   removeServices(service?.requirementFromCustomer);
@@ -194,7 +189,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   removeServices(service?.gIPromise);
   removeServices(service?.serviceFaq);
 
-  const bookingItems = await BookingItemModel.find({ serviceId: serviceId }).select("bookingId");
+  const bookingItems = await BookingItemModel.find({ serviceId }).select("bookingId");
   const bookingIds = bookingItems.map((b) => b?.bookingId);
 
   const ratingStats = await ReviewModel.aggregate([
@@ -207,14 +202,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const ratingCount = {
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-  };
-
+  const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   let totalRatings = 0;
   let sumRatings = 0;
 
@@ -227,23 +215,19 @@ export const getServiceById = asyncHandler(async (req, res) => {
   const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
 
   const latestReviews = await ReviewModel
-    .find({
-      bookingId: { $in: bookingIds },
-      status: true,
-    })
+    .find({ bookingId: { $in: bookingIds }, status: true })
     .select("rating description userId createdAt updatedAt")
     .populate("user", "-password -role -createdAt -updatedAt")
     .sort({ createdAt: -1 })
     .limit(5)
     .lean();
 
-    let cartItems = [];
-
-    if (userId) {
-      cartItems = await CartModel.find({ userId }).lean();
-    };
-    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === serviceId);
-    const quantity = cartItem ? cartItem?.quantity : 0;
+  let cartItems = [];
+  if (userId) {
+    cartItems = await CartModel.find({ userId }).lean();
+  }
+  const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === serviceId);
+  const quantity = cartItem ? cartItem?.quantity : 0;
 
   service.ratings = {
     ratingCount,
@@ -251,7 +235,10 @@ export const getServiceById = asyncHandler(async (req, res) => {
     averageRating: Number(averageRating),
     latestReviews,
   };
-  service.quantity=quantity;
+  service.quantity = quantity;
+
+  // 🔹 Add full rateCard details
+  service.rateCard = rateCard || null;
 
   return res.status(200).json({
     success: true,

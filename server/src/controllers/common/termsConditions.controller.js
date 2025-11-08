@@ -45,7 +45,7 @@ export const getTermsList = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE TERMS ---------------------
 export const getTermsById = asyncHandler(async (req, res) => {
-  const terms = await TermsConditionsModel.findById(req.params.id).lean();
+  const terms = await TermsConditionsModel.findOne();
   if (!terms) throw new ApiError(404, "Terms not found");
 
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: terms });

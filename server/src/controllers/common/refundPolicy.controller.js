@@ -46,7 +46,7 @@ export const getRefundPolicies = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE REFUND POLICY ---------------------
 export const getRefundPolicyById = asyncHandler(async (req, res) => {
-  const refundPolicy = await RefundPolicyModel.findById(req.params.id).lean();
+  const refundPolicy = await RefundPolicyModel.findOne();
 
   if (!refundPolicy) {
     throw new ApiError(404, "Refund Policy not found");

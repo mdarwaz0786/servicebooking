@@ -42,6 +42,8 @@ export const AppProvider = ({ children }) => {
   
   const [serviceDetailData, setserviceDetailData] = useState([]);
   const [serviceDetailDataItem, setserviceDetailDataItem] = useState();
+
+  const [rateCardDetailData, setrateCardDetailData] = useState([]);
   
   const [myserviceListData, setmyserviceListData] = useState([]);
   
@@ -99,10 +101,13 @@ export const AppProvider = ({ children }) => {
       serviceList: `${commurl}service`,
       serviceDetail: `${commurl}service`,
 
+      rateCardDetail: `${commurl}rate-card`,
+
       blog: `${commurl}blog`,
       blogDetail: `${commurl}blog/detail`,
 
       career: `${commurl}job-posting`,
+      jobApply: `${commurl}job-application`,
 
       termCondition: `${commurl}terms-conditions/68f9c1b3d21c16a35f074cc1`, 
       privacyPolicy: `${commurl}privacy-policy/68f9c40128f9e5ad117c82a1`,
@@ -401,6 +406,7 @@ export const AppProvider = ({ children }) => {
     addressModal: false,
     BookignStartModal: false,
     ServiceDetailModal: false,
+    RateCardModal: false,
     paymentModeModal: false,
   });
   const toggleModal = (modalName, isOpen) => {
@@ -562,6 +568,21 @@ export const AppProvider = ({ children }) => {
     }
   }
 
+  const handleRateCardDetail = async (id, item) => {
+    
+    try {
+      const response = await postData({userId:generateUniqueId()}, Urls.rateCardDetail + '/' + id, "GET", 0, 1);
+      if (response.success) {
+        if (response?.success) {
+          setrateCardDetailData(response.data);
+          toggleModal("RateCardModal", true)
+        }
+      }
+    } catch (error) {
+      console.error("Cart API Error:", error);
+    }
+  }
+
 
   const handleHome = async () => {
     try {
@@ -680,6 +701,10 @@ export const AppProvider = ({ children }) => {
       setserviceListData,
       serviceItemData,
       setserviceItemData,
+
+      rateCardDetailData,
+      setrateCardDetailData,
+      handleRateCardDetail,
 
       servicePageCategoryData,
       setservicePageCategoryData,

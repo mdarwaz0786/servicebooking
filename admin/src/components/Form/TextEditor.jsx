@@ -5,7 +5,7 @@ import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-const TextEditor = ({ value = "", onChange, placeholder = "Start typing...", height = 300, }) => {
+const TextEditor = ({ value = "", onChange, placeholder = "Start typing...", height = 300, name='' }) => {
   const [editorState, setEditorState] = useState(() => {
     if (value) {
       const blocksFromHtml = htmlToDraft(value);
@@ -20,7 +20,14 @@ const TextEditor = ({ value = "", onChange, placeholder = "Start typing...", hei
   const handleEditorChange = (state) => {
     setEditorState(state);
     const html = draftToHtml(convertToRaw(state.getCurrentContent()));
-    onChange(html);
+    if (onChange) {
+      onChange({
+        target: {
+          name: name,
+          value: html,
+        },
+      });
+    }
   };
 
   return (

@@ -45,7 +45,7 @@ export const getImpacts = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE IMPACT ---------------------
 export const getImpactById = asyncHandler(async (req, res) => {
-  const impact = await ImpactModel.findById(req.params.id).lean();
+  const impact = await ImpactModel.findOne();
 
   if (!impact) {
     throw new ApiError(404, "Impact not found");

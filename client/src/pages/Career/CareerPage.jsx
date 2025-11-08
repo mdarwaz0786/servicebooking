@@ -75,7 +75,7 @@ const CareerPage = () => {
                   <h5 className="card-title">{job.title}</h5>
                   <p className="card-subtitle text-muted mb-2">{job.location} | {job.employmentType}</p>
                   <p className="card-text">{job.shortDescription}</p>
-                  <Link to="#" className="btn btn-primary btn-sm mt-auto">Apply Now</Link>
+                  <Link to={`/career/${job._id}`} className="btn btn-primary btn-sm mt-auto">Apply Now</Link>
                 </div>
               </div>
             </div>

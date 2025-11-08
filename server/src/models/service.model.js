@@ -41,7 +41,7 @@ const serviceSchema = new mongoose.Schema({
   shortDescription: {
     type: String,
     trim: true,
-    maxlength: [250, "Short description must not exceed 250 characters"],
+    maxlength: [500, "Short description must not exceed 250 characters"],
   },
   fullDescription: {
     type: String,

@@ -50,7 +50,7 @@ const AddTermsConditionsPage = () => {
       });
 
       if (res.data.success) {
-        toast.success("Terms & Conditions created successfully");
+        toast.success(res.data.message);
         navigate(-1);
       }
     } catch (error) {
@@ -128,7 +128,7 @@ const AddTermsConditionsPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <TextEditor
-                key={descriptionKey}
+                  key={descriptionKey}
                   value={formData.description}
                   onChange={handleDescriptionChange}
                   placeholder="Enter terms and conditions..."

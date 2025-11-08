@@ -56,7 +56,7 @@ export const getPrivacyPolicies = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE PRIVACY POLICY ---------------------
 export const getPrivacyPolicyById = asyncHandler(async (req, res) => {
-  const policy = await PrivacyPolicyModel.findById(req.params.id).lean();
+  const policy = await PrivacyPolicyModel.findOne();
 
   if (!policy) {
     throw new ApiError(404, "Privacy Policy not found");
@@ -67,25 +67,41 @@ export const getPrivacyPolicyById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE PRIVACY POLICY ---------------------
 export const updatePrivacyPolicy = asyncHandler(async (req, res) => {
-  const { title, description, effectiveDate, status } = req.body;
+  const { title, effectiveDate, description, status } = req.body;
 
-  const policy = await PrivacyPolicyModel.findById(req.params.id);
-  if (!policy) {
-    throw new ApiError(404, "Privacy Policy not found");
+  // Check if any Privacy Policy record already exists
+  let terms = await PrivacyPolicyModel.findOne();
+  
+
+  if (terms) {
+    // ------------------ UPDATE EXISTING ------------------
+    terms.title = title || terms.title;
+    terms.effectiveDate = effectiveDate || terms.effectiveDate;
+    terms.description = description || terms.description;
+    if (status !== undefined) terms.status = status;
+
+    await terms.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Privacy Policy updated successfully",
+      data: terms,
+    });
+  } else {
+    // ------------------ CREATE NEW ------------------
+    const newTerms = await PrivacyPolicyModel.create({
+      title: title || "Privacy Policy",
+      effectiveDate: effectiveDate || new Date(),
+      description: description || "",
+      status: status !== undefined ? status : true,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Privacy Policy created successfully",
+      data: newTerms,
+    });
   }
-
-  policy.title = title || policy.title;
-  policy.description = description || policy.description;
-  policy.effectiveDate = effectiveDate || policy.effectiveDate;
-  policy.status = status !== undefined ? status : policy.status;
-
-  await policy.save();
-
-  return res.status(200).json({
-    success: true,
-    message: "Updated successfully",
-    data: policy,
-  });
 });
 
 // --------------------- DELETE PRIVACY POLICY ---------------------

@@ -55,7 +55,7 @@ export const getImpacts = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE IMPACT ---------------------
 export const getImpactById = asyncHandler(async (req, res) => {
-  const impact = await ImpactModel.findById(req.params.id).lean();
+  const impact = await ImpactModel.findOne();
 
   if (!impact) {
     throw new ApiError(404, "Impact not found");
@@ -66,24 +66,41 @@ export const getImpactById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE IMPACT ---------------------
 export const updateImpact = asyncHandler(async (req, res) => {
-  const { title, description, status } = req.body;
+  const { title, effectiveDate, description, status } = req.body;
 
-  const impact = await ImpactModel.findById(req.params.id);
-  if (!impact) {
-    throw new ApiError(404, "Impact not found");
+  // Check if any Impact record already exists
+  let terms = await ImpactModel.findOne();
+  
+
+  if (terms) {
+    // ------------------ UPDATE EXISTING ------------------
+    terms.title = title || terms.title;
+    terms.effectiveDate = effectiveDate || terms.effectiveDate;
+    terms.description = description || terms.description;
+    if (status !== undefined) terms.status = status;
+
+    await terms.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Impact updated successfully",
+      data: terms,
+    });
+  } else {
+    // ------------------ CREATE NEW ------------------
+    const newTerms = await ImpactModel.create({
+      title: title || "Impact",
+      effectiveDate: effectiveDate || new Date(),
+      description: description || "",
+      status: status !== undefined ? status : true,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Impact created successfully",
+      data: newTerms,
+    });
   }
-
-  impact.title = title || impact.title;
-  impact.description = description || impact.description;
-  impact.status = status !== undefined ? status : impact.status;
-
-  await impact.save();
-
-  return res.status(200).json({
-    success: true,
-    message: "Updated successfully",
-    data: impact,
-  });
 });
 
 // --------------------- DELETE IMPACT ---------------------

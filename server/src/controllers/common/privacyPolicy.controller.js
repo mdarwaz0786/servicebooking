@@ -45,7 +45,7 @@ export const getPrivacyPolicies = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE PRIVACY POLICY ---------------------
 export const getPrivacyPolicyById = asyncHandler(async (req, res) => {
-  const policy = await PrivacyPolicyModel.findById(req.params.id).lean();
+  const policy = await PrivacyPolicyModel.findOne();
 
   if (!policy) {
     throw new ApiError(404, "Privacy Policy not found");

@@ -29,10 +29,10 @@ const Sidebar = () => {
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <Link to="/">
-            <img src="assets/img/logo.png" className="img-fluid logo" alt="Logo" />
+            <img src="/admin/assets/img/logo.png" className="img-fluid logo" alt="Logo" />
           </Link>
           <Link to="/">
-            <img src="assets/img/logo.png" className="img-fluid logo-small" alt="Logo" />
+            <img src="/admin/assets/img/logo.png" className="img-fluid logo-small" alt="Logo" />
           </Link>
         </div>
       </div>

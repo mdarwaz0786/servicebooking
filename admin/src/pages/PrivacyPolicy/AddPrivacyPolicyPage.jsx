@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,9 @@ import apis from "../../apis/apis";
 const AddPrivacyPolicyPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+
+  let id = 'fdgfd';
+  const [descriptionKey, setdescriptionKey] = useState(1);
 
   const [formData, setFormData] = useState({
     title: "Privacy Policy",
@@ -33,12 +36,12 @@ const AddPrivacyPolicyPage = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(apis.privacyPolicy.create, formData, {
+      const res = await axios.patch(`${apis.privacyPolicy.update}/${id}`, formData, {
         headers: { Authorization: validToken },
       });
 
       if (res.data.success) {
-        toast.success("Privacy Policy added successfully");
+        toast.success(res.data.message);
         navigate(-1);
       }
     } catch (error) {
@@ -55,6 +58,32 @@ const AddPrivacyPolicyPage = () => {
       description: "",
     });
   };
+
+
+    useEffect(() => { 
+    if (id || id=='') {
+      setLoading(true);
+      axios.get(`${apis.privacyPolicy.get}/${id}`, { headers: { Authorization: validToken } })
+        .then(res => {
+          if (res.data?.success) {
+            const { title, description, effectiveDate } = res.data.data;
+            setFormData({
+              title: title || 'Privacy Policy', // Ensure title has a default if missing
+              description: description || '', // Ensure description is not null
+              effectiveDate: effectiveDate
+              ? effectiveDate.split("T")[0]
+              : "", // format YYYY-MM-DD
+            });
+            setdescriptionKey(2)            
+          };
+        })
+        .catch(err => toast.error(err?.response?.data?.message || err.message))
+        .finally(() => setLoading(false));
+    };
+  }, []);
+
+
+
 
   return (
     <div className="page-wrapper">
@@ -100,6 +129,7 @@ const AddPrivacyPolicyPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <TextEditor
+                  key={descriptionKey}
                   value={formData.description}
                   onChange={(value) =>
                     setFormData((prev) => ({ ...prev, description: value }))
