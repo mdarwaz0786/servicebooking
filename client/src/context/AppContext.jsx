@@ -133,6 +133,9 @@ export const AppProvider = ({ children }) => {
 
       myReview: `${userUrl}review`,
       myReviewRemove: `${userUrl}review`,
+      myReviewAdd: `${userUrl}review`,
+
+      serviceManReview: `${userUrl}review`,
 
       // service man urls
       serviceManlogin: `${servicemanUrl}auth/login`,
@@ -143,7 +146,6 @@ export const AppProvider = ({ children }) => {
       serviceManProfileDetail: `${servicemanUrl}profile/detail`,
       serviceManProfileUpdate: `${servicemanUrl}profile`,
 
-      serviceManReview: `${userUrl}review`,
 
       serviceManBooking: `${servicemanUrl}booking`,
       serviceManBookingAccept: `${servicemanUrl}booking/accept`,
@@ -333,6 +335,18 @@ export const AppProvider = ({ children }) => {
       uniqueId = user._id;
     }
     return uniqueId;
+  };
+
+
+  const bookingStatus = (value) => {
+    let status = '';
+    if(value=='new')
+        status = <span className="badge badge-soft-info ms-2">Confirm</span>
+    else if(value=='assign')
+        status = <span className="badge badge-soft-info ms-2">Process</span>
+    else    
+        status = <span className="badge badge-soft-info ms-2">{value}</span>
+    return status;
   };
 
 
@@ -633,6 +647,8 @@ export const AppProvider = ({ children }) => {
       VITE_APP_NAME,
       toggleModal,
       modals,
+
+      bookingStatus,
       
       checkoutpageloading,
       setcheckoutpageloading,

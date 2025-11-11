@@ -19,6 +19,7 @@ import UserDashboard from "./pages/UserPanel/UserDashboard";
 import UserBookingPage from "./pages/UserPanel/Booking/UserBookingPage";
 import UserAddressPage from "./pages/UserPanel/Address/UserAddressPage";
 import UserBookingDetailPage from "./pages/UserPanel/Booking/UserBookingDetailPage";
+import UserBookingInvoice from "./pages/UserPanel/Booking/UserBookingInvoice";
 import UserFavouritesPage from "./pages/UserPanel/Favourites/UserFavouritesPage";
 import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
 import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
@@ -78,6 +79,7 @@ const App = () => {
         <Route element={<UserLayout />}>
           <Route path="/user" element={<UserBookingPage />} />
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
+          <Route path="/user/booking/invoice/:bookingId" element={<UserBookingInvoice />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
           <Route path="/user/address" element={<UserAddressPage />} />
           <Route path="/user/reviews" element={<UserReviewsPage />} />

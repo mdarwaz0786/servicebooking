@@ -2,10 +2,11 @@ import { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import { Link, useParams } from "react-router-dom";
+import BookignReviewModal from "../../../components/Modal/BookignReviewModal";
 
 const UserBookingDetailPage = () => {
     const { bookingId } = useParams();
-  const { Urls, postData, formatDateTime, formatDate, PriceFormat, imageCheck } = useContext(AppContext);
+  const { Urls, postData, formatDateTime, formatDate, PriceFormat, imageCheck, bookingStatus, toggleModal } = useContext(AppContext);
   const [data, setdata] = useState([]);
   const [items, setitems] = useState([]);
   const fetchData = async () => {
@@ -26,8 +27,9 @@ const UserBookingDetailPage = () => {
   }, []);  
 
   return (
+    <>
   <div className="col-lg-9 mx-auto">
-    <div className="row justify-content-center">
+    <div className="row justify-content-center card" style={{padding: '10px 10px'}}>
     
     <div className="row booking-details">
       <div className="col-md-4">
@@ -48,7 +50,7 @@ const UserBookingDetailPage = () => {
             LiveTrack
           </Link> */}
           <Link
-            to="invoice.html"
+            to={'/user/booking/invoice/'+data._id}
             className="btn btn-light d-flex align-items-center justify-content-center"
           >
             <i className="ti ti-file-text me-1" />
@@ -80,9 +82,9 @@ const UserBookingDetailPage = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-6">
+        <div className="col-md-5">
           <div className="slot-user">
-            {(data?.serviceman)?(
+            {(data?.serviceman && data.status=='accept')?(
               <>
                 <h6>Services Man</h6>
                 <div className="slot-chat">
@@ -108,19 +110,18 @@ const UserBookingDetailPage = () => {
 
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-4">
           <div className="slot-action">
-            <h6>Booking Status</h6>
-            <div className="booking-otp">
+            <h6 className="text-end">Booking Status: 
+              {bookingStatus(data?.status)}
+            </h6>
+            <div className="booking-otp" style={{justifyContent: 'end'}}>
                   {data?.otp?.split("").map((digit, index) => (
                   <span key={index} className="otp-box">
                   {digit}
                   </span>
               ))}
             </div>
-            {/* <span className="badge badge-success-100 p-2 me-3">Completed</span> */}
-
-            <span className="badge badge-skyblue p-2">Pending</span>
           </div>
         </div>
       </div>
@@ -173,14 +174,14 @@ const UserBookingDetailPage = () => {
                 {items.map((value, index)=>(
                     <div className="order-amt" key={index}>
                     <div className="order-info">
-                        <div className="order-img" style={{width: '182px'}}>
+                        <div className="order-img" style={{width: '100px'}}>
                         <img src={imageCheck(value?.service?.image)} className="img-thumbnail w-20" alt="img" style={{width: '80px'}} />
                         </div>
                         <div className="order-profile">
                         <h6>{value?.service?.name}</h6>
                         </div>
                     </div>
-                    <h5>{PriceFormat(value.salePrice*value.quantity)}</h5>
+                    <h5 style={{fontSize: '15px'}}>{PriceFormat(value.salePrice*value.quantity)}</h5>
                     </div>
                 ))}
             </>
@@ -209,7 +210,7 @@ const UserBookingDetailPage = () => {
           </div>
         </div>
         {/* /Order Summary */}
-        <div className="row booking d-none">
+        <div className="row booking ">
           {/* Booking History */}
           <div className="col-md-6">
             <h6 className="order-title">Booking History</h6>
@@ -242,38 +243,20 @@ const UserBookingDetailPage = () => {
             <div className="order-reviews">
               <div className="row align-items-center mb-4">
                 <div className="col-5">
-                  <h6 className="order-title">Reviews</h6>
+                  {/* <h6 className="order-title">Reviews</h6> */}
                 </div>
                 <div className="col-7 text-end d-flex justify-content-end">
                   <Link
                     to="javascript:void(0);"
                     className="btn btn-sm d-flex align-items-center btn-dark"
-                    data-bs-toggle="modal"
-                    data-bs-target="#add-review"
+                     onClick={() => toggleModal("BookignReviewModal", true)}
                   >
                     <i className="feather-plus-circle me-2" />
                     Add Review
                   </Link>
                 </div>
               </div>
-              <ul>
-                <li>
-                  <div className="order-comment">
-                    <div className="rating">
-                      <i className="ti ti-star-filled text-warning" />
-                      <i className="ti ti-star-filled text-warning" />
-                      <i className="ti ti-star-filled text-warning" />
-                      <i className="ti ti-star-filled text-warning" />
-                      <i className="ti ti-star-filled text-warning" />
-                    </div>
-                    <h6>A wonderful experience was all the help...</h6>
-                    <p>
-                      <i className="fa-solid fa-calendar-days me-1" /> September
-                      5, 2023
-                    </p>
-                  </div>
-                </li>
-              </ul>
+              
             </div>
           </div>
           {/* /Reviews */}
@@ -282,6 +265,10 @@ const UserBookingDetailPage = () => {
     </div>
   </div>
 </div>
+
+  <BookignReviewModal bookingId={data._id} />
+  </>
+
 
   );
 };

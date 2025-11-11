@@ -5,7 +5,7 @@ import { useContext } from "react";
 import Pagination from '../../../components/Pagination/Pagination';
 
 const BookingListCard = ({handlePagination}) => {
-    const { PriceFormat, myserviceListData, formatDateTime, formatDate, imageCheck } = useContext(AppContext);
+    const { PriceFormat, myserviceListData, formatDateTime, formatDate, imageCheck, bookingStatus } = useContext(AppContext);
   return ( 
     <>  
       {myserviceListData.map((value, index)=>(
@@ -43,7 +43,7 @@ const BookingListCard = ({handlePagination}) => {
                         <li className="d-flex align-items-center mb-2">
                         <span className="book-item">Location</span> <small className="me-2">: </small>{value?.address?.houseNumber}, {value?.address?.landmark}
                         </li>
-                        {(value?.serviceman)?(
+                        {(value?.serviceman && value.status=='accept')?(
                             <li className="d-flex align-items-center flex-wrap">
                                 <span className="book-item">Service Man</span> <small className="me-2">: </small>
                                 <div className="user-book d-flex align-items-center flex-wrap me-2">
@@ -58,14 +58,9 @@ const BookingListCard = ({handlePagination}) => {
                         }
 
                         <li className="d-flex align-items-center mb-2">
-                        <span className="book-item">Booking Status</span> <small className="me-2">: </small>
+                            <span className="book-item">Booking Status</span> <small className="me-2">: </small>
                         
-                            {(value.status=='new')?(
-                                <><span className="badge badge-soft-info ms-2">Confirm</span></>
-                            ):(
-                                <><span className="badge badge-soft-info ms-2">{value?.status}</span></>
-                            )}
-                            
+                            {bookingStatus(value.status)}                            
                         </li>
 
                     </ul>
