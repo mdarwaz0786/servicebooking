@@ -32,6 +32,8 @@ const UpdateServicePage = () => {
     subSubCategoryId: "",
     subSubSubCategoryId: "",
     name: "",
+    rating: "",
+    review: "",
     timeTaking: "",
     mrpPrice: "",
     salePrice: "",
@@ -60,6 +62,8 @@ const UpdateServicePage = () => {
             subSubCategoryId: s?.subSubCategoryId || "",
             subSubSubCategoryId: s?.subSubSubCategoryId || "",
             name: s?.name || "",
+            rating: s?.rating || "",
+            review: s?.review || "",
             timeTaking: s?.timeTaking || "",
             mrpPrice: s?.mrpPrice || "",
             salePrice: s?.salePrice || "",
@@ -409,6 +413,31 @@ const UpdateServicePage = () => {
                     onChange={handleChange}
                     className="form-control"
                     placeholder="e.g. 30 mins"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Rating</label>
+                  <input
+                    type="number"
+                    name="rating"
+                    value={formData.rating}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="0"
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Review</label>
+                  <input
+                    type="number"
+                    name="review"
+                    value={formData.review}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="0"
                   />
                 </div>
               </div>

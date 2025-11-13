@@ -29,6 +29,8 @@ const AddServicePage = () => {
     subSubCategoryId: "",
     subSubSubCategoryId: "",
     name: "",
+    rating: "",
+    review: "",
     timeTaking: "",
     mrpPrice: "",
     salePrice: "",
@@ -197,6 +199,8 @@ const AddServicePage = () => {
         setFormData((prev) => ({
           ...prev,
           name: "",
+          rating: "",
+          review: "",
           mrpPrice: "",
           salePrice: "",
           timeTaking: "",
@@ -398,6 +402,31 @@ const AddServicePage = () => {
               </div>
 
               <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Rating</label>
+                  <input
+                    type="number"
+                    name="rating"
+                    value={formData.rating}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="0"
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Review</label>
+                  <input
+                    type="number"
+                    name="review"
+                    value={formData.review}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Taxable Price</label>
                   <input type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
@@ -565,6 +594,8 @@ const AddServicePage = () => {
                       subSubCategoryId: "",
                       subSubSubCategoryId: "",
                       name: "",
+                      rating: "",
+                      review: "",
                       mrpPrice: "",
                       salePrice: "",
                       timeTaking: "",

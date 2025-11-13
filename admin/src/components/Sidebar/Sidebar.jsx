@@ -212,16 +212,52 @@ const Sidebar = () => {
             </li>
 
             <li className="menu-title">
-              <h6>User</h6>
+              <h6>Users</h6>
             </li>
+
             <li>
-              <Link
-                to="/users"
-                className={currentPath === "/users" ? "active" : ""}
-              >
-                <i className="fe fe-user" /> <span>Users</span>
+              <Link to="#"><i className="fe fe-user" />
+                <span>User</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/users"
+                    className={currentPath === "/customers" ? "active" : ""}
+                  >
+                    <span>Customers</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/providers"
+                    className={currentPath === "/providers" ? "active" : ""}
+                  >
+                    <span>Providers</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admins"
+                    className={currentPath === "/admins" ? "active" : ""}
+                  >
+                    <span>Admins</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
+
+            <ul>
+              <li>
+                <Link
+                  to="/users"
+                  className={currentPath === "/users" ? "active" : ""}
+                >
+                  <i className="fe fe-user" /> <span>Users</span>
+                </Link>
+              </li>
+            </ul>
 
             <li className="menu-title">
               <h6>Service Man</h6>

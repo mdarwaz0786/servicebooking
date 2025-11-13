@@ -12,6 +12,8 @@ import { buildPagination } from "../../utils/pagination.js";
 export const createService = asyncHandler(async (req, res) => {
   const {
     name,
+    rating,
+    review,
     mrpPrice,
     salePrice,
     taxablePrice,
@@ -52,6 +54,8 @@ export const createService = asyncHandler(async (req, res) => {
 
     const service = await ServiceModel.create({
       name,
+      rating,
+      review,
       mrpPrice,
       salePrice,
       taxablePrice,
@@ -175,6 +179,8 @@ export const getServiceById = asyncHandler(async (req, res) => {
 export const updateService = asyncHandler(async (req, res) => {
   const {
     name,
+    rating,
+    review,
     mrpPrice,
     salePrice,
     taxablePrice,
@@ -225,6 +231,8 @@ export const updateService = asyncHandler(async (req, res) => {
   };
 
   service.name = name || service.name;
+  service.rating = rating || service.rating;
+  service.review = review || service.review;
   service.mrpPrice = mrpPrice !== undefined ? mrpPrice : service.mrpPrice;
   service.salePrice = salePrice !== undefined ? salePrice : service.salePrice;
   service.timeTaking = timeTaking || service.timeTaking;
