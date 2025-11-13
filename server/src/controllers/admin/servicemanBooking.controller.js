@@ -32,7 +32,7 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
 
     await BookingModel.findByIdAndUpdate(bookingId, {
       $set: {
-        status: "new",
+        status: "assign",
         actionById: req.user?._id,
         updatedBy: req.user?._id,
       },
