@@ -75,6 +75,8 @@ import AddJobPostingPage from "../pages/JobPosting/AddJobPostingPage";
 import AddRateCardPage from "../pages/RateCard/AddRateCardPage";
 import UpdateRateCardPage from "../pages/RateCard/UpdateRateCardPage";
 import RateCardListPage from "../pages/RateCard/RateCardListPage";
+import ProviderListPage from "../pages/User/ProviderListPage";
+import AdminListPage from "../pages/User/AdminListPage";
 
 const routesConfig = {
   private: [
@@ -183,6 +185,8 @@ const routesConfig = {
     { path: "/add-job", element: AddJobPostingPage },
 
     { path: "/users", element: UserListPage },
+    { path: "/providers", element: ProviderListPage },
+    { path: "/admins", element: AdminListPage },
   ],
   public: [
     { path: "/login", element: LoginPage },

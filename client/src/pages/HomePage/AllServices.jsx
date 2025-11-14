@@ -12,7 +12,7 @@ const AllServices = ({ value = [] }) => {
 
   // ✅ Create refs for custom buttons
   const prevRef = useRef(null);
-  const nextRef = useRef(null); 
+  const nextRef = useRef(null);
 
   return (
     <section className={`section popular-section m-0 p-0`}>

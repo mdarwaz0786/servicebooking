@@ -12,6 +12,14 @@ const serviceSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+  review: {
+    type: Number,
+  },
   image: {
     type: String,
     required: false,

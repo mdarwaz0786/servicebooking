@@ -20,7 +20,6 @@ const AddSubSubCategoryPage = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    shortDescription: "",
     fullDescription: "",
     categoryId: "",
     subCategoryId: "",
@@ -142,7 +141,6 @@ const AddSubSubCategoryPage = () => {
         setFormData((prev) => ({
           ...prev,
           name: "",
-          shortDescription: "",
           fullDescription: "",
         }));
         setImage(null);
@@ -247,22 +245,9 @@ const AddSubSubCategoryPage = () => {
                 />
               </div>
 
-              {/* Short Description */}
+              {/* Description */}
               <div className="mb-3">
-                <label className="form-label">Short Description</label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="250"
-                />
-              </div>
-
-              {/* Full Description */}
-              <div className="mb-3">
-                <label className="form-label">Full Description</label>
+                <label className="form-label">Description</label>
                 <textarea
                   name="fullDescription"
                   value={formData.fullDescription}
@@ -274,7 +259,7 @@ const AddSubSubCategoryPage = () => {
 
               {/* Image */}
               <div className="mb-3">
-                <label className="form-label">Image</label>
+                <label className="form-label">Banner</label>
                 <div
                   {...getImageRootProps()}
                   className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
@@ -283,10 +268,10 @@ const AddSubSubCategoryPage = () => {
                 >
                   <input {...getImageInputProps()} />
                   {isImageActive ? (
-                    <p>Drop the image here...</p>
+                    <p>Drop the banner here...</p>
                   ) : (
                     <p>
-                      Drag & drop image here, or{" "}
+                      Drag & drop banner here, or{" "}
                       <span className="text-primary">browse</span>
                     </p>
                   )}

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 
-const UserListPage = () => {
+const ProviderListPage = () => {
   const { validToken } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,7 @@ const UserListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Customer</h5>
+          <h5>Provider</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -131,7 +131,7 @@ const UserListPage = () => {
                 </thead>
                 <tbody>
                   {users?.length > 0 ? (
-                    users?.map((d, index) => (
+                    users?.filter?.((u) => u?.user === "provider")?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.mobile}</td>
@@ -207,4 +207,4 @@ const UserListPage = () => {
   );
 };
 
-export default UserListPage;
+export default ProviderListPage;
