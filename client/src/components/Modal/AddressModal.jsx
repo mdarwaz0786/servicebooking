@@ -44,7 +44,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           long: latLng?.lng,
           houseNumber,
           landmark,
-          addresstype,
+          type:addresstype,
         },
         Urls.addAddress,
         "POST"

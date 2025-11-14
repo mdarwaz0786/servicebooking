@@ -87,7 +87,7 @@ const LocationBooking = () => {
                     </span>
                   </div>
 
-                  <h6 className="mb-1 fw-bold text-dark">{value.type}</h6>
+                  <h6 className="mb-1 fw-bold text-dark">{value.type.charAt(0).toUpperCase() + value.type.slice(1)}</h6>
                   <p className="text-muted mb-0">
                     {value.houseNumber} {value.landmark}
                   </p>

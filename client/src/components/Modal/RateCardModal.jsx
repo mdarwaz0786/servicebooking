@@ -22,7 +22,7 @@ const RateCardModal = () => {
             <h5 className="m-0 fw-bold text-white">Rate Card</h5>
             <Link
               className="text-white fs-4"
-              onClick={() => toggleModal("RateCardModal", false)}
+              onClick={() => {toggleModal("RateCardModal", false);toggleModal("ServiceDetailModal", true);}}
               style={{ cursor: "pointer" }}
             >
               <i className="fa fa-times"></i>
