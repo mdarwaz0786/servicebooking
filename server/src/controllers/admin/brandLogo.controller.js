@@ -94,53 +94,75 @@ export const getBrandLogoById = asyncHandler(async (req, res) => {
 export const updateBrandLogo = asyncHandler(async (req, res) => {
   const { mainTitle, description, services } = req.body;
 
-  let existingIcons = [];
-  if (req.body.existingIcons) {
+  let removeIcons = [];
+  if (req.body.removeIcons) {
     try {
-      existingIcons = JSON.parse(req.body.existingIcons);
-    } catch (err) {
-      throw new ApiError(400, "Invalid existingIcons format");
-    };
-  };
+      removeIcons = JSON.parse(req.body.removeIcons);
+    } catch {
+      throw new ApiError(400, "Invalid removeIcons format");
+    }
+  }
 
   const brandLogo = await BrandLogoModel.findById(req.params.id);
-  if (!brandLogo) {
-    throw new ApiError(404, "Brand logo not found");
-  };
+  if (!brandLogo) throw new ApiError(404, "Brand logo not found");
 
-  let updatedIcons = [];
+  let icons = [...brandLogo.icons];
 
-  if (existingIcons.length > 0) {
-    updatedIcons = brandLogo.icons.filter((icon) => existingIcons.includes(icon));
+  if (removeIcons?.length > 0) {
+    removeIcons
+      .sort((a, b) => b - a)
+      .forEach((index) => {
+        const imgPath = icons[index];
 
-    brandLogo.icons.forEach((icon) => {
-      if (!existingIcons.includes(icon) && fs.existsSync(path.join(process.cwd(), icon))) {
-        fs.unlinkSync(path.join(process.cwd(), icon));
-      };
-    });
-  } else {
-    brandLogo.icons.forEach((icon) => {
-      if (fs.existsSync(path.join(process.cwd(), icon))) fs.unlinkSync(path.join(process.cwd(), icon));
-    });
-  };
+        if (imgPath) {
+          const fullPath = path.join(process.cwd(), imgPath);
+          if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+        }
+
+        icons.splice(index, 1);
+      });
+  }
 
   if (req.files?.icons?.length) {
     for (const file of req.files.icons) {
-      const compressedPath = await compressImage(file.buffer, "service");
-      updatedIcons.push(compressedPath);
-    };
-  };
+      const savedPath = await compressImage(file.buffer, "service");
+      icons.push(savedPath);
+    }
+  }
 
-  brandLogo.icons = updatedIcons;
+  let updatedServices = brandLogo?.services || [];
+
+  if (services !== undefined) {
+    let parsedServices = services;
+
+    // If it's a string, parse it
+    if (typeof parsedServices === "string") {
+      try {
+        parsedServices = JSON.parse(parsedServices);
+      } catch (err) {
+        throw new ApiError(400, "Invalid services format");
+      }
+    }
+
+    // Validate after parsing
+    if (!Array.isArray(parsedServices)) {
+      throw new ApiError(400, "services must be an array");
+    }
+
+    updatedServices = parsedServices;
+  }
+
   brandLogo.mainTitle = mainTitle || brandLogo.mainTitle;
   brandLogo.description = description || brandLogo.description;
+  brandLogo.services = updatedServices;
+  brandLogo.icons = icons;
 
   await brandLogo.save();
 
   return res.status(200).json({
     success: true,
-    message: "Brand logo updated successfully",
-    data: brandLogo
+    message: "Updated successfully",
+    data: brandLogo,
   });
 });
 
