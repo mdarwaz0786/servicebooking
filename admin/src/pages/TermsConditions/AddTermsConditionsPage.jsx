@@ -1,20 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import TextEditor from "../../components/Form/TextEditor";
+
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import { useEffect } from "react";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 
 const AddTermsConditionsPage = () => {
   const { validToken } = useAuth();
-  const navigate = useNavigate(); 
-  let id = 'fdgfd';
-  
+  const navigate = useNavigate();
+  const id = '6908899d680fadb3c45c4e1f';
 
-
-  const [descriptionKey, setdescriptionKey] = useState(1);
+  const [descriptionKey, setDescriptionKey] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "Terms and Conditions",
@@ -38,16 +36,18 @@ const AddTermsConditionsPage = () => {
       toast.error("Effective date is required");
       return;
     }
-    if (!formData.description.trim()) {
+    if (!formData.description) {
       toast.error("Description is required");
       return;
     }
 
     setLoading(true);
     try {
-      const res = await axios.patch(`${apis.termsConditions.update}/${id}`, formData, {
-        headers: { Authorization: validToken },
-      });
+      const res = await axios.patch(
+        `${apis.termsConditions.update}/${id}`,
+        formData,
+        { headers: { Authorization: validToken } }
+      );
 
       if (res.data.success) {
         toast.success(res.data.message);
@@ -61,28 +61,25 @@ const AddTermsConditionsPage = () => {
   };
 
   useEffect(() => {
-    if (id || id=='') {
+    if (id) {
       setLoading(true);
-      axios.get(`${apis.termsConditions.get}/${id}`, { headers: { Authorization: validToken } })
+      axios
+        .get(`${apis.termsConditions.get}/${id}`, { headers: { Authorization: validToken } })
         .then(res => {
           if (res.data?.success) {
             const { title, description, effectiveDate } = res.data.data;
             setFormData({
-              title: title || 'Terms and Conditions', // Ensure title has a default if missing
-              description: description || '', // Ensure description is not null
-              effectiveDate: effectiveDate
-              ? effectiveDate.split("T")[0]
-              : "", // format YYYY-MM-DD
+              title: title || "Terms and Conditions",
+              description: description || "",
+              effectiveDate: effectiveDate ? effectiveDate.split("T")[0] : "",
             });
-            setdescriptionKey(2)            
-          };
+            setDescriptionKey(2);
+          }
         })
         .catch(err => toast.error(err?.response?.data?.message || err.message))
         .finally(() => setLoading(false));
-    };
-  }, []);
-
-
+    }
+  }, [id, validToken]);
 
   return (
     <div className="page-wrapper">
@@ -126,13 +123,15 @@ const AddTermsConditionsPage = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Description</label>
-                <TextEditor
+                <RichTextEditor
                   key={descriptionKey}
+                  label="Description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
                   placeholder="Enter terms and conditions..."
-                  height={200}
+                  height={500}
+                  required
+                  error={!formData.description ? "Description is required" : ""}
                 />
               </div>
 

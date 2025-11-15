@@ -30,7 +30,7 @@ const removeServices = (doc) => {
 
 // ==================== GET ALL SERVICES ====================
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
+  let { search, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -38,7 +38,7 @@ export const getServices = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
-  if (status !== undefined) filters.status = status === "true";
+  filters.status = true;
 
   if (categoryId) filters.categoryId = categoryId;
   if (subCategoryId) filters.subCategoryId = subCategoryId;
@@ -60,25 +60,25 @@ export const getServices = asyncHandler(async (req, res) => {
     if (slugData.collectionName === "Category") {
       filters.categoryId = slugData.documentId;
       data = await CategoryModel.findById(slugData.documentId);
-      categoryList = await SubCategoryModel.find({ categoryId: data._id });
+      categoryList = await SubCategoryModel.find({ categoryId: data._id, status: true });
       name = data.name;
     } else if (slugData.collectionName === "SubCategory") {
       filters.subCategoryId = slugData.documentId;
       data = await SubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubCategoryModel.find({ subCategoryId: data._id });
+      categoryList = await SubSubCategoryModel.find({ subCategoryId: data._id, status: true });
       name = data.name;
     } else if (slugData.collectionName === "SubSubCategory") {
       filters.subSubCategoryId = slugData.documentId;
       data = await SubSubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubSubCategoryModel.find({ subSubCategoryId: data._id });
+      categoryList = await SubSubSubCategoryModel.find({ subSubCategoryId: data._id, status: true });
       name = data.name;
     } else if (slugData.collectionName === "SubSubSubCategory") {
       filters.subSubSubCategoryId = slugData.documentId;
-      data = await SubSubSubCategoryModel.findById(slugData.documentId);
+      data = await SubSubSubCategoryModel.findById({ _id: slugData.documentId, status: true });
       name = data.name;
     } else if (slugData.collectionName === "Service") {
       filters._id = slugData.documentId;
-      data = await ServiceModel.findById(slugData.documentId);
+      data = await ServiceModel.findById({ _id: slugData.documentId, status: true });
       name = data.name;
     }
   }

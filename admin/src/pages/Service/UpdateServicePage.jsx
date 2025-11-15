@@ -426,11 +426,11 @@ const UpdateServicePage = () => {
                     value={formData.rating}
                     onChange={handleChange}
                     className="form-control"
-                    placeholder="0"
+                    placeholder="1-5"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Review</label>
+                  <label className="form-label">Number of Reviews</label>
                   <input
                     type="number"
                     name="review"
