@@ -37,6 +37,7 @@ export const AppProvider = ({ children }) => {
   const [subsubsubcategoryListData, setsubsubsubcategoryListData] = useState([]);
   const [subsubsubcategoryItemData, setsubsubsubcategoryItemData] = useState([]);
   
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
   
@@ -583,13 +584,13 @@ export const AppProvider = ({ children }) => {
   }
 
   const handleRateCardDetail = async (id, item) => {
-    
     try {
       const response = await postData({userId:generateUniqueId()}, Urls.rateCardDetail + '/' + id, "GET", 0, 1);
       if (response.success) {
         if (response?.success) {
           setrateCardDetailData(response.data);
           toggleModal("RateCardModal", true)
+          toggleModal("ServiceDetailModal", false);
         }
       }
     } catch (error) {
@@ -702,6 +703,8 @@ export const AppProvider = ({ children }) => {
       subsubsubcategoryItemData,
       setsubsubsubcategoryItemData,
 
+      selectedCategory,
+      setSelectedCategory,
       serviceDetailData,
       setserviceDetailData,
       serviceDetailDataItem,

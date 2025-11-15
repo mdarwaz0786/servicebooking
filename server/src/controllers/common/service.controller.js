@@ -84,7 +84,8 @@ export const getServices = asyncHandler(async (req, res) => {
   }
 
   const services = await ServiceModel
-    .find(filters)
+  .find(filters)
+  .populate('category','name')
     .sort(sort)
     .skip(skip)
     .limit(limit)

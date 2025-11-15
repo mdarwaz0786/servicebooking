@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const ServiceDetail = () => {
-  const { serviceDetailData, PriceFormat, imageCheck, handleCartAddRemove, serviceDetailDataItem, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
+  const { handleRateCardDetail, serviceDetailData, PriceFormat, imageCheck, handleCartAddRemove, serviceDetailDataItem, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
   const data = serviceDetailData;
   const rating = data.ratings;
   const ratingCount = rating?.ratingCount;
@@ -98,9 +98,25 @@ const ServiceDetail = () => {
                     <div className=" mt-1 justify-content-around align-items-center service-item-add-btn-section mb-0 mt-0">
                         {(serviceDetailDataItem?.quantity) ? (
                             <>
-                              <button className="btn btn-light border cart-item-btn" onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)} >-</button>
-                              <span className="mx-3 item-qty">{serviceDetailDataItem?.quantity ? serviceDetailDataItem?.quantity : 0}</span>
-                              <button className="btn btn-light border cart-item-btn" onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}>+</button>
+                              <button
+                                className="btn btn-light border cart-item-btn"
+                                onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)}
+                                disabled={serviceDetailDataItem?.quantity <= 0}
+                              >
+                                -
+                              </button>
+
+                              <span className="mx-3 item-qty">
+                                {serviceDetailDataItem?.quantity || 0}
+                              </span>
+
+                              <button
+                                className="btn btn-light border cart-item-btn"
+                                onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
+                                disabled={serviceDetailDataItem?.quantity >= serviceDetailDataItem?.maxBookingQuantity}
+                              >
+                                +
+                              </button>
                             </>
                         ) : (
                             <button
@@ -114,6 +130,18 @@ const ServiceDetail = () => {
                   </div>
 
                   <br />
+
+                  {data?.rateCard ? (
+                      <button
+                          className="btn btn-primary-ghost w-50 d-flex justify-content-between align-items-center"
+                          onClick={() =>
+                              handleRateCardDetail(data._id, data)
+                          }
+                      >
+                          Standard Transparent Rate List
+                          <i className="fa fa-angle-right"></i>
+                      </button>
+                  ) : null}
                   
                   <div
                   className="mt-1"
@@ -331,7 +359,7 @@ const ServiceDetail = () => {
                       {data?.brandLogo?.icons?.map((icon, index) => (
                         <div
                           key={index}
-                          className="col-6 col-sm-6 col-md-3 d-flex justify-content-center"
+                          className="col-6 col-sm-6 col-md-4 d-flex justify-content-center"
                         >
                           <div
                             className="d-flex align-items-center justify-content-center"
@@ -368,7 +396,7 @@ const ServiceDetail = () => {
                         color: "#555",
                       }}
                     >
-                      * {data?.brandLogo?.description}
+                      {data?.brandLogo?.description}
                     </p>
                   </div>
                 </div>

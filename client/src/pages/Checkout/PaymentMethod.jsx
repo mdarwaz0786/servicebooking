@@ -110,7 +110,7 @@ const PaymentMethod = () => {
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
           <div className="d-flex align-items-center justify-content-between mb-3">
-            <h5 className="fw-bold text-success">Payment Method</h5>
+            <h5 className="fw-bold text-success">Transaction Summary</h5>
           </div>
           <div className="d-flex align-items-center mb-2">
 
@@ -149,23 +149,23 @@ const PaymentMethod = () => {
                 <div>
                   <div className="total-wrap">
                     <div className="mb-2 d-flex align-items-center justify-content-between">
-                      <h6 className="fw-medium">Sub Total</h6>
+                      <h6 className="fw-medium">Item Value</h6>
                       <p className="text-gray-9">{PriceFormat(cartAmount.amount)}</p>
                     </div>
                     <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
-                        GST <span className="text-default fw-normal">({cartAmount.gstPercent})</span>
+                        Taxes & fee  <span className="text-default fw-normal">({cartAmount.gstPercent})</span>
                       </h6>
                       <p className="text-gray-9">{PriceFormat(cartAmount.gstAmount)}</p>
                     </div>
-                    <div className="mb-2 d-flex align-items-center justify-content-between">
+                    {/* <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
                         Discount <span className="text-default fw-normal"></span>
                       </h6>
                       <p className="text-gray-9">-{PriceFormat(cartAmount.discountAmount)}</p>
-                    </div>
+                    </div> */}
                     <div className="d-flex align-items-center justify-content-between">
-                      <h6 className="fs-14">Total</h6>
+                      <h6 className="fs-14">Grand Total</h6>
                       <h6 className="fs-14">{PriceFormat(cartAmount.payableAmount)}</h6>
                     </div>
                   </div>
@@ -176,7 +176,7 @@ const PaymentMethod = () => {
                     {(paymentMode=='online')
                     ?
                     (
-                      <>Pay {PriceFormat(cartAmount.payableAmount)}</>
+                      <>Pay Now {PriceFormat(cartAmount.payableAmount)}</>
                     )
                     :
                     (
