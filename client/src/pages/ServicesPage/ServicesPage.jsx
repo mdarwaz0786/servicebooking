@@ -8,14 +8,19 @@ import { useParams } from "react-router-dom";
 import RateCardModal from "../../components/Modal/RateCardModal";
 
 const ServicesPage = () => {    
- const { slug } = useParams();
+ const { slug, search } = useParams();
   const { Urls, postData, setserviceListData, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
   const fetchData = async () => {
     try { 
 
       let userId = generateUniqueId();
 
-      const response = await postData({slug:slug,userId:userId,limit:5000}, Urls.serviceList, "GET", 0, 1);
+      let payload = {slug:slug,userId:userId,limit:5000};
+        if(search) 
+        {          
+          payload = {search:search,userId:userId,limit:5000};
+        }
+        const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
       
         setserviceListData(response.data?response.data:[]);
         setservicePageCategoryData(response.categoryList?response.categoryList:[]);
@@ -36,7 +41,7 @@ useEffect(() => {
   return (
     <>
       {/* <BreadCrumb /> */}
-      <Services />
+      <Services search={search} />
       <RateCardModal />
     </>
   );

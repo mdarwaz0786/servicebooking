@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import CategoryMiniCard3 from "../../components/Category/CategoryMiniCard3";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,11 +8,30 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 const HeroSection = ({categoryData, handleSubCategory}) => {
 
-  const { homePageData, imageCheck } = useContext(AppContext);
+  const { homePageData, imageCheck, postData, Urls, toast, navigate } = useContext(AppContext);
+  const [search, setsearch] = useState();
+
+  const handleSearch = async () => {
+    try {
+      if(search)
+      {
+        navigate("/search/"+search);
+      }
+      else
+      {
+        toast.error("Enter Keyword..");
+        return false;
+      }
+      
+    } catch (error) {
+      console.error("TimeSlot API Error:", error);
+    }
+  };
+
 
   return (
     <section className="hero-section" id="home">
@@ -27,17 +46,24 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="banner-form bg-white w-100 border mb-3 col-md-6" style={{margin:'0 auto'}}>
-                      <form action="#">
+                      <form action="#" onSubmit={handleSearch}>
                         <div className="d-md-flex align-items-center">
                           <div className="input-group mb-2">
                             <span className="input-group-text px-1"><i className="ti ti-search serach-icon-hero" /></span>
-                            <input type="text" className="form-control" placeholder="Search for Service" />
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Search for Service"
+                              value={search}
+                              onChange={(e) => setsearch(e.target.value)}
+                              required
+                            />
                           </div>
                           <div className="mb-2">
-                            <Link to="/search" className="btn btn-linear-primary d-inline-flex align-items-center w-100">
+                            <button type="submit"  className="btn btn-linear-primary d-inline-flex align-items-center w-100">
                               <i className="feather-search me-2 " />
                               Search
-                            </Link>
+                            </button>
                           </div>
                         </div>
                       </form>

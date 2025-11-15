@@ -74,22 +74,6 @@ useEffect(() => {
         
 
 
-
-      {/* <FeaturedServices /> */}
-      {/* <KitchenServices /> */}
-      {/* <div className="container">
-        <img src="/assets/img/home/kitchenbanner.jpg" className="img-fluid" alt="img" />
-      </div> */}
-      {/* <TvServices /> */}
-      {/* <div className="container">
-        <img src="/assets/img/home/tvbanner.jpg" className="img-fluid" alt="img" />
-      </div> */}
-      {/* <EpServices /> */}
-      {/* <div className="container">
-        <img src="/assets/img/home/epbanner.jpg" className="img-fluid" alt="img" />
-      </div> */}
-      
-      {/* <Links /> */}
       <CategoryModal />
     </>
   );
