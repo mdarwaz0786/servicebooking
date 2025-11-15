@@ -68,12 +68,14 @@ const ServiceListCard = () => {
     return (
         <>
             {Object.keys(groupedServices).map((catId) => (
-                <div key={catId} style={{ marginBottom: "40px" }}>
+                <div key={catId} style={{ marginBottom: servicePageCategoryData.find(c => c._id === catId)?.name?"40px":'' }}>
 
                     {/* 🟡 CATEGORY TITLE */}
-                    <h3 className="fw-bold mb-3">
-                        {servicePageCategoryData.find(c => c._id === catId)?.name || "Category"}
-                    </h3>
+                    {servicePageCategoryData.find(c => c._id === catId)?.name?
+                        <h3 className="fw-bold mb-3">
+                            {servicePageCategoryData.find(c => c._id === catId)?.name || "Category"}
+                        </h3>:''
+                    }
 
                     {/* 🟢 SERVICES OF THIS CATEGORY */}
                     {groupedServices[catId].map((value) => (
