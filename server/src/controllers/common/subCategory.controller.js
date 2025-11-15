@@ -20,9 +20,7 @@ export const getSubCategories = asyncHandler(async (req, res) => {
     filters.$or = [{ name: { $regex: search, $options: "i" } }];
   };
 
-  if (status !== undefined) {
-    filters.status = status === "true";
-  };
+  filters.status = true;
 
   let sortOption = {};
   if (sort === "asc") {

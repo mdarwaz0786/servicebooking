@@ -13,7 +13,7 @@ export const getSubSubCategories = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
-  if (status !== undefined) filters.status = status === "true";
+  filters.status = true;
 
   if (subCategoryId) {
     filters.subCategoryId = subCategoryId;

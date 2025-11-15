@@ -62,29 +62,46 @@
 
 // export default compressImage;
 
-
-
-import sharp from "sharp";
 import path from "path";
 import fs from "fs";
 import ApiError from "./apiError.js";
+import { fileTypeFromBuffer } from "file-type";
 
 const compressImage = async (buffer, folder = "common") => {
   const uploadDir = path.join(process.cwd(), "uploads", folder);
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
-  };
+  }
+
+  const detected = await fileTypeFromBuffer(buffer);
+
+  let ext = "";
+
+  if (detected?.ext) {
+    ext = `.${detected.ext}`;
+  } else {
+    const textSample = buffer.toString("utf8").trim().toLowerCase();
+
+    if (textSample.startsWith("<svg")) {
+      ext = ".svg";
+    } else {
+      ext = ".bin";
+    }
+  }
 
   const baseName = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-  const finalPath = path.join(uploadDir, `${baseName}.webp`);
+  const finalPath = path.join(uploadDir, `${baseName}${ext}`);
 
   try {
-    await sharp(buffer).toFile(finalPath);
-    return `uploads/${folder}/${baseName}.webp`;
+    fs.writeFileSync(finalPath, buffer);
+    return `uploads/${folder}/${baseName}${ext}`;
   } catch (error) {
-    throw new ApiError(400, "Image is corrupted or in unsupported format.");
-  };
+    throw new ApiError(400, "Unable to save image.");
+  }
 };
 
 export default compressImage;
+
+
+
 

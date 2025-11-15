@@ -3,15 +3,15 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
-import TextEditor from "../../components/Form/TextEditor";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 import apis from "../../apis/apis";
 
 const AddPrivacyPolicyPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
-  let id = 'fdgfd';
-  const [descriptionKey, setdescriptionKey] = useState(1);
+  const id = "69032f19d05bc860dfc159fb";
+  const [descriptionKey, setDescriptionKey] = useState(1);
 
   const [formData, setFormData] = useState({
     title: "Privacy Policy",
@@ -26,10 +26,14 @@ const AddPrivacyPolicyPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.effectiveDate || !formData.description.trim()) {
+    if (!formData.effectiveDate || !formData.description?.trim()) {
       toast.error("Effective Date and Description are required");
       return;
     }
@@ -59,31 +63,26 @@ const AddPrivacyPolicyPage = () => {
     });
   };
 
-
-    useEffect(() => { 
-    if (id || id=='') {
+  useEffect(() => {
+    if (id) {
       setLoading(true);
-      axios.get(`${apis.privacyPolicy.get}/${id}`, { headers: { Authorization: validToken } })
-        .then(res => {
+      axios
+        .get(`${apis.privacyPolicy.get}/${id}`, { headers: { Authorization: validToken } })
+        .then((res) => {
           if (res.data?.success) {
             const { title, description, effectiveDate } = res.data.data;
             setFormData({
-              title: title || 'Privacy Policy', // Ensure title has a default if missing
-              description: description || '', // Ensure description is not null
-              effectiveDate: effectiveDate
-              ? effectiveDate.split("T")[0]
-              : "", // format YYYY-MM-DD
+              title: title || "Privacy Policy",
+              description: description || "",
+              effectiveDate: effectiveDate ? effectiveDate.split("T")[0] : "",
             });
-            setdescriptionKey(2)            
-          };
+            setDescriptionKey(2);
+          }
         })
-        .catch(err => toast.error(err?.response?.data?.message || err.message))
+        .catch((err) => toast.error(err?.response?.data?.message || err.message))
         .finally(() => setLoading(false));
-    };
-  }, []);
-
-
-
+    }
+  }, [id, validToken]);
 
   return (
     <div className="page-wrapper">
@@ -127,15 +126,15 @@ const AddPrivacyPolicyPage = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Description</label>
-                <TextEditor
+                <RichTextEditor
                   key={descriptionKey}
+                  label="Description"
                   value={formData.description}
-                  onChange={(value) =>
-                    setFormData((prev) => ({ ...prev, description: value }))
-                  }
+                  onChange={handleDescriptionChange}
                   placeholder="Enter privacy policy description..."
-                  height={300}
+                  height={400} // increased height
+                  required
+                  error={!formData.description ? "Description is required" : ""}
                 />
               </div>
 
