@@ -8,7 +8,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE BRAND LOGO ---------------------
 export const createBrandLogo = asyncHandler(async (req, res) => {
-  const { mainTitle, description, services } = req.body;
+  const { mainTitle, description, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!mainTitle || !mainTitle.trim()) {
     throw new ApiError(400, "Main title is required");
@@ -29,6 +29,10 @@ export const createBrandLogo = asyncHandler(async (req, res) => {
       description,
       services,
       icons: iconsPaths,
+      category,
+      subCategory,
+      subSubCategory,
+      subSubSubCategory
     });
 
     return res.status(201).json({ success: true, message: "Created successfully", data: brandLogo });
@@ -44,7 +48,7 @@ export const createBrandLogo = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL BRAND LOGOS ---------------------
 export const getBrandLogos = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -55,10 +59,19 @@ export const getBrandLogos = asyncHandler(async (req, res) => {
     filters.mainTitle = { $regex: search, $options: "i" };
   };
 
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const brandLogos = await BrandLogoModel.find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -83,7 +96,14 @@ export const getBrandLogos = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE BRAND LOGO ---------------------
 export const getBrandLogoById = asyncHandler(async (req, res) => {
-  const brandLogo = await BrandLogoModel.findById(req.params.id).populate("services").lean();
+  const brandLogo = await BrandLogoModel.findById(req.params.id)
+    .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
+    .lean();
+
   if (!brandLogo) {
     throw new ApiError(404, "Brand logo not found");
   };
@@ -92,7 +112,7 @@ export const getBrandLogoById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE BRAND LOGO ---------------------
 export const updateBrandLogo = asyncHandler(async (req, res) => {
-  const { mainTitle, description, services } = req.body;
+  const { mainTitle, description, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   let removeIcons = [];
   if (req.body.removeIcons) {
@@ -152,6 +172,10 @@ export const updateBrandLogo = asyncHandler(async (req, res) => {
 
   brandLogo.mainTitle = mainTitle || brandLogo.mainTitle;
   brandLogo.description = description || brandLogo.description;
+  brandLogo.category = category || brandLogo?.category;
+  brandLogo.subCategory = subCategory || brandLogo?.subCategory;
+  brandLogo.subSubCategory = subSubCategory || brandLogo?.subSubCategory;
+  brandLogo.subSubSubCategory = subSubSubCategory || brandLogo?.subSubSubCategory;
   brandLogo.services = updatedServices;
   brandLogo.icons = icons;
 

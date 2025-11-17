@@ -5,7 +5,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // ======================== CREATE RATE CARD ========================
 export const createRateCard = asyncHandler(async (req, res) => {
-  const { services, rateGroups } = req.body;
+  const { services, rateGroups, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!services || !Array.isArray(services) || services.length === 0) {
     throw new ApiError(400, "At least one service is required");
@@ -19,6 +19,10 @@ export const createRateCard = asyncHandler(async (req, res) => {
     services,
     rateGroups,
     createdBy: req.user?._id,
+    category,
+    subCategory,
+    subSubCategory,
+    subSubSubCategory
   });
 
   return res.status(201).json({
@@ -36,6 +40,10 @@ export const getRateCards = asyncHandler(async (req, res) => {
     sort = "desc",
     page = 1,
     limit = 10,
+    category,
+    subCategory,
+    subSubCategory,
+    subSubSubCategory
   } = req.query;
 
   page = parseInt(page, 10);
@@ -54,6 +62,11 @@ export const getRateCards = asyncHandler(async (req, res) => {
     filters.status = status === "true";
   }
 
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+
   const sortOption =
     sort === "asc"
       ? { createdAt: 1 }
@@ -65,6 +78,10 @@ export const getRateCards = asyncHandler(async (req, res) => {
 
   const rateCards = await RateCardModel.find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -88,7 +105,13 @@ export const getRateCards = asyncHandler(async (req, res) => {
 
 // ======================== GET SINGLE RATE CARD ========================
 export const getRateCardById = asyncHandler(async (req, res) => {
-  const rateCard = await RateCardModel.findById(req.params.id).populate("services");
+  const rateCard = await RateCardModel.findById(req.params.id)
+    .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
+    .lean();
 
   if (!rateCard) {
     throw new ApiError(404, "Rate card not found");
@@ -102,7 +125,7 @@ export const getRateCardById = asyncHandler(async (req, res) => {
 
 // ======================== UPDATE RATE CARD ========================
 export const updateRateCard = asyncHandler(async (req, res) => {
-  const { services, rateGroups, status } = req.body;
+  const { services, rateGroups, status, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   const rateCard = await RateCardModel.findById(req.params.id);
   if (!rateCard) {
@@ -122,6 +145,11 @@ export const updateRateCard = asyncHandler(async (req, res) => {
   }
 
   rateCard.updatedBy = req.user?._id;
+
+  rateCard.category = category || rateCard?.category;
+  rateCard.subCategory = subCategory || rateCard?.subCategory;
+  rateCard.subSubCategory = subSubCategory || rateCard?.subSubCategory;
+  rateCard.subSubSubCategory = subSubSubCategory || rateCard?.subSubSubCategory;
 
   await rateCard.save();
 

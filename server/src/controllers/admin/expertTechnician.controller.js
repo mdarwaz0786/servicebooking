@@ -8,7 +8,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE EXPERT TECHNICIAN ---------------------
 export const createExpertTechnician = asyncHandler(async (req, res) => {
-  const { mainTitle, services, points } = req.body;
+  const { mainTitle, services, points, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
@@ -45,6 +45,10 @@ export const createExpertTechnician = asyncHandler(async (req, res) => {
       points: finalPoints,
       image: imagePath,
       services,
+      category,
+      subCategory,
+      subSubCategory,
+      subSubSubCategory
     });
 
     return res
@@ -60,7 +64,7 @@ export const createExpertTechnician = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL EXPERT TECHNICIANS ---------------------
 export const getExpertTechnicians = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -71,10 +75,19 @@ export const getExpertTechnicians = asyncHandler(async (req, res) => {
     filters.mainTitle = { $regex: search, $options: "i" };
   };
 
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const experts = await ExpertTechnicianModel.find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -99,7 +112,14 @@ export const getExpertTechnicians = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE EXPERT TECHNICIAN ---------------------
 export const getExpertTechnicianById = asyncHandler(async (req, res) => {
-  const expertTechnician = await ExpertTechnicianModel.findById(req.params.id).populate("services").lean();
+  const expertTechnician = await ExpertTechnicianModel.findById(req.params.id)
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
+    .populate("services")
+    .lean();
+
   if (!expertTechnician) {
     throw new ApiError(404, "Expert technician not found");
   };
@@ -108,7 +128,7 @@ export const getExpertTechnicianById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE EXPERT TECHNICIAN ---------------------
 export const updateExpertTechnician = asyncHandler(async (req, res) => {
-  const { mainTitle } = req.body
+  const { mainTitle, category, subCategory, subSubCategory, subSubSubCategory } = req.body
 
   let existingPoints = []
   if (req.body.existingPoints) {
@@ -157,6 +177,10 @@ export const updateExpertTechnician = asyncHandler(async (req, res) => {
 
   expertTechnician.points = updatedPoints
   expertTechnician.mainTitle = mainTitle || expertTechnician.mainTitle
+  expertTechnician.category = category || expertTechnician?.category;
+  expertTechnician.subCategory = subCategory || expertTechnician?.subCategory;
+  expertTechnician.subSubCategory = subSubCategory || expertTechnician?.subSubCategory;
+  expertTechnician.subSubSubCategory = subSubSubCategory || expertTechnician?.subSubSubCategory;
 
   if (req.files?.image?.[0]) {
     if (expertTechnician.image && fs.existsSync(path.join(process.cwd(), expertTechnician.image))) {

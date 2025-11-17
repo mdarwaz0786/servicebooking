@@ -1,6 +1,22 @@
 import mongoose from "mongoose";
 
 const rateCardSchema = new mongoose.Schema({
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+  },
+  subCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubCategory",
+  },
+  subSubCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubSubCategory",
+  },
+  subSubSubCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubSubSubCategory",
+  },
   services: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Service",

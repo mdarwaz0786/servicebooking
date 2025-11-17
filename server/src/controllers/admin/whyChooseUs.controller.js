@@ -5,7 +5,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE WHY CHOOSE US ---------------------
 export const createWhyChooseUs = asyncHandler(async (req, res) => {
-  const { mainTitle, reasons, services } = req.body;
+  const { mainTitle, reasons, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
@@ -15,6 +15,10 @@ export const createWhyChooseUs = asyncHandler(async (req, res) => {
     mainTitle,
     reasons,
     services,
+    category,
+    subCategory,
+    subSubCategory,
+    subSubSubCategory
   });
 
   return res.status(201).json({ success: true, data: whyChooseUs });
@@ -22,7 +26,7 @@ export const createWhyChooseUs = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL WHY CHOOSE US ---------------------
 export const getWhyChooseUsList = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -33,11 +37,20 @@ export const getWhyChooseUsList = asyncHandler(async (req, res) => {
     filters.mainTitle = { $regex: search, $options: "i" };
   };
 
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const whyChooseUsList = await WhyChooseUsModel
     .find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -62,7 +75,14 @@ export const getWhyChooseUsList = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE WHY CHOOSE US ---------------------
 export const getWhyChooseUsById = asyncHandler(async (req, res) => {
-  const whyChooseUs = await WhyChooseUsModel.findById(req.params.id).populate("services").lean();
+  const whyChooseUs = await WhyChooseUsModel.findById(req.params.id)
+    .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
+    .lean();
+
   if (!whyChooseUs) {
     throw new ApiError(404, "Entry not found");
   };
@@ -71,7 +91,7 @@ export const getWhyChooseUsById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE WHY CHOOSE US ---------------------
 export const updateWhyChooseUs = asyncHandler(async (req, res) => {
-  const { mainTitle, reasons, services, status } = req.body;
+  const { mainTitle, reasons, services, status, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   const whyChooseUs = await WhyChooseUsModel.findById(req.params.id)
   if (!whyChooseUs) {
@@ -82,6 +102,10 @@ export const updateWhyChooseUs = asyncHandler(async (req, res) => {
   whyChooseUs.mainTitle = mainTitle || whyChooseUs?.mainTitle;
   whyChooseUs.status = status !== undefined ? status : whyChooseUs.status;
   whyChooseUs.services = services || whyChooseUs?.services;
+  whyChooseUs.category = category || whyChooseUs?.category;
+  whyChooseUs.subCategory = subCategory || whyChooseUs?.subCategory;
+  whyChooseUs.subSubCategory = subSubCategory || whyChooseUs?.subSubCategory;
+  whyChooseUs.subSubSubCategory = subSubSubCategory || whyChooseUs?.subSubSubCategory;
 
   await whyChooseUs.save()
 

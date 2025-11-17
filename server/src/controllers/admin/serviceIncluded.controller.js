@@ -5,7 +5,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE SERVICE INCLUDED ---------------------
 export const createServiceIncluded = asyncHandler(async (req, res) => {
-  const { mainTitle, titles, services } = req.body;
+  const { mainTitle, titles, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
@@ -15,6 +15,10 @@ export const createServiceIncluded = asyncHandler(async (req, res) => {
     mainTitle,
     services,
     titles,
+    category,
+    subCategory,
+    subSubCategory,
+    subSubSubCategory
   });
 
   return res.status(201).json({ success: true, data: serviceIncluded });
@@ -22,7 +26,7 @@ export const createServiceIncluded = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL SERVICE INCLUDED ---------------------
 export const getServiceIncludedList = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -33,11 +37,20 @@ export const getServiceIncludedList = asyncHandler(async (req, res) => {
     filters.mainTitle = { $regex: search, $options: "i" };
   };
 
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const serviceIncludedList = await ServiceIncludedModel
     .find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -65,6 +78,10 @@ export const getServiceIncludedById = asyncHandler(async (req, res) => {
   const serviceIncluded = await ServiceIncludedModel
     .findById(req.params.id)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .lean();
 
   if (!serviceIncluded) {
@@ -76,7 +93,7 @@ export const getServiceIncludedById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE SERVICE INCLUDED ---------------------
 export const updateServiceIncluded = asyncHandler(async (req, res) => {
-  const { mainTitle, status, titles, services } = req.body;
+  const { mainTitle, status, titles, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   const serviceIncluded = await ServiceIncludedModel.findById(req.params.id);
   if (!serviceIncluded) {
@@ -107,6 +124,10 @@ export const updateServiceIncluded = asyncHandler(async (req, res) => {
   };
   serviceIncluded.titles = updatedTitles;
   serviceIncluded.services = updatedServices;
+  serviceIncluded.category = category || serviceIncluded?.category;
+  serviceIncluded.subCategory = subCategory || serviceIncluded?.subCategory;
+  serviceIncluded.subSubCategory = subSubCategory || serviceIncluded?.subSubCategory;
+  serviceIncluded.subSubSubCategory = subSubSubCategory || serviceIncluded?.subSubSubCategory;
   serviceIncluded.updatedAt = new Date();
 
   await serviceIncluded.save();
