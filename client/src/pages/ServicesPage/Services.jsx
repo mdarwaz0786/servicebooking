@@ -6,17 +6,19 @@ import CategoryMiniCard2 from "../../components/Category/CategoryMiniCard2";
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 
-const Services = ({search}) => {
+const Services = ({search, slug}) => {
 
+  console.log(slug)
+  console.log(search)
   const { servicePageCategoryData, servicePageName, cartAmount, cartItems, servicePageCartShow } = useContext(AppContext);
-  return (
+  return ( 
     <div className="page-wrapper m-0">
       <div className="content">
         <div className="container-fluid">
           <div className="row">
 
             {/* 1st box */}
-            {!search?
+            {slug?
               <div className="col-xl-3 col-lg-4 theiaStickySidebar">
                 <div className="side-category shadow p-3 rounded-2">
                   <div className="d-flex justify-content-between align-items-center flex-wrap mb-3">
@@ -33,7 +35,7 @@ const Services = ({search}) => {
           :null}
 
             {/* -- 2nd  box- */}
-            <div className={`${cartItems.length > 0 ? !search?'col-xl-6 col-lg-6':'col-xl-9 col-lg-12' : 'col-xl-8'}`}>
+            <div className={`${cartItems.length > 0 ? slug?'col-xl-6 col-lg-6':'col-xl-9 col-lg-12' : 'col-xl-8'}`}>
 
               <div className="row justify-content-center align-items-center">
 

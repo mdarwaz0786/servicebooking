@@ -56,7 +56,7 @@ const Navbar = () => {
                 <Link to="/about-us" onClick={handleLinkClick}>About Us </Link>
               </li>
               <li className="has-submenu">
-                <Link to="/" onClick={handleLinkClickService}>Services </Link>
+                <Link to="/services" onClick={handleLinkClickService}>Services </Link>
               </li>
               <li className="nav-item d-sm-none">
                 <Link to="/login" className="nav-link" onClick={handleLinkClick}>Sign In</Link>

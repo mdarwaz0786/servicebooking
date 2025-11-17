@@ -165,7 +165,7 @@ const ServiceListCard = () => {
 
                                     <p className="m-0">
                                         <span className="badge badge-success fs-15 mb-2">
-                                            {PriceFormat(value.salePrice)} OFF
+                                            {PriceFormat(value.offerContent)} OFF
                                         </span>
                                     </p>
 

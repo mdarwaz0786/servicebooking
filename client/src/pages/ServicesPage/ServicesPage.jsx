@@ -15,12 +15,18 @@ const ServicesPage = () => {
 
       let userId = generateUniqueId();
 
-      let payload = {slug:slug,userId:userId,limit:5000};
+        let payload = {userId:userId,limit:5000};
         if(search) 
         {          
           payload = {search:search,userId:userId,limit:5000};
         }
+        else if(slug)
+        {
+          payload = {slug:slug,userId:userId,limit:5000};
+        }
         const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
+
+          console.log(slug)  
       
         setserviceListData(response.data?response.data:[]);
         setservicePageCategoryData(response.categoryList?response.categoryList:[]);
@@ -41,7 +47,7 @@ useEffect(() => {
   return (
     <>
       {/* <BreadCrumb /> */}
-      <Services search={search} />
+      <Services search={search} slug={slug} />
       <RateCardModal />
     </>
   );
