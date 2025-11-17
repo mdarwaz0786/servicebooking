@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
-import RichTextEditor from "../../components/Form/RichTextEditor"; // <-- updated import
+import RichTextEditor from "../../components/Form/RichTextEditor";
 import apis from "../../apis/apis";
 
 const AddImpactPage = () => {
@@ -11,7 +11,6 @@ const AddImpactPage = () => {
   const navigate = useNavigate();
 
   const id = "68f9c71c3cb87f459f74c3d7";
-  const [descriptionKey, setDescriptionKey] = useState(1);
 
   const [formData, setFormData] = useState({
     title: "Green India Team Impact",
@@ -44,7 +43,7 @@ const AddImpactPage = () => {
       });
 
       if (res.data.success) {
-        toast.success("Impact created successfully");
+        toast.success("Saved successfully");
         navigate(-1);
       }
     } catch (error) {
@@ -73,7 +72,6 @@ const AddImpactPage = () => {
               title: title || "Green India Team Impact",
               description: description || "",
             });
-            setDescriptionKey(2);
           }
         })
         .catch((err) => toast.error(err?.response?.data?.message || err.message))
@@ -111,15 +109,10 @@ const AddImpactPage = () => {
               </div>
 
               <div className="mb-3">
+                <label className="form-label">Description</label>
                 <RichTextEditor
-                  key={descriptionKey}
-                  label="Description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
-                  placeholder="Enter impact description..."
-                  height={400} // increased height
-                  required
-                  error={!formData.description ? "Description is required" : ""}
                 />
               </div>
 

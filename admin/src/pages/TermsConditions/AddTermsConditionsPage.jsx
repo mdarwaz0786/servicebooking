@@ -12,7 +12,6 @@ const AddTermsConditionsPage = () => {
   const navigate = useNavigate();
   const id = '6908899d680fadb3c45c4e1f';
 
-  const [descriptionKey, setDescriptionKey] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "Terms and Conditions",
@@ -50,8 +49,7 @@ const AddTermsConditionsPage = () => {
       );
 
       if (res.data.success) {
-        toast.success(res.data.message);
-        navigate(-1);
+        toast.success("Saved successfully");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -73,7 +71,6 @@ const AddTermsConditionsPage = () => {
               description: description || "",
               effectiveDate: effectiveDate ? effectiveDate.split("T")[0] : "",
             });
-            setDescriptionKey(2);
           }
         })
         .catch(err => toast.error(err?.response?.data?.message || err.message))
@@ -123,15 +120,10 @@ const AddTermsConditionsPage = () => {
               </div>
 
               <div className="mb-3">
+                <label className="form-label">Description</label>
                 <RichTextEditor
-                  key={descriptionKey}
-                  label="Description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
-                  placeholder="Enter terms and conditions..."
-                  height={500}
-                  required
-                  error={!formData.description ? "Description is required" : ""}
                 />
               </div>
 

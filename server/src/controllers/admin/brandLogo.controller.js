@@ -135,7 +135,6 @@ export const updateBrandLogo = asyncHandler(async (req, res) => {
   if (services !== undefined) {
     let parsedServices = services;
 
-    // If it's a string, parse it
     if (typeof parsedServices === "string") {
       try {
         parsedServices = JSON.parse(parsedServices);
@@ -144,7 +143,6 @@ export const updateBrandLogo = asyncHandler(async (req, res) => {
       }
     }
 
-    // Validate after parsing
     if (!Array.isArray(parsedServices)) {
       throw new ApiError(400, "services must be an array");
     }

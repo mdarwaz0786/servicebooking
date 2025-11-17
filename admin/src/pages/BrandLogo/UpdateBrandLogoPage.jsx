@@ -17,10 +17,10 @@ const UpdateBrandLogoPage = () => {
   const [mainTitle, setMainTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const [oldIcons, setOldIcons] = useState([]); // strings
-  const [removeIcons, setRemoveIcons] = useState([]); // indexes to remove
+  const [oldIcons, setOldIcons] = useState([]);
+  const [removeIcons, setRemoveIcons] = useState([]);
 
-  const [newIcons, setNewIcons] = useState([]); // File objects
+  const [newIcons, setNewIcons] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -87,13 +87,11 @@ const UpdateBrandLogoPage = () => {
     try {
       setLoading(true);
 
-      console.log(selectedServices)
-
       const formData = new FormData();
       formData.append("mainTitle", mainTitle);
       formData.append("description", description);
       formData.append("services", JSON.stringify(selectedServices));
-      formData.append("removeIcons", removeIcons);
+      formData.append("removeIcons", JSON.stringify(removeIcons));
 
       newIcons.forEach((file) => {
         formData.append("icons", file);

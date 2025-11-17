@@ -11,7 +11,6 @@ const AddPrivacyPolicyPage = () => {
   const navigate = useNavigate();
 
   const id = "69032f19d05bc860dfc159fb";
-  const [descriptionKey, setDescriptionKey] = useState(1);
 
   const [formData, setFormData] = useState({
     title: "Privacy Policy",
@@ -45,8 +44,7 @@ const AddPrivacyPolicyPage = () => {
       });
 
       if (res.data.success) {
-        toast.success(res.data.message);
-        navigate(-1);
+        toast.success("Saved successfully");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -76,7 +74,6 @@ const AddPrivacyPolicyPage = () => {
               description: description || "",
               effectiveDate: effectiveDate ? effectiveDate.split("T")[0] : "",
             });
-            setDescriptionKey(2);
           }
         })
         .catch((err) => toast.error(err?.response?.data?.message || err.message))
@@ -126,15 +123,10 @@ const AddPrivacyPolicyPage = () => {
               </div>
 
               <div className="mb-3">
+                <label className="form-label">Description</label>
                 <RichTextEditor
-                  key={descriptionKey}
-                  label="Description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
-                  placeholder="Enter privacy policy description..."
-                  height={400} // increased height
-                  required
-                  error={!formData.description ? "Description is required" : ""}
                 />
               </div>
 

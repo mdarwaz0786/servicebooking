@@ -1,59 +1,50 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import JoditEditor from "jodit-pro-react";
+import debounce from "lodash.debounce";
 
 const RichTextEditor = ({
-  label,
-  name,
   value = "",
   onChange = () => { },
-  readonly = false,
-  placeholder = "Start typing here...",
-  config = {},
   height = 500,
-  required = false,
-  error = "",
+  placeholder = "",
+  readonly = false,
 }) => {
   const editor = useRef(null);
 
-  const defaultConfig = {
-    readonly,
-    placeholder,
-    height,
-    uploader: {
-      url: "https://xdsoft.net/jodit/finder/?action=fileUpload",
-    },
-    filebrowser: {
-      ajax: {
-        url: "https://xdsoft.net/jodit/finder/",
+  const debouncedChange = useMemo(() =>
+    debounce((val) => {
+      onChange(val);
+    }, 300),
+    [onChange]
+  );
+
+  const config = useMemo(
+    () => ({
+      readonly,
+      height,
+      placeholder,
+      uploader: {
+        url: "https://xdsoft.net/jodit/finder/?action=fileUpload",
       },
-      height: 580,
-    },
-    toolbarAdaptive: true,
-    toolbarSticky: false,
-    removeButtons: ["about"],
-    ...config,
-  };
+      filebrowser: {
+        ajax: {
+          url: "https://xdsoft.net/jodit/finder/",
+        },
+        height: 580,
+      },
+    }),
+    [readonly, height, placeholder]
+  );
 
   return (
-    <div className="form-wrap mb-3">
-      {label && (
-        <label className="col-form-label" htmlFor={name}>
-          {label} {required && <span className="text-danger">*</span>}
-        </label>
-      )}
-
-      <div className={`border rounded ${error ? "border-danger" : "border-secondary"}`}>
-        <JoditEditor
-          ref={editor}
-          value={value}
-          config={defaultConfig}
-          tabIndex={1}
-          onBlur={(newContent) => onChange(newContent)}
-        />
-      </div>
-
-      {error && <div className="invalid-feedback d-block">{error}</div>}
-    </div>
+    <JoditEditor
+      ref={editor}
+      value={value}
+      config={config}
+      tabIndex={1}
+      onBlur={(newContent) => onChange(newContent)}
+      onChange={(newContent) => debouncedChange(newContent)}
+    />
   );
 };
 

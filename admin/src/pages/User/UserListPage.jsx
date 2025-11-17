@@ -126,26 +126,17 @@ const UserListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Mobile Number</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users?.length > 0 ? (
-                    users?.map((d, index) => (
+                    users?.filter?.((u) => u?.role === "user")?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.mobile}</td>
-                        <div className="d-flex">
-                          <button
-                            className="btn delete-table"
-                            type="button"
-                          >
-                            <i className="fe fe-trash-2" />
-                          </button>
-                        </div>
                       </tr>
                     ))
-                  ) : !loading ? (
+                  ) : !loading && users?.filter?.((u) => u?.role === "user")?.length == 0 ? (
                     <tr>
                       <td colSpan="6" className="text-center">
                         No users found
