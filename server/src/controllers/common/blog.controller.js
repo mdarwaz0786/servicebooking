@@ -2,6 +2,7 @@ import BlogModel from "../../models/blog.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import BlogCategoryModel from "../../models/blogCategory.model.js";
 
 // --------------------- GET ALL BLOGS ---------------------
 export const getBlogs = asyncHandler(async (req, res) => {
@@ -25,6 +26,9 @@ export const getBlogs = asyncHandler(async (req, res) => {
   }
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
+
+  
+
 
   const blogs = await BlogModel
     .find(filters)
@@ -63,6 +67,21 @@ export const getBlogById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Blog not found");
   }
 
-  return res.status(200).json({ success: true, message: "Data fetched successfully", data: blog });
+    const categories = await BlogCategoryModel
+      .find({status:true})
+      .sort({createdAt: 1})      
+      .lean();
+
+      const blogs = await BlogModel
+        .find({status:true})
+        .sort({createdAt: -1}) 
+        .populate("category", "name")
+        .populate("createdBy updatedBy", "name")
+        .limit(10)
+        .lean();
+
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: blog,categories,
+    blogs:blogs
+   });
 });
 

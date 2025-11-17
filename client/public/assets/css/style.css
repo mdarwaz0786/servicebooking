@@ -14140,7 +14140,7 @@ footer .form-control {
 .modal-category-card-mini {
     width: 20% !important;
     display: block;
-    margin: 0 auto;
+    /* margin: 0 auto; */
 }
 .modal .ti-circle-x-filled {
     font-size: 35px;
@@ -36445,6 +36445,12 @@ span.select2-container.select2-container--default.select2-container--open {
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 10px
+}
+.contact-icon {
+    font-size: 40px;
+    border: 2px solid;
+    border-radius: 50%;
+    padding: 8px;
 }
 
 @media (min-width: 992px) {

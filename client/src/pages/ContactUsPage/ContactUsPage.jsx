@@ -51,15 +51,14 @@ const ContactUsPage = () => {
           {/* Phone Number */}
           <div className="col-md-6 col-lg-4 d-flex">
             <div className="card flex-fill">
-              <div className="card-body">
+              <div className="card-body align-items-center d-flex">
                 <div className="d-flex align-items-center">
                   <span className="rounded-circle">
-                    <i className="ti ti-phone text-primary"></i>
+                    <i className="contact-icon ti ti-phone text-primary"></i>
                   </span>
                   <div className="ms-3">
                     <h6 className="fs-18 mb-1">Phone Number</h6>
-                    <p className="fs-14 mb-0">(888) 888-8888</p>
-                    <p className="fs-14 mb-0">(123) 456-7890</p>
+                    <p className="fs-14 mb-0">+91-80-90-400-401</p>
                   </div>
                 </div>
               </div>
@@ -69,15 +68,14 @@ const ContactUsPage = () => {
           {/* Email Address */}
           <div className="col-md-6 col-lg-4 d-flex">
             <div className="card flex-fill">
-              <div className="card-body">
+              <div className="card-body align-items-center d-flex">
                 <div className="d-flex align-items-center">
                   <span className="rounded-circle">
-                    <i className="ti ti-mail text-primary"></i>
+                    <i className="contact-icon ti ti-mail text-primary"></i>
                   </span>
                   <div className="ms-3">
                     <h6 className="fs-18 mb-1">Email Address</h6>
-                    <p className="fs-14 mb-0">truelysell@example.com</p>
-                    <p className="fs-14 mb-0">johnsmith@example.com</p>
+                    <p className="fs-14 mb-0">greenindiateam2022@gmail.com</p>
                   </div>
                 </div>
               </div>
@@ -87,15 +85,15 @@ const ContactUsPage = () => {
           {/* Address */}
           <div className="col-md-6 col-lg-4 d-flex">
             <div className="card flex-fill">
-              <div className="card-body">
+              <div className="card-body align-items-center d-flex">
                 <div className="d-flex align-items-center">
                   <span className="rounded-circle">
-                    <i className="ti ti-map-pin text-primary"></i>
+                    <i className="contact-icon ti ti-map-pin text-primary"></i>
                   </span>
                   <div className="ms-3">
                     <h6 className="fs-18 mb-1">Address</h6>
                     <p className="fs-14 mb-0">
-                      367 Hillcrest Lane, Irvine, California, United States
+                      First floor, Lotus building, kh.no.365, Sultanpur, New Delhi, Delhi 110030
                     </p>
                   </div>
                 </div>
@@ -104,9 +102,8 @@ const ContactUsPage = () => {
           </div>
         </div>
       </div>
-      <div className="row align-items-start">
+      <div className="row align-items-start mt-4">
         {/* Left Side - Contact Form */}
-        <h4 className="fw-bold mb-4">Contact us</h4>
         <div className="col-md-6 mb-4">
           <form onSubmit={handleSubmit} >
             <div className="mb-3">
@@ -180,23 +177,15 @@ const ContactUsPage = () => {
               title="Green India Team Map"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2771.3665711897197!2d77.15764397428771!3d28.496384690252437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1ffa1978b437%3A0xe38d18a0f1ae45b5!2sGreen%20India%20Team!5e1!3m2!1sen!2sin!4v1761026597772!5m2!1sen!2sin"
               width="100%"
-              height="250"
+              height="400"
               style={{ border: 0 }}
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
-          <div className="d-flex align-items-start mb-2">
-            <FaMapMarkerAlt className="me-2 mt-1 text-dark" />
-            <p className="mb-0 text-muted">
-              365, Lotus Building, Sultanpur, Delhi-110030
-            </p>
-          </div>
-          <div className="d-flex align-items-start">
-            <FaEnvelope className="me-2 mt-1 text-dark" />
-            <p className="mb-0 text-muted">info@greenindiateam.com</p>
-          </div>
+          
+          
         </div>
       </div>
     </div>
