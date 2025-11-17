@@ -1,14 +1,18 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import RichTextEditor from "../../components/Form/RichTextEditor";
 
-const AddJobPostingPage = () => {
+const UpdateJobPostingPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -19,37 +23,70 @@ const AddJobPostingPage = () => {
     status: true
   });
 
-  const [loading, setLoading] = useState(false);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDescriptionChange = (value) => {
-    setFormData((prev) => ({ ...prev, description: value }));
+    setFormData((prev) => ({ ...prev, fullDescription: value }));
   };
 
+  // ------------------------------------------------------
+  // FETCH EXISTING JOB
+  // ------------------------------------------------------
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        const res = await axios.get(`${apis.jobPosting.get}/${id}`, {
+          headers: { Authorization: validToken },
+        });
+
+        if (res?.data?.success) {
+          const job = res.data.data;
+
+          setFormData({
+            title: job.title || "",
+            location: job.location || "",
+            employmentType: job.employmentType || "Full-time",
+            shortDescription: job.shortDescription || "",
+            fullDescription: job.fullDescription || "",
+            status: job.status ?? true
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load job details");
+      }
+    };
+
+    fetchJob();
+  }, [id]);
+
+  // ------------------------------------------------------
+  // UPDATE JOB
+  // ------------------------------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.title || !formData.location || !formData.shortDescription || !formData.fullDescription) {
-      toast.error("Please fill in all required fields");
+      toast.error("Please fill all required fields");
       return;
     }
 
     try {
       setLoading(true);
-      const res = await axios.post(apis.jobPosting.create, formData, {
+
+      const res = await axios.patch(`${apis.jobPosting.update}/${id}`, formData, {
         headers: { Authorization: validToken },
       });
 
       if (res.data.success) {
-        toast.success("Job created successfully");
+        toast.success("Job updated successfully");
         navigate(-1);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
@@ -60,7 +97,7 @@ const AddJobPostingPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Job</h5>
+            <h5 className="mb-0">Update Job</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -69,8 +106,10 @@ const AddJobPostingPage = () => {
               ← Back
             </button>
           </div>
+
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+
               {/* Title */}
               <div className="mb-3">
                 <label className="form-label">Job Title</label>
@@ -131,33 +170,41 @@ const AddJobPostingPage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <RichTextEditor
-                  value={formData.description}
+                  key={formData.fullDescription}  // ensures editor loads initial value
+                  value={formData.fullDescription}
                   onChange={handleDescriptionChange}
                 />
+              </div>
+
+              {/* Status */}
+              <div className="mb-3">
+                <label className="form-label">Status</label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value={true}>Active</option>
+                  <option value={false}>Inactive</option>
+                </select>
               </div>
 
               {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="reset"
+                  type="button"
                   className="btn btn-secondary me-2"
-                  onClick={() =>
-                    setFormData({
-                      title: "",
-                      location: "",
-                      employmentType: "Full-time",
-                      shortDescription: "",
-                      fullDescription: "",
-                      status: true
-                    })
-                  }
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </button>
+
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Saving..." : "Save"}
+                  {loading ? "Updating..." : "Update"}
                 </button>
               </div>
+
             </form>
           </div>
         </div>
@@ -166,4 +213,4 @@ const AddJobPostingPage = () => {
   );
 };
 
-export default AddJobPostingPage;
+export default UpdateJobPostingPage;

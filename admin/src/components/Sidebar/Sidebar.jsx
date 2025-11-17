@@ -326,12 +326,10 @@ const Sidebar = () => {
               </Link>
             </li>
 
-<<<<<<< HEAD
             {/* <li className="menu-title">
               <h6>Footer Pages</h6>
             </li> */}
-
-=======
+            {/* 
             <li className="menu-title">
               <h6>Footer Page</h6>
             </li>
@@ -390,8 +388,8 @@ const Sidebar = () => {
               >
                 <i className="fe fe-file-text" /> <span>Contact Enquiry</span>
               </Link>
-            </li>
->>>>>>> aa23ba9e6e9679bcb22950341012e4b41c1d4078
+            </li> */}
+
             <li style={{ marginBottom: "5rem" }}>
               <Link to="#"><i className="fe fe-briefcase"></i>
                 <span>Footer Layout</span>
@@ -400,16 +398,16 @@ const Sidebar = () => {
               <ul>
                 <li>
                   <Link
-                    to="/add-blog-category"
-                    className={currentPath === "/add-blog-category" ? "active" : ""}
+                    to="/list-blog-category"
+                    className={currentPath === "/list-blog-category" ? "active" : ""}
                   >
                     <span>Blog Category</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/add-blog"
-                    className={currentPath === "/add-blog" ? "active" : ""}
+                    to="/blog-list"
+                    className={currentPath === "/blog-list" ? "active" : ""}
                   >
                     <span>Blog</span>
                   </Link>
@@ -456,8 +454,8 @@ const Sidebar = () => {
                 </li>
                 <li style={{ marginBottom: "5rem" }}>
                   <Link
-                    to="/add-job"
-                    className={currentPath === "/add-job" ? "active" : ""}
+                    to="/job-list"
+                    className={currentPath === "/job-list" ? "active" : ""}
                   >
                     <span>Job</span>
                   </Link>

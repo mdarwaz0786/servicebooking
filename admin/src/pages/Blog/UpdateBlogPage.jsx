@@ -3,54 +3,86 @@ import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import { useNavigate } from "react-router-dom";
-import TextEditor from "../../components/Form/TextEditor";
+import { useNavigate, useParams } from "react-router-dom";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 
 const UpdateBlogPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const [loading, setLoading] = useState(false);
+
+  const [categories, setCategories] = useState([]);
 
   const [frontImage, setFrontImage] = useState(null);
   const [detailImage, setDetailImage] = useState(null);
+
   const [frontPreview, setFrontPreview] = useState(null);
   const [detailPreview, setDetailPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
     category: "",
     title: "",
     shortDescription: "",
     fullDescription: "",
+    frontImageUrl: "",
+    detailImageUrl: "",
   });
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(apis.blogCategory.get, {
-          headers: {
-            Authorization: validToken,
-          }
+          headers: { Authorization: validToken }
         });
+
         if (res?.data?.success) {
-          setCategories(res?.data?.data || []);
+          setCategories(res.data.data || []);
         }
       } catch (error) {
         console.log(error)
-        toast.error("Failed to fetch categories");
+        toast.error("Failed to load categories");
       }
     };
     fetchCategories();
   }, []);
 
-  const handleFullDescriptionChange = (editorContent) => {
-    const value = typeof editorContent === "object" && editorContent.target?.value
-      ? editorContent.target.value
-      : editorContent;
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const res = await axios.get(`${apis.blog.get}/${id}`, {
+          headers: { Authorization: validToken }
+        });
 
-    setFormData({ ...formData, fullDescription: value });
+        if (res?.data?.success) {
+          const blog = res.data.data;
+
+          setFormData({
+            category: blog.category?._id || "",
+            title: blog.title || "",
+            shortDescription: blog.shortDescription || "",
+            fullDescription: blog.fullDescription || "",
+            frontImageUrl: blog.frontImage || "",
+            detailImageUrl: blog.detailImage || "",
+          });
+
+          setFrontPreview(blog.frontImage);
+          setDetailPreview(blog.detailImage);
+        }
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to load blog");
+      };
+    };
+
+    fetchBlog();
+  }, [id]);
+
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, fullDescription: value }));
   };
 
   const handleChange = (e) => {
@@ -101,47 +133,37 @@ const UpdateBlogPage = () => {
       toast.error("Blog title is required");
       return;
     }
-
     if (!formData.category) {
-      toast.error("Please select a category");
+      toast.error("Category is required");
       return;
     }
 
     try {
       setLoading(true);
+
       const data = new FormData();
       Object.keys(formData).forEach((key) => data.append(key, formData[key]));
+
       if (frontImage) data.append("frontImage", frontImage);
       if (detailImage) data.append("detailImage", detailImage);
 
-      const res = await axios.post(apis.blog.create, data, {
+      const res = await axios.patch(`${apis.blog.update}/${id}`, data, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: validToken,
+          "Content-Type": "multipart/form-data",
         },
       });
 
       if (res.data.success) {
-        toast.success("Blog created successfully");
-        setFormData({ category: "", title: "", shortDescription: "", fullDescription: "" });
-        setFrontImage(null);
-        setFrontPreview(null);
-        setDetailImage(null);
-        setDetailPreview(null);
+        toast.success("Blog updated successfully");
+        navigate(-1);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      if (frontPreview) URL.revokeObjectURL(frontPreview);
-      if (detailPreview) URL.revokeObjectURL(detailPreview);
-    };
-  }, [frontPreview, detailPreview]);
 
   return (
     <div className="page-wrapper">
@@ -157,13 +179,12 @@ const UpdateBlogPage = () => {
               ← Back
             </button>
           </div>
+
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">
-                  Category <span style={{ color: "red" }}>*</span>
-                </label>
+                <label className="form-label">Category *</label>
                 <select
                   name="category"
                   value={formData.category}
@@ -182,9 +203,7 @@ const UpdateBlogPage = () => {
 
               {/* Title */}
               <div className="mb-3">
-                <label className="form-label">
-                  Title <span style={{ color: "red" }}>*</span>
-                </label>
+                <label className="form-label">Title *</label>
                 <input
                   type="text"
                   name="title"
@@ -212,10 +231,9 @@ const UpdateBlogPage = () => {
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <TextEditor
+                <RichTextEditor
                   value={formData.fullDescription}
-                  onChange={handleFullDescriptionChange}
-                  placeholder="Enter full blog content..."
+                  onChange={handleDescriptionChange}
                 />
               </div>
 
@@ -224,23 +242,21 @@ const UpdateBlogPage = () => {
                 <label className="form-label">Front Image</label>
                 <div
                   {...getFrontRootProps()}
-                  className={`border p-4 text-center rounded ${isFrontActive ? "bg-light" : ""}`}
+                  className={`border p-4 text-center rounded ${isFrontActive ? "bg-light" : ""
+                    }`}
                   style={{ cursor: "pointer" }}
                 >
                   <input {...getFrontInputProps()} />
-                  {isFrontActive ? (
-                    <p>Drop the image here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop front image here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
-                  )}
+                  <p>
+                    Drag & drop front image here, or{" "}
+                    <span className="text-primary">browse</span>
+                  </p>
                 </div>
+
                 {frontPreview && (
                   <div className="mt-3 text-center">
                     <img
-                      src={frontPreview}
+                      src={BASE_URL + "/" + frontPreview}
                       alt="Front Preview"
                       style={{ maxWidth: "200px", borderRadius: "8px" }}
                     />
@@ -253,23 +269,21 @@ const UpdateBlogPage = () => {
                 <label className="form-label">Detail Image</label>
                 <div
                   {...getDetailRootProps()}
-                  className={`border p-4 text-center rounded ${isDetailActive ? "bg-light" : ""}`}
+                  className={`border p-4 text-center rounded ${isDetailActive ? "bg-light" : ""
+                    }`}
                   style={{ cursor: "pointer" }}
                 >
                   <input {...getDetailInputProps()} />
-                  {isDetailActive ? (
-                    <p>Drop the image here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop detail image here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
-                  )}
+                  <p>
+                    Drag & drop detail image here, or{" "}
+                    <span className="text-primary">browse</span>
+                  </p>
                 </div>
+
                 {detailPreview && (
                   <div className="mt-3 text-center">
                     <img
-                      src={detailPreview}
+                      src={BASE_URL + "/" + detailPreview}
                       alt="Detail Preview"
                       style={{ maxWidth: "200px", borderRadius: "8px" }}
                     />
@@ -280,24 +294,20 @@ const UpdateBlogPage = () => {
               {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="reset"
+                  type="button"
                   className="btn btn-secondary me-2"
-                  onClick={() => {
-                    setFormData({ category: "", title: "", shortDescription: "", fullDescription: "" });
-                    setFrontImage(null);
-                    setFrontPreview(null);
-                    setDetailImage(null);
-                    setDetailPreview(null);
-                  }}
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </button>
+
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Saving..." : "Save"}
+                  {loading ? "Updating..." : "Update"}
                 </button>
               </div>
             </form>
           </div>
+
         </div>
       </div>
     </div>

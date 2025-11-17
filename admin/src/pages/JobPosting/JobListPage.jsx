@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 
-const ListBlogCategoryPage = () => {
+const JobListPage = () => {
   const { validToken } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const ListBlogCategoryPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.blogCategory.get, {
+      const response = await axios.get(apis.jobPosting.get, {
         headers: { Authorization: validToken },
         params: {
           page,
@@ -73,7 +73,7 @@ const ListBlogCategoryPage = () => {
 
     try {
       const response = await axios.patch(
-        `${apis.blogCategory.update}/${id}`,
+        `${apis.jobPosting.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
@@ -90,7 +90,7 @@ const ListBlogCategoryPage = () => {
     if (!window.confirm("Are you sure you want to delete this?")) return;
 
     try {
-      const response = await axios.delete(`${apis.blogCategory.delete}/${id}`, {
+      const response = await axios.delete(`${apis.jobPosting.delete}/${id}`, {
         headers: { Authorization: validToken },
       });
 
@@ -111,7 +111,7 @@ const ListBlogCategoryPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Blog Category {data?.length}</h5>
+          <h5>Jobs {data?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -149,7 +149,7 @@ const ListBlogCategoryPage = () => {
               <option value={total}>All</option>
             </select>
             <div>
-              <Link to="/add-blog-category">
+              <Link to="/add-job">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
                   <span>Add</span>
@@ -177,7 +177,7 @@ const ListBlogCategoryPage = () => {
                     data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.name}</td>
+                        <td>{d?.title}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">
@@ -192,7 +192,7 @@ const ListBlogCategoryPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-blog-category/${d?._id}`}>
+                            <Link to={`/update-job/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-edit" />
                               </button>
@@ -270,4 +270,4 @@ const ListBlogCategoryPage = () => {
   );
 };
 
-export default ListBlogCategoryPage;
+export default JobListPage;

@@ -6,7 +6,7 @@ import { useDropzone } from "react-dropzone";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
-import TextEditor from "../../components/Form/TextEditor";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 
 const AddBlogPage = () => {
   const { validToken } = useAuth();
@@ -45,12 +45,8 @@ const AddBlogPage = () => {
     fetchCategories();
   }, []);
 
-  const handleFullDescriptionChange = (editorContent) => {
-    const value = typeof editorContent === "object" && editorContent.target?.value
-      ? editorContent.target.value
-      : editorContent;
-
-    setFormData({ ...formData, fullDescription: value });
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, dullDescription: value }));
   };
 
   const handleChange = (e) => {
@@ -212,10 +208,9 @@ const AddBlogPage = () => {
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <TextEditor
+                <RichTextEditor
                   value={formData.fullDescription}
-                  onChange={handleFullDescriptionChange}
-                  placeholder="Enter full blog content..."
+                  onChange={handleDescriptionChange}
                 />
               </div>
 
