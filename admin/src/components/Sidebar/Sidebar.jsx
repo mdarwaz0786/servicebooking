@@ -328,16 +328,16 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to="/add-blog-category"
-                className={currentPath === "/add-blog-category" ? "active" : ""}
+                to="/list-blog-category"
+                className={currentPath === "/list-blog-category" ? "active" : ""}
               >
                 <i className="fe fe-layers" /> <span>Blog Category</span>
               </Link>
             </li>
             <li>
               <Link
-                to="/add-blog"
-                className={currentPath === "/add-blog" ? "active" : ""}
+                to="/blog-list"
+                className={currentPath === "/blog-list" || currentPath === "/update-blog" ? "active" : ""}
               >
                 <i className="fe fe-file-text" /> <span>Blog</span>
               </Link>

@@ -65,7 +65,13 @@ import ExpertTechnicianListPage from "../pages/ExportTechnician/ExpertTechnician
 import UpdateBrandLogoPage from "../pages/BrandLogo/UpdateBrandLogoPage";
 import BrandLogoListPage from "../pages/BrandLogo/BrandLogoListPage";
 import AddBlogPage from "../pages/Blog/AddBlogPage";
+import UpdateBlogPage from "../pages/Blog/UpdateBlogPage";
+import BlogListPage from "../pages/Blog/BlogListPage";
+
 import AddBlogCategoryPage from "../pages/BlogCategory/AddBlogCategoryPage";
+import ListBlogCategoryPage from "../pages/BlogCategory/ListBlogCategoryPage";
+import UpdateBlogCategoryPage from "../pages/BlogCategory/UpdateBlogCategoryPage";
+
 import AddTermsConditionsPage from "../pages/TermsConditions/AddTermsConditionsPage";
 import AddPrivacyPolicyPage from "../pages/PrivacyPolicy/AddPrivacyPolicyPage";
 import AddRefundPolicyPage from "../pages/RefundPolicy/AddRefundPolicyPage";
@@ -167,9 +173,13 @@ const routesConfig = {
     { path: "/service-faq", element: ServiceFaqListPage },
     { path: "/add-service-faq", element: AddServiceFaqPage },
     { path: "/update-service-faq/:id", element: UpdateServiceFaqPage },
-
+    
+    { path: "/blog-list", element: BlogListPage },
     { path: "/add-blog", element: AddBlogPage },
-
+    { path: "/update-blog/:id", element: UpdateBlogPage },
+    
+    { path: "/list-blog-category", element: ListBlogCategoryPage },
+    { path: "/update-blog-category/:id", element: UpdateBlogCategoryPage },
     { path: "/add-blog-category", element: AddBlogCategoryPage },
 
     { path: "/add-terms-conditions", element: AddTermsConditionsPage },
