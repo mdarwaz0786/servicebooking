@@ -133,13 +133,14 @@ const ServiceDetail = () => {
 
                   {data?.rateCard ? (
                       <button
-                          className="btn btn-primary-ghost w-50 d-flex justify-content-between align-items-center"
+                          className="btn btn-primary-ghost d-flex align-items-center"
                           onClick={() =>
                               handleRateCardDetail(data._id, data)
                           }
                       >
+                        <img src="/assets/img/favicon.jpg" style={{width: '25px',marginRight: '5px'}} />
                           Standard Transparent Rate List
-                          <i className="fa fa-angle-right"></i>
+                          <i className="fa fa-angle-right" style={{marginLeft: '5px'}}></i>
                       </button>
                   ) : null}
                   
@@ -279,10 +280,9 @@ const ServiceDetail = () => {
 
               {data?.expertTechnician && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-5 br-10">
+                  <div className="bg-light-500 p-3 pb-5 br-10">
                     <div className="row align-items-stretch">
                       {/* Left Section*/}
-                      <div className="col-md-7 d-flex flex-column justify-content-center">
                         <h3
                           style={{
                             fontSize: "40px",
@@ -293,6 +293,7 @@ const ServiceDetail = () => {
                         >
                           {data?.expertTechnician?.mainTitle}
                         </h3>
+                      <div className="col-md-7 d-flex flex-column justify-content-center">
 
                         {data?.expertTechnician?.points?.map((item, index) => (
                           <div key={index} className="d-flex align-items-center mb-3">
@@ -306,7 +307,7 @@ const ServiceDetail = () => {
                                 objectFit: "contain",
                               }}
                             />
-                            <span style={{ fontSize: "20px", color: "#00522c" }}>
+                            <span style={{ fontSize: "16px", color: "#00522c" }}>
                               {item?.title}
                             </span>
                           </div>

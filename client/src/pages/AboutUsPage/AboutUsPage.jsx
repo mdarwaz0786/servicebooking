@@ -19,7 +19,7 @@ const AboutUsPage = () => {
 
   return (
     <>
-        <BreadCrumb data={{title:'About us'}} />
+      <BreadCrumb data={{title:'About us'}} />
   
 
 

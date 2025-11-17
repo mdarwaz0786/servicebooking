@@ -3,7 +3,7 @@ import CategoryModalCard from "../../components/Category/CategoryModalCard";
 const Categories = ({ categoryData = [] }) => {
   return (
     <div className="container-fluid">
-      <div className="row p-4 pt-0">
+      <div className="row p-4 pt-0 justify-content-center">
         {categoryData.map((cat) =>
           cat.subcategories?.length > 0 ? (
             <div key={cat.id} className="mb-5">
