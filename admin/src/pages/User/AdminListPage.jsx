@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -114,6 +114,14 @@ const AdminListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+            <div>
+              <Link to="/add-admin">
+                <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                  <i className="fa fa-plus me-2"></i>
+                  <span>Add Admin</span>
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -125,27 +133,18 @@ const AdminListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Mobile Number</th>
-                    <th>Action</th>
+                    <th>Mobile</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users?.length > 0 ? (
-                    users?.filter?.((u) => u?.user === "admin")?.map((d, index) => (
+                    users?.filter?.((u) => u?.role === "admin")?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.mobile}</td>
-                        <div className="d-flex">
-                          <button
-                            className="btn delete-table"
-                            type="button"
-                          >
-                            <i className="fe fe-trash-2" />
-                          </button>
-                        </div>
                       </tr>
                     ))
-                  ) : !loading ? (
+                  ) : !loading && users?.filter?.((u) => u?.role === "admin")?.length == 0 ? (
                     <tr>
                       <td colSpan="6" className="text-center">
                         No users found

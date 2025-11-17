@@ -11,7 +11,6 @@ const AddRefundPolicyPage = () => {
   const navigate = useNavigate();
 
   const id = "68f9c555819007e42b718e67";
-  const [descriptionKey, setDescriptionKey] = useState(1);
 
   const [formData, setFormData] = useState({
     title: "Refund Policy",
@@ -45,8 +44,7 @@ const AddRefundPolicyPage = () => {
       });
 
       if (res.data.success) {
-        toast.success("Refund Policy created successfully");
-        navigate(-1);
+        toast.success("Saved successfully");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -76,7 +74,6 @@ const AddRefundPolicyPage = () => {
               description: description || "",
               effectiveDate: effectiveDate ? effectiveDate.split("T")[0] : "",
             });
-            setDescriptionKey(2);
           }
         })
         .catch((err) => toast.error(err?.response?.data?.message || err.message))
@@ -126,15 +123,10 @@ const AddRefundPolicyPage = () => {
               </div>
 
               <div className="mb-3">
+                <label className="form-label">Description</label>
                 <RichTextEditor
-                  key={descriptionKey}
-                  label="Description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
-                  placeholder="Enter refund policy description..."
-                  height={400} // increased height
-                  required
-                  error={!formData.description ? "Description is required" : ""}
                 />
               </div>
 

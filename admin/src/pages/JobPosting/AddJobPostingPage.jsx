@@ -26,11 +26,7 @@ const AddJobPostingPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-const handleFullDescriptionChange = (editorContent) => {
-    const value = typeof editorContent === "object" && editorContent.target?.value
-      ? editorContent.target.value
-      : editorContent;
-
+  const handleFullDescriptionChange = (value) => {
     setFormData({ ...formData, fullDescription: value });
   };
 

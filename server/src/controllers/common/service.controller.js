@@ -32,9 +32,18 @@ const removeServices = (doc) => {
 export const getServices = asyncHandler(async (req, res) => {
   let { search, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
-  page = parseInt(page, 10);
-  limit = parseInt(limit, 10);
+  page = parseInt(page, 10) || 1;
+  limit = parseInt(limit, 10) || 10;
+
+  if (isNaN(page) || isNaN(limit)) {
+    return res.status(400).json({
+      success: false,
+      message: "page & limit must be valid numbers"
+    });
+  }
+
   const skip = (page - 1) * limit;
+
 
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
@@ -83,13 +92,70 @@ export const getServices = asyncHandler(async (req, res) => {
     }
   }
 
-  const services = await ServiceModel
-    .find(filters)
-    .populate('category', 'name')
-    .sort(sort)
-    .skip(skip)
-    .limit(limit)
-    .lean();
+  const services = await ServiceModel.aggregate([
+    { $match: filters },
+
+    // JOIN CATEGORY
+    {
+      $lookup: {
+        from: "categories",
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "category"
+      }
+    },
+    { $unwind: "$category" },
+
+    // JOIN SUBCATEGORY
+    {
+      $lookup: {
+        from: "subcategories",
+        localField: "subCategoryId",
+        foreignField: "_id",
+        as: "subCategory"
+      }
+    },
+    { $unwind: { path: "$subCategory", preserveNullAndEmptyArrays: true } },
+
+    // JOIN SUBSUBCATEGORY
+    {
+      $lookup: {
+        from: "subsubcategories",
+        localField: "subSubCategoryId",
+        foreignField: "_id",
+        as: "subSubCategory"
+      }
+    },
+    { $unwind: { path: "$subSubCategory", preserveNullAndEmptyArrays: true } },
+
+    // JOIN SUBSUBSUBCATEGORY
+    {
+      $lookup: {
+        from: "subsubsubcategories",
+        localField: "subSubSubCategoryId",
+        foreignField: "_id",
+        as: "subSubSubCategory"
+      }
+    },
+    { $unwind: { path: "$subSubSubCategory", preserveNullAndEmptyArrays: true } },
+
+    // 🚨 MAIN FIX — REMOVE SERVICES OF INACTIVE CATEGORIES
+    {
+      $match: {
+        "category.status": true,
+        $and: [
+          { $or: [{ subCategory: null }, { "subCategory.status": true }] },
+          { $or: [{ subSubCategory: null }, { "subSubCategory.status": true }] },
+          { $or: [{ subSubSubCategory: null }, { "subSubSubCategory.status": true }] }
+        ]
+      }
+    },
+
+    { $sort: sort === "-createdAt" ? { createdAt: -1 } : { createdAt: 1 } },
+    { $skip: skip },
+    { $limit: limit }
+  ]);
+
 
   // 🔹 Fetch rate cards related to these services
   const serviceIds = services.map((s) => s._id);

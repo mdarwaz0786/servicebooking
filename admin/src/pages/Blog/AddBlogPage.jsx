@@ -45,6 +45,14 @@ const AddBlogPage = () => {
     fetchCategories();
   }, []);
 
+  const handleFullDescriptionChange = (editorContent) => {
+    const value = typeof editorContent === "object" && editorContent.target?.value
+      ? editorContent.target.value
+      : editorContent;
+
+    setFormData({ ...formData, fullDescription: value });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -206,7 +214,7 @@ const AddBlogPage = () => {
                 <label className="form-label">Full Description</label>
                 <TextEditor
                   value={formData.fullDescription}
-                  onChange={(value) => setFormData({ ...formData, fullDescription: value })}
+                  onChange={handleFullDescriptionChange}
                   placeholder="Enter full blog content..."
                 />
               </div>
