@@ -4,6 +4,7 @@ import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";
 import AboutUsPage from "./pages/AboutUsPage/AboutUsPage";
 import ContactUsPage from "./pages/ContactUsPage/ContactUsPage";
+import AddressesPage from "./pages/ContactUsPage/AddressesPage";
 import ServicesPage from "./pages/ServicesPage/ServicesPage";
 import LoginPage from "./pages/Login/LoginPage";
 import RegisterPage from "./pages/Register/RegisterPage";
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/addresses" element={<AddressesPage />} />
           <Route path="/term-condition" element={<TermsConditionsPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/refund-policy" element={<RefundPolicyPage />} />
