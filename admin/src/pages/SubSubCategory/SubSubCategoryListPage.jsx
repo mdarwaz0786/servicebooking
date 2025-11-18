@@ -50,19 +50,22 @@ const SubSubCategoryListPage = () => {
     };
   };
 
-  const fetchSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub categories");
     };
-  };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
 
   const fetchSubSubCategories = async () => {
     try {
@@ -141,7 +144,6 @@ const SubSubCategoryListPage = () => {
 
   useEffect(() => {
     fetchCategories();
-    fetchSubCategories();
   }, []);
 
   useEffect(() => {
