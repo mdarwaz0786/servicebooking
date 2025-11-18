@@ -8,8 +8,8 @@ import { useContext, useEffect, useState } from "react";
 
 const Services = ({search, slug}) => {
 
-  console.log(slug)
-  console.log(search)
+  // console.log(slug)
+  // console.log(search)
   const { servicePageCategoryData, servicePageName, cartAmount, cartItems, servicePageCartShow } = useContext(AppContext);
   return ( 
     <div className="page-wrapper m-0">

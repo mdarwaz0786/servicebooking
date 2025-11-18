@@ -5,11 +5,13 @@ import { useDropzone } from "react-dropzone";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
+import TextEditor from "../../components/Form/TextEditor";
 
 const AddServicePage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
+  const [descriptionKey, setdescriptionKey] = useState(1);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subSubCategories, setSubSubCategories] = useState([]);
@@ -54,7 +56,7 @@ const AddServicePage = () => {
         if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load categories");
+        toast.error("Failed to load products");
       };
     };
     fetchCategories();
@@ -71,7 +73,7 @@ const AddServicePage = () => {
         if (res?.data?.success) setSubCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub categories");
+        toast.error("Failed to load variants");
       };
     };
     fetchSubCategories();
@@ -88,7 +90,7 @@ const AddServicePage = () => {
         if (res?.data?.success) setSubSubCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub sub categories");
+        toast.error("Failed to load service process");
       };
     };
     fetchSubSubCategories();
@@ -105,7 +107,7 @@ const AddServicePage = () => {
         if (res?.data?.success) setSubSubSubCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub sub sub categories");
+        toast.error("Failed to load Nested Service Process");
       };
     };
     fetchSubSubSubCategories();
@@ -171,7 +173,7 @@ const AddServicePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.categoryId) return toast.error("Please select a category");
+    if (!formData.categoryId) return toast.error("Please select a product");
     if (!formData.name.trim()) return toast.error("Name is required");
 
     try {
@@ -220,6 +222,7 @@ const AddServicePage = () => {
         setIconPreview(null);
         setPopupImage(null);
         setPopupImagePreview(null);
+        navigate(-1);
       };
     } catch (error) {
       toast.error(
@@ -256,7 +259,7 @@ const AddServicePage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product *</label>
                 <select
                   name="categoryId"
                   value={formData.categoryId}
@@ -272,7 +275,7 @@ const AddServicePage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -283,7 +286,7 @@ const AddServicePage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategoryId"
                   value={formData.subCategoryId}
@@ -298,7 +301,7 @@ const AddServicePage = () => {
                   className="form-control"
                   disabled={!formData.categoryId}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -309,7 +312,7 @@ const AddServicePage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategoryId"
                   value={formData.subSubCategoryId}
@@ -323,7 +326,7 @@ const AddServicePage = () => {
                   className="form-control"
                   disabled={!formData.subCategoryId}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -334,7 +337,7 @@ const AddServicePage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategoryId"
                   value={formData.subSubSubCategoryId}
@@ -342,7 +345,7 @@ const AddServicePage = () => {
                   className="form-control"
                   disabled={!formData.subSubCategoryId}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -444,8 +447,8 @@ const AddServicePage = () => {
                   </select>
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label className="form-label">Offer Content</label>
-                  <input type="text" placeholder="Add more and save upto 10%" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Offer Price</label>
+                  <input type="number" placeholder="Add offer price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Max Booking Quantity</label>
@@ -471,25 +474,27 @@ const AddServicePage = () => {
               {/* Short Description */}
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
-                <input
-                  type="text"
+                <TextEditor
+                  key={descriptionKey}
                   name="shortDescription"
                   value={formData.shortDescription}
                   onChange={handleChange}
-                  className="form-control"
+                  placeholder="Enter impact Short Description..."
+                  height={300}
                 />
               </div>
 
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <textarea
-                  name="fullDescription"
+                <TextEditor
+                  key={descriptionKey}
                   value={formData.fullDescription}
+                  name="fullDescription"
                   onChange={handleChange}
-                  className="form-control"
-                  rows="3"
-                ></textarea>
+                  placeholder="Enter impact Full Description..."
+                  height={300}
+                />
               </div>
 
               {/* Image */}
@@ -523,7 +528,7 @@ const AddServicePage = () => {
               </div>
 
               {/* Icon */}
-              <div className="mb-3">
+              <div className="mb-3 d-none">
                 <label className="form-label">Icon</label>
                 <div
                   {...getIconRootProps()}

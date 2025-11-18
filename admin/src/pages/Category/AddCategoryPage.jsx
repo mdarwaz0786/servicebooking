@@ -90,6 +90,7 @@ const AddCategoryPage = () => {
         setPreview(null);
         setIcon(null);
         setIconPreview(null);
+        navigate(-1);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
@@ -110,7 +111,7 @@ const AddCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Category</h5>
+            <h5 className="mb-0">Add Product</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"

@@ -89,7 +89,7 @@ const AddSubCategoryPage = () => {
     };
 
     if (!formData.name.trim()) {
-      toast.error("Subcategory name is required");
+      toast.error("Variant name is required");
       return;
     };
 
@@ -108,7 +108,7 @@ const AddSubCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Subcategory created successfully");
+        toast.success("Variant created successfully");
         setFormData((prev) => ({
           ...prev,
           name: "",
@@ -118,6 +118,7 @@ const AddSubCategoryPage = () => {
         setPreview(null);
         setIcon(null);
         setIconPreview(null);
+        navigate(-1);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
@@ -138,7 +139,7 @@ const AddSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Sub Category</h5>
+            <h5 className="mb-0">Add Variant</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -152,7 +153,7 @@ const AddSubCategoryPage = () => {
               {/* Select Category */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Category <span style={{ color: "red" }}>*</span>
+                  Select Product <span style={{ color: "red" }}>*</span>
                 </label>
                 <select
                   name="categoryId"
@@ -161,7 +162,7 @@ const AddSubCategoryPage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}

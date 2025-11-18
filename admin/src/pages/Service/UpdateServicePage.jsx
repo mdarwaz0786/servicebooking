@@ -274,7 +274,7 @@ const UpdateServicePage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product *</label>
                 <select
                   name="categoryId"
                   value={formData.categoryId}
@@ -290,7 +290,7 @@ const UpdateServicePage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -301,7 +301,7 @@ const UpdateServicePage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategoryId"
                   value={formData.subCategoryId}
@@ -316,7 +316,7 @@ const UpdateServicePage = () => {
                   className="form-control"
                   disabled={!formData.categoryId}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -327,7 +327,7 @@ const UpdateServicePage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategoryId"
                   value={formData.subSubCategoryId}
@@ -341,7 +341,7 @@ const UpdateServicePage = () => {
                   className="form-control"
                   disabled={!formData.subCategoryId}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -352,7 +352,7 @@ const UpdateServicePage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategoryId"
                   value={formData.subSubSubCategoryId}
@@ -360,7 +360,7 @@ const UpdateServicePage = () => {
                   className="form-control"
                   disabled={!formData.subSubCategoryId}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -460,8 +460,8 @@ const UpdateServicePage = () => {
                   </select>
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label className="form-label">Offer Content</label>
-                  <input type="text" placeholder="Add more and save upto 10%" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Offer Price</label>
+                  <input type="number" placeholder="Add price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Max Booking Quantity</label>
@@ -541,7 +541,7 @@ const UpdateServicePage = () => {
               </div>
 
               {/* Icon */}
-              <div className="mb-3">
+              <div className="mb-3 d-none">
                 <label className="form-label">Icon</label>
                 <div
                   {...getIconRootProps()}

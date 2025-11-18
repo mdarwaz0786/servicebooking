@@ -150,7 +150,12 @@ const PaymentMethod = () => {
                   <div className="total-wrap">
                     <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">Item Value</h6>
-                      <p className="text-gray-9">{PriceFormat(cartAmount.amount)}</p>
+                      <p className="text-gray-9">
+                        <span className="old-price text-muted text-decoration-line-through me-2">
+                          {PriceFormat(cartAmount.mrpAmount)}
+                        </span>
+                        {PriceFormat(cartAmount.amount)}
+                      </p>
                     </div>
                     <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">

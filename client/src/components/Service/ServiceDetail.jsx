@@ -54,7 +54,7 @@ const ServiceDetail = () => {
                 style={{ height: "220px" }}
               >
                 <img
-                  src={imageCheck(data.image)}
+                  src={imageCheck(data.popupImage)}
                   className="w-100 h-100"
                   alt="Service"
                 />

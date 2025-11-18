@@ -34,7 +34,7 @@ const UpdateSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error.message);
-        toast.error("Failed to load categories");
+        toast.error("Failed to load Variants");
       };
     };
     fetchCategories();
@@ -59,7 +59,7 @@ const UpdateSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load subcategory");
+        toast.error("Failed to load Variant");
       };
     };
     if (id) fetchSubCategory();
@@ -110,12 +110,12 @@ const UpdateSubCategoryPage = () => {
     e.preventDefault();
 
     if (!formData.categoryId) {
-      toast.error("Please select a category");
+      toast.error("Please select a product");
       return;
     };
 
     if (!formData.name.trim()) {
-      toast.error("Sub category name is required");
+      toast.error("Sub Variant name is required");
       return;
     };
 
@@ -134,7 +134,7 @@ const UpdateSubCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Sub category updated successfully");
+        toast.success("Variant updated successfully");
         navigate(-1);
       };
     } catch (error) {
@@ -156,7 +156,7 @@ const UpdateSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Sub Category</h5>
+            <h5 className="mb-0">Update Variant</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -170,7 +170,7 @@ const UpdateSubCategoryPage = () => {
               {/* Select Category */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Category <span style={{ color: "red" }}>*</span>
+                  Select Product <span style={{ color: "red" }}>*</span>
                 </label>
                 <select
                   name="categoryId"
@@ -179,7 +179,7 @@ const UpdateSubCategoryPage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}

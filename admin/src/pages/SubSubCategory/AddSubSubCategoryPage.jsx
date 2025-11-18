@@ -36,7 +36,7 @@ const AddSubSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error.message);
-        toast.error("Failed to load categories");
+        toast.error("Failed to load products");
       };
     };
     fetchCategories();
@@ -57,7 +57,7 @@ const AddSubSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load subcategories");
+        toast.error("Failed to load variants");
       };
     };
     fetchSubCategories();
@@ -108,17 +108,17 @@ const AddSubSubCategoryPage = () => {
     e.preventDefault();
 
     if (!formData.categoryId) {
-      toast.error("Please select a category");
+      toast.error("Please select a product");
       return;
     };
 
     if (!formData.subCategoryId) {
-      toast.error("Please select a sub category");
+      toast.error("Please select a sub variant");
       return;
     };
 
     if (!formData.name.trim()) {
-      toast.error("Sub sub category name is required");
+      toast.error("Service Process name is required");
       return;
     };
 
@@ -137,7 +137,7 @@ const AddSubSubCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Sub sub category created successfully");
+        toast.success("Service Process created successfully");
         setFormData((prev) => ({
           ...prev,
           name: "",
@@ -147,6 +147,7 @@ const AddSubSubCategoryPage = () => {
         setPreview(null);
         setIcon(null);
         setIconPreview(null);
+        navigate(-1);
       };
     } catch (error) {
       toast.error(
@@ -169,7 +170,7 @@ const AddSubSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Sub Sub Category</h5>
+            <h5 className="mb-0">Add Service Process</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -183,7 +184,7 @@ const AddSubSubCategoryPage = () => {
               {/* Select Category */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Category <span style={{ color: "red" }}>*</span>
+                  Select product <span style={{ color: "red" }}>*</span>
                 </label>
                 <select
                   name="categoryId"
@@ -198,7 +199,7 @@ const AddSubSubCategoryPage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -210,7 +211,7 @@ const AddSubSubCategoryPage = () => {
               {/* Select Sub Category */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Sub Category <span style={{ color: "red" }}>*</span>
+                  Select Variant <span style={{ color: "red" }}>*</span>
                 </label>
                 <select
                   name="subCategoryId"
@@ -220,7 +221,7 @@ const AddSubSubCategoryPage = () => {
                   required
                   disabled={!formData.categoryId}
                 >
-                  <option value="">-- Select SubCategory --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}

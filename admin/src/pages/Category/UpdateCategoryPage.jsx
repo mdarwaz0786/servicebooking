@@ -40,7 +40,7 @@ const UpdateCategoryPage = () => {
         if (data?.icon) setIconPreview(`${BASE_URL}/${data?.icon}`);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch category");
+      toast.error(error?.response?.data?.message || "Failed to fetch product");
     } finally {
       setLoading(false);
     };
@@ -95,7 +95,7 @@ const UpdateCategoryPage = () => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error("Category name is required");
+      toast.error("Product name is required");
       return;
     };
 
@@ -114,11 +114,11 @@ const UpdateCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Category updated successfully");
+        toast.success("Product updated successfully");
         navigate(-1);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update category");
+      toast.error(error?.response?.data?.message || "Failed to update product");
     } finally {
       setLoading(false);
     };
@@ -136,7 +136,7 @@ const UpdateCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Category</h5>
+            <h5 className="mb-0">Update Product</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"

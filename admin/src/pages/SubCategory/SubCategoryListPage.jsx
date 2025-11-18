@@ -133,7 +133,7 @@ const SubCategoryListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Sub Categories {subCategories?.length}</h5>
+          <h5>Variants {subCategories?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -153,7 +153,7 @@ const SubCategoryListPage = () => {
             <Select
               isClearable
               isSearchable
-              placeholder="All Categories"
+              placeholder="All Products"
               value={
                 categoryId
                   ? { value: categoryId, label: categories.find((c) => c._id === categoryId)?.name }
@@ -211,7 +211,7 @@ const SubCategoryListPage = () => {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Category</th>
+                    <th>Product</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -223,7 +223,7 @@ const SubCategoryListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>
                           <img
-                            src={d?.image ? `${BASE_URL}/${d.image}` : "https://via.placeholder.com/50"}
+                            src={d?.icon ? `${BASE_URL}/${d.icon}` : "https://via.placeholder.com/50"}
                             className="me-2"
                             alt="image"
                             style={{ width: "50px", height: "50px", objectFit: "cover" }}

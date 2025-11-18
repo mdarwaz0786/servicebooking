@@ -37,7 +37,7 @@ const UpdateSubSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error.message);
-        toast.error("Failed to load categories");
+        toast.error("Failed to load products");
       };
     };
     fetchCategories();
@@ -58,7 +58,7 @@ const UpdateSubSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error.message);
-        toast.error("Failed to load subcategories");
+        toast.error("Failed to load variants");
       };
     };
     fetchSubCategories();
@@ -83,7 +83,7 @@ const UpdateSubSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub sub category");
+        toast.error("Failed to load Service Process");
       };
     };
     if (id) fetchSubSubCategory();
@@ -133,17 +133,17 @@ const UpdateSubSubCategoryPage = () => {
     e.preventDefault();
 
     if (!formData.categoryId) {
-      toast.error("Please select a category");
+      toast.error("Please select a product");
       return;
     };
 
     if (!formData.subCategoryId) {
-      toast.error("Please select a sub category");
+      toast.error("Please select a variant");
       return;
     };
 
     if (!formData.name.trim()) {
-      toast.error("Sub sub category name is required");
+      toast.error("Service Process name is required");
       return;
     };
 
@@ -162,7 +162,7 @@ const UpdateSubSubCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Sub sub category updated successfully");
+        toast.success("Service Process updated successfully");
         navigate(-1);
       };
     } catch (error) {
@@ -184,7 +184,7 @@ const UpdateSubSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Sub Sub Category</h5>
+            <h5 className="mb-0">Update Service Process</h5>
             <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => navigate(-1)}>
               ← Back
             </button>
@@ -193,7 +193,7 @@ const UpdateSubSubCategoryPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category Select */}
               <div className="mb-3">
-                <label className="form-label">Select Category <span style={{ color: "red" }}>*</span></label>
+                <label className="form-label">Select Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="categoryId"
                   value={formData.categoryId}
@@ -214,7 +214,7 @@ const UpdateSubSubCategoryPage = () => {
 
               {/* Subcategory Select */}
               <div className="mb-3">
-                <label className="form-label">Select Sub Category <span style={{ color: "red" }}>*</span></label>
+                <label className="form-label">Select variant <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="subCategoryId"
                   value={formData.subCategoryId}
@@ -223,7 +223,7 @@ const UpdateSubSubCategoryPage = () => {
                   required
                   disabled={!formData.categoryId}
                 >
-                  <option value="">-- Select SubCategory --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}

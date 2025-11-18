@@ -20,7 +20,7 @@ const subSubCategorySchema = new mongoose.Schema({
   },
   icon: {
     type: String,
-    required: false,
+    required: [true, "Icon is required"],
     trim: true,
   },
   shortDescription: {

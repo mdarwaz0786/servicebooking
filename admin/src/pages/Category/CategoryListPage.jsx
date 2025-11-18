@@ -110,7 +110,7 @@ const CategoryListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Categories {categories?.length}</h5>
+          <h5>Products {categories?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -179,7 +179,7 @@ const CategoryListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>
                           <img
-                            src={d?.image ? `${BASE_URL}/${d.image}` : "https://via.placeholder.com/50"}
+                            src={d?.icon ? `${BASE_URL}/${d.icon}` : "https://via.placeholder.com/50"}
                             className="me-2"
                             alt="image"
                             style={{ width: "50px", height: "50px", objectFit: "cover" }}

@@ -36,6 +36,10 @@ const CartItem = () => {
                             {/* Price */}
                             <div className="cart-item-price text-end fw-bold text-dark">
                                 {PriceFormat(value.salePrice * value.quantity)}
+                                <br/>
+                                <span className="old-price text-muted text-decoration-line-through fs-11">
+                                    {PriceFormat(value.mrpPrice * value.quantity)}
+                                </span>
                             </div>
                         </div>
                     ))}

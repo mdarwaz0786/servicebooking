@@ -243,7 +243,7 @@ const ServiceListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Categories"
+              placeholder="All Products"
               value={
                 categoryId
                   ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
@@ -269,7 +269,7 @@ const ServiceListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Sub Categories"
+              placeholder="All Variants"
               value={
                 subCategoryId
                   ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
@@ -295,7 +295,7 @@ const ServiceListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Sub Sub Categories"
+              placeholder="All Service Process"
               value={
                 subSubCategoryId
                   ? { value: subSubCategoryId, label: subSubCategories.find((c) => c?._id === subSubCategoryId)?.name }
@@ -321,7 +321,7 @@ const ServiceListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Sub Sub Sub Categories"
+              placeholder="All Nested Service Process"
               value={
                 subSubSubCategoryId
                   ? { value: subSubSubCategoryId, label: subSubSubCategories.find((c) => c?._id === subSubSubCategoryId)?.name }
@@ -355,10 +355,10 @@ const ServiceListPage = () => {
                     <th>Image</th>
                     <th>Name</th>
                     <th>Price</th>
-                    <th>Category</th>
-                    <th>Sub Category</th>
-                    <th>2 Sub Category</th>
-                    <th>3 Sub Category</th>
+                    <th>Product</th>
+                    <th>Variant</th>
+                    <th>Service Process</th>
+                    <th>Nested Service Process</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
