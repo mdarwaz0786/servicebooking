@@ -1,19 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateBlogCategoryPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
   });
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const res = await axios.get(`${apis.blogCategory.get}/${id}`, {
+          headers: { Authorization: validToken },
+        });
+
+        if (res?.data?.success) {
+          setFormData({
+            name: res.data.data.name || "",
+            description: res.data.data.description || "",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCategory();
+  }, [id, validToken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,17 +56,21 @@ const UpdateBlogCategoryPage = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(apis.blogCategory.create, formData, {
-        headers: { Authorization: validToken },
-      });
+      const response = await axios.patch(
+        `${apis.blogCategory.update}/${id}`,
+        formData,
+        { headers: { Authorization: validToken } }
+      );
 
       if (response?.data?.success) {
-        toast.success("Created successfully");
-        setFormData({ name: "", description: "" });
+        toast.success("Updated successfully");
+        navigate(-1);
       }
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || error.message || "Something went wrong"
+        error?.response?.data?.message ||
+        error.message ||
+        "Something went wrong"
       );
     } finally {
       setLoading(false);
@@ -55,7 +82,7 @@ const UpdateBlogCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Blog Category</h5>
+            <h5 className="mb-0">Update Blog Category</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -100,18 +127,19 @@ const UpdateBlogCategoryPage = () => {
               {/* Buttons */}
               <div className="text-end">
                 <button
-                  type="reset"
+                  type="button"
                   className="btn btn-secondary me-2"
-                  onClick={() => setFormData({ name: "", description: "" })}
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </button>
+
                 <button
                   type="submit"
                   className="btn btn-primary"
                   disabled={loading}
                 >
-                  {loading ? "Saving..." : "Save"}
+                  {loading ? "Updating..." : "Update"}
                 </button>
               </div>
             </form>

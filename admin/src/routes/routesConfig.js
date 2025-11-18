@@ -83,6 +83,8 @@ import UpdateRateCardPage from "../pages/RateCard/UpdateRateCardPage";
 import RateCardListPage from "../pages/RateCard/RateCardListPage";
 import ProviderListPage from "../pages/User/ProviderListPage";
 import AdminListPage from "../pages/User/AdminListPage";
+import JobListPage from "../pages/JobPosting/JobListPage";
+import UpdateJobPostingPage from "../pages/JobPosting/UpdateJobPostingPage";
 
 const routesConfig = {
   private: [
@@ -173,11 +175,11 @@ const routesConfig = {
     { path: "/service-faq", element: ServiceFaqListPage },
     { path: "/add-service-faq", element: AddServiceFaqPage },
     { path: "/update-service-faq/:id", element: UpdateServiceFaqPage },
-    
+
     { path: "/blog-list", element: BlogListPage },
     { path: "/add-blog", element: AddBlogPage },
     { path: "/update-blog/:id", element: UpdateBlogPage },
-    
+
     { path: "/list-blog-category", element: ListBlogCategoryPage },
     { path: "/update-blog-category/:id", element: UpdateBlogCategoryPage },
     { path: "/add-blog-category", element: AddBlogCategoryPage },
@@ -193,6 +195,8 @@ const routesConfig = {
     { path: "/contact-enquiry", element: ContactEnquiryListPage },
 
     { path: "/add-job", element: AddJobPostingPage },
+    { path: "/update-job/:id", element: UpdateJobPostingPage },
+    { path: "/job-list", element: JobListPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },
