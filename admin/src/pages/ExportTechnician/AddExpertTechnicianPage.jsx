@@ -214,6 +214,7 @@ const AddExpertTechnicianPage = () => {
 
       if (res?.data?.success) {
         toast.success("Expert Technician created successfully");
+        navigate(-1);
         setMainTitle("");
         setPoints([{ icon: "", title: "" }]);
         setPointIcons([]);
@@ -245,7 +246,7 @@ const AddExpertTechnicianPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -254,11 +255,12 @@ const AddExpertTechnicianPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -269,7 +271,7 @@ const AddExpertTechnicianPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -277,11 +279,12 @@ const AddExpertTechnicianPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -292,19 +295,20 @@ const AddExpertTechnicianPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -315,7 +319,7 @@ const AddExpertTechnicianPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -323,7 +327,7 @@ const AddExpertTechnicianPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -360,11 +364,12 @@ const AddExpertTechnicianPage = () => {
 
               {/* Image */}
               <div className="mb-3">
-                <label className="form-label">Main Image</label>
+                <label className="form-label">Main Image <span style={{ color: "red" }}>*</span></label>
                 <input
                   type="file"
                   className="form-control"
                   accept="image/*"
+                  required
                   onChange={(e) => handleImageChange(e.target.files[0])}
                 />
                 {imagePreview && (
@@ -384,7 +389,7 @@ const AddExpertTechnicianPage = () => {
 
               {/* Points */}
               <div className="mb-3">
-                <label className="form-label">Points (Icon + Title)</label>
+                <label className="form-label">Points (Icon + Title) <span style={{ color: "red" }}>*</span></label>
                 {points.map((point, index) => (
                   <div key={index} className="border p-3 mb-2 rounded">
                     <div className="row align-items-center">
@@ -393,6 +398,7 @@ const AddExpertTechnicianPage = () => {
                           type="file"
                           className="form-control"
                           accept="image/*"
+                          required
                           onChange={(e) =>
                             handlePointIconChange(index, e.target.files[0])
                           }
@@ -404,6 +410,7 @@ const AddExpertTechnicianPage = () => {
                           className="form-control"
                           placeholder="Title"
                           value={point.title}
+                          required
                           onChange={(e) =>
                             handlePointChange(index, "title", e.target.value)
                           }

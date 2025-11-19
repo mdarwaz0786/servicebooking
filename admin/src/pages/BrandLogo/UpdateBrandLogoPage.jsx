@@ -183,10 +183,18 @@ const UpdateBrandLogoPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!mainTitle.trim()) return toast.error("Main title is required");
-
     try {
       setLoading(true);
+
+      if (!mainTitle.trim()) {
+        toast.error("Main title is required");
+        return;
+      }
+
+      if (selectedServices.length === 0) {
+        toast.error("Please select at least one service");
+        return;
+      }
 
       const formData = new FormData();
       formData.append("mainTitle", mainTitle);
@@ -240,7 +248,7 @@ const UpdateBrandLogoPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -249,11 +257,12 @@ const UpdateBrandLogoPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -264,7 +273,7 @@ const UpdateBrandLogoPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -272,11 +281,12 @@ const UpdateBrandLogoPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -287,7 +297,7 @@ const UpdateBrandLogoPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
@@ -299,7 +309,7 @@ const UpdateBrandLogoPage = () => {
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -310,7 +320,7 @@ const UpdateBrandLogoPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -318,7 +328,7 @@ const UpdateBrandLogoPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -329,7 +339,7 @@ const UpdateBrandLogoPage = () => {
 
               {/* SERVICES */}
               <div className="mb-3">
-                <label className="form-label">Select Services</label>
+                <label className="form-label">Select Services <span style={{ color: "red" }}>*</span></label>
                 <SelectMultipleService
                   optionsList={services}
                   value={selectedServices}
@@ -339,21 +349,23 @@ const UpdateBrandLogoPage = () => {
 
               {/* MAIN TITLE */}
               <div className="mb-3">
-                <label className="form-label">Main Title</label>
+                <label className="form-label">Main Title <span style={{ color: "red" }}>*</span></label>
                 <input
                   type="text"
                   className="form-control"
                   value={mainTitle}
+                  required
                   onChange={(e) => setMainTitle(e.target.value)}
                 />
               </div>
 
               {/* DESCRIPTION */}
               <div className="mb-3">
-                <label className="form-label">Description</label>
+                <label className="form-label">Description <span style={{ color: "red" }}>*</span></label>
                 <textarea
                   className="form-control"
                   rows={4}
+                  required
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
@@ -385,7 +397,7 @@ const UpdateBrandLogoPage = () => {
 
               {/* NEW ICON UPLOAD */}
               <div className="mb-3">
-                <label className="form-label">Upload New Icons</label>
+                <label className="form-label">Upload New Icons <span style={{ color: "red" }}>*</span></label>
                 <input
                   type="file"
                   multiple
@@ -422,7 +434,6 @@ const UpdateBrandLogoPage = () => {
                   {loading ? "Updating..." : "Update"}
                 </button>
               </div>
-
             </form>
           </div>
         </div>

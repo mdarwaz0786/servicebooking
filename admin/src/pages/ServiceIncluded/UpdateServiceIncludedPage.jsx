@@ -170,6 +170,7 @@ const UpdateServiceIncludedPage = () => {
 
     if (!mainTitle.trim()) return toast.error("Main title is required");
     if (selectedServices?.length === 0) return toast.error("Select at least one service");
+    if (titles?.length === 0) return toast.error("Title is required");
 
     try {
       setLoading(true);
@@ -219,7 +220,7 @@ const UpdateServiceIncludedPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span className="text-danger">*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -228,11 +229,12 @@ const UpdateServiceIncludedPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -243,7 +245,7 @@ const UpdateServiceIncludedPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Sub Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -251,11 +253,12 @@ const UpdateServiceIncludedPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -266,19 +269,20 @@ const UpdateServiceIncludedPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process--</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -289,7 +293,7 @@ const UpdateServiceIncludedPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -297,7 +301,7 @@ const UpdateServiceIncludedPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -327,13 +331,14 @@ const UpdateServiceIncludedPage = () => {
                   type="text"
                   className="form-control"
                   value={mainTitle}
+                  required
                   onChange={(e) => setMainTitle(e.target.value)}
                 />
               </div>
 
               {/* Titles */}
               <div className="mb-3">
-                <label className="form-label">Titles</label>
+                <label className="form-label">Titles <span className="text-danger">*</span></label>
                 {titles?.map((title, index) => (
                   <div key={index} className="d-flex align-items-center mb-2">
                     <input
@@ -341,6 +346,7 @@ const UpdateServiceIncludedPage = () => {
                       className="form-control me-2"
                       placeholder="Enter title"
                       value={title}
+                      required
                       onChange={(e) =>
                         handleTitleChange(index, e.target.value)
                       }

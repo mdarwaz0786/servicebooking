@@ -187,6 +187,7 @@ const AddRequirementFromCustomerPage = () => {
 
       if (res?.data?.success) {
         toast.success("Requirement created successfully");
+        navigate(-1);
         setMainTitle("");
         setRequirements([{ name: "", icon: null, preview: null }]);
         setSelectedServices([]);
@@ -212,7 +213,7 @@ const AddRequirementFromCustomerPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -221,11 +222,12 @@ const AddRequirementFromCustomerPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -236,7 +238,7 @@ const AddRequirementFromCustomerPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -244,11 +246,12 @@ const AddRequirementFromCustomerPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -259,19 +262,20 @@ const AddRequirementFromCustomerPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -282,7 +286,7 @@ const AddRequirementFromCustomerPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -290,7 +294,7 @@ const AddRequirementFromCustomerPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -327,7 +331,7 @@ const AddRequirementFromCustomerPage = () => {
 
               {/* Requirements */}
               <div className="mb-3">
-                <label className="form-label">Requirements</label>
+                <label className="form-label">Requirements <span style={{ color: "red" }}>*</span></label>
                 {requirements.map((req, index) => (
                   <div key={index} className="d-flex align-items-center mb-2">
                     <input
@@ -335,6 +339,7 @@ const AddRequirementFromCustomerPage = () => {
                       className="form-control me-2"
                       placeholder="Title"
                       value={req.name}
+                      required
                       onChange={(e) => handleRequirementChange(index, "name", e.target.value)}
                     />
                     <input
@@ -342,6 +347,7 @@ const AddRequirementFromCustomerPage = () => {
                       className="form-control me-2"
                       onChange={(e) => handleIconChange(index, e.target.files[0])}
                       accept="image/*"
+                      required
                     />
                     {req.preview && (
                       <img src={req.preview} alt="Icon Preview" style={{ width: "50px", height: "50px", marginRight: "5px", borderRadius: "4px" }} />

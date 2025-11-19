@@ -50,8 +50,8 @@ const UpdateExpertTechnicianPage = () => {
         setSubCategory(d.subCategory?._id || "");
         setSubSubCategory(d.subSubCategory?._id || "");
         setSubSubSubCategory(d.subSubSubCategory?._id || "");
-        setSelectedServices(d.services?.map(s => s._id) || []);
-
+        setSelectedServices(d.services?.map(s => s?._id) || []);
+        console.log("lkjhgf", selectedServices)
         // Points
         setPoints(
           d.points?.map((p) => ({
@@ -196,6 +196,17 @@ const UpdateExpertTechnicianPage = () => {
 
     try {
       setLoading(true);
+
+      if (!mainTitle.trim()) {
+        toast.error("Main title is required");
+        return;
+      }
+
+      if (selectedServices?.length === 0) {
+        toast.error("Please select at least one service");
+        return;
+      }
+
       const fd = new FormData();
 
       fd.append("mainTitle", mainTitle);
@@ -242,7 +253,7 @@ const UpdateExpertTechnicianPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Expert Technician</h5>
+            <h5 className="mb-0">Update Expert Technician</h5>
             <button
               className="btn btn-outline-secondary btn-sm"
               onClick={() => navigate(-1)}
@@ -254,7 +265,7 @@ const UpdateExpertTechnicianPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -263,11 +274,12 @@ const UpdateExpertTechnicianPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -278,7 +290,7 @@ const UpdateExpertTechnicianPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -286,11 +298,12 @@ const UpdateExpertTechnicianPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -301,19 +314,20 @@ const UpdateExpertTechnicianPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -324,7 +338,7 @@ const UpdateExpertTechnicianPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -332,7 +346,7 @@ const UpdateExpertTechnicianPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -393,7 +407,7 @@ const UpdateExpertTechnicianPage = () => {
 
               {/* Points */}
               <div className="mb-3">
-                <label className="form-label">Points (Icon + Title)</label>
+                <label className="form-label">Points (Icon + Title) <span style={{ color: "red" }}>*</span></label>
                 {points.map((point, index) => (
                   <div key={index} className="border p-3 mb-2 rounded">
                     <div className="row align-items-center">
@@ -412,6 +426,7 @@ const UpdateExpertTechnicianPage = () => {
                           type="text"
                           className="form-control"
                           placeholder="Title"
+                          required
                           value={point.title}
                           onChange={(e) =>
                             handlePointChange(index, "title", e.target.value)

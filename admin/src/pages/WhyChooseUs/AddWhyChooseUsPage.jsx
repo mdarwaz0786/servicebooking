@@ -169,6 +169,7 @@ const AddWhyChooseUsPage = () => {
 
       if (res?.data?.success) {
         toast.success("Why Choose Us entry created successfully");
+        navigate(-1);
         setMainTitle("");
         setReasons([{ title: "", description: "" }]);
         setSelectedServices([]);
@@ -194,7 +195,7 @@ const AddWhyChooseUsPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -203,11 +204,12 @@ const AddWhyChooseUsPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -218,7 +220,7 @@ const AddWhyChooseUsPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -226,11 +228,12 @@ const AddWhyChooseUsPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -241,19 +244,20 @@ const AddWhyChooseUsPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -264,7 +268,7 @@ const AddWhyChooseUsPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -272,7 +276,7 @@ const AddWhyChooseUsPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -309,7 +313,7 @@ const AddWhyChooseUsPage = () => {
 
               {/* Reasons */}
               <div className="mb-5">
-                <label className="form-label">Reasons</label>
+                <label className="form-label">Reasons <span style={{ color: "red" }}>*</span></label>
                 {reasons.map((reason, index) => (
                   <div key={index} className="mb-2">
                     <div className="d-flex mb-1">
@@ -318,6 +322,7 @@ const AddWhyChooseUsPage = () => {
                         className="form-control me-2"
                         placeholder="Reason Title"
                         value={reason.title}
+                        required
                         onChange={(e) => handleReasonChange(index, "title", e.target.value)}
                       />
                       <button
@@ -342,6 +347,7 @@ const AddWhyChooseUsPage = () => {
                       className="form-control"
                       placeholder="Reason Description"
                       value={reason.description}
+                      required
                       onChange={(e) => handleReasonChange(index, "description", e.target.value)}
                     />
                   </div>

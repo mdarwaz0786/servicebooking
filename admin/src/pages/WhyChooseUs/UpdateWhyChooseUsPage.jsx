@@ -226,7 +226,7 @@ const UpdateWhyChooseUsPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -235,11 +235,12 @@ const UpdateWhyChooseUsPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -250,7 +251,7 @@ const UpdateWhyChooseUsPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -258,11 +259,12 @@ const UpdateWhyChooseUsPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Varint --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -273,19 +275,20 @@ const UpdateWhyChooseUsPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -296,7 +299,7 @@ const UpdateWhyChooseUsPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -304,7 +307,7 @@ const UpdateWhyChooseUsPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process--</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -334,19 +337,21 @@ const UpdateWhyChooseUsPage = () => {
                   type="text"
                   className="form-control"
                   value={mainTitle}
+                  required
                   onChange={(e) => setMainTitle(e.target.value)}
                 />
               </div>
 
               {/* Reasons */}
               <div className="mb-3">
-                <label className="form-label">Reasons</label>
+                <label className="form-label">Reasons <span style={{ color: "red" }}>*</span></label>
                 {reasons.map((reason, index) => (
                   <div key={index} className="mb-3 border p-3 rounded">
                     <input
                       type="text"
                       className="form-control mb-2"
                       placeholder="Reason title"
+                      required
                       value={reason?.title}
                       onChange={(e) =>
                         handleReasonChange(index, "title", e.target.value)
@@ -356,6 +361,7 @@ const UpdateWhyChooseUsPage = () => {
                       className="form-control mb-2"
                       placeholder="Reason description"
                       value={reason?.description}
+                      required
                       onChange={(e) =>
                         handleReasonChange(index, "description", e.target.value)
                       }

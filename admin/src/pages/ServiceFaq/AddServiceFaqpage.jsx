@@ -174,6 +174,7 @@ const AddServiceFaqPage = () => {
 
       if (res?.data?.success) {
         toast.success("Service FAQ created successfully");
+        navigate(-1);
         setMainTitle("");
         setSelectedServices([]);
         setFaqs([{ question: "", answer: "" }]);
@@ -204,7 +205,7 @@ const AddServiceFaqPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -213,11 +214,12 @@ const AddServiceFaqPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -228,7 +230,7 @@ const AddServiceFaqPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -236,11 +238,12 @@ const AddServiceFaqPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -251,19 +254,20 @@ const AddServiceFaqPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -274,7 +278,7 @@ const AddServiceFaqPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -282,7 +286,7 @@ const AddServiceFaqPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -319,28 +323,30 @@ const AddServiceFaqPage = () => {
 
               {/* FAQs */}
               <div className="mb-3">
-                <label className="form-label">FAQs</label>
+                <label className="form-label">FAQs <span style={{ color: "red" }}>*</span></label>
                 {faqs.map((faq, index) => (
                   <div key={index} className="border p-3 mb-2 rounded">
                     <div className="mb-2">
-                      <label className="form-label">Question</label>
+                      <label className="form-label">Question <span style={{ color: "red" }}>*</span></label>
                       <input
                         type="text"
                         className="form-control"
                         placeholder="Enter question"
                         value={faq.question}
+                        required
                         onChange={(e) =>
                           handleFaqChange(index, "question", e.target.value)
                         }
                       />
                     </div>
                     <div className="mb-2">
-                      <label className="form-label">Answer</label>
+                      <label className="form-label">Answer <span style={{ color: "red" }}>*</span></label>
                       <textarea
                         className="form-control"
                         rows={2}
                         placeholder="Enter answer"
                         value={faq.answer}
+                        required
                         onChange={(e) =>
                           handleFaqChange(index, "answer", e.target.value)
                         }
@@ -351,6 +357,7 @@ const AddServiceFaqPage = () => {
                         type="button"
                         className="btn btn-danger btn-sm me-2"
                         onClick={() => removeFaqField(index)}
+                        required
                         disabled={faqs.length === 1}
                       >
                         -

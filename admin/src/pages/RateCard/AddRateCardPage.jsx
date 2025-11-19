@@ -222,6 +222,7 @@ const AddRateCardPage = () => {
 
       if (response?.data?.success) {
         toast.success("Rate Card created successfully!");
+        navigate(-1);
         setSelectedServices([]);
         setRateGroups([{ title: "", rates: [{ description: "", price: "", labourCharge: "" }] }]);
       }
@@ -246,7 +247,7 @@ const AddRateCardPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -255,11 +256,12 @@ const AddRateCardPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -270,7 +272,7 @@ const AddRateCardPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -278,11 +280,12 @@ const AddRateCardPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -293,19 +296,20 @@ const AddRateCardPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -316,7 +320,7 @@ const AddRateCardPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -324,7 +328,7 @@ const AddRateCardPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -347,7 +351,7 @@ const AddRateCardPage = () => {
 
               {/* Rate Groups */}
               <div className="mb-3">
-                <label className="form-label">Rate Groups</label>
+                <label className="form-label">Rate Groups <span style={{ color: "red" }}>*</span></label>
                 {rateGroups.map((group, gIndex) => (
                   <div key={gIndex} className="border rounded p-3 mb-3 bg-light">
                     <div className="d-flex align-items-center mb-2">
@@ -356,6 +360,7 @@ const AddRateCardPage = () => {
                         className="form-control me-2"
                         placeholder="Group Title"
                         value={group.title}
+                        required
                         onChange={(e) => handleGroupTitleChange(gIndex, e.target.value)}
                       />
                       <button
@@ -386,6 +391,7 @@ const AddRateCardPage = () => {
                             className="form-control"
                             placeholder="Description"
                             value={rate.description}
+                            required
                             onChange={(e) =>
                               handleRateChange(gIndex, rIndex, "description", e.target.value)
                             }
@@ -397,6 +403,7 @@ const AddRateCardPage = () => {
                             className="form-control"
                             placeholder="Price"
                             value={rate.price}
+                            required
                             onChange={(e) =>
                               handleServiceChargeChange(gIndex, rIndex, "price", e.target.value)
                             }
@@ -408,6 +415,7 @@ const AddRateCardPage = () => {
                             className="form-control"
                             placeholder="Labour Charge"
                             value={rate.labourCharge}
+                            required
                             onChange={(e) =>
                               handleServiceChargeChange(gIndex, rIndex, "labourCharge", e.target.value)
                             }
