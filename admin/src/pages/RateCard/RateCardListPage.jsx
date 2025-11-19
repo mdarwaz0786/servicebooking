@@ -155,7 +155,8 @@ const RateCardListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Service(s)</th>
+                    <th>Variant</th>
+                    <th>Services</th>
                     <th>Rate Group Titles</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -166,6 +167,7 @@ const RateCardListPage = () => {
                     rateCards?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>{d?.subCategory?.name}</td>
                         <td>
                           {d?.services?.length > 0 ? (
                             d.services.map((service, index) => (

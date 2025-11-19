@@ -168,6 +168,8 @@ const GIPromiseListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Title</th>
+                    <th>Variant</th>
+                    <th>Services</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -178,6 +180,12 @@ const GIPromiseListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.mainTitle}</td>
+                        <td>{d?.subCategory?.name}</td>
+                        <td>
+                          {d?.services?.map((n) => (
+                            <p>{n?.name}</p>
+                          ))}
+                        </td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

@@ -54,47 +54,56 @@ const ServiceListPage = () => {
     };
   };
 
-  const fetchSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub categories");
     };
-  };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
 
-  const fetchSubSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subSubCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subSubCategory.get}?subCategoryId=${subCategoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub sub categories");
     };
-  };
+    fetchSubSubCategories();
+  }, [subCategoryId, validToken]);
 
-  const fetchSubSubSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subSubSubCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubSubSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubSubSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubSubSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub sub sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub sub sub categories");
     };
-  };
+    fetchSubSubSubCategories();
+  }, [subSubSubCategoryId, validToken])
 
   const fetchServices = async () => {
     try {
@@ -177,9 +186,6 @@ const ServiceListPage = () => {
 
   useEffect(() => {
     fetchCategories();
-    fetchSubCategories();
-    fetchSubSubCategories();
-    fetchSubSubSubCategories();
   }, []);
 
   useEffect(() => {
