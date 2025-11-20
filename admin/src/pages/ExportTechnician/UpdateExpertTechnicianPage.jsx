@@ -24,7 +24,7 @@ const UpdateExpertTechnicianPage = () => {
 
   const [mainTitle, setMainTitle] = useState("");
   const [points, setPoints] = useState([]);
-  const [pointIcons, setPointIcons] = useState([]);
+  const [removedIndexes, setRemovedIndexes] = useState([]);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -33,14 +33,13 @@ const UpdateExpertTechnicianPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // 🚀 FETCH SINGLE
+  // FETCH SINGLE EXPERT TECHNICIAN
   useEffect(() => {
     const fetchSingle = async () => {
       try {
         const res = await axios.get(`${apis.expertTechnician.get}/${id}`, {
           headers: { Authorization: validToken },
         });
-
         if (!res?.data?.success) return toast.error("Failed to load data.");
 
         const d = res.data.data;
@@ -51,90 +50,105 @@ const UpdateExpertTechnicianPage = () => {
         setSubSubCategory(d.subSubCategory?._id || "");
         setSubSubSubCategory(d.subSubSubCategory?._id || "");
         setSelectedServices(d.services?.map(s => s?._id) || []);
-        console.log("lkjhgf", selectedServices)
+
         // Points
         setPoints(
-          d.points?.map((p) => ({
-            icon: p.icon ? `${BASE_URL}/${p.icon}` : "",
+          d.points?.map(p => ({
             title: p.title,
+            icon: p.icon ? `${BASE_URL}/${p.icon}` : null,
+            _hasFile: false, // track new uploads
+            hasOldIcon: !!p.icon
           })) || []
         );
 
         setImagePreview(d.image ? `${BASE_URL}/${d.image}` : null);
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
+        console.log(err);
       }
     };
     fetchSingle();
-  }, [id]);
-
-  // 🚀 FETCH CATEGORIES
+  }, [id, validToken]);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(apis.category.get, {
           headers: { Authorization: validToken },
         });
-        if (res?.data?.success) setCategories(res.data.data);
+        if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.log(error)
-      }
+        console.log(error);
+        toast.error("Failed to load categories");
+      };
     };
     fetchCategories();
-  }, []);
+  }, [validToken]);
 
-  // FETCH SUB CATEGORIES
   useEffect(() => {
     if (!category) return;
-    const fetchData = async () => {
+    const fetchSubCategories = async () => {
       try {
         const res = await axios.get(
           `${apis.subCategory.get}?categoryId=${category}`,
           { headers: { Authorization: validToken } }
         );
-        if (res.data.success) setSubCategories(res.data.data);
+        if (res?.data?.success) {
+          setSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
       } catch (error) {
-        console.log(error)
-      }
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
     };
-    fetchData();
-  }, [category]);
+    fetchSubCategories();
+  }, [category, validToken]);
 
-  // FETCH SUB SUB CATEGORY
   useEffect(() => {
     if (!subCategory) return;
-    const load = async () => {
+    const fetchSubSubCategories = async () => {
       try {
         const res = await axios.get(
           `${apis.subSubCategory.get}?subCategoryId=${subCategory}`,
           { headers: { Authorization: validToken } }
         );
-        if (res.data.success) setSubSubCategories(res.data.data);
+        if (res?.data?.success) {
+          setSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
       } catch (error) {
-        console.log(error)
-      }
+        console.log(error);
+        toast.error("Failed to load sub sub categories");
+      };
     };
-    load();
-  }, [subCategory]);
+    fetchSubSubCategories();
+  }, [subCategory, validToken]);
 
-  // FETCH SUB SUB SUB CATEGORY
   useEffect(() => {
     if (!subSubCategory) return;
-    const load = async () => {
+    const fetchSubSubSubCategories = async () => {
       try {
         const res = await axios.get(
           `${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategory}`,
           { headers: { Authorization: validToken } }
         );
-        if (res.data.success) setSubSubSubCategories(res.data.data);
+        if (res?.data?.success) {
+          setSubSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
       } catch (error) {
-        console.log(error)
-      }
+        console.log(error);
+        toast.error("Failed to load sub sub sub categories");
+      };
     };
-    load();
-  }, [subSubCategory]);
+    fetchSubSubSubCategories();
+  }, [subSubCategory, validToken]);
 
-  // FETCH SERVICES
   const fetchServices = async () => {
     try {
       const params = {};
@@ -145,43 +159,41 @@ const UpdateExpertTechnicianPage = () => {
 
       const res = await axios.get(apis.service.get, {
         params,
-        headers: { Authorization: validToken },
+        headers: {
+          Authorization: validToken,
+        },
       });
-
       setServices(res?.data?.data || []);
     } catch (error) {
-      console.log(error)
+      console.error(error);
     }
   };
 
-  useEffect(() => {
-    fetchServices();
-  }, [category, subCategory, subSubCategory, subSubSubCategory]);
-
+  // POINTS HANDLERS
   const handlePointChange = (index, field, value) => {
-    const copy = [...points];
-    copy[index][field] = value;
-    setPoints(copy);
+    const updated = [...points];
+    updated[index][field] = value;
+    setPoints(updated);
   };
 
   const handlePointIconChange = (index, file) => {
-    const iconCopy = [...pointIcons];
-    iconCopy[index] = file;
-    setPointIcons(iconCopy);
-
-    const p = [...points];
-    p[index].icon = URL.createObjectURL(file);
-    setPoints(p);
+    const updated = [...points];
+    updated[index].icon = URL.createObjectURL(file);
+    updated[index]._hasFile = true;
+    updated[index].iconFile = file;
+    setPoints(updated);
   };
 
   const addPointField = () => {
-    setPoints([...points, { icon: "", title: "" }]);
-    setPointIcons([...pointIcons, null]);
+    setPoints([...points, { title: "", icon: null, _hasFile: false }]);
   };
 
   const removePointField = (index) => {
+    // If old icon exists, mark index for removal
+    if (points[index].hasOldIcon) {
+      setRemovedIndexes(prev => [...prev, index]);
+    }
     setPoints(points.filter((_, i) => i !== index));
-    setPointIcons(pointIcons.filter((_, i) => i !== index));
   };
 
   const handleImageChange = (file) => {
@@ -190,59 +202,48 @@ const UpdateExpertTechnicianPage = () => {
     setImagePreview(URL.createObjectURL(file));
   };
 
-  // 🚀 UPDATE
+  // SUBMIT FORM
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setLoading(true);
 
-      if (!mainTitle.trim()) {
-        toast.error("Main title is required");
-        return;
-      }
-
-      if (selectedServices?.length === 0) {
-        toast.error("Please select at least one service");
-        return;
-      }
+      if (!mainTitle.trim()) return toast.error("Main title is required");
+      if (!selectedServices.length) return toast.error("Please select at least one service");
 
       const fd = new FormData();
-
       fd.append("mainTitle", mainTitle);
       if (category) fd.append("category", category);
       if (subCategory) fd.append("subCategory", subCategory);
       if (subSubCategory) fd.append("subSubCategory", subSubCategory);
       if (subSubSubCategory) fd.append("subSubSubCategory", subSubSubCategory);
 
-      fd.append(
-        "points",
-        JSON.stringify(points.map((p) => ({ title: p.title })))
-      );
+      fd.append("services", JSON.stringify(selectedServices));
+      fd.append("removedIndexes", JSON.stringify(removedIndexes));
 
-      pointIcons.forEach((f) => {
-        if (f) fd.append("icons", f);
+      const newPointsPayload = points.map(p => ({
+        title: p.title,
+        _hasFile: !!p._hasFile
+      }));
+
+      fd.append("newPoints", JSON.stringify(newPointsPayload));
+
+      points.forEach((p) => {
+        if (p._hasFile) fd.append("icons", p._file || p.iconFile);
       });
 
       if (image) fd.append("image", image);
 
-      selectedServices.forEach((id, index) => {
-        fd.append(`services[${index}]`, id);
-      });
-
       const res = await axios.patch(`${apis.expertTechnician.update}/${id}`, fd, {
-        headers: {
-          Authorization: validToken,
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { Authorization: validToken, "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
         toast.success("Updated successfully");
         navigate(-1);
       }
-    } catch (e) {
-      toast.error(e?.response?.data?.message || "Update failed");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
@@ -254,10 +255,7 @@ const UpdateExpertTechnicianPage = () => {
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
             <h5 className="mb-0">Update Expert Technician</h5>
-            <button
-              className="btn btn-outline-secondary btn-sm"
-              onClick={() => navigate(-1)}
-            >
+            <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate(-1)}>
               ← Back
             </button>
           </div>
@@ -369,111 +367,33 @@ const UpdateExpertTechnicianPage = () => {
 
               {/* Main Title */}
               <div className="mb-3">
-                <label className="form-label">
-                  Main Title <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={mainTitle}
-                  onChange={(e) => setMainTitle(e.target.value)}
-                  required
-                />
+                <label className="form-label">Main Title <span style={{ color: "red" }}>*</span></label>
+                <input type="text" className="form-control" value={mainTitle} onChange={(e) => setMainTitle(e.target.value)} required />
               </div>
 
-              {/* Image */}
+              {/* Main Image */}
               <div className="mb-3">
                 <label className="form-label">Main Image</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e.target.files[0])}
-                />
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      marginTop: "5px",
-                      borderRadius: "4px",
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
+                <input type="file" className="form-control" accept="image/*" onChange={(e) => handleImageChange(e.target.files[0])} />
+                {imagePreview && <img src={imagePreview} alt="preview" style={{ width: "100px", height: "100px", marginTop: "5px", borderRadius: "4px", objectFit: "cover" }} />}
               </div>
 
               {/* Points */}
               <div className="mb-3">
-                <label className="form-label">Points (Icon + Title) <span style={{ color: "red" }}>*</span></label>
+                <label className="form-label">Points <span style={{ color: "red" }}>*</span></label>
                 {points.map((point, index) => (
-                  <div key={index} className="border p-3 mb-2 rounded">
-                    <div className="row align-items-center">
-                      <div className="col-md-4 mb-2">
-                        <input
-                          type="file"
-                          className="form-control"
-                          accept="image/*"
-                          onChange={(e) =>
-                            handlePointIconChange(index, e.target.files[0])
-                          }
-                        />
-                      </div>
-                      <div className="col-md-4 mb-2">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Title"
-                          required
-                          value={point.title}
-                          onChange={(e) =>
-                            handlePointChange(index, "title", e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="col-md-4 d-flex align-items-center">
-                        {point.icon && (
-                          <img
-                            src={point.icon}
-                            alt="icon-preview"
-                            style={{
-                              width: "50px",
-                              height: "50px",
-                              borderRadius: "4px",
-                              marginRight: "10px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        )}
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-sm me-2"
-                          onClick={() => removePointField(index)}
-                          disabled={points.length === 1}
-                        >
-                          -
-                        </button>
-                        {index === points.length - 1 && (
-                          <button
-                            type="button"
-                            className="btn btn-success btn-sm"
-                            onClick={addPointField}
-                          >
-                            +
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                  <div key={index} className="d-flex align-items-center mb-2">
+                    <input type="file" className="form-control me-2" accept="image/*" onChange={(e) => handlePointIconChange(index, e.target.files[0])} />
+                    <input type="text" className="form-control me-2" placeholder="Title" value={point.title} onChange={(e) => handlePointChange(index, "title", e.target.value)} required />
+                    {point.icon && <img src={point.icon} alt="preview" width={50} height={50} className="me-2 rounded" style={{ objectFit: "cover" }} />}
+                    <button type="button" className="btn btn-danger me-1" disabled={points.length === 1} onClick={() => removePointField(index)}>-</button>
+                    {index === points.length - 1 && <button type="button" className="btn btn-success" onClick={addPointField}>+</button>}
                   </div>
                 ))}
               </div>
 
               <div className="text-end">
-                <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Saving..." : "Save"}
-                </button>
+                <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? "Saving..." : "Save"}</button>
               </div>
             </form>
           </div>

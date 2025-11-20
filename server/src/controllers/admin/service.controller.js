@@ -99,7 +99,7 @@ export const createService = asyncHandler(async (req, res) => {
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
+  let { search, status, sort = "desc", page, limit, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);

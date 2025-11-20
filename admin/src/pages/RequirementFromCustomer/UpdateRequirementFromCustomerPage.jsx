@@ -23,11 +23,12 @@ const UpdateRequirementFromCustomerPage = () => {
   const [subSubSubCategory, setSubSubSubCategory] = useState();
 
   const [mainTitle, setMainTitle] = useState("");
-  const [requirements, setRequirements] = useState([{ name: "", icon: null, preview: null }]);
+  const [requirements, setRequirements] = useState([]);
+  const [removedIndexes, setRemovedIndexes] = useState([]);
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
+
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -130,38 +131,36 @@ const UpdateRequirementFromCustomerPage = () => {
     }
   };
 
-  // Fetch existing requirement
   useEffect(() => {
     const fetchRequirement = async () => {
       try {
         const res = await axios.get(`${apis.requirementFromCustomer.get}/${id}`, {
-          headers: { Authorization: validToken },
+          headers: { Authorization: validToken }
         });
-        if (res?.data?.success && res.data.data) {
-          const data = res.data.data;
-          setMainTitle(data.mainTitle || "");
+
+        if (res?.data?.success) {
+          const data = res?.data?.data;
+
+          setMainTitle(data.mainTitle);
           setCategory(data?.category?._id);
           setSubCategory(data?.subCategory?._id);
           setSubSubCategory(data?.subSubCategory?._id);
           setSubSubSubCategory(data?.subSubSubCategory?._id);
-          setSelectedServices(data.services?.map(s => s._id) || []);
+          setSelectedServices(data?.services?.map((s) => s?._id) || []);
 
-          // Prepare requirements with preview
-          if (data.requirements?.length) {
-            const formatted = data.requirements.map(req => ({
-              name: req.name || "",
-              icon: null,
-              preview: req.icon ? `${BASE_URL}/${req.icon}` : null,
-            }));
-            setRequirements(formatted);
-          }
+          const formatted = data?.requirements?.map((item) => ({
+            name: item?.name,
+            icon: null,
+            preview: item?.icon ? `${BASE_URL}/${item?.icon}` : null,
+            hasOldIcon: !!item?.icon
+          }));
+
+          setRequirements(formatted);
         }
       } catch (error) {
-        console.log(error)
-        toast.error("Failed to load requirement data");
-      } finally {
-        setInitialLoading(false);
-      }
+        console.log(error);
+        toast.error("Failed to load requirement");
+      };
     };
     fetchRequirement();
   }, [id, validToken]);
@@ -174,47 +173,69 @@ const UpdateRequirementFromCustomerPage = () => {
 
   const handleIconChange = (index, file) => {
     const updated = [...requirements];
-    if (updated[index].preview) URL.revokeObjectURL(updated[index].preview);
     updated[index].icon = file;
     updated[index].preview = URL.createObjectURL(file);
+    updated[index]._hasFile = true;
     setRequirements(updated);
   };
 
-  const addRequirementField = () => setRequirements([...requirements, { name: "", icon: null, preview: null }]);
   const removeRequirementField = (index) => {
+    if (requirements[index].hasOldIcon) {
+      setRemovedIndexes((prev) => [...prev, index]);
+    }
     setRequirements(requirements.filter((_, i) => i !== index));
   };
 
+  const addRequirementField = () =>
+    setRequirements([...requirements, { name: "", icon: null, preview: null }]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!mainTitle.trim()) return toast.error("Main title is required");
-    if (selectedServices.length === 0) return toast.error("Please select at least one service");
+
+    if (selectedServices.length === 0) {
+      toast.error("Please select at least one service");
+      return;
+    }
 
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("mainTitle", mainTitle);
+      const fd = new FormData();
 
-      if (category) formData.append("category", category);
-      if (subCategory) formData.append("subCategory", subCategory);
-      if (subSubCategory) formData.append("subSubCategory", subSubCategory);
-      if (subSubSubCategory) formData.append("subSubSubCategory", subSubSubCategory);
+      fd.append("mainTitle", mainTitle);
+      if (category) fd.append("category", category);
+      if (subCategory) fd.append("subCategory", subCategory);
+      if (subSubCategory) fd.append("subSubCategory", subSubCategory);
+      if (subSubSubCategory) fd.append("subSubSubCategory", subSubSubCategory);
 
-      selectedServices.forEach((id, index) => {
-        formData.append(`services[${index}]`, id);
+      fd.append("services", JSON.stringify(selectedServices));
+      fd.append("removedIndexes", JSON.stringify(removedIndexes));
+
+      const newReqPayload = requirements?.map((item) => ({
+        name: item?.name,
+        _hasFile: !!(item.icon instanceof File)
+      }));
+
+      fd.append("newRequirements", JSON.stringify(newReqPayload));
+
+      requirements.forEach((item) => {
+        if (item.icon instanceof File) fd.append("icons", item.icon);
       });
 
-      requirements.forEach((req, idx) => {
-        formData.append(`requirements[${idx}][name]`, req.name);
-        if (req.icon instanceof File) formData.append("icons", req.icon);
-      });
-
-      const res = await axios.patch(`${apis.requirementFromCustomer.update}/${id}`, formData, {
-        headers: { Authorization: validToken, "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.patch(
+        `${apis.requirementFromCustomer.update}/${id}`,
+        fd,
+        {
+          headers: {
+            Authorization: validToken,
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
 
       if (res?.data?.success) {
-        toast.success("Requirement updated successfully");
+        toast.success("Updated successfully");
         navigate(-1);
       }
     } catch (error) {
@@ -223,8 +244,6 @@ const UpdateRequirementFromCustomerPage = () => {
       setLoading(false);
     }
   };
-
-  if (initialLoading) return <div className="text-center mt-5">Loading data...</div>;
 
   return (
     <div className="page-wrapper">
@@ -238,13 +257,13 @@ const UpdateRequirementFromCustomerPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-
               {/* Category */}
               <div className="mb-3">
                 <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
+                  required
                   onChange={(e) => {
                     setCategory(e.target.value);
                     setSubCategory();
@@ -253,7 +272,6 @@ const UpdateRequirementFromCustomerPage = () => {
                     setSelectedServices([]);
                   }}
                   className="form-control"
-                  required
                 >
                   <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
@@ -365,35 +383,32 @@ const UpdateRequirementFromCustomerPage = () => {
                     <input
                       type="text"
                       className="form-control me-2"
-                      placeholder="Title"
                       value={req.name}
-                      required
                       onChange={(e) => handleRequirementChange(index, "name", e.target.value)}
+                      placeholder="Requirement name"
+                      required
                     />
                     <input
                       type="file"
                       className="form-control me-2"
-                      onChange={(e) => handleIconChange(index, e.target.files[0])}
                       accept="image/*"
+                      onChange={(e) => handleIconChange(index, e.target.files[0])}
                     />
                     {req.preview && (
                       <img
                         src={req.preview}
-                        alt="Icon Preview"
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          marginRight: "5px",
-                          borderRadius: "4px",
-                          objectFit: "cover",
-                        }}
+                        alt="preview"
+                        width={50}
+                        height={50}
+                        className="me-2 rounded"
+                        style={{ objectFit: "cover" }}
                       />
                     )}
                     <button
                       type="button"
                       className="btn btn-danger me-1"
-                      onClick={() => removeRequirementField(index)}
                       disabled={requirements.length === 1}
+                      onClick={() => removeRequirementField(index)}
                     >
                       -
                     </button>
@@ -408,7 +423,7 @@ const UpdateRequirementFromCustomerPage = () => {
 
               <div className="text-end">
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? "Updating..." : "Update"}
+                  {loading ? "Saving..." : "Save"}
                 </button>
               </div>
             </form>

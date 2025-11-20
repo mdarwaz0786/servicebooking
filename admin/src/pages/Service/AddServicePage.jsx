@@ -11,7 +11,6 @@ const AddServicePage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
-  const [descriptionKey, setdescriptionKey] = useState(1);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subSubCategories, setSubSubCategories] = useState([]);
@@ -241,6 +240,18 @@ const AddServicePage = () => {
     };
   }, [preview, iconPreview, popupImagePreview]);
 
+  useEffect(() => {
+    const mrp = parseFloat(formData.mrpPrice);
+    const sale = parseFloat(formData.salePrice);
+
+    const offer = !isNaN(mrp) ? Math.max(mrp - (isNaN(sale) ? 0 : sale), 0) : 0;
+
+    setFormData(prev => ({
+      ...prev,
+      offerContent: offer
+    }));
+  }, [formData.mrpPrice, formData.salePrice]);
+
   return (
     <div className="page-wrapper">
       <div className="container mt-4 mb-5">
@@ -259,7 +270,7 @@ const AddServicePage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Product *</label>
+                <label className="form-label">Product <span className="text-danger">*</span></label>
                 <select
                   name="categoryId"
                   value={formData.categoryId}
@@ -356,7 +367,7 @@ const AddServicePage = () => {
 
               {/* Name */}
               <div className="mb-3">
-                <label className="form-label">Name *</label>
+                <label className="form-label">Name <span className="text-danger">*</span></label>
                 <input
                   type="text"
                   name="name"
@@ -381,7 +392,7 @@ const AddServicePage = () => {
                   />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Sale Price</label>
+                  <label className="form-label">Sale Price <span className="text-danger">*</span></label>
                   <input
                     type="number"
                     name="salePrice"
@@ -389,10 +400,11 @@ const AddServicePage = () => {
                     onChange={handleChange}
                     className="form-control"
                     placeholder="0"
+                    required
                   />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Time Taking</label>
+                  <label className="form-label">Service Duration</label>
                   <input
                     type="text"
                     name="timeTaking"
@@ -431,8 +443,8 @@ const AddServicePage = () => {
 
               <div className="row">
                 <div className="col-md-3 mb-3">
-                  <label className="form-label">Taxable Price</label>
-                  <input type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
+                  <input required type="number" placeholder="for e.g. 299 or 199" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
@@ -447,8 +459,8 @@ const AddServicePage = () => {
                   </select>
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label className="form-label">Offer Price</label>
-                  <input type="number" placeholder="Add offer price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Off Price</label>
+                  <input type="number" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" readOnly disabled={true} />
                 </div>
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Max Booking Quantity</label>
@@ -458,16 +470,16 @@ const AddServicePage = () => {
 
               <div className="row">
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Tax Percent</label>
-                  <input type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Tax (%) <span className="text-danger">*</span></label>
+                  <input required type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Credit Point</label>
-                  <input type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Credit Point <span className="text-danger">*</span></label>
+                  <input required type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Transaction Charge</label>
-                  <input type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Transaction Charge <span className="text-danger">*</span></label>
+                  <input required type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
                 </div>
               </div>
 
@@ -475,7 +487,6 @@ const AddServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
                 <TextEditor
-                  key={descriptionKey}
                   name="shortDescription"
                   value={formData.shortDescription}
                   onChange={handleChange}
@@ -488,7 +499,6 @@ const AddServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <TextEditor
-                  key={descriptionKey}
                   value={formData.fullDescription}
                   name="fullDescription"
                   onChange={handleChange}

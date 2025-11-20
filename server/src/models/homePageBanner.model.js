@@ -5,6 +5,9 @@ const homePageBannerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  mobileBanner: {
+    type: String,
+  },
   title: {
     type: String,
     required: false,

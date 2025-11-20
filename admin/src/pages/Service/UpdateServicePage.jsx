@@ -12,7 +12,6 @@ const UpdateServicePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [descriptionKey, setdescriptionKey] = useState(1);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subSubCategories, setSubSubCategories] = useState([]);
@@ -80,9 +79,6 @@ const UpdateServicePage = () => {
           if (s?.image) setPreview(`${BASE_URL}/${s?.image}`);
           if (s?.icon) setIconPreview(`${BASE_URL}/${s?.icon}`);
           if (s?.popupImage) setPopupImagePreview(`${BASE_URL}/${s?.popupImage}`);
-
-          setdescriptionKey(2)
-
         };
       } catch (error) {
         console.log(error.message);
@@ -256,6 +252,18 @@ const UpdateServicePage = () => {
     };
   }, [preview, iconPreview]);
 
+  useEffect(() => {
+    const mrp = parseFloat(formData.mrpPrice);
+    const sale = parseFloat(formData.salePrice);
+
+    const offer = !isNaN(mrp) ? Math.max(mrp - (isNaN(sale) ? 0 : sale), 0) : 0;
+
+    setFormData(prev => ({
+      ...prev,
+      offerContent: offer
+    }));
+  }, [formData.mrpPrice, formData.salePrice]);
+
   return (
     <div className="page-wrapper">
       <div className="container mt-4 mb-5">
@@ -274,10 +282,11 @@ const UpdateServicePage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Product *</label>
+                <label className="form-label">Product <span className="text-danger">*</span></label>
                 <select
                   name="categoryId"
                   value={formData.categoryId}
+                  required
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -288,7 +297,6 @@ const UpdateServicePage = () => {
                     })
                   }
                   className="form-control"
-                  required
                 >
                   <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
@@ -395,17 +403,18 @@ const UpdateServicePage = () => {
                   />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Sale Price</label>
+                  <label className="form-label">Sale Price <span className="text-danger">*</span></label>
                   <input
                     type="number"
                     name="salePrice"
                     value={formData.salePrice}
                     onChange={handleChange}
                     className="form-control"
+                    required
                   />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Time Taking</label>
+                  <label className="form-label">Service Duration</label>
                   <input
                     type="text"
                     name="timeTaking"
@@ -460,8 +469,8 @@ const UpdateServicePage = () => {
                   </select>
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label className="form-label">Offer Price</label>
-                  <input type="number" placeholder="Add price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Off Price</label>
+                  <input type="number" placeholder="Add price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" required disabled={true} />
                 </div>
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Max Booking Quantity</label>
@@ -471,7 +480,7 @@ const UpdateServicePage = () => {
 
               <div className="row">
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Tax Percent</label>
+                  <label className="form-label">Tax (%)</label>
                   <input type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-4 mb-3">
@@ -488,7 +497,6 @@ const UpdateServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
                 <TextEditor
-                  key={descriptionKey}
                   name="shortDescription"
                   value={formData.shortDescription}
                   onChange={handleChange}
@@ -501,7 +509,6 @@ const UpdateServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <TextEditor
-                  key={descriptionKey}
                   value={formData.fullDescription}
                   name="fullDescription"
                   onChange={handleChange}

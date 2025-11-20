@@ -15,7 +15,10 @@ const router = express.Router();
 router.post(
   "/",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "mobileBanner", maxCount: 1 },
+  ]),
   validateFileSize,
   createHomePageBanner,
 );
@@ -23,7 +26,10 @@ router.post(
 router.patch(
   "/:id",
   isLoggedIn,
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "mobileBanner", maxCount: 1 },
+  ]),
   validateFileSize,
   updateHomePageBanner
 );
