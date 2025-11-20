@@ -215,7 +215,7 @@ const UpdateServiceFaqPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -224,11 +224,12 @@ const UpdateServiceFaqPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -239,7 +240,7 @@ const UpdateServiceFaqPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -247,11 +248,12 @@ const UpdateServiceFaqPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -262,19 +264,20 @@ const UpdateServiceFaqPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -285,7 +288,7 @@ const UpdateServiceFaqPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -293,7 +296,7 @@ const UpdateServiceFaqPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -323,13 +326,14 @@ const UpdateServiceFaqPage = () => {
                   type="text"
                   className="form-control"
                   value={mainTitle}
+                  required
                   onChange={(e) => setMainTitle(e.target.value)}
                 />
               </div>
 
               {/* FAQs */}
               <div className="mb-3">
-                <label className="form-label">FAQs</label>
+                <label className="form-label">FAQs <span style={{ color: "red" }}>*</span></label>
                 {faqs.map((faq, index) => (
                   <div key={index} className="mb-2 border p-2 rounded">
                     <input
@@ -337,12 +341,14 @@ const UpdateServiceFaqPage = () => {
                       className="form-control mb-1"
                       placeholder="Question"
                       value={faq.question}
+                      required
                       onChange={(e) => handleFaqChange(index, "question", e.target.value)}
                     />
                     <textarea
                       className="form-control mb-1"
                       placeholder="Answer"
                       value={faq.answer}
+                      required
                       onChange={(e) => handleFaqChange(index, "answer", e.target.value)}
                     />
                     <div className="d-flex justify-content-end">

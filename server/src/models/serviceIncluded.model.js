@@ -4,6 +4,7 @@ const serviceIncludedSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
+    required: [true, "Product is required"]
   },
   subCategory: {
     type: mongoose.Schema.Types.ObjectId,
@@ -21,6 +22,7 @@ const serviceIncludedSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
+      required: [true, "Service is required"]
     },
   ],
   mainTitle: {

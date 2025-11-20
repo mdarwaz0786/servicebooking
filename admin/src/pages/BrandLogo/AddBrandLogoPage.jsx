@@ -148,13 +148,19 @@ const AddBrandLogoPage = () => {
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!mainTitle.trim()) {
-      toast.error("Main title is required");
-      return;
-    }
 
     try {
       setLoading(true);
+      if (!mainTitle.trim()) {
+        toast.error("Main title is required");
+        return;
+      }
+
+      if (selectedServices.length === 0) {
+        toast.error("Please select at least one service");
+        return;
+      }
+
       const formData = new FormData();
       formData.append("mainTitle", mainTitle);
       formData.append("description", description);
@@ -178,6 +184,7 @@ const AddBrandLogoPage = () => {
 
       if (res?.data?.success) {
         toast.success("Brand logo created successfully");
+        navigate(-1);
         setMainTitle("");
         setDescription("");
         setIcons([{ file: null, preview: null }]);
@@ -205,7 +212,7 @@ const AddBrandLogoPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
                 <select
                   name="category"
                   value={category}
@@ -214,11 +221,12 @@ const AddBrandLogoPage = () => {
                     setSubCategory();
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -229,7 +237,7 @@ const AddBrandLogoPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category</label>
+                <label className="form-label">Variant</label>
                 <select
                   name="subCategory"
                   value={subCategory}
@@ -237,11 +245,12 @@ const AddBrandLogoPage = () => {
                     setSubCategory(e.target.value);
                     setSubSubCategory();
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -252,19 +261,20 @@ const AddBrandLogoPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category</label>
+                <label className="form-label">Service Process</label>
                 <select
                   name="subSubCategory"
                   value={subSubCategory}
                   onChange={(e) => {
                     setSubSubCategory(e.target.value);
                     setSubSubSubCategory();
+                    setSelectedServices([]);
                   }
                   }
                   className="form-control"
                   disabled={!subCategory}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories?.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -275,7 +285,7 @@ const AddBrandLogoPage = () => {
 
               {/* Sub Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Sub Category</label>
+                <label className="form-label">Nested Service Process</label>
                 <select
                   name="subSubSubCategory"
                   value={subSubSubCategory}
@@ -283,7 +293,7 @@ const AddBrandLogoPage = () => {
                   className="form-control"
                   disabled={!subSubCategory}
                 >
-                  <option value="">-- Select Sub Sub Sub Category --</option>
+                  <option value="">-- Select Nested Service Process --</option>
                   {subSubSubCategories?.map((sss) => (
                     <option key={sss?._id} value={sss?._id}>
                       {sss?.name}
@@ -295,7 +305,7 @@ const AddBrandLogoPage = () => {
               {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Services
+                  Select Services <span style={{ color: "red" }}>*</span>
                 </label>
                 <SelectMultipleService
                   optionsList={services}
@@ -320,18 +330,19 @@ const AddBrandLogoPage = () => {
 
               {/* Description */}
               <div className="mb-3">
-                <label className="form-label">Description</label>
+                <label className="form-label">Description <span style={{ color: "red" }}>*</span></label>
                 <textarea
                   className="form-control"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
+                  required
                 />
               </div>
 
               {/* Icons */}
               <div className="mb-3">
-                <label className="form-label">Icons</label>
+                <label className="form-label">Icons <span style={{ color: "red" }}>*</span></label>
                 {icons.map((iconObj, index) => (
                   <div key={index} className="d-flex align-items-center mb-2">
                     <input
@@ -339,6 +350,7 @@ const AddBrandLogoPage = () => {
                       className="form-control me-2"
                       onChange={(e) => handleIconChange(index, e.target.files[0])}
                       accept="image/*"
+                      required
                     />
                     {iconObj.preview && (
                       <img
