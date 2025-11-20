@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis, { BASE_URL } from "../../apis/apis";
+import apis from "../../apis/apis";
 
 const ContactEnquiryListPage = () => {
   const { validToken } = useAuth();
@@ -146,6 +146,7 @@ const ContactEnquiryListPage = () => {
                     <th>Email</th>
                     <th>Mobile</th>
                     <th>Subject</th>
+                    <th>Message</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -158,6 +159,7 @@ const ContactEnquiryListPage = () => {
                         <td>{d?.email}</td>
                         <td>{d?.mobile}</td>
                         <td>{d?.subject}</td>
+                        <td>{d?.message}</td>
                         <td>
                           <div className="d-flex">
                             <button

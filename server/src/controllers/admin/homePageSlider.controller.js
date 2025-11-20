@@ -17,14 +17,21 @@ export const createHomePageSlider = asyncHandler(async (req, res) => {
   const { title, link, status } = req.body;
   const userId = req.user?._id;
 
-  if (!req.file || !req.file.buffer) throw new ApiError(400, "Image is required");
-
-  let imagePath;
+  let imagePath = null;
+  let mobileBannerPath = null;
 
   try {
-    imagePath = await compressImage(req.file.buffer, "homePageSlider");
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "homePageSlider");
+    };
+
+    if (req.files?.mobileBanner?.[0]) {
+      mobileBannerPath = await compressImage(req.files.mobileBanner[0].buffer, "homePageSlider");
+    };
+
     const newSlider = await HomePageSliderModel.create({
       image: imagePath,
+      mobileBanner: mobileBannerPath,
       title,
       link,
       status: status !== undefined ? status : true,
@@ -34,6 +41,7 @@ export const createHomePageSlider = asyncHandler(async (req, res) => {
     return res.status(201).json({ success: true, message: "Created successfully", data: newSlider });
   } catch (error) {
     removeFile(imagePath);
+    removeFile(mobileBannerPath);
     throw error;
   };
 });
@@ -46,13 +54,19 @@ export const updateHomePageSlider = asyncHandler(async (req, res) => {
   const slider = await HomePageSliderModel.findById(req.params.id);
   if (!slider) throw new ApiError(404, "Slider not found");
 
-  let oldImage = slider.image;
-  let newImagePath;
-
   try {
-    if (req.file && req.file.buffer) {
-      newImagePath = await compressImage(req.file.buffer, "homePageSlider");
-      slider.image = newImagePath;
+    if (req.files?.image?.[0]) {
+      if (slider.image && fs.existsSync(path.join(process.cwd(), slider.image))) {
+        fs.unlinkSync(path.join(process.cwd(), slider.image));
+      };
+      slider.image = await compressImage(req.files.image[0].buffer, "homePageBanner");
+    };
+
+    if (req.files?.mobileBanner?.[0]) {
+      if (slider.mobileBanner && fs.existsSync(path.join(process.cwd(), slider.mobileBanner))) {
+        fs.unlinkSync(path.join(process.cwd(), category.icon));
+      };
+      slider.mobileBanner = await compressImage(req.files.mobileBanner[0].buffer, "homePageBanner");
     };
 
     if (title) slider.title = title;
@@ -62,11 +76,8 @@ export const updateHomePageSlider = asyncHandler(async (req, res) => {
 
     await slider.save();
 
-    if (newImagePath && oldImage) removeFile(oldImage);
-
     return res.status(200).json({ success: true, message: "Updated successfully", data: slider });
   } catch (error) {
-    if (newImagePath) removeFile(newImagePath);
     throw error;
   };
 });
