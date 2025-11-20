@@ -41,7 +41,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
             <div className="col-lg-12 hero-category-div">
               <div className="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".25s">
                 
-                <h1 className="mb-2 text-center">Connect with Nearby Top-rated Professional <span className="typed" data-type-text="Carpenters" /></h1>
+                <h1 className="mb-2 text-center">Connect with Nearby Top-rated Professional Team <span className="typed" data-type-text="Carpenters" /></h1>
                 
                 <div className="row">
                   <div className="col-md-6">
