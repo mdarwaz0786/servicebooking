@@ -298,10 +298,6 @@ const Sidebar = () => {
               </Link>
             </li>
 
-            {/* <li className="menu-title">
-              <h6>Website</h6>
-            </li> */}
-
             <li>
               <Link
                 to="/home-banner"
@@ -325,71 +321,6 @@ const Sidebar = () => {
                 <i className="fe fe-sliders" /> <span>Front Banner</span>
               </Link>
             </li>
-
-            {/* <li className="menu-title">
-              <h6>Footer Pages</h6>
-            </li> */}
-            {/* 
-            <li className="menu-title">
-              <h6>Footer Page</h6>
-            </li>
-            <li>
-              <Link
-                to="/list-blog-category"
-                className={currentPath === "/list-blog-category" ? "active" : ""}
-              >
-                <i className="fe fe-layers" /> <span>Blog Category</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/blog-list"
-                className={currentPath === "/blog-list" || currentPath === "/update-blog" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" /> <span>Blog</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/add-terms-conditions"
-                className={currentPath === "/add-terms-conditions" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" /> <span>Terms & Conditions</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/add-privacy-policy"
-                className={currentPath === "/add-privacy-policy" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" /> <span>Privacy & Policy</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/add-refund-policy"
-                className={currentPath === "/add-refund-policy" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" /> <span>Refund Policy</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/add-impact"
-                className={currentPath === "/add-impact" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" /> <span>GIT Impact</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/contact-enquiry"
-                className={currentPath === "/contact-enquiry" ? "active" : ""}
-              >
-                <i className="fe fe-file-text" /> <span>Contact Enquiry</span>
-              </Link>
-            </li> */}
-
             <li style={{ marginBottom: "5rem" }}>
               <Link to="#"><i className="fe fe-briefcase"></i>
                 <span>Footer Layout</span>
@@ -457,7 +388,7 @@ const Sidebar = () => {
                     to="/job-list"
                     className={currentPath === "/job-list" ? "active" : ""}
                   >
-                    <span>Job</span>
+                    <span>Jobs</span>
                   </Link>
                 </li>
               </ul>
