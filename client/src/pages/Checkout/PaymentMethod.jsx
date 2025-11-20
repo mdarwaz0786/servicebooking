@@ -159,7 +159,7 @@ const PaymentMethod = () => {
                     </div>
                     <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
-                        Taxes & fee  <span className="text-default fw-normal">({cartAmount.gstPercent})</span>
+                        Taxes & fee  
                       </h6>
                       <p className="text-gray-9">{PriceFormat(cartAmount.gstAmount)}</p>
                     </div>

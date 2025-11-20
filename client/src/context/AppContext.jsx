@@ -627,6 +627,7 @@ export const AppProvider = ({ children }) => {
     storage.delete('user');
     storage.delete('token');
     setuser(null);
+    window.location.reload();
   }
 
 

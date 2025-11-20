@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 
 const LoginForm = () => {
-  const { Urls, postData, toast, generateUniqueId } = useContext(AppContext);
+  const { Urls, postData, toast, generateUniqueId, handleHome } = useContext(AppContext);
 
   const [mobile, setmobile] = useState("");
   const [otp, setOtp] = useState("");
@@ -53,6 +53,8 @@ const LoginForm = () => {
         setverifyOtpBtn(false);
         setmobile("");
         setOtp("");
+        window.location.reload();
+
       }
     } catch (error) {
       console.error("Verify OTP Error:", error);
