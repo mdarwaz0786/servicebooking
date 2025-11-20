@@ -379,14 +379,14 @@ const UpdateServicePage = () => {
 
               {/* Name */}
               <div className="mb-3">
-                <label className="form-label">Name *</label>
+                <label className="form-label">Name <span className="text-danger">*</span></label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
+                  required
                   onChange={handleChange}
                   className="form-control"
-                  required
                 />
               </div>
 
@@ -453,8 +453,8 @@ const UpdateServicePage = () => {
 
               <div className="row">
                 <div className="col-md-3 mb-3">
-                  <label className="form-label">Taxable Price</label>
-                  <input type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
+                  <input required type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-3 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
@@ -480,16 +480,16 @@ const UpdateServicePage = () => {
 
               <div className="row">
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Tax (%)</label>
+                  <label className="form-label">Tax (%) <span className="text-danger">*</span></label>
                   <input type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Credit Point</label>
-                  <input type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Credit Point <span className="text-danger">*</span></label>
+                  <input required type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
                 </div>
                 <div className="col-md-4 mb-3">
-                  <label className="form-label">Transaction Charge</label>
-                  <input type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
+                  <label className="form-label">Transaction Charge <span className="text-danger">*</span></label>
+                  <input required type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
                 </div>
               </div>
 
