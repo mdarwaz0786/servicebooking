@@ -26,7 +26,7 @@ export const createServiceIncluded = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL SERVICE INCLUDED ---------------------
 export const getServiceIncludedList = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc", category, subCategory, subSubCategory, subSubSubCategory } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", category, services, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -41,6 +41,7 @@ export const getServiceIncludedList = asyncHandler(async (req, res) => {
   if (subCategory) filters.subCategory = subCategory;
   if (subSubCategory) filters.subSubCategory = subSubCategory;
   if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+  if (services) filters.services = services;
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 

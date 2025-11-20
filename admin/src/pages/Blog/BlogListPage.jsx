@@ -5,9 +5,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
+import Select from "react-select";
 
 const BlogListPage = () => {
   const { validToken } = useAuth();
+  const [categories, setCategories] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -20,6 +22,7 @@ const BlogListPage = () => {
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const categoryId = searchParams.get("categoryId") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -31,6 +34,23 @@ const BlogListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(apis.blogCategory.get, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch categories");
+      };
+    };
+    fetchCategories();
+  }, []);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -41,6 +61,7 @@ const BlogListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          category: categoryId,
         },
       });
 
@@ -105,7 +126,7 @@ const BlogListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, categoryId]);
 
   return (
     <div className="page-wrapper page-settings">
@@ -125,6 +146,28 @@ const BlogListPage = () => {
                 setSearchInput(e.target.value);
                 updateParams({ page: 1, search: e.target.value });
               }}
+            />
+
+            {/* Category */}
+            <Select
+              isClearable
+              isSearchable
+              placeholder="All Category"
+              value={
+                categoryId
+                  ? { value: categoryId, label: categories.find((c) => c._id === categoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  categoryId: selected ? selected.value : "",
+                  page: 1,
+                })
+              }
+              options={categories.map((cat) => ({
+                value: cat._id,
+                label: cat.name,
+              }))}
             />
 
             {/* Sort */}
@@ -167,6 +210,7 @@ const BlogListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Category</th>
                     <th>Title</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -177,6 +221,7 @@ const BlogListPage = () => {
                     data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>{d?.category?.name}</td>
                         <td>{d?.title}</td>
                         <td>
                           <div className="active-switch">

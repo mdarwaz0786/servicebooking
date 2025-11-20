@@ -40,6 +40,7 @@ export const getRateCards = asyncHandler(async (req, res) => {
     sort = "desc",
     page = 1,
     limit = 10,
+    services,
     category,
     subCategory,
     subSubCategory,
@@ -66,6 +67,7 @@ export const getRateCards = asyncHandler(async (req, res) => {
   if (subCategory) filters.subCategory = subCategory;
   if (subSubCategory) filters.subSubCategory = subSubCategory;
   if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+  if (services) filters.services = services;
 
   const sortOption =
     sort === "asc"

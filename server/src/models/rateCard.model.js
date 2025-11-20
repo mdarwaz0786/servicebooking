@@ -4,6 +4,7 @@ const rateCardSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
+    required: [true, "Product is required"]
   },
   subCategory: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +21,7 @@ const rateCardSchema = new mongoose.Schema({
   services: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Service",
-    required: true,
+    required: [true, "Service is required"]
   }],
   rateGroups: [{
     title: {

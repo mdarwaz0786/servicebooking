@@ -26,7 +26,7 @@ export const createWhyChooseUs = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL WHY CHOOSE US ---------------------
 export const getWhyChooseUsList = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc", category, subCategory, subSubCategory, subSubSubCategory } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", services, category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -41,6 +41,7 @@ export const getWhyChooseUsList = asyncHandler(async (req, res) => {
   if (subCategory) filters.subCategory = subCategory;
   if (subSubCategory) filters.subSubCategory = subSubCategory;
   if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+  if (services) filters.services = services;
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 

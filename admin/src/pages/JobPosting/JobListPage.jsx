@@ -168,6 +168,7 @@ const JobListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Title</th>
+                    <th>Job Type</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -178,6 +179,7 @@ const JobListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.title}</td>
+                        <td>{d?.employmentType}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

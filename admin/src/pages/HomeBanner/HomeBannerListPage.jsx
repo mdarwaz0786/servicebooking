@@ -149,7 +149,8 @@ const HomeBannerListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Image</th>
+                    <th>Desktop Banner</th>
+                    <th>Mobile Banner</th>
                     <th>Title</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -167,6 +168,13 @@ const HomeBannerListPage = () => {
                         <td>
                           <img
                             src={b?.image ? `${BASE_URL}/${b?.image}` : "https://via.placeholder.com/50"}
+                            alt="banner"
+                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                          />
+                        </td>
+                        <td>
+                          <img
+                            src={b?.mobileBanner ? `${BASE_URL}/${b?.mobileBanner}` : "https://via.placeholder.com/50"}
                             alt="banner"
                             style={{ width: "50px", height: "50px", objectFit: "cover" }}
                           />

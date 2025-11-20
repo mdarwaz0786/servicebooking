@@ -4,6 +4,7 @@ const serviceFaqSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
+    required: [true, "Product is required"]
   },
   subCategory: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +30,7 @@ const serviceFaqSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
+      required: [true, "Category is required"]
     },
   ],
   faqs: [
