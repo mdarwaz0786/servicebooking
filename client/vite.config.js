@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: "/codediffusion/greenindia/",
+  base: "/",
   server: {
     host: true,
     proxy: {
