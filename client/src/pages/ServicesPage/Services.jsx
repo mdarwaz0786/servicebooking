@@ -8,8 +8,7 @@ import { useContext, useEffect, useState } from "react";
 
 const Services = ({search, slug}) => {
 
-  // console.log(slug)
-  // console.log(search)
+
   const { servicePageCategoryData, servicePageName, cartAmount, cartItems, servicePageCartShow } = useContext(AppContext);
   return ( 
     <div className="page-wrapper m-0">
@@ -39,7 +38,7 @@ const Services = ({search, slug}) => {
 
               <div className="row justify-content-center align-items-center">
 
-                <ServiceListCard />
+                <ServiceListCard id={slug} />
 
               </div>
               {/* <Pagination /> */}

@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 
 const LoginForm = () => {
-  const { Urls, postData, toast } = useContext(AppContext);
+  const { Urls, postData, toast, generateUniqueId } = useContext(AppContext);
 
   const [mobile, setmobile] = useState("");
   const [otp, setOtp] = useState("");
@@ -44,7 +44,7 @@ const LoginForm = () => {
       return false;
     }
     try {
-      const response = await postData({ otp, mobile }, Urls.verifyOtp, "POST");
+      const response = await postData({ otp, mobile, userId: generateUniqueId() }, Urls.verifyOtp, "POST");
       if (response.success) {
         setformTitle("Enter Mobile Number");
         setotpField(false);
