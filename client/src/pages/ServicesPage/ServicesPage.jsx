@@ -26,7 +26,7 @@ const ServicesPage = () => {
         }
         const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
 
-          console.log(slug)  
+          
       
         setserviceListData(response.data?response.data:[]);
         setservicePageCategoryData(response.categoryList?response.categoryList:[]);
@@ -46,6 +46,15 @@ useEffect(() => {
 
   return (
     <>
+    <style>
+      {`.header {
+        position: relative !important;
+      }
+      .provider-page .page-wrapper {
+        padding-top: 5px;
+      }
+      `}
+    </style>
       {/* <BreadCrumb /> */}
       <Services search={search} slug={slug} />
       <RateCardModal />
