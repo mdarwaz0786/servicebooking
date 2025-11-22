@@ -40,7 +40,6 @@ const UpdateServicePage = () => {
     repairingDiagnostic: true,
     offerContent: "",
     maxBookingQuantity: "",
-    taxPercent: "",
     creditPoint: "",
     transactionCharge: "",
     shortDescription: "",
@@ -70,7 +69,6 @@ const UpdateServicePage = () => {
             repairingDiagnostic: s?.repairingDiagnostic ?? true,
             offerContent: s?.offerContent || "",
             maxBookingQuantity: s?.maxBookingQuantity || "",
-            taxPercent: s?.taxPercent || "",
             creditPoint: s?.creditPoint || "",
             transactionCharge: s?.transactionCharge || "",
             shortDescription: s?.shortDescription || "",
@@ -239,7 +237,13 @@ const UpdateServicePage = () => {
         navigate(-1);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update service");
+      const status = error?.response?.status;
+      if (status === 409) {
+        toast.error("Service already exists");
+      }
+      else {
+        toast.error("Something went wrong");
+      }
     } finally {
       setLoading(false);
     };
@@ -479,15 +483,11 @@ const UpdateServicePage = () => {
               </div>
 
               <div className="row">
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Tax (%) <span className="text-danger">*</span></label>
-                  <input type="number" placeholder="9, 12, 18" name="taxPercent" value={formData.taxPercent} onChange={handleChange} className="form-control" />
-                </div>
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">Credit Point <span className="text-danger">*</span></label>
                   <input required type="number" name="creditPoint" placeholder="1, 2, 3" value={formData.creditPoint} onChange={handleChange} className="form-control" />
                 </div>
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">Transaction Charge <span className="text-danger">*</span></label>
                   <input required type="number" name="transactionCharge" placeholder="5, 6, 7" value={formData.transactionCharge} onChange={handleChange} className="form-control" />
                 </div>

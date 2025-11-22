@@ -176,9 +176,13 @@ const UpdateSubSubSubCategoryPage = () => {
         navigate(-1);
       };
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || error.message || "Something Went Wrong"
-      );
+      const status = error?.response?.status;
+      if (status === 409) {
+        toast.error("Nested service process already exists");
+      }
+      else {
+        toast.error("Something went wrong");
+      }
     } finally {
       setLoading(false);
     };

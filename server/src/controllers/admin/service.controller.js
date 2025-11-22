@@ -93,6 +93,9 @@ export const createService = asyncHandler(async (req, res) => {
     if (popupImagePath && fs.existsSync(path.join(process.cwd(), popupImagePath))) {
       fs.unlinkSync(path.join(process.cwd(), popupImagePath));
     };
+    if (error.code === 11000) {
+      throw new ApiError(409, "Service already exisyts");
+    }
     throw new ApiError(500, error.message || "Something went wrong");
   };
 });

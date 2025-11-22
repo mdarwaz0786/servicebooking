@@ -39,19 +39,11 @@ const Sidebar = () => {
       <div className="sidebar-inner slimscroll">
         <div id="sidebar-menu" className="sidebar-menu">
           <ul>
-            {/* <li className="menu-title m-0">
-              <h6>Home</h6>
-            </li> */}
-
             <li>
               <Link to="/" className={currentPath === "/" ? "active" : ""}>
                 <i className="fe fe-grid" /> <span>Dashboard</span>
               </Link>
             </li>
-
-            {/* <li className="menu-title">
-              <h6>Services</h6>
-            </li> */}
 
             <li>
               <Link to="#"><i className="fe fe-briefcase"></i>
@@ -183,17 +175,13 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            <li>
+            {/* <li>
               <Link
                 to="/reviews"
                 className={currentPath === "/reviews" ? "active" : ""}
               >
                 <i className="fe fe-star" /> <span>Reviews</span>
               </Link>
-            </li>
-
-            {/* <li className="menu-title">
-              <h6>Booking</h6>
             </li> */}
 
             <li>
@@ -212,10 +200,6 @@ const Sidebar = () => {
                 <i className="fe fe-credit-card" /> <span>Transactions</span>
               </Link>
             </li>
-
-            {/* <li className="menu-title">
-              <h6>Users</h6>
-            </li> */}
 
             <li>
               <Link to="#"><i className="fe fe-user" />
@@ -260,10 +244,6 @@ const Sidebar = () => {
                 </Link>
               </li>
             </ul>
-
-            {/* <li className="menu-title">
-              <h6>Service Man</h6>
-            </li> */}
 
             <li>
               <Link

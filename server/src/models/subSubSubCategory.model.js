@@ -66,8 +66,7 @@ const subSubSubCategorySchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-subSubSubCategorySchema.index({ name: 1 });
-subSubSubCategorySchema.index({ categoryId: 1, subCategoryId: 1, subSubCategoryId: 1 });
+subSubSubCategorySchema.index({ name: 1, categoryId: 1, subCategoryId: 1, subSubCategoryId: 1 }, { unique: true });
 
 subSubSubCategorySchema.virtual("category", {
   ref: "Category",

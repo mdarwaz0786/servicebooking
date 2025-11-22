@@ -1,11 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
-import SelectMultipleService from "../../components/Form/SelectMultipleService";
 
 const UpdateRateCardPage = () => {
   const { validToken } = useAuth();
@@ -14,16 +12,10 @@ const UpdateRateCardPage = () => {
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [subSubCategories, setSubSubCategories] = useState([]);
-  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
 
   const [category, setCategory] = useState();
   const [subCategory, setSubCategory] = useState();
-  const [subSubCategory, setSubSubCategory] = useState();
-  const [subSubSubCategory, setSubSubSubCategory] = useState();
 
-  const [services, setServices] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
   const [rateGroups, setRateGroups] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -52,9 +44,6 @@ const UpdateRateCardPage = () => {
         );
         if (res?.data?.success) {
           setSubCategories(res?.data?.data || []);
-          if (res?.data.data.length < 1) {
-            fetchServices();
-          }
         }
       } catch (error) {
         console.log(error);
@@ -63,70 +52,6 @@ const UpdateRateCardPage = () => {
     };
     fetchSubCategories();
   }, [category, validToken]);
-
-  useEffect(() => {
-    if (!subCategory) return;
-    const fetchSubSubCategories = async () => {
-      try {
-        const res = await axios.get(
-          `${apis.subSubCategory.get}?subCategoryId=${subCategory}`,
-          { headers: { Authorization: validToken } }
-        );
-        if (res?.data?.success) {
-          setSubSubCategories(res?.data?.data || []);
-          if (res?.data.data.length < 1) {
-            fetchServices();
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Failed to load sub sub categories");
-      };
-    };
-    fetchSubSubCategories();
-  }, [subCategory, validToken]);
-
-  useEffect(() => {
-    if (!subSubCategory) return;
-    const fetchSubSubSubCategories = async () => {
-      try {
-        const res = await axios.get(
-          `${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategory}`,
-          { headers: { Authorization: validToken } }
-        );
-        if (res?.data?.success) {
-          setSubSubSubCategories(res?.data?.data || []);
-          if (res?.data.data.length < 1) {
-            fetchServices();
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Failed to load sub sub sub categories");
-      };
-    };
-    fetchSubSubSubCategories();
-  }, [subSubCategory, validToken]);
-
-  const fetchServices = async () => {
-    try {
-      const params = {};
-      if (category) params.categoryId = category;
-      if (subCategory) params.subCategoryId = subCategory;
-      if (subSubCategory) params.subSubCategoryId = subSubCategory;
-      if (subSubSubCategory) params.subSubSubCategoryId = subSubSubCategory;
-
-      const res = await axios.get(apis.service.get, {
-        params,
-        headers: {
-          Authorization: validToken,
-        },
-      });
-      setServices(res?.data?.data || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,12 +64,8 @@ const UpdateRateCardPage = () => {
 
         const rateCardData = rateCardRes?.data?.data;
         if (rateCardData) {
-          const existingServiceIds = rateCardData?.services?.map((s) => s?._id || s?.id) || [];
-          setSelectedServices(existingServiceIds);
           setCategory(rateCardData?.category?._id);
           setSubCategory(rateCardData?.subCategory?._id);
-          setSubSubCategory(rateCardData?.subSubCategory?._id);
-          setSubSubSubCategory(rateCardData?.subSubSubCategory?._id);
 
           setRateGroups(
             rateCardData?.rateGroups?.length
@@ -153,10 +74,11 @@ const UpdateRateCardPage = () => {
                 rates: group?.rates?.map((r) => ({
                   description: r?.description || "",
                   price: r?.serviceCharge?.price || "",
+                  discountPrice: r?.serviceCharge?.discountPrice || "",
                   labourCharge: r?.serviceCharge?.labourCharge || "",
-                })) || [{ description: "", price: "", labourCharge: "" }],
+                })) || [{ description: "", price: "", discountPrice: "", labourCharge: "" }],
               }))
-              : [{ title: "", rates: [{ description: "", price: "", labourCharge: "" }] }]
+              : [{ title: "", rates: [{ description: "", price: "", discountPrice: "", labourCharge: "" }] }]
           );
         };
       } catch (error) {
@@ -183,7 +105,7 @@ const UpdateRateCardPage = () => {
   const addGroupField = () => {
     setRateGroups([
       ...rateGroups,
-      { title: "", rates: [{ description: "", price: "", labourCharge: "" }] },
+      { title: "", rates: [{ description: "", price: "", discountPrice: "", labourCharge: "" }] },
     ]);
   };
 
@@ -193,7 +115,7 @@ const UpdateRateCardPage = () => {
 
   const addRateField = (groupIndex) => {
     const updated = [...rateGroups];
-    updated[groupIndex].rates.push({ description: "", price: "", labourCharge: "" });
+    updated[groupIndex].rates.push({ description: "", price: "", discountPrice: "", labourCharge: "" });
     setRateGroups(updated);
   };
 
@@ -206,11 +128,6 @@ const UpdateRateCardPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (selectedServices.length === 0) {
-      toast.error("Please select at least one service");
-      return;
-    }
-
     const validGroups = rateGroups.filter(
       (g) => g?.title?.trim() && g?.rates?.some((r) => r?.description?.trim())
     );
@@ -221,13 +138,13 @@ const UpdateRateCardPage = () => {
     }
 
     const payload = {
-      services: selectedServices,
       rateGroups: rateGroups?.map((group) => ({
         title: group?.title,
         rates: group?.rates?.map((rate) => ({
           description: rate?.description,
           serviceCharge: {
             price: rate?.price,
+            discountPrice: rate?.discountPrice,
             labourCharge: rate?.labourCharge,
           },
         })),
@@ -273,8 +190,6 @@ const UpdateRateCardPage = () => {
                   onChange={(e) => {
                     setCategory(e.target.value);
                     setSubCategory();
-                    setSubSubCategory();
-                    setSubSubSubCategory();
                   }}
                   className="form-control"
                   required
@@ -296,12 +211,10 @@ const UpdateRateCardPage = () => {
                   value={subCategory}
                   onChange={(e) => {
                     setSubCategory(e.target.value);
-                    setSubSubCategory();
-                    setSubSubSubCategory();
-                    setSelectedServices([]);
                   }}
                   className="form-control"
                   disabled={!category}
+                  required
                 >
                   <option value="">-- Select Variant --</option>
                   {subCategories?.map((sub) => (
@@ -310,61 +223,6 @@ const UpdateRateCardPage = () => {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              {/* Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Service Process</label>
-                <select
-                  name="subSubCategory"
-                  value={subSubCategory}
-                  onChange={(e) => {
-                    setSubSubCategory(e.target.value);
-                    setSubSubSubCategory();
-                    setSelectedServices([]);
-                  }
-                  }
-                  className="form-control"
-                  disabled={!subCategory}
-                >
-                  <option value="">-- Select Service Process --</option>
-                  {subSubCategories?.map((subsub) => (
-                    <option key={subsub?._id} value={subsub?._id}>
-                      {subsub?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sub Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Nested Service Process </label>
-                <select
-                  name="subSubSubCategory"
-                  value={subSubSubCategory}
-                  onChange={(e) => setSubSubSubCategory(e.target.value)}
-                  className="form-control"
-                  disabled={!subSubCategory}
-                >
-                  <option value="">-- Select Nested Service Process --</option>
-                  {subSubSubCategories?.map((sss) => (
-                    <option key={sss?._id} value={sss?._id}>
-                      {sss?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Services */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span className="text-danger">*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
-                />
               </div>
 
               {/* Rate Groups */}
@@ -415,25 +273,34 @@ const UpdateRateCardPage = () => {
                             }
                           />
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                           <input
                             type="text"
                             className="form-control"
                             placeholder="Price"
                             value={rate.price}
-                            required
                             onChange={(e) =>
                               handleRateChange(gIndex, rIndex, "price", e.target.value)
                             }
                           />
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Discount Price"
+                            value={rate.discountPrice}
+                            onChange={(e) =>
+                              handleRateChange(gIndex, rIndex, "discountPrice", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="col-md-2">
                           <input
                             type="text"
                             className="form-control"
                             placeholder="Labour Charge"
                             value={rate.labourCharge}
-                            required
                             onChange={(e) =>
                               handleRateChange(gIndex, rIndex, "labourCharge", e.target.value)
                             }

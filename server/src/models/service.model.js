@@ -88,9 +88,6 @@ const serviceSchema = new mongoose.Schema({
   maxBookingQuantity: {
     type: String,
   },
-  taxPercent: {
-    type: String,
-  },
   creditPoint: {
     type: String,
   },
@@ -112,8 +109,7 @@ const serviceSchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-serviceSchema.index({ name: 1 });
-serviceSchema.index({ categoryId: 1, subCategoryId: 1, subSubCategoryId: 1, subSubSubCategoryId: 1 });
+serviceSchema.index({ name: 1, categoryId: 1, subCategoryId: 1, subSubCategoryId: 1, subSubSubCategoryId: 1 }, { unique: true });
 
 serviceSchema.virtual("category", {
   ref: "Category",

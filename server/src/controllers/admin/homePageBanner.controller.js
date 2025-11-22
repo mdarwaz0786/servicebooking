@@ -64,7 +64,7 @@ export const updateHomePageBanner = asyncHandler(async (req, res) => {
 
     if (req.files?.mobileBanner?.[0]) {
       if (banner.mobileBanner && fs.existsSync(path.join(process.cwd(), banner.mobileBanner))) {
-        fs.unlinkSync(path.join(process.cwd(), category.icon));
+        fs.unlinkSync(path.join(process.cwd(), banner.icon));
       };
       banner.mobileBanner = await compressImage(req.files.mobileBanner[0].buffer, "homePageBanner");
     };

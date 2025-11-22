@@ -50,6 +50,9 @@ export const createCategory = asyncHandler(async (req, res) => {
     if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
       fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
+    if (error.code === 11000) {
+      throw new ApiError(409, "Product already exisyts");
+    }
     throw new ApiError(500, error.message || "Something went wrong");
   };
 });

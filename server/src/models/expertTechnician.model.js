@@ -45,4 +45,28 @@ const expertTechnicianSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+expertTechnicianSchema.pre("save", async function (next) {
+  const ExpertTechnician = mongoose.model("ExpertTechnician");
+
+  const existingSet = await ExpertTechnician.findOne({
+    services: { $all: this.services, $size: this.services.length },
+    _id: { $ne: this._id },
+  });
+
+  if (existingSet) {
+    return next(new Error("This service already exists"));
+  }
+
+  const overlapping = await ExpertTechnician.findOne({
+    services: { $in: this.services },
+    _id: { $ne: this._id },
+  });
+
+  if (overlapping) {
+    return next(new Error("This service already exists"));
+  }
+
+  next();
+});
+
 export default mongoose.model("ExpertTechnician", expertTechnicianSchema);

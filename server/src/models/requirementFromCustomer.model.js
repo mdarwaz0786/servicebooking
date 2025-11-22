@@ -41,4 +41,28 @@ const requirementFromCustomerSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+requirementFromCustomerSchema.pre("save", async function (next) {
+  const Existing = mongoose.model("RequirementFromCustomer");
+
+  const existingSet = await Existing.findOne({
+    services: { $all: this.services, $size: this.services.length },
+    _id: { $ne: this._id },
+  });
+
+  if (existingSet) {
+    return next(new Error("This service already exists"));
+  }
+
+  const overlapping = await Existing.findOne({
+    services: { $in: this.services },
+    _id: { $ne: this._id },
+  });
+
+  if (overlapping) {
+    return next(new Error("This service already exists"));
+  }
+
+  next();
+});
+
 export default mongoose.model("RequirementFromCustomer", requirementFromCustomerSchema);

@@ -27,12 +27,9 @@ const RateCardListPage = () => {
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [subSubCategories, setSubSubCategories] = useState([]);
-  const [service, setService] = useState([]);
+
   const categoryId = searchParams.get("categoryId") || "";
   const subCategoryId = searchParams.get("subCategoryId") || "";
-  const subSubCategoryId = searchParams.get("subSubCategoryId") || "";
-  const services = searchParams.get("services") || "";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,46 +66,6 @@ const RateCardListPage = () => {
   }, [categoryId, validToken]);
 
   useEffect(() => {
-    const fetchSubSubCategories = async () => {
-      try {
-        const response = await axios.get(`${apis.subSubCategory.get}?subCategoryId=${subCategoryId}`, {
-          headers: { Authorization: validToken },
-        });
-        if (response?.data?.success) {
-          setSubSubCategories(response?.data?.data || []);
-        };
-      } catch (error) {
-        console.log(error.message);
-        toast.error("Failed to fetch sub sub categories");
-      };
-    };
-    fetchSubSubCategories();
-  }, [subCategoryId, validToken]);
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(apis.service.get, {
-          headers: { Authorization: validToken },
-          params: {
-            categoryId,
-            subCategoryId,
-            subSubCategoryId,
-          },
-        });
-
-        if (response?.data?.success) {
-          setService(response?.data?.data || []);
-        };
-      } catch (error) {
-        toast.error(error?.response?.data?.message || "Failed to fetch services");
-      };
-    };
-    fetchServices();
-  }, [categoryId, subCategoryId, subSubCategoryId, validToken]);
-
-  useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchInput), 500);
     return () => clearTimeout(handler);
   }, [searchInput]);
@@ -125,8 +82,6 @@ const RateCardListPage = () => {
           sort,
           category: categoryId,
           subCategory: subCategoryId,
-          subSubCategory: subSubCategoryId,
-          services,
         },
       });
 
@@ -184,7 +139,7 @@ const RateCardListPage = () => {
 
   useEffect(() => {
     fetchRateCards();
-  }, [page, limit, debouncedSearch, sort, services, categoryId, subCategoryId, subSubCategoryId]);
+  }, [page, limit, debouncedSearch, sort, categoryId, subCategoryId]);
 
   return (
     <div className="page-wrapper page-settings">
@@ -257,7 +212,6 @@ const RateCardListPage = () => {
                   categoryId: selected ? selected.value : "",
                   page: 1,
                   subCategoryId,
-                  subSubCategoryId,
                 })
               }
               options={categories.map((cat) => ({
@@ -282,63 +236,11 @@ const RateCardListPage = () => {
                   subCategoryId: selected ? selected.value : "",
                   page: 1,
                   categoryId,
-                  subSubCategoryId,
                 })
               }
               options={subCategories.map((cat) => ({
                 value: cat?._id,
                 label: cat?.name,
-              }))}
-            />
-          </div>
-
-          {/* Sub Sub Category */}
-          <div style={{ minWidth: "200px" }}>
-            <Select
-              isClearable
-              placeholder="All Service Process"
-              value={
-                subSubCategoryId
-                  ? { value: subSubCategoryId, label: subSubCategories.find((c) => c?._id === subSubCategoryId)?.name }
-                  : null
-              }
-              onChange={(selected) =>
-                updateParams({
-                  subSubCategoryId: selected ? selected.value : "",
-                  page: 1,
-                  categoryId,
-                  subCategoryId,
-                })
-              }
-              options={subSubCategories.map((cat) => ({
-                value: cat?._id,
-                label: cat?.name,
-              }))}
-            />
-          </div>
-
-          {/* Services */}
-          <div style={{ minWidth: "200px" }}>
-            <Select
-              isClearable
-              placeholder="All Services"
-              value={
-                service
-                  .map((s) => ({ value: s?._id, label: s?.name }))
-                  .find((s) => s?.value === services) || null
-              }
-              onChange={(selected) =>
-                updateParams({
-                  services: selected ? selected.value : "",
-                  page: 1,
-                  categoryId,
-                  subCategoryId,
-                  subSubCategoryId,
-                })
-              }
-              options={service.map((s) => ({
-                value: s?._id,
-                label: s?.name,
               }))}
             />
           </div>
@@ -354,8 +256,6 @@ const RateCardListPage = () => {
                     <th>#</th>
                     <th>Product</th>
                     <th>Variant</th>
-                    <th>Service Process</th>
-                    <th>Services</th>
                     <th>Rate Group Titles</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -368,16 +268,6 @@ const RateCardListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.category?.name}</td>
                         <td>{d?.subCategory?.name}</td>
-                        <td>{d?.subSubCategory?.name}</td>
-                        <td>
-                          {d?.services?.length > 0 ? (
-                            d.services.map((service, index) => (
-                              <div key={index}>{service?.name || "Unnamed"}</div>
-                            ))
-                          ) : (
-                            <span className="text-muted">No Services</span>
-                          )}
-                        </td>
                         <td>
                           {d?.rateGroups?.length > 0 ? (
                             d.rateGroups.map((group, index) => (

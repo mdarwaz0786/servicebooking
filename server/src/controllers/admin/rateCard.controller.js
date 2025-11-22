@@ -5,29 +5,22 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // ======================== CREATE RATE CARD ========================
 export const createRateCard = asyncHandler(async (req, res) => {
-  const { services, rateGroups, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
-
-  if (!services || !Array.isArray(services) || services.length === 0) {
-    throw new ApiError(400, "At least one service is required");
-  }
+  const { rateGroups, category, subCategory } = req.body;
 
   if (!rateGroups || !Array.isArray(rateGroups) || rateGroups.length === 0) {
     throw new ApiError(400, "Rate groups are required");
   }
 
   const rateCard = await RateCardModel.create({
-    services,
-    rateGroups,
-    createdBy: req.user?._id,
     category,
     subCategory,
-    subSubCategory,
-    subSubSubCategory
+    rateGroups,
+    createdBy: req.user?._id,
   });
 
   return res.status(201).json({
     success: true,
-    message: "Rate card created successfully",
+    message: "Created successfully",
     data: rateCard,
   });
 });
@@ -40,11 +33,8 @@ export const getRateCards = asyncHandler(async (req, res) => {
     sort = "desc",
     page = 1,
     limit = 10,
-    services,
     category,
     subCategory,
-    subSubCategory,
-    subSubSubCategory
   } = req.query;
 
   page = parseInt(page, 10);
@@ -65,9 +55,6 @@ export const getRateCards = asyncHandler(async (req, res) => {
 
   if (category) filters.category = category;
   if (subCategory) filters.subCategory = subCategory;
-  if (subSubCategory) filters.subSubCategory = subSubCategory;
-  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
-  if (services) filters.services = services;
 
   const sortOption =
     sort === "asc"
@@ -78,12 +65,10 @@ export const getRateCards = asyncHandler(async (req, res) => {
 
   const total = await RateCardModel.countDocuments(filters);
 
-  const rateCards = await RateCardModel.find(filters)
-    .populate("services")
+  const rateCards = await RateCardModel
+    .find(filters)
     .populate("category")
     .populate("subCategory")
-    .populate("subSubCategory")
-    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -93,7 +78,7 @@ export const getRateCards = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Rate cards fetched successfully",
+    message: "Data fetched successfully",
     total,
     page,
     limit,
@@ -108,11 +93,8 @@ export const getRateCards = asyncHandler(async (req, res) => {
 // ======================== GET SINGLE RATE CARD ========================
 export const getRateCardById = asyncHandler(async (req, res) => {
   const rateCard = await RateCardModel.findById(req.params.id)
-    .populate("services")
     .populate("category")
     .populate("subCategory")
-    .populate("subSubCategory")
-    .populate("subSubSubCategory")
     .lean();
 
   if (!rateCard) {
@@ -121,21 +103,18 @@ export const getRateCardById = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     data: rateCard,
   });
 });
 
 // ======================== UPDATE RATE CARD ========================
 export const updateRateCard = asyncHandler(async (req, res) => {
-  const { services, rateGroups, status, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
+  const { rateGroups, status, category, subCategory } = req.body;
 
   const rateCard = await RateCardModel.findById(req.params.id);
   if (!rateCard) {
     throw new ApiError(404, "Rate card not found");
-  }
-
-  if (services && Array.isArray(services) && services.length > 0) {
-    rateCard.services = services;
   }
 
   if (rateGroups && Array.isArray(rateGroups) && rateGroups.length > 0) {
@@ -150,14 +129,12 @@ export const updateRateCard = asyncHandler(async (req, res) => {
 
   rateCard.category = category || rateCard?.category;
   rateCard.subCategory = subCategory || rateCard?.subCategory;
-  rateCard.subSubCategory = subSubCategory || rateCard?.subSubCategory;
-  rateCard.subSubSubCategory = subSubSubCategory || rateCard?.subSubSubCategory;
 
   await rateCard.save();
 
   return res.status(200).json({
     success: true,
-    message: "Rate card updated successfully",
+    message: "Updated successfully",
     data: rateCard,
   });
 });
@@ -174,6 +151,6 @@ export const deleteRateCard = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "Rate card deleted successfully",
+    message: "Deleted successfully",
   });
 });

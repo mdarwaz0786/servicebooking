@@ -159,7 +159,16 @@ const ContactEnquiryListPage = () => {
                         <td>{d?.email}</td>
                         <td>{d?.mobile}</td>
                         <td>{d?.subject}</td>
-                        <td>{d?.message}</td>
+                        <td className="tooltip-cell">
+                          <span className="tooltip-text">
+                            {d?.message?.length > 30
+                              ? d.message.substring(0, 30) + "..."
+                              : d.message}
+                          </span>
+                          <div className="tooltip-box">
+                            {d?.message}
+                          </div>
+                        </td>
                         <td>
                           <div className="d-flex">
                             <button

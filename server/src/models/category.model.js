@@ -15,7 +15,7 @@ const categorySchema = new mongoose.Schema({
   image: {
     type: String,
     required: false,
-    trim: true, 
+    trim: true,
   },
   icon: {
     type: String,
@@ -49,14 +49,14 @@ const categorySchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-categorySchema.index({ name: 1 });
-
 categorySchema.virtual("subcategories", {
   ref: "SubCategory",
   localField: "_id",
   foreignField: "categoryId",
   justOne: false,
 });
+
+categorySchema.index({ name: 1 }, { unique: true });
 
 const CategoryModel = mongoose.model("Category", categorySchema);
 

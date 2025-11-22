@@ -54,8 +54,7 @@ const subCategorySchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-subCategorySchema.index({ name: 1 });
-subCategorySchema.index({ categoryId: 1 });
+subCategorySchema.index({ name: 1, categoryId: 1 }, { unique: true });
 
 subCategorySchema.virtual("category", {
   ref: "Category",
