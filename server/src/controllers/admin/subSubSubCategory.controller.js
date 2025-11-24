@@ -74,7 +74,7 @@ export const createSubSubSubCategory = asyncHandler(async (req, res) => {
       fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
     if (error.code === 11000) {
-      throw new ApiError(409, "Nested service process already exisyts");
+      throw new ApiError(409, "Nested service process already exists");
     }
     throw new ApiError(500, error.message || "Something went wrong");
   };

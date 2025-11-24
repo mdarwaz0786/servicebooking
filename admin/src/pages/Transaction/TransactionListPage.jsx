@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis, { BASE_URL } from "../../apis/apis";
+import { formatDate } from "../../helpers/formatDate";
 
 const TransactionListPage = () => {
+  const navigate = useNavigate();
   const { validToken } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -69,23 +71,6 @@ const TransactionListPage = () => {
     setSearchParams(params);
   };
 
-  const deleteTransaction = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this transaction?")) return;
-
-    try {
-      const response = await axios.delete(`${apis.transaction.delete}/${id}`, {
-        headers: { Authorization: validToken },
-      });
-
-      if (response?.data?.success) {
-        toast.success("Transaction deleted successfully");
-        fetchTransactions();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete transaction");
-    };
-  };
-
   useEffect(() => {
     fetchTransactions();
   }, [page, limit, debouncedSearch, sort]);
@@ -94,7 +79,7 @@ const TransactionListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Transactions {transactions?.length}</h5>
+          <h5>Payments {transactions?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -142,7 +127,13 @@ const TransactionListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Transaction Id</th>
+                    <th>Name</th>
                     <th>Mobile</th>
+                    <th>Amount</th>
+                    <th>Mode</th>
+                    <th>Type</th>
+                    <th>Date</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -152,23 +143,22 @@ const TransactionListPage = () => {
                     transactions?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>{d?.transactionId || "-"}</td>
+                        <td>{d?.user?.name || "-"}</td>
                         <td>{d?.user?.mobile}</td>
+                        <td>{d?.finalAmount}</td>
+                        <td>{d?.PID?.paymentMode}</td>
+                        <td>Debit</td>
+                        <td>{formatDate(d?.createdAt)}</td>
                         <td>{d?.status}</td>
                         <td>
                           <div className="d-flex">
                             {/* View Button */}
-                            <Link to={`/transaction-detail/${d?._id}`}>
+                            <Link to="/transaction-detail" onClick={() => navigate("/transaction-detail", { state: d })}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />
                               </button>
                             </Link>
-                            <button
-                              className="btn delete-table"
-                              type="button"
-                              onClick={() => deleteTransaction(d?._id)}
-                            >
-                              <i className="fe fe-trash-2" />
-                            </button>
                           </div>
                         </td>
                       </tr>

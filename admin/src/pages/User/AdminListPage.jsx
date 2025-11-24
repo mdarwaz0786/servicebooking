@@ -77,7 +77,7 @@ const AdminListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Admin</h5>
+          <h5>User</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -118,7 +118,7 @@ const AdminListPage = () => {
               <Link to="/add-admin">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
-                  <span>Add Admin</span>
+                  <span>Create User</span>
                 </button>
               </Link>
             </div>
@@ -133,7 +133,12 @@ const AdminListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Name</th>
                     <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,7 +146,20 @@ const AdminListPage = () => {
                     users?.filter?.((u) => u?.role === "admin")?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>-</td>
                         <td>{d?.mobile}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                          <div className="d-flex">
+                            <Link to="#">
+                              <button className="btn delete-table me-2" type="button">
+                                <i className="fe fe-edit" />
+                              </button>
+                            </Link>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : !loading && users?.filter?.((u) => u?.role === "admin")?.length == 0 ? (

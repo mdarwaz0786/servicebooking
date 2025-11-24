@@ -85,6 +85,7 @@ import ProviderListPage from "../pages/User/ProviderListPage";
 import AdminListPage from "../pages/User/AdminListPage";
 import JobListPage from "../pages/JobPosting/JobListPage";
 import UpdateJobPostingPage from "../pages/JobPosting/UpdateJobPostingPage";
+import TransactionDetailPage from "../pages/Transaction/TransactionDetailPage";
 
 const routesConfig = {
   private: [
@@ -117,6 +118,7 @@ const routesConfig = {
     { path: "/booking-detail/:id", element: BookingDetailPage },
 
     { path: "/transactions", element: TransactionListPage },
+    { path: "/transaction-detail", element: TransactionDetailPage },
 
     { path: "/kyc", element: KycListPage },
     { path: "/kyc-detail", element: KycDetailsPage },

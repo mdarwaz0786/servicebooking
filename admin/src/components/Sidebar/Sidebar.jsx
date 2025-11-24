@@ -103,7 +103,7 @@ const Sidebar = () => {
             </li>
 
             <li>
-              <Link to="#"><i className="fe fe-briefcase"></i>
+              <Link to="#"><i className="fe fe-package"></i>
                 <span>Service Master</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
@@ -175,35 +175,85 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            {/* <li>
-              <Link
-                to="/reviews"
-                className={currentPath === "/reviews" ? "active" : ""}
-              >
-                <i className="fe fe-star" /> <span>Reviews</span>
+            <li>
+              <Link to="#"> <i className="fe fe-credit-card" />
+                <span> Payments</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
-            </li> */}
+              <ul>
+                <li>
+                  <Link
+                    to="/transactions"
+                    className={currentPath === "/transactions" ? "active" : ""}
+                  >
+                    <span>Customer</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/transactions"
+                    className={currentPath === "/transactions" ? "active" : ""}
+                  >
+                    <span>Provider</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
 
             <li>
-              <Link
-                to="/bookings"
-                className={currentPath === "/bookings" ? "active" : ""}
-              >
-                <i className="fe fe-shopping-cart" /> <span>Bookings</span>
+              <Link to="#"><i className="fe fe-shopping-cart" />
+                <span>  Bookings</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
-            </li>
-            <li>
-              <Link
-                to="/transactions"
-                className={currentPath === "/transactions" ? "active" : ""}
-              >
-                <i className="fe fe-credit-card" /> <span>Transactions</span>
-              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/bookings"
+                    className={currentPath === "/bookings" ? "active" : ""}
+                  >
+                    <span>Active</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/bookings"
+                    className={currentPath === "/bookings" ? "active" : ""}
+                  >
+                    <span>Completed</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/bookings"
+                    className={currentPath === "/bookings" ? "active" : ""}
+                  >
+                    <span>Cancel</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
 
             <li>
               <Link to="#"><i className="fe fe-user" />
-                <span> All Users</span>
+                <span> Users</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/admins"
+                    className={currentPath === "/admins" ? "active" : ""}
+                  >
+                    <span>Users</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <Link to="#"><i className="fe fe-user" />
+                <span> Customers</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
               <ul>
@@ -212,98 +262,97 @@ const Sidebar = () => {
                     to="/users"
                     className={currentPath === "/customers" ? "active" : ""}
                   >
-                    <span>Customers</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/providers"
-                    className={currentPath === "/providers" ? "active" : ""}
-                  >
-                    <span>Providers</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/admins"
-                    className={currentPath === "/admins" ? "active" : ""}
-                  >
-                    <span>Admin</span>
+                    <span>Customer List</span>
                   </Link>
                 </li>
               </ul>
             </li>
 
-            <ul>
-              <li>
-                <Link
-                  to="/users"
-                  className={currentPath === "/users" ? "active" : ""}
-                >
-                  <i className="fe fe-user" /> <span>Users</span>
-                </Link>
-              </li>
-            </ul>
+            <li>
+              <Link to="#"><i className="fe fe-award" />
+                <span> Providers</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/providers"
+                    className={currentPath === "/providers" ? "active" : ""}
+                  >
+                    <span>Provider List</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/service-man-profile"
+                    className={currentPath === "/service-man-profile" ? "active" : ""}
+                  >
+                    <span>Profile</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/kyc"
+                    className={currentPath === "/kyc" ? "active" : ""}
+                  >
+                    <span>KYC</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/training-schedule"
+                    className={currentPath === "/training-schedule" ? "active" : ""}
+                  >
+                    <span>Training Schedule</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/earning"
+                    className={currentPath === "/earning" ? "active" : ""}
+                  >
+                    <span>Earning</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
 
             <li>
-              <Link
-                to="/service-man-profile"
-                className={currentPath === "/service-man-profile" ? "active" : ""}
-              >
-                <i className="fe fe-user" /> <span>Profile</span>
+              <Link to="#"><i className="fe fe-layers" />
+                <span> Home Service</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
-            </li>
-            <li>
-              <Link
-                to="/kyc"
-                className={currentPath === "/kyc" ? "active" : ""}
-              >
-                <i className="fe fe-shield" /> <span>KYC</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/training-schedule"
-                className={currentPath === "/training-schedule" ? "active" : ""}
-              >
-                <i className="fe fe-calendar" /> <span>Training Schedule</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/earning"
-                className={currentPath === "/earning" ? "active" : ""}
-              >
-                <i className="fe fe-dollar-sign" /> <span>Earning</span>
-              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/home-banner"
+                    className={currentPath === "/home-banner" ? "active" : ""}
+                  >
+                    <span>Wide Banner</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/home-service"
+                    className={currentPath === "/home-service" ? "active" : ""}>
+                    <span>Product Services</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/home-slider"
+                    className={currentPath === "/home-slider" ? "active" : ""}
+                  >
+                    <span>Front Banner</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
 
             <li>
-              <Link
-                to="/home-banner"
-                className={currentPath === "/home-banner" ? "active" : ""}
-              >
-                <i className="fe fe-image" /> <span>Wide Banner</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/home-service"
-                className={currentPath === "/home-service" ? "active" : ""}>
-                <i className="fe fe-briefcase" /> <span>Product Services</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/home-slider"
-                className={currentPath === "/home-slider" ? "active" : ""}
-              >
-                <i className="fe fe-sliders" /> <span>Front Banner</span>
-              </Link>
-            </li>
-            <li style={{ marginBottom: "5rem" }}>
-              <Link to="#"><i className="fe fe-briefcase"></i>
-                <span>Footer Layout</span>
+              <Link to="#"><i className="fe fe-file-text" />
+                <span> Blog</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
               <ul>
@@ -323,6 +372,15 @@ const Sidebar = () => {
                     <span>Blog</span>
                   </Link>
                 </li>
+              </ul>
+            </li>
+
+            <li style={{ marginBottom: "5rem" }}>
+              <Link to="#"><i className="fe fe-briefcase"></i>
+                <span>Footer Pages</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
                 <li>
                   <Link
                     to="/add-terms-conditions"

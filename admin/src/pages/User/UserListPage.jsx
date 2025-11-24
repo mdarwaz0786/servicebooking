@@ -125,7 +125,12 @@ const UserListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Mobile Number</th>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>DOB</th>
+                    <th>Can Update</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,7 +138,12 @@ const UserListPage = () => {
                     users?.filter?.((u) => u?.role === "user")?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>-</td>
+                        <td>-</td>
                         <td>{d?.mobile}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                       </tr>
                     ))
                   ) : !loading && users?.filter?.((u) => u?.role === "user")?.length == 0 ? (

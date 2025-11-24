@@ -58,7 +58,7 @@ export const createSubCategory = asyncHandler(async (req, res) => {
       fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
     if (error.code === 11000) {
-      throw new ApiError(409, "Variant already exisyts");
+      throw new ApiError(409, "Variant already exists");
     }
     throw new ApiError(500, error.message || "Something went wrong");
   };
