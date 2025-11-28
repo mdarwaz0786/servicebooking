@@ -6,7 +6,6 @@ import { buildPagination } from "../../utils/pagination.js";
 export const createWallet = asyncHandler(async (req, res) => {
   const {
     providerId,
-    creditPoints,
     depositAmount,
     depositStatus,
     dateOfDeposit,
@@ -15,7 +14,6 @@ export const createWallet = asyncHandler(async (req, res) => {
     transactionId,
     transactionNumber,
     purpose,
-    status
   } = req.body;
 
   if (!providerId) throw new ApiError(400, "Provider ID is required");
@@ -25,16 +23,15 @@ export const createWallet = asyncHandler(async (req, res) => {
 
   const wallet = await WalletModel.create({
     providerId,
-    creditPoints: creditPoints || 0,
-    depositAmount: depositAmount || 0,
-    depositStatus: depositStatus || "unpaid",
+    depositAmount,
+    depositStatus,
     dateOfDeposit,
     paymentMode,
     transactionType,
     transactionId,
     transactionNumber,
     purpose,
-    status: typeof status === "boolean" ? status : true
+    createdBy: req.user?._id,
   });
 
   return res.status(201).json({ success: true, data: wallet });
@@ -94,7 +91,6 @@ export const getWalletById = asyncHandler(async (req, res) => {
 export const updateWallet = asyncHandler(async (req, res) => {
   const {
     providerId,
-    creditPoints,
     depositAmount,
     depositStatus,
     dateOfDeposit,
@@ -110,8 +106,7 @@ export const updateWallet = asyncHandler(async (req, res) => {
   if (!wallet) throw new ApiError(404, "Wallet not found");
 
   wallet.providerId = providerId || wallet.providerId;
-  wallet.creditPoints = creditPoints ?? wallet.creditPoints;
-  wallet.depositAmount = depositAmount ?? wallet.depositAmount;
+  wallet.depositAmount = depositAmount || wallet.depositAmount;
   wallet.depositStatus = depositStatus || wallet.depositStatus;
   wallet.dateOfDeposit = dateOfDeposit || wallet.dateOfDeposit;
   wallet.paymentMode = paymentMode || wallet.paymentMode;
@@ -120,6 +115,8 @@ export const updateWallet = asyncHandler(async (req, res) => {
   wallet.transactionNumber = transactionNumber || wallet.transactionNumber;
   wallet.purpose = purpose || wallet.purpose;
   wallet.status = typeof status === "boolean" ? status : wallet.status;
+  wallet.updatedBy = req.user?._id;
+  wallet.updatedAt = new Date();
 
   await wallet.save();
 

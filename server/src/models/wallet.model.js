@@ -10,12 +10,10 @@ const walletSchema = new mongoose.Schema(
     creditPoints: {
       type: Number,
       default: 0,
-      min: [0, "Credit points cannot be negative"],
     },
     depositAmount: {
       type: Number,
       default: 0,
-      min: [0, "Deposit amount cannot be negative"],
     },
     depositStatus: {
       type: String,
@@ -33,7 +31,7 @@ const walletSchema = new mongoose.Schema(
     },
     transactionType: {
       type: String,
-      enum: ["debit", "credit"],
+      enum: ["Debit", "Credit"],
       required: [true, "Transaction type is required"],
     },
     transactionId: {
@@ -65,5 +63,22 @@ const walletSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+walletSchema.pre("save", function (next) {
+  if (this.depositAmount > 0) {
+    this.creditPoints = this.depositAmount * 0.10;
+  }
+  next();
+});
+
+walletSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+
+  if (update.depositAmount !== undefined) {
+    update.creditPoints = update.depositAmount * 0.10;
+  }
+
+  next();
+});
 
 export default mongoose.model("Wallet", walletSchema);

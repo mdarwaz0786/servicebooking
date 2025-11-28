@@ -4,6 +4,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import { buildPagination } from "../../utils/pagination.js";
+import compressImage from "../../helpers/compressImage.js";
 
 export const createInsurance = asyncHandler(async (req, res) => {
   const {
@@ -15,41 +16,48 @@ export const createInsurance = asyncHandler(async (req, res) => {
     expiryDate,
     coverageDetail,
     emergencyNumber,
-    remarks,
-    isRenewed,
   } = req.body;
 
   if (!providerId) throw new ApiError(400, "Provider ID is required");
   if (!companyName) throw new ApiError(400, "Company name is required");
   if (!policyNumber) throw new ApiError(400, "Policy number is required");
 
-  const image =
-    req.files?.image?.length > 0 ? req.files.image[0].path : null;
+  let imagePath = null;
 
-  let insurance = await InsuranceModel.create({
-    providerId,
-    companyName,
-    policyNumber,
-    insuranceType,
-    issueDate,
-    expiryDate,
-    coverageDetail,
-    emergencyNumber,
-    remarks,
-    isRenewed,
-    image,
-  });
+  try {
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "insurance");
+    }
 
-  const slug = await generateUniqueSlug(
-    companyName,
-    "Insurance",
-    insurance._id,
-    "insurances"
-  );
-  insurance.slug = slug;
-  await insurance.save();
+    let insurance = await InsuranceModel.create({
+      providerId,
+      companyName,
+      policyNumber,
+      insuranceType,
+      issueDate,
+      expiryDate,
+      coverageDetail,
+      emergencyNumber,
+      image: imagePath,
+      createdBy: req.user?._id,
+    });
 
-  return res.status(201).json({ success: true, data: insurance });
+    const slug = await generateUniqueSlug(
+      companyName,
+      "Insurance",
+      insurance._id,
+      "insurances"
+    );
+    insurance.slug = slug;
+    await insurance.save();
+
+    return res.status(201).json({ success: true, data: insurance });
+  } catch (error) {
+    if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), imagePath));
+    }
+    throw new ApiError(500, error.message || "Something went wrong");
+  }
 });
 
 export const getInsurances = asyncHandler(async (req, res) => {
@@ -123,6 +131,7 @@ export const updateInsurance = asyncHandler(async (req, res) => {
     emergencyNumber,
     remarks,
     isRenewed,
+    status,
   } = req.body;
 
   const insurance = await InsuranceModel.findById(req.params.id);
@@ -145,8 +154,12 @@ export const updateInsurance = asyncHandler(async (req, res) => {
     insurance.slug = newSlug;
   }
 
-  const image =
-    req.files?.image?.length > 0 ? req.files.image[0].path : insurance.image;
+  if (req.files?.image?.[0]) {
+    if (insurance.image && fs.existsSync(path.join(process.cwd(), insurance.image))) {
+      fs.unlinkSync(path.join(process.cwd(), insurance.image));
+    }
+    insurance.image = await compressImage(req.files.image[0].buffer, "insurances");
+  }
 
   insurance.providerId = providerId || insurance.providerId;
   insurance.companyName = companyName || insurance.companyName;
@@ -157,9 +170,10 @@ export const updateInsurance = asyncHandler(async (req, res) => {
   insurance.coverageDetail = coverageDetail || insurance.coverageDetail;
   insurance.emergencyNumber = emergencyNumber || insurance.emergencyNumber;
   insurance.remarks = remarks || insurance.remarks;
-  insurance.isRenewed =
-    typeof isRenewed === "boolean" ? isRenewed : insurance.isRenewed;
-  insurance.image = image;
+  insurance.isRenewed = typeof isRenewed === "boolean" ? isRenewed : insurance.isRenewed;
+  insurance.status = typeof status == "boolean" ? status : insurance.status;
+  insurance.updatedBy = req.user?._id;
+  insurance.updatedAt = new Date();
 
   await insurance.save();
 

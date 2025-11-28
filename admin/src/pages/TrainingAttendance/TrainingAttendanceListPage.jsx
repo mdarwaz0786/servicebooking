@@ -136,11 +136,11 @@ const TrainingAttendanceListPage = () => {
                     data.map((d, index) => (
                       <tr key={d._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d.providerId.name}</td>
-                        <td>{formatDate(d.date)}</td>
-                        <td>{d.trainingId.fullName}</td>
-                        <td>{d.location}</td>
-                        <td>{d.interviewStatus}</td>
+                        <td>{d?.providerId?.name}</td>
+                        <td>{formatDate(d?.date)}</td>
+                        <td>{d?.trainingId?.fullName}</td>
+                        <td>{d?.location}</td>
+                        <td>{d?.interviewStatus}</td>
                         <td>
                           <div className="d-flex">
                             <Link to={`/update-training-attendance/${d._id}`}>

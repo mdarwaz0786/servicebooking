@@ -6,14 +6,14 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 
-const ServicemanProfileListPage = () => {
+const WalletListPage = () => {
   const { validToken } = useAuth();
-  const [servicemanProfile, setServicemanProfile] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [hasPrevPage, setHasPrevPage] = useState();
-  const [hasNextPage, setHasNexrPage] = useState();
-  const [total, setTotal] = useState();
+  const [hasPrevPage, setHasPrevPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
@@ -25,93 +25,88 @@ const ServicemanProfileListPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchInput);
-    }, 500);
+    const handler = setTimeout(() => setDebouncedSearch(searchInput), 500);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const fetchServicemanProfile = async () => {
+  useEffect(() => {
+    updateParams({ page: 1, search: debouncedSearch });
+  }, [debouncedSearch]);
+
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.servicemanProfile.get, {
+      const response = await axios.get(apis.wallet.get, {
         headers: { Authorization: validToken },
-        params: {
-          page,
-          limit,
-          search: debouncedSearch,
-          sort,
-        },
+        params: { page, limit, search: debouncedSearch, sort },
       });
 
       if (response?.data?.success) {
-        setServicemanProfile(response?.data?.data || []);
-        setTotalPages(response?.data?.totalPages || 1);
-        setTotal(response?.data?.total || 1);
-        setHasNexrPage(response?.data?.hasNextPage);
-        setHasPrevPage(response?.data?.hasPrevPage);
-      };
+        setData(response.data.data || []);
+        setTotalPages(response.data.totalPages || 1);
+        setTotal(response.data.total || 0);
+        setHasNextPage(response.data.hasNextPage || false);
+        setHasPrevPage(response.data.hasPrevPage || false);
+      }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch serviceman profile");
+      console.log(error)
+      toast.error("Failed to fetch data");
     } finally {
       setLoading(false);
-    };
+    }
   };
 
   const updateParams = (newParams) => {
-    const params = {
+    setSearchParams({
       page,
       limit,
-      search: debouncedSearch,
       sort,
+      search: debouncedSearch,
       ...newParams,
-    };
-    setSearchParams(params);
-  };
-
-  const deleteServicemanProfile = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this serviceman profile?")) return;
-
-    try {
-      const response = await axios.delete(`${apis.servicemanProfile.delete}/${id}`, {
-        headers: { Authorization: validToken },
-      });
-
-      if (response?.data?.success) {
-        toast.success("Serviceman profile deleted successfully");
-        fetchServicemanProfile();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete serviceman profile");
-    };
+    });
   };
 
   const toggleStatus = async (id, currentStatus) => {
     try {
       const response = await axios.patch(
-        `${apis.servicemanProfile.update}/${id}`,
+        `${apis.wallet.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
       if (response?.data?.success) {
         toast.success("Updated successfully");
-        fetchServicemanProfile();
+        fetchData();
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to update status");
     }
   };
 
+  const deleteData = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this?")) return;
+
+    try {
+      const response = await axios.delete(`${apis.wallet.delete}/${id}`, {
+        headers: { Authorization: validToken },
+      });
+      if (response?.data?.success) {
+        toast.success("Deleted successfully");
+        fetchData();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to delete");
+    }
+  };
+
   useEffect(() => {
-    fetchServicemanProfile();
-  }, [page, limit, debouncedSearch, sort]);
+    fetchData();
+  }, [page, limit, sort, search]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Service Man Profile {servicemanProfile?.length}</h5>
-
+          <h5>Wallet {data?.length}</h5>
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
             <input
@@ -120,12 +115,8 @@ const ServicemanProfileListPage = () => {
               className="form-control form-control-sm toolbar-input w-auto"
               style={{ width: "200px" }}
               value={searchInput}
-              onChange={(e) => {
-                setSearchInput(e.target.value);
-                updateParams({ page: 1, search: e.target.value });
-              }}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
-
             {/* Sort */}
             <select
               className="form-select form-select-sm w-auto"
@@ -135,7 +126,6 @@ const ServicemanProfileListPage = () => {
               <option value="desc">DESC</option>
               <option value="asc">ASC</option>
             </select>
-
             {/* Limit */}
             <select
               className="form-select form-select-sm w-auto"
@@ -147,6 +137,12 @@ const ServicemanProfileListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+            <Link to="/add-wallet">
+              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                <i className="fa fa-plus me-2"></i>
+                <span>Add</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -158,21 +154,23 @@ const ServicemanProfileListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Mobile</th>
+                    <th>Transaction Id</th>
+                    <th>Provider</th>
+                    <th>Credit Points</th>
+                    <th>Mode</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {servicemanProfile?.length > 0 ? (
-                    servicemanProfile?.map((d, index) => (
-                      <tr key={d?._id}>
+                  {data.length > 0 ? (
+                    data.map((d, index) => (
+                      <tr key={d._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.name}</td>
-                        <td>{d?.email}</td>
-                        <td>{d?.user?.mobile}</td>
+                        <td>{d?.transactionId}</td>
+                        <td>{d?.providerId?.name}</td>
+                        <td>{d?.creditPoints}</td>
+                        <td>{d?.paymentMode}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">
@@ -187,17 +185,12 @@ const ServicemanProfileListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to="/service-man-profile-detail" state={{ record: d }}>
-                              <button className="btn delete-table me-2" type="button">
-                                <i className="fe fe-eye" />
+                            <Link to={`/update-wallet/${d._id}`}>
+                              <button className="btn delete-table me-2">
+                                <i className="fe fe-edit" />
                               </button>
                             </Link>
-                            <button
-                              className="btn delete-table"
-                              type="button"
-                              onClick={() => deleteServicemanProfile(d?._id)}
-                              disabled={true}
-                            >
+                            <button className="btn delete-table" onClick={() => deleteData(d._id)}>
                               <i className="fe fe-trash-2" />
                             </button>
                           </div>
@@ -206,8 +199,8 @@ const ServicemanProfileListPage = () => {
                     ))
                   ) : !loading ? (
                     <tr>
-                      <td colSpan="6" className="text-center">
-                        No serviceman profile found
+                      <td colSpan="5" className="text-center">
+                        No data found
                       </td>
                     </tr>
                   ) : null}
@@ -266,4 +259,4 @@ const ServicemanProfileListPage = () => {
   );
 };
 
-export default ServicemanProfileListPage;
+export default WalletListPage;

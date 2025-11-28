@@ -10,7 +10,7 @@ const ServicemanProfileDetailPage = () => {
   const location = useLocation();
   const { validToken } = useAuth();
   const { record } = location.state || {};
-  const [currentStatus, setCurrentStatus] = useState(record?.status || "pending");
+  const [currentStatus, setCurrentStatus] = useState(record?.profileStatus || "pending");
   const [remarks, setRemarks] = useState(record?.remarks || "");
 
   if (!record)
@@ -36,7 +36,7 @@ const ServicemanProfileDetailPage = () => {
     referenceMobile1,
     referenceName2,
     referenceMobile2,
-    status,
+    profileStatus,
     user,
     categories,
   } = record;
@@ -45,7 +45,7 @@ const ServicemanProfileDetailPage = () => {
     try {
       const response = await axios.patch(
         `${apis.servicemanProfile.update}/${record?._id}`,
-        { status: currentStatus, remarks },
+        { profileStatus: currentStatus, remarks },
         { headers: { Authorization: validToken } }
       );
       if (response?.data?.success) {
@@ -123,15 +123,7 @@ const ServicemanProfileDetailPage = () => {
                       <strong>Current Address:</strong> {currentAddress}
                     </li>
                     <li>
-                      <strong>Status:</strong>{" "}
-                      <span
-                        className={`badge ${status === "pending"
-                          ? "bg-warning p-2"
-                          : "bg-success p-2"
-                          }`}
-                      >
-                        {status}
-                      </span>
+                      <strong>Profile Status:</strong><span> {profileStatus}</span>
                     </li>
                   </ul>
                 </div>
@@ -180,26 +172,26 @@ const ServicemanProfileDetailPage = () => {
 
                 {/* Status Update */}
                 <div className="col-md-6">
-                  <h5 className="border-bottom pb-2">Update Status</h5>
+                  <h5 className="border-bottom pb-2">Update Profile Status</h5>
                   <div className="mt-3 d-flex flex-column gap-2">
                     <select
                       className="form-select"
                       value={currentStatus}
                       onChange={(e) => setCurrentStatus(e.target.value)}
                     >
-                      <option value="pending">Pending</option>
-                      <option value="approved">Approved</option>
-                      <option value="rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
                     </select>
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Add remarks"
+                      placeholder="Enter remark"
                       value={remarks}
                       onChange={(e) => setRemarks(e.target.value)}
                     />
                     <button className="btn btn-primary" onClick={handleStatusUpdate}>
-                      Update Status
+                      Update Profile Status
                     </button>
                   </div>
                 </div>
