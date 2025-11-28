@@ -37,10 +37,14 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: {
-        values: ["admin", "user", "provider", "serviceman"],
-        message: "Role must be either admin or user or provider or serviceman",
+        values: ["admin", "subadmin", "user", "provider"],
+        message: "Role must be either admin or subadmin or user or provider",
       },
       default: "user",
+    },
+    profileImage: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true },

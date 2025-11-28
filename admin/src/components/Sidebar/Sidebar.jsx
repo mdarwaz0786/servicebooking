@@ -93,10 +93,50 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/product-store"
+                    className={currentPath === "/product-store" ? "active" : ""}
+                  >
+                    <span>Product Store</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/time-slots"
                     className={currentPath === "/time-slots" ? "active" : ""}
                   >
                     <span>Time Slots</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/brand"
+                    className={currentPath === "/brand" ? "active" : ""}
+                  >
+                    <span>Brand</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/city"
+                    className={currentPath === "/city" ? "active" : ""}
+                  >
+                    <span>City</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/locality"
+                    className={currentPath === "/locality" ? "active" : ""}
+                  >
+                    <span>Locality</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/areazone"
+                    className={currentPath === "/areazone" ? "active" : ""}
+                  >
+                    <span>Area Zone</span>
                   </Link>
                 </li>
               </ul>
@@ -301,6 +341,14 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/training"
+                    className={currentPath === "/training" ? "active" : ""}
+                  >
+                    <span>Training</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/training-schedule"
                     className={currentPath === "/training-schedule" ? "active" : ""}
                   >
@@ -309,10 +357,42 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/training-attendance"
+                    className={currentPath === "/training-attendance" ? "active" : ""}
+                  >
+                    <span>Training Attendance</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/earning"
                     className={currentPath === "/earning" ? "active" : ""}
                   >
                     <span>Earning</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/wallet"
+                    className={currentPath === "/wallet" ? "active" : ""}
+                  >
+                    <span>Wallet</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/insurance"
+                    className={currentPath === "/insurance" ? "active" : ""}
+                  >
+                    <span>Insurance</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/notification"
+                    className={currentPath === "/notification" ? "active" : ""}
+                  >
+                    <span>Notification</span>
                   </Link>
                 </li>
               </ul>
@@ -375,7 +455,7 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            <li style={{ marginBottom: "5rem" }}>
+            <li>
               <Link to="#"><i className="fe fe-briefcase"></i>
                 <span>Footer Pages</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
@@ -421,12 +501,37 @@ const Sidebar = () => {
                     <span>Contact Enquiry</span>
                   </Link>
                 </li>
-                <li style={{ marginBottom: "5rem" }}>
+                <li>
                   <Link
                     to="/job-list"
                     className={currentPath === "/job-list" ? "active" : ""}
                   >
                     <span>Jobs</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <li style={{ marginBottom: "5rem" }}>
+              <Link to="#"><i className="fe fe-help-circle" />
+                <span> Support</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/customer-support"
+                    className={currentPath === "/customer-support" ? "active" : ""}
+                  >
+                    <span>Customer</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/provider-support"
+                    className={currentPath === "/provider-support" ? "active" : ""}
+                  >
+                    <span>Provider</span>
                   </Link>
                 </li>
               </ul>

@@ -37,7 +37,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
     };
 
     const profile = await ServiceManProfileModel.create({
-      userId,
+      userId: userId || req.user?._id,
       categoryIds,
       name,
       email,

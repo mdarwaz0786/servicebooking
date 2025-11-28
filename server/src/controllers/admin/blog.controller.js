@@ -10,7 +10,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE BLOG ---------------------
 export const createBlog = asyncHandler(async (req, res) => {
-  const { category, title, shortDescription, fullDescription, status } = req.body;
+  const { category, title, shortDescription, fullDescription, status, meta, frontImageAlt, detailImageAlt } = req.body;
 
   if (!title) {
     throw new ApiError(400, "Blog title is required");
@@ -40,6 +40,9 @@ export const createBlog = asyncHandler(async (req, res) => {
       frontImage: frontImagePath,
       detailImage: detailImagePath,
       status,
+      meta,
+      frontImageAlt,
+      detailImageAlt,
       createdBy: req.user?._id,
     });
 
@@ -124,7 +127,7 @@ export const getBlogById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE BLOG ---------------------
 export const updateBlog = asyncHandler(async (req, res) => {
-  const { category, title, shortDescription, fullDescription, status } = req.body;
+  const { category, title, shortDescription, fullDescription, status, meta, frontImageAlt, detailImageAlt } = req.body;
 
   const blog = await BlogModel.findById(req.params.id);
   if (!blog) {
@@ -156,6 +159,9 @@ export const updateBlog = asyncHandler(async (req, res) => {
   }
 
   blog.title = title || blog.title;
+  blog.meta = meta || blog.meta;
+  blog.frontImageAlt = frontImageAlt || blog.frontImageAlt;
+  blog.detailImageAlt = detailImageAlt || blog.detailImageAlt;
   blog.category = category || blog.category;
   blog.shortDescription = shortDescription || blog.shortDescription;
   blog.fullDescription = fullDescription || blog.fullDescription;

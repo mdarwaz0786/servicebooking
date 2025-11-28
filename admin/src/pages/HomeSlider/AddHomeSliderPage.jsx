@@ -85,10 +85,6 @@ const AddHomeSliderPage = () => {
       toast.error("Desktop banner is required");
       return;
     }
-    if (!mobileImage) {
-      toast.error("Mobile banner is required");
-      return;
-    }
 
     try {
       setLoading(true);
