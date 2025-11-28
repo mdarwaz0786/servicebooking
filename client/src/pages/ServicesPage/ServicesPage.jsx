@@ -53,6 +53,12 @@ useEffect(() => {
       .provider-page .page-wrapper {
         padding-top: 5px;
       }
+        @media(max-width: 767px)
+        {
+        .provider-page .content {
+            padding: 0px;
+          }
+        }
       `}
     </style>
       {/* <BreadCrumb /> */}

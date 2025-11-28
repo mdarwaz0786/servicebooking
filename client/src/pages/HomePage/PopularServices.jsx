@@ -13,7 +13,7 @@ const PopularServices = () => {
   const prevRef = useRef(null);
     const nextRef = useRef(null); 
   return (
-    <section className="section popular-section pt-0">
+    <section className="section popular-section popular-section2 pt-0">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-12  wow fadeInUp" data-wow-delay="0.2s">
@@ -47,8 +47,9 @@ const PopularServices = () => {
             centeredSlides={false}
             grabCursor={true}
             breakpoints={{
-              320: { slidesPerView: 1 },
+              0: { slidesPerView: 2 },
               640: { slidesPerView: 2 },
+              768: { slidesPerView: 2 },
               1024: { slidesPerView: 5 },
             }}
           >

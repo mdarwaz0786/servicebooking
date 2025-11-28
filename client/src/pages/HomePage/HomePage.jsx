@@ -32,6 +32,18 @@ const HomePage = () => {
   const { categoryListData, handleHome, toggleModal, homePageData, imageCheck } = useContext(AppContext);
 
 
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
 useEffect(() => {
   toggleModal("homeCategoryModal", false); 
   handleHome();
@@ -60,7 +72,7 @@ useEffect(() => {
               {(index + 1) % 2 === 0 && homePageData.banners && homePageData.banners[bannerIndex] && (
                 <div className="container mt-4">
                   <img
-                    src={imageCheck(homePageData.banners[bannerIndex].image)}
+                    src={imageCheck(width>767?homePageData.banners[bannerIndex].image:homePageData.banners[bannerIndex].mobileBanner)}
                     className="img-fluid"
                     alt={`Banner ${bannerIndex}`}
                   />

@@ -59,8 +59,8 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                   <div className="col-md-6">
                     <div className="banner-form bg-white w-100 border mb-3 col-md-6" style={{margin:'0 auto'}}>
                       <form action="#" onSubmit={handleSearch}>
-                        <div className="d-md-flex align-items-center">
-                          <div className="input-group mb-2">
+                        <div className="d-md-flex align-items-center hero-search-bar">
+                          <div className="input-group mb-2 hero-search-bar-div-1">
                             <span className="input-group-text px-1"><i className="ti ti-search serach-icon-hero" /></span>
                             <input
                               type="text"
@@ -71,7 +71,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                               required
                             />
                           </div>
-                          <div className="mb-2">
+                          <div className="mb-2 hero-search-bar-div-2">
                             <button type="submit"  className="btn btn-linear-primary d-inline-flex align-items-center w-100">
                               <i className="feather-search me-2 " />
                               Search
@@ -83,12 +83,12 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                   </div>
                   
                   <div className="col-md-6">
-                    <div className="d-flex align-items-center flex-wrap banner-info m-0" style={{height: '100%',alignItems: 'center !important'}}>
+                    <div className="hero-section-rating d-flex align-items-center flex-wrap banner-info m-0" style={{height: '100%',alignItems: 'center !important'}}>
                       <div className="d-flex align-items-center me-4 mt-0">
                         <img src="assets/img/icons/success-01.svg" alt="icon" />
                         <div className="ms-2">
                           <h6>{homePageData?.customer} +</h6>
-                          <p>Customers </p>
+                          <p>Customers With us</p>
                         </div>
                       </div>
                       <div className="d-flex align-items-center me-4 mt-0">
@@ -108,33 +108,35 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                     </div>
                   </div>
                 </div>
-                  
-                <div className="banner-slider">
-                <Swiper
-                  modules={[Navigation, Pagination, Autoplay, EffectFade]} 
-                  spaceBetween={20}
-                  slidesPerView={1}
-                  loop={true}
-                  // autoplay={{
-                  //   delay: 1500,
-                  //   disableOnInteraction: false,
-                  // }}
-                  pagination={{ clickable: true }}
-                  effect="slide"
-                >
-                  {homePageData.sliders && homePageData.sliders.length > 0 ? (
-                    homePageData.sliders.map((value, index) => (
-                      <SwiperSlide key={index}>
-                        <Link to={value.link ?? "#"}> 
-                          <img src={imageCheck(width>767?value.image:value.mobileBanner)} alt={`Slide ${index}`} />
-                        </Link>
-                      </SwiperSlide>
-                    ))
-                  ) : (
-                    null
-                  )}
-                </Swiper>
-                </div>
+                
+                {width>767?
+                  <div className="banner-slider">
+                    <Swiper
+                      modules={[Navigation, Pagination, Autoplay, EffectFade]} 
+                      spaceBetween={20}
+                      slidesPerView={1}
+                      loop={true}
+                      // autoplay={{
+                      //   delay: 1500,
+                      //   disableOnInteraction: false,
+                      // }}
+                      pagination={{ clickable: true }}
+                      effect="slide"
+                    >
+                      {homePageData.sliders && homePageData.sliders.length > 0 ? (
+                        homePageData.sliders.map((value, index) => (
+                          <SwiperSlide key={index}>
+                            <Link to={value.link ?? "#"}> 
+                              <img src={imageCheck(width>767?value.image:value.mobileBanner)} alt={`Slide ${index}`} />
+                            </Link>
+                          </SwiperSlide>
+                        ))
+                      ) : (
+                        null
+                      )}
+                    </Swiper>
+                  </div>
+                  :null}
 
                 <div className="card card-body mt-3 shadow-none bg-transparent" style={{paddingBottom: '7px'}}>
                   <h3 className="text-start hero-category-title">Explore our services</h3>

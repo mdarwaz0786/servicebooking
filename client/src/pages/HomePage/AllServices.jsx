@@ -66,9 +66,10 @@ const AllServices = ({ value = [] }) => {
             centeredSlides={false}
             grabCursor={true}
             breakpoints={{
-              320: { slidesPerView: 1 },
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 5 },
+              0: { slidesPerView: 2 },      // Extra small screens
+              640: { slidesPerView: 2 },    // Mobile / small tablets
+              768: { slidesPerView: 2 },    // Tablets
+              1024: { slidesPerView: 5 },   // Desktop
             }}
           >
             {value.services &&

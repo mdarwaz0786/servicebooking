@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { scrollToService, scrollToTop } from "../../helper/scrollToTop";
 
 const Navbar = () => {
@@ -13,6 +13,17 @@ const Navbar = () => {
   const handleLinkClickService = () => {
     scrollToService("instant");
   };
+
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <header className="header header-new">
@@ -79,23 +90,23 @@ const Navbar = () => {
                   <>
                     {(user?.role == 'user') ? (
                       <Link to={'/user'} className="btn btn-linear-primary" onClick={handleLinkClick} >
-                        <i className="ti ti-user me-2" />Account
+                        <i className={`ti ti-user ${width>767?'me-2':''}`} />{width>767?'Account':null}
                       </Link>
                     ) : (
                       <Link to={'/serviceman/dashboard'} className="btn btn-linear-primary" onClick={handleLinkClick} >
-                        <i className="ti ti-user me-2" />Account
+                        <i className={`ti ti-user ${width>767?'me-2':''}`} />Account
                       </Link>
                     )}
                     <Link className="btn btn-linear-primary  m-2" onClick={handleLogout}>
-                      <i className="ti ti-lock me-2" />Logout
+                      <i className={`ti ti-logout ${width>767?'me-2':''}`} / >{width>767?'Logout':null}
                     </Link>
                   </>
                 ) : (
                   <>
-                    <Link className="btn btn-linear-primary me-1 " onClick={() => toggleModal("loginModal", true)}>
-                      <i className="ti ti-lock me-2" />Login
+                    <Link className="btn btn-linear-primary me-1 user-login-navbtn" onClick={() => toggleModal("loginModal", true)}>
+                      <i className="ti ti-login me-2" /> Login
                     </Link>
-                    <Link className="btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i className="ti ti-user-filled me-2"></i>Join As Team</Link>
+                    <Link className="btn btn-linear-primary provider-login-navbtn" onClick={() => toggleModal("serviceManJoinModal", true)}><i className="ti ti-user-filled me-2"></i>Join As Team</Link>
 
                   </>
                 )}

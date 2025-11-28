@@ -36,7 +36,6 @@ const CategoryModal = () => {
                 <img 
                   src={SERVER_BASE_URL + categoryModalImage} 
                   className="img-fluid w-100" 
-                  style={{ height: "180px", objectFit: "cover" }} 
                   alt="Category Banner"
                 />
               </div>

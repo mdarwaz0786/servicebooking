@@ -69,7 +69,7 @@ const ServiceListCard = ({ slug }) => {
                     >
                         <div className="service-cont row">
 
-                            <div className="service-cont-img col-4">
+                            <div className="service-cont-img col-md-4">
                                 <Link>
                                     <img
                                         className="img-fluid serv-img"
@@ -120,7 +120,7 @@ const ServiceListCard = ({ slug }) => {
                                 </div>
                             </div>
 
-                            <div className="service-cont-info col-8">
+                            <div className="service-cont-info col-md-8">
                                 <h3 className="title">
                                     <Link>{value.name}</Link>
                                 </h3>
@@ -193,7 +193,7 @@ const ServiceListCard = ({ slug }) => {
                                     >
                                         <div className="service-cont row">
 
-                                            <div className="service-cont-img col-4">
+                                            <div className="service-cont-img col-md-4">
                                                 <Link>
                                                     <img
                                                         className="img-fluid serv-img"
@@ -244,7 +244,7 @@ const ServiceListCard = ({ slug }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="service-cont-info col-8">
+                                            <div className="service-cont-info col-md-8">
                                                 <h3 className="title">
                                                     <Link>{value.name}</Link>
                                                 </h3>
