@@ -86,6 +86,20 @@ import AdminListPage from "../pages/User/AdminListPage";
 import JobListPage from "../pages/JobPosting/JobListPage";
 import UpdateJobPostingPage from "../pages/JobPosting/UpdateJobPostingPage";
 import TransactionDetailPage from "../pages/Transaction/TransactionDetailPage";
+import BrandListPage from "../pages/Brand/BrandListPage";
+import BrandFormPage from "../pages/Brand/BrandFormPage";
+import CityListPage from "../pages/City/CityListPage";
+import CityFormPage from "../pages/City/CityFormPage";
+import LocalityListPage from "../pages/Locality/LocalityListPage";
+import LocalityFormPage from "../pages/Locality/LocalityFormPage";
+import AreaZoneListPage from "../pages/AreaZone/AreaZoneListPage";
+import AreaZoneFormPage from "../pages/AreaZone/AreaZoneForm";
+import ProductStoreFormPage from "../pages/ProductStore/ProductStoreFormPage";
+import ProductStoreListPage from "../pages/ProductStore/ProductStoreListPage";
+import TrainingListPage from "../pages/Training/TrainingListPage";
+import TrainingFormPage from "../pages/Training/TrainingFormPage";
+import TrainingAttendanceListPage from "../pages/TrainingAttendance/TrainingAttendanceListPage";
+import TrainingAttendanceFormPage from "../pages/TrainingAttendance/TrainingAttendanceForm";
 
 const routesConfig = {
   private: [
@@ -199,6 +213,34 @@ const routesConfig = {
     { path: "/add-job", element: AddJobPostingPage },
     { path: "/update-job/:id", element: UpdateJobPostingPage },
     { path: "/job-list", element: JobListPage },
+
+    { path: "/brand", element: BrandListPage },
+    { path: "/add-brand", element: BrandFormPage },
+    { path: "/update-brand/:id", element: BrandFormPage },
+
+    { path: "/city", element: CityListPage },
+    { path: "/add-city", element: CityFormPage },
+    { path: "/update-city/:id", element: CityFormPage },
+
+    { path: "/locality", element: LocalityListPage },
+    { path: "/add-locality", element: LocalityFormPage },
+    { path: "/update-locality/:id", element: LocalityFormPage },
+
+    { path: "/areazone", element: AreaZoneListPage },
+    { path: "/add-areazone", element: AreaZoneFormPage },
+    { path: "/update-areazone/:id", element: AreaZoneFormPage },
+
+    { path: "/product-store", element: ProductStoreListPage },
+    { path: "/add-product-store", element: ProductStoreFormPage },
+    { path: "/update-product-store/:id", element: ProductStoreFormPage },
+
+    { path: "/training", element: TrainingListPage },
+    { path: "/add-training", element: TrainingFormPage },
+    { path: "/update-training/:id", element: TrainingFormPage },
+
+    { path: "/training-attendance", element: TrainingAttendanceListPage },
+    { path: "/add-training-attendance", element: TrainingAttendanceFormPage },
+    { path: "/update-training-attendance/:id", element: TrainingAttendanceFormPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },

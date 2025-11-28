@@ -9,6 +9,14 @@ const trainingScheduleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  providerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManProfile",
+  },
+  trainingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Training",
+  },
   status: {
     type: Boolean,
     default: true,

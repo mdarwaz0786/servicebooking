@@ -79,11 +79,6 @@ const AddHomeBannerPage = () => {
       return;
     }
 
-    if (!mobileBanner) {
-      toast.error("Mobile banner image is required");
-      return;
-    }
-
     try {
 
       console.log(image)

@@ -5,7 +5,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // Create Training Schedule
 export const createTrainingSchedule = asyncHandler(async (req, res) => {
-  const { scheduleDate, scheduleTime } = req.body;
+  const { scheduleDate, scheduleTime, trainingId, providerId } = req.body;
 
   if (!scheduleDate || !scheduleTime) {
     throw new ApiError(400, "Scheduled date and time are required");
@@ -14,6 +14,8 @@ export const createTrainingSchedule = asyncHandler(async (req, res) => {
   const trainingSchedule = await TrainingScheduleModel.create({
     scheduleDate,
     scheduleTime,
+    trainingId,
+    providerId,
     createdBy: req.user._id,
   });
 
@@ -56,6 +58,8 @@ export const getAllTrainingSchedules = asyncHandler(async (req, res) => {
 
   let trainings = await TrainingScheduleModel
     .find(filters)
+    .populate("trainingId")
+    .populate("providerId")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -81,7 +85,10 @@ export const getAllTrainingSchedules = asyncHandler(async (req, res) => {
 export const getTrainingScheduleById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const schedule = await TrainingScheduleModel.findById(id)
+  const schedule = await TrainingScheduleModel
+    .findById(id)
+    .populate("trainingId")
+    .populate("providerId")
 
   if (!schedule) {
     throw new ApiError(404, "Training schedule not found");
@@ -93,7 +100,7 @@ export const getTrainingScheduleById = asyncHandler(async (req, res) => {
 // Update Training Schedule
 export const updateTrainingSchedule = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { scheduleDate, scheduleTime, status } = req.body;
+  const { scheduleDate, scheduleTime, status, trainingId, providerId } = req.body;
 
   const schedule = await TrainingScheduleModel.findById(id);
   if (!schedule) {
@@ -102,6 +109,8 @@ export const updateTrainingSchedule = asyncHandler(async (req, res) => {
 
   schedule.scheduleDate = scheduleDate || schedule.scheduleDate;
   schedule.scheduleTime = scheduleTime || schedule.scheduleTime;
+  schedule.trainingId = trainingId || schedule.trainingId;
+  schedule.providerId = providerId || schedule.providerId;
   if (status !== undefined) schedule.status = status;
   schedule.updatedBy = req.user._id;
 
