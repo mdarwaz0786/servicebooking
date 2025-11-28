@@ -159,7 +159,7 @@ const TrainingAttendanceFormPage = () => {
                       setFormData({ ...formData, trainingId: val })
                     }
                     placeholder="Select Trainer"
-                    labelKey="firtName"
+                    labelKey="fullName"
                     valueKey="_id"
                   />
                 </div>

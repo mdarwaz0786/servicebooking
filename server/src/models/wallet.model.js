@@ -19,8 +19,8 @@ const walletSchema = new mongoose.Schema(
     },
     depositStatus: {
       type: String,
-      enum: ["paid", "unpaid"],
-      default: "unpaid",
+      enum: ["Paid", "Unpaid"],
+      default: "Unpaid",
     },
     dateOfDeposit: {
       type: Date,
@@ -28,7 +28,7 @@ const walletSchema = new mongoose.Schema(
     },
     paymentMode: {
       type: String,
-      enum: ["online", "cash"],
+      enum: ["Online", "Cash"],
       required: [true, "Payment mode is required"],
     },
     transactionType: {
@@ -47,11 +47,20 @@ const walletSchema = new mongoose.Schema(
     purpose: {
       type: String,
       trim: true,
-      maxlength: [200, "Purpose must not exceed 200 characters"],
     },
     status: {
       type: Boolean,
       default: true,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   { timestamps: true }

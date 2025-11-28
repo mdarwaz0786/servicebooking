@@ -25,6 +25,7 @@ const serviceManProfileSchema = new mongoose.Schema({
   },
   mobile: {
     type: String,
+    trim: true,
   },
   dob: {
     type: Date,
@@ -83,13 +84,18 @@ const serviceManProfileSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  status: {
+  profileStatus: {
     type: String,
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
   remarks: {
     type: String,
+    trim: true,
+  },
+  status: {
+    type: Boolean,
+    default: false,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
