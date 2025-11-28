@@ -111,6 +111,8 @@ const UpdateHomeBannerPage = () => {
       const data = new FormData();
       Object.keys(formData).forEach((key) => data.append(key, formData[key]));
 
+      console.log(mobileBanner)
+
       if (image) data.append("image", image);
       if (mobileBanner) data.append("mobileBanner", mobileBanner);
 

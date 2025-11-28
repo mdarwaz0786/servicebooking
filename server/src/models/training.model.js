@@ -26,6 +26,10 @@ const trainingSchema = new mongoose.Schema(
       required: [true, "Last name is required"],
       trim: true,
     },
+    fullName: {
+      type: String,
+      trim: true,
+    },
     startDate: {
       type: Date,
       required: [true, "Start date is required"],
@@ -67,7 +71,25 @@ const trainingSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+trainingSchema.pre("save", function (next) {
+  this.fullName = `${this.firstName} ${this.lastName}`;
+  next();
+});
+
+trainingSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+
+  if (update.firstName || update.lastName) {
+    const first = update.firstName || this._update.firstName;
+    const last = update.lastName || this._update.lastName;
+
+    update.fullName = `${first} ${last}`;
+  }
+
+  next();
+});
 
 export default mongoose.model("Training", trainingSchema);

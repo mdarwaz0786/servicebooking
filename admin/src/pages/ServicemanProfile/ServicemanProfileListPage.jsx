@@ -169,6 +169,7 @@ const ServicemanProfileListPage = () => {
                               className="btn delete-table"
                               type="button"
                               onClick={() => deleteServicemanProfile(d?._id)}
+                              disabled={true}
                             >
                               <i className="fe fe-trash-2" />
                             </button>

@@ -89,7 +89,7 @@ export const getTrainings = asyncHandler(async (req, res) => {
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
-    .lean();
+    .lean({ virtuals: true });
 
   const total = await TrainingModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -109,7 +109,7 @@ export const getTrainings = asyncHandler(async (req, res) => {
 });
 
 export const getTrainingById = asyncHandler(async (req, res) => {
-  const training = await TrainingModel.findById(req.params.id).populate("category");
+  const training = await TrainingModel.findById(req.params.id).populate("category").lean({ virtuals: true });
 
   if (!training) throw new ApiError(404, "Training not found");
 
