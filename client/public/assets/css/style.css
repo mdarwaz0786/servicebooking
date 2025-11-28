@@ -15149,10 +15149,16 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
 .hero-section .banner-info p {
   font-size: 14px;
 }
+.banner-slider img {
+    border-radius: 5px;
+}
 
 @media (max-width: 991.98px) {
   .hero-section .banner-info {
     margin-top: 18px;
+    justify-content: center;
+    row-gap: 0;
+    margin-bottom: 31px !important;
   }
 }
 
@@ -24524,7 +24530,7 @@ fieldset.booking-content#first-field {
 
 @media (max-width: 767.98px) {
   section {
-    padding: 40px 0;
+    padding: 10px 0;
   }
 }
 
@@ -36484,6 +36490,19 @@ span.select2-container.select2-container--default.select2-container--open {
     .modal-lg, .modal-xl {
         --bs-modal-width: 700px;
     }
+}
+
+@media(max-width: 767px)
+{
+  .logo-small img {
+    width: 100%;
+  }
+  .navbar-brand.logo-small img {
+      max-height: 52px;
+  }
+  .hero-section .hero-content h1 {
+      line-height: 30px;
+  }
 }
 
 

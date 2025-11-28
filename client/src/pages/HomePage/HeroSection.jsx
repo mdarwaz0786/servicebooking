@@ -8,12 +8,24 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { AppContext } from "../../context/AppContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const HeroSection = ({categoryData, handleSubCategory}) => {
 
   const { homePageData, imageCheck, postData, Urls, toast, navigate } = useContext(AppContext);
   const [search, setsearch] = useState();
+
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSearch = async () => {
     try {
@@ -103,10 +115,10 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                   spaceBetween={20}
                   slidesPerView={1}
                   loop={true}
-                  autoplay={{
-                    delay: 1500,
-                    disableOnInteraction: false,
-                  }}
+                  // autoplay={{
+                  //   delay: 1500,
+                  //   disableOnInteraction: false,
+                  // }}
                   pagination={{ clickable: true }}
                   effect="slide"
                 >
@@ -114,7 +126,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                     homePageData.sliders.map((value, index) => (
                       <SwiperSlide key={index}>
                         <Link to={value.link ?? "#"}> 
-                          <img src={imageCheck(value.image)} alt={`Slide ${index}`} />
+                          <img src={imageCheck(width>767?value.image:value.mobileBanner)} alt={`Slide ${index}`} />
                         </Link>
                       </SwiperSlide>
                     ))
