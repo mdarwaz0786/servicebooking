@@ -100,6 +100,10 @@ import TrainingListPage from "../pages/Training/TrainingListPage";
 import TrainingFormPage from "../pages/Training/TrainingFormPage";
 import TrainingAttendanceListPage from "../pages/TrainingAttendance/TrainingAttendanceListPage";
 import TrainingAttendanceFormPage from "../pages/TrainingAttendance/TrainingAttendanceForm";
+import InsuranceListPage from "../pages/Insurance/InsuranceListPage";
+import InsuranceFormPage from "../pages/Insurance/InsuranceFornPage";
+import WalletListPage from "../pages/Wallet/WalletListPage";
+import WalletFormPage from "../pages/Wallet/WalletFormPage";
 
 const routesConfig = {
   private: [
@@ -241,6 +245,14 @@ const routesConfig = {
     { path: "/training-attendance", element: TrainingAttendanceListPage },
     { path: "/add-training-attendance", element: TrainingAttendanceFormPage },
     { path: "/update-training-attendance/:id", element: TrainingAttendanceFormPage },
+
+    { path: "/insurance", element: InsuranceListPage },
+    { path: "/add-insurance", element: InsuranceFormPage },
+    { path: "/update-insurance/:id", element: InsuranceFormPage },
+
+    { path: "/wallet", element: WalletListPage },
+    { path: "/add-wallet", element: WalletFormPage },
+    { path: "/update-wallet/:id", element: WalletFormPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },
