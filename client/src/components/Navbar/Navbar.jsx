@@ -7,11 +7,38 @@ const Navbar = () => {
   const { toggleModal, handleLogout, user } = useContext(AppContext);
 
   const handleLinkClick = () => {
-    scrollToTop("instant");
+    // Scroll to top instantly
+    window.scrollTo({
+      top: 0,
+      behavior: "instant" // Some browsers ignore "instant", use "auto"
+    });
+
+    // Remove class from HTML element
+    document.documentElement.classList.remove("menu-opened");
+    
+
+    // .sidebar-overlay element से class हटाना
+    const overlay = document.querySelector(".sidebar-overlay");
+    overlay?.classList.remove("opened");
   };
 
   const handleLinkClickService = () => {
     scrollToService("instant");
+
+    // Scroll to top instantly
+    window.scrollTo({
+      top: 0,
+      behavior: "instant" // Some browsers ignore "instant", use "auto"
+    });
+
+    // Remove class from HTML element
+    document.documentElement.classList.remove("menu-opened");
+    
+    
+    // .sidebar-overlay element से class हटाना
+    const overlay = document.querySelector(".sidebar-overlay");
+    overlay?.classList.remove("opened");
+
   };
 
   const [width, setWidth] = useState(window.innerWidth);
@@ -70,11 +97,28 @@ const Navbar = () => {
                 <Link to="/services" onClick={handleLinkClickService}>Services </Link>
               </li>
               <li className="nav-item d-sm-none">
-                <Link to="/login" className="nav-link" onClick={handleLinkClick}>Sign In</Link>
+                {/* <Link to="/login" className="nav-link" onClick={handleLinkClick}>Sign In</Link> */}
+                <Link className="nav-link" 
+                onClick={() => {
+                  toggleModal("serviceManJoinModal", true);
+                   // Remove class from HTML element
+                    document.documentElement.classList.remove("menu-opened");
+                    
+                    
+                    // .sidebar-overlay element से class हटाना
+                    const overlay = document.querySelector(".sidebar-overlay");
+                    overlay?.classList.remove("opened");
+
+
+                }}
+                >
+                  Join As Team
+                </Link>
               </li>
-              <li className="nav-item d-sm-none">
-                <Link to="/register" className="nav-link" onClick={handleLinkClick}>Join Us</Link>
-              </li>
+
+
+
+              
             </ul>
           </div>
 

@@ -15,7 +15,7 @@ const Footer = () => {
       <div className="footer-top">
         <div className="container">
           <div className="row">
-            <div className="col-md-6 col-xl-3">
+            <div className="col-md-6 col-xl-3 col-sm-6">
               <div className="footer-widget">
                 <h5 className="mb-1 fs-17">Company</h5>
                 <ul className="footer-menu">
@@ -29,7 +29,7 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="col-md-6 col-xl-3">
+            <div className="col-md-6 col-xl-3 col-sm-6">
               <div className="footer-widget">
                 <h5 className="mb-1 fs-17">Customers</h5>
                 <ul className="footer-menu">
@@ -41,7 +41,7 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="col-md-6 col-xl-3">
+            <div className="col-md-6 col-xl-3 col-sm-8">
               <div className="footer-widget">
                 <h5 className="mb-1 fs-17">Partners</h5>
                 <ul className="footer-menu">
@@ -49,12 +49,13 @@ const Footer = () => {
                 </ul>
               </div>
             </div>
+            <div className="col-md-6 col-xl-3 col-sm-4"></div>
 
             {/* Newsletter */}
-            <div className="col-md-12 col-xl-3">
+            <div className="col-md-12 col-xl-3 footer-sm footer-sm-mt">
               <div className="footer-widget">
                 <h5 className="mb-3 fs-17">Keep In Touch</h5>
-                <ul className="social-icon mb-3">
+                <ul className="social-icon mb-3 footer-sm">
                   <li><Link to="https://www.facebook.com/greenindiateams/" target="_blank"><img src="/assets/img/icons/fb.svg" alt="facebook" /></Link></li>
                   <li><Link to="https://www.instagram.com/greenindiateams/#" target="_blank"><img src="/assets/img/icons/instagram.svg" alt="instagram" /></Link></li>
                   <li><Link to="https://x.com/greenindiateam_" target="_blank"><img src="/assets/img/icons/twitter.svg" alt="twitter" /></Link></li>
@@ -62,8 +63,8 @@ const Footer = () => {
                   <li><Link to="https://www.youtube.com/@GREENINDIATEAM" target="_blank"><img src="/assets/img/icons/youtube.svg" alt="youtube" /></Link></li>
                   <li><Link to="https://www.linkedin.com/company/green-india-team/?viewAsMember=true" target="_blank"><img src="/assets/img/icons/linkedin.svg" alt="linkedin" /></Link></li>
                 </ul>
-                <h5 className="mb-1 fs-14 mb-3">Experience GI Team app on mobile</h5>
-                <div className="d-flex align-items-center flex-wrap">
+                <h5 className="mb-1 fs-14 mb-3 footer-sm footer-sm-mt">Experience GI Team app on mobile</h5>
+                <div className="d-flex align-items-center flex-wrap footer-sm">
                   <img src="/assets/img/icons/app-store.svg" className="me-2" alt="app-store" />
                   <img src="/assets/img/icons/goolge-play.svg" className="me-2" alt="google-play" />
                 </div>
@@ -78,7 +79,7 @@ const Footer = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-12">
-              <div className="d-flex align-items-center justify-content-center flex-wrap">
+              <div className="d-flex align-items-center justify-content-center flex-wrap footer-sm-center">
                 <p className="mb-2"> Copyright 2025 Sarv Laxmi Green India Pvt. Ltd. All Rights Reserved. CIN: U51909DL2022PTC406952</p>
               </div>
             </div>

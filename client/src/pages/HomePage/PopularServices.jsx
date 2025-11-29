@@ -29,7 +29,7 @@ const PopularServices = () => {
 
               <Swiper
             modules={[Navigation, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={10}
             slidesPerView={5}
             loop={true}
             autoplay={{
@@ -47,7 +47,7 @@ const PopularServices = () => {
             centeredSlides={false}
             grabCursor={true}
             breakpoints={{
-              0: { slidesPerView: 2 },
+              0: { slidesPerView: 3 },
               640: { slidesPerView: 2 },
               768: { slidesPerView: 2 },
               1024: { slidesPerView: 5 },

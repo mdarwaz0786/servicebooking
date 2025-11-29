@@ -48,7 +48,7 @@ const AllServices = ({ value = [] }) => {
         <div className="service-slider-wrapper all-service">
           <Swiper
             modules={[Navigation, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={10}
             slidesPerView={5}
             loop={false}
             // autoplay={{
@@ -66,7 +66,7 @@ const AllServices = ({ value = [] }) => {
             centeredSlides={false}
             grabCursor={true}
             breakpoints={{
-              0: { slidesPerView: 2 },      // Extra small screens
+              0: { slidesPerView: 3 },      // Extra small screens
               640: { slidesPerView: 2 },    // Mobile / small tablets
               768: { slidesPerView: 2 },    // Tablets
               1024: { slidesPerView: 5 },   // Desktop

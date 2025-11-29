@@ -4,13 +4,13 @@ import { useContext, useEffect, useState } from "react";
 const CategoryMiniCard3 = ({ data = [], handleSubCategory, className='' }) => {
   const { Urls, postData, toggleModal, handleCategoryClick, imageCheck } = useContext(AppContext);
   
-  
+  const dataCount = data.length;
 
   return (
     
     <>    
       {data.map((value, index) => (
-            <div className={className?className:'col d-flex mb-4'} onClick={() => handleCategoryClick(value)}
+            <div className={`${className?className:'col d-flex mb-4'} ${dataCount-3<index?'hero-category-item-last':''}`} onClick={() => handleCategoryClick(value)}
             key={index} 
             >
                 <div className="category-item text-center flex-fill wow fadeInUp" data-wow-delay="0.2s">

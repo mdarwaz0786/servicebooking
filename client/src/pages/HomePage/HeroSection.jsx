@@ -16,14 +16,11 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
   const [search, setsearch] = useState();
 
   const [width, setWidth] = useState(window.innerWidth);
-
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
     };
-
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -88,21 +85,21 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                         <img src="assets/img/icons/success-01.svg" alt="icon" />
                         <div className="ms-2">
                           <h6>{homePageData?.customer} +</h6>
-                          <p>Customers With us</p>
+                          <p>Customers</p>
                         </div>
                       </div>
                       <div className="d-flex align-items-center me-4 mt-0">
                         <img src="assets/img/icons/success-02.svg" alt="icon" />
                         <div className="ms-2">
                           <h6>{homePageData?.serviceCompleted}+</h6>
-                          <p>Services Completed</p>
+                          <p>Services</p>
                         </div>
                       </div>
                       <div className="d-flex align-items-center me-4 mt-0">
                         <img src="assets/img/icons/success-03.svg" alt="icon" />
                         <div className="ms-2">
                           <h6>{homePageData?.review} </h6>
-                          <p>Reviews Globally</p>
+                          <p>Reviews</p>
                         </div>
                       </div>
                     </div>
