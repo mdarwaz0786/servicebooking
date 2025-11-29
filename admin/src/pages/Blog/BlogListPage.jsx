@@ -4,7 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import Select from "react-select";
 
 const BlogListPage = () => {
@@ -155,7 +155,7 @@ const BlogListPage = () => {
               placeholder="All Category"
               value={
                 categoryId
-                  ? { value: categoryId, label: categories.find((c) => c._id === categoryId)?.name }
+                  ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
                   : null
               }
               onChange={(selected) =>
@@ -164,9 +164,9 @@ const BlogListPage = () => {
                   page: 1,
                 })
               }
-              options={categories.map((cat) => ({
-                value: cat._id,
-                label: cat.name,
+              options={categories?.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
               }))}
             />
 
@@ -210,8 +210,9 @@ const BlogListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Category</th>
+                    <th>Front Image</th>
                     <th>Title</th>
+                    <th>Category</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -221,8 +222,15 @@ const BlogListPage = () => {
                     data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.category?.name}</td>
+                        <td>
+                          <img
+                            src={d?.frontImage ? `${BASE_URL}/${d.frontImage}` : "https://via.placeholder.com/50"}
+                            alt="front-image"
+                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                          />
+                        </td>
                         <td>{d?.title}</td>
+                        <td>{d?.category?.name}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

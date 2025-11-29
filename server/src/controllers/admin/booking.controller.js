@@ -75,7 +75,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
 // Get All Bookings
 export const getBookings = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, userId, sort = "desc", search } = req.query;
+  let { page = 1, limit = 10, userId, sort = "desc", search, status } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -84,6 +84,21 @@ export const getBookings = asyncHandler(async (req, res) => {
   const filters = {};
 
   if (userId) filters.userId = userId;
+
+  if (status) {
+    if (status === "active") {
+      filters.status = { $in: ["new", "assign", "accept", "ongoing", "reject"] };
+    }
+    else if (status === "completed") {
+      filters.status = "complete";
+    }
+    else if (status === "cancelled") {
+      filters.status = "cancel";
+    }
+    else {
+      filters.status = status;
+    }
+  };
 
   if (search) {
     filters.$or = [

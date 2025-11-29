@@ -11,6 +11,22 @@ export const createTrainingSchedule = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Scheduled date and time are required");
   };
 
+  if (!scheduleDate) {
+    throw new ApiError(400, "Scheduled date is required");
+  };
+
+  if (!scheduleTime) {
+    throw new ApiError(400, "Scheduled time is required");
+  };
+
+  if (!trainingId) {
+    throw new ApiError(400, "Trainer is required");
+  };
+
+  if (!providerId) {
+    throw new ApiError(400, "Provider is required");
+  };
+
   const trainingSchedule = await TrainingScheduleModel.create({
     scheduleDate,
     scheduleTime,
@@ -63,6 +79,7 @@ export const getAllTrainingSchedules = asyncHandler(async (req, res) => {
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
+    .lean();
 
   const total = await TrainingScheduleModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -89,6 +106,7 @@ export const getTrainingScheduleById = asyncHandler(async (req, res) => {
     .findById(id)
     .populate("trainingId")
     .populate("providerId")
+    .lean();
 
   if (!schedule) {
     throw new ApiError(404, "Training schedule not found");
@@ -113,6 +131,7 @@ export const updateTrainingSchedule = asyncHandler(async (req, res) => {
   schedule.providerId = providerId || schedule.providerId;
   if (status !== undefined) schedule.status = status;
   schedule.updatedBy = req.user._id;
+  schedule.updatedAt = new Date();
 
   await schedule.save();
 

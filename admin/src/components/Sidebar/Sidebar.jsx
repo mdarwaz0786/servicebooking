@@ -257,18 +257,18 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/bookings"
-                    className={currentPath === "/bookings" ? "active" : ""}
+                    to="/completed-bookings"
+                    className={currentPath === "completed-bookings" ? "active" : ""}
                   >
                     <span>Completed</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/bookings"
-                    className={currentPath === "/bookings" ? "active" : ""}
+                    to="/cancelled-bookings"
+                    className={currentPath === "/cancelled-bookings" ? "active" : ""}
                   >
-                    <span>Cancel</span>
+                    <span>Cancelled</span>
                   </Link>
                 </li>
               </ul>

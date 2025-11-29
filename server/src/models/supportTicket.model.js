@@ -4,15 +4,13 @@ const supportTicketSchema = new mongoose.Schema(
   {
     ticketNumber: {
       type: String,
-      required: [true, "Ticket number is required"],
-      unique: true,
       trim: true,
+      default: "12345",
     },
     name: {
       type: String,
       required: [true, "Name is required"],
       trim: true,
-      maxlength: 100,
     },
     slug: {
       type: String,
@@ -20,25 +18,22 @@ const supportTicketSchema = new mongoose.Schema(
     },
     userType: {
       type: String,
-      enum: ["customer", "provider", "other"],
+      enum: ["Customer", "Provider", "Other"],
       required: [true, "User type is required"],
     },
     mobile: {
       type: String,
-      required: [true, "Mobile number is required"],
       trim: true,
-      maxlength: 15,
     },
     subject: {
       type: String,
       required: [true, "Subject is required"],
       trim: true,
-      maxlength: 150,
     },
     priority: {
       type: String,
-      enum: ["high", "medium", "low"],
-      default: "medium",
+      enum: ["High", "Medium", "Low"],
+      default: "Medium",
     },
     image: {
       type: String,
@@ -47,22 +42,39 @@ const supportTicketSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     reply: {
       type: String,
       trim: true,
-      default: "",
     },
     replyImage: {
       type: String,
       trim: true,
-      default: "",
     },
     scheduleTicket: {
       type: Boolean,
       default: false,
+    },
+    ticketStatus: {
+      type: String,
+      enum: ["Pending", "Active", "Cancelled", "Completed"],
+      default: "Pending",
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   { timestamps: true }

@@ -30,6 +30,11 @@ const UpdateBlogPage = () => {
     fullDescription: "",
     frontImageUrl: "",
     detailImageUrl: "",
+    frontImageAlt: "",
+    detailImageAlt: "",
+    metaKeywords: "",
+    metaAuthor: "",
+    metaDescription: "",
   });
 
   useEffect(() => {
@@ -67,10 +72,15 @@ const UpdateBlogPage = () => {
             fullDescription: blog.fullDescription || "",
             frontImageUrl: blog.frontImage || "",
             detailImageUrl: blog.detailImage || "",
+            frontImageAlt: blog.frontImageAlt,
+            detailImageAlt: blog.detailImageAlt,
+            metaKeywords: blog.meta.keywords,
+            metaAuthor: blog.meta.author,
+            metaDescription: blog.meta.description,
           });
 
-          setFrontPreview(blog.frontImage);
-          setDetailPreview(blog.detailImage);
+          setFrontPreview(`${BASE_URL}/${blog?.frontImage}`);
+          setDetailPreview(`${BASE_URL}/${blog?.detailImage}`);
         }
       } catch (error) {
         console.log(error)
@@ -142,7 +152,17 @@ const UpdateBlogPage = () => {
       setLoading(true);
 
       const data = new FormData();
-      Object.keys(formData).forEach((key) => data.append(key, formData[key]));
+      data.append("category", formData.category);
+      data.append("title", formData.title);
+      data.append("shortDescription", formData.shortDescription);
+      data.append("fullDescription", formData.fullDescription);
+
+      data.append("frontImageAlt", formData.frontImageAlt);
+      data.append("detailImageAlt", formData.detailImageAlt);
+
+      data.append("meta[keywords]", formData.metaKeywords);
+      data.append("meta[author]", formData.metaAuthor);
+      data.append("meta[description]", formData.metaDescription);
 
       if (frontImage) data.append("frontImage", frontImage);
       if (detailImage) data.append("detailImage", detailImage);
@@ -182,37 +202,46 @@ const UpdateBlogPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category */}
-              <div className="mb-3">
-                <label className="form-label">Category *</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="form-select"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Title */}
-              <div className="mb-3">
-                <label className="form-label">Title *</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="150"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Category */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Category <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <select
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="form-select"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((cat) => (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Title */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Title <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="form-control"
+                      maxLength="150"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Short Description */}
@@ -237,58 +266,138 @@ const UpdateBlogPage = () => {
                 />
               </div>
 
-              {/* Front Image */}
-              <div className="mb-3">
-                <label className="form-label">Front Image</label>
-                <div
-                  {...getFrontRootProps()}
-                  className={`border p-4 text-center rounded ${isFrontActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getFrontInputProps()} />
-                  <p>
-                    Drag & drop front image here, or{" "}
-                    <span className="text-primary">browse</span>
-                  </p>
-                </div>
 
-                {frontPreview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={BASE_URL + "/" + frontPreview}
-                      alt="Front Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Front Image */}
+                  <div className="mb-3">
+                    <label className="form-label">Front Image</label>
+                    <div
+                      {...getFrontRootProps()}
+                      className={`border p-4 text-center rounded ${isFrontActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <input {...getFrontInputProps()} />
+                      {isFrontActive ? (
+                        <p>Drop the image here...</p>
+                      ) : (
+                        <p>
+                          Drag & drop front image here, or{" "}
+                          <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+                    {frontPreview && (
+                      <div className="mt-3 text-center">
+                        <img
+                          src={frontPreview}
+                          alt="Front Preview"
+                          style={{ maxWidth: "200px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* FRONT IMAGE ALT */}
+                  <div className="mb-3">
+                    <label className="form-label">Front Image Alt Text</label>
+                    <input
+                      type="text"
+                      name="frontImageAlt"
+                      className="form-control"
+                      value={formData.frontImageAlt}
+                      onChange={handleChange}
                     />
                   </div>
-                )}
+                </div>
               </div>
 
-              {/* Detail Image */}
-              <div className="mb-3">
-                <label className="form-label">Detail Image</label>
-                <div
-                  {...getDetailRootProps()}
-                  className={`border p-4 text-center rounded ${isDetailActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getDetailInputProps()} />
-                  <p>
-                    Drag & drop detail image here, or{" "}
-                    <span className="text-primary">browse</span>
-                  </p>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Detail Image */}
+                  <div className="mb-3">
+                    <label className="form-label">Detail Image</label>
+                    <div
+                      {...getDetailRootProps()}
+                      className={`border p-4 text-center rounded ${isDetailActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <input {...getDetailInputProps()} />
+                      {isDetailActive ? (
+                        <p>Drop the image here...</p>
+                      ) : (
+                        <p>
+                          Drag & drop detail image here, or{" "}
+                          <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+                    {detailPreview && (
+                      <div className="mt-3 text-center">
+                        <img
+                          src={detailPreview}
+                          alt="Detail Preview"
+                          style={{ maxWidth: "200px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                {detailPreview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={BASE_URL + "/" + detailPreview}
-                      alt="Detail Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
+                <div className="col-md-6">
+                  {/* DETAIL IMAGE ALT */}
+                  <div className="mb-3">
+                    <label className="form-label">Detail Image Alt Text</label>
+                    <input
+                      type="text"
+                      name="detailImageAlt"
+                      className="form-control"
+                      value={formData.detailImageAlt}
+                      onChange={handleChange}
                     />
                   </div>
-                )}
+                </div>
+              </div>
+
+              {/* META FIELDS */}
+              <h6 className="mt-4 mb-3 text-center">SEO Meta Information</h6>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Meta Keywords</label>
+                    <input
+                      type="text"
+                      name="metaKeywords"
+                      className="form-control"
+                      value={formData.metaKeywords}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Meta Author</label>
+                    <input
+                      type="text"
+                      name="metaAuthor"
+                      className="form-control"
+                      value={formData.metaAuthor}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Meta Description</label>
+                <textarea
+                  name="metaDescription"
+                  className="form-control"
+                  rows="3"
+                  value={formData.metaDescription}
+                  onChange={handleChange}
+                ></textarea>
               </div>
 
               {/* Buttons */}
@@ -307,7 +416,6 @@ const UpdateBlogPage = () => {
               </div>
             </form>
           </div>
-
         </div>
       </div>
     </div>

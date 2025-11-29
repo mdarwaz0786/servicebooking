@@ -4,57 +4,62 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import { buildPagination } from "../../utils/pagination.js";
+import compressImage from "../../helpers/compressImage.js";
+import fs from "fs";
+import path from "path";
 
 export const createSupportTicket = asyncHandler(async (req, res) => {
   const {
-    ticketNumber,
     name,
-    role,
+    userType,
     mobile,
     subject,
     priority,
     description,
-    scheduleTicket
   } = req.body;
 
-  if (!ticketNumber?.trim()) throw new ApiError(400, "Ticket number is required");
   if (!name?.trim()) throw new ApiError(400, "Name is required");
-  if (!role) throw new ApiError(400, "Role is required");
-  if (!mobile?.trim()) throw new ApiError(400, "Mobile is required");
+  if (!userType) throw new ApiError(400, "User type is required");
   if (!subject?.trim()) throw new ApiError(400, "Subject is required");
-  if (!description?.trim()) throw new ApiError(400, "Description is required");
 
-  const image = req.files?.image?.[0] ? req.files.image[0].path : null;
-  const replyImage = req.files?.replyImage?.[0] ? req.files.replyImage[0].path : null;
+  let imagePath = null;
 
-  let ticket = await SupportTicketModel.create({
-    ticketNumber,
-    name,
-    role,
-    mobile,
-    subject,
-    priority,
-    description,
-    scheduleTicket,
-    image,
-    replyImage
-  });
+  try {
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "support");
+    };
 
-  const slug = await generateUniqueSlug(
-    ticketNumber,
-    "SupportTicket",
-    ticket._id,
-    "support-tickets"
-  );
+    let ticket = await SupportTicketModel.create({
+      name,
+      mobile,
+      subject,
+      userType,
+      priority,
+      description,
+      image: imagePath,
+    });
 
-  ticket.slug = slug;
-  await ticket.save();
+    const slug = await generateUniqueSlug(
+      subject,
+      "SupportTicket",
+      ticket?._id,
+      "support-tickets"
+    );
 
-  return res.status(201).json({ success: true, data: ticket });
+    ticket.slug = slug;
+    await ticket.save();
+
+    return res.status(201).json({ success: true, data: ticket });
+  } catch (error) {
+    if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), imagePath));
+    };
+    throw new ApiError(500, error.message || "Something went wrong");
+  }
 });
 
 export const getSupportTickets = asyncHandler(async (req, res) => {
-  let { search, sort = "desc", page, limit, priority, role } = req.query;
+  let { search, sort = "desc", page, limit, priority, userType } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -72,7 +77,7 @@ export const getSupportTickets = asyncHandler(async (req, res) => {
   }
 
   if (priority) filters.priority = priority;
-  if (role) filters.role = role;
+  if (userType) filters.userType = userType;
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
@@ -109,53 +114,26 @@ export const getSupportTicketById = asyncHandler(async (req, res) => {
 
 export const updateSupportTicket = asyncHandler(async (req, res) => {
   const {
-    ticketNumber,
-    name,
-    role,
-    mobile,
-    subject,
-    priority,
-    description,
     reply,
-    scheduleTicket
+    scheduleTicket,
+    ticketStatus,
+    status,
   } = req.body;
 
   const ticket = await SupportTicketModel.findById(req.params.id);
   if (!ticket) throw new ApiError(404, "Support ticket not found");
 
-  if (ticketNumber && ticketNumber !== ticket.ticketNumber) {
-    await SlugModel.deleteOne({
-      collectionName: "SupportTicket",
-      documentId: ticket._id
-    });
+  if (req.files?.replyImage?.[0]) {
+    if (ticket.replyImage && fs.existsSync(path.join(process.cwd(), ticket.replyImage))) {
+      fs.unlinkSync(path.join(process.cwd(), ticket.replyImage));
+    };
+    ticket.replyImage = await compressImage(req.files.replyImage[0].buffer, "support");
+  };
 
-    const newSlug = await generateUniqueSlug(
-      ticketNumber,
-      "SupportTicket",
-      ticket._id,
-      "support-tickets"
-    );
-
-    ticket.slug = newSlug;
-  }
-
-  const image = req.files?.image?.[0] ? req.files.image[0].path : ticket.image;
-  const replyImage = req.files?.replyImage?.[0]
-    ? req.files.replyImage[0].path
-    : ticket.replyImage;
-
-  ticket.ticketNumber = ticketNumber || ticket.ticketNumber;
-  ticket.name = name || ticket.name;
-  ticket.role = role || ticket.role;
-  ticket.mobile = mobile || ticket.mobile;
-  ticket.subject = subject || ticket.subject;
-  ticket.priority = priority || ticket.priority;
-  ticket.description = description || ticket.description;
   ticket.reply = reply || ticket.reply;
-  ticket.scheduleTicket = typeof scheduleTicket === "boolean" ? scheduleTicket : ticket.scheduleTicket;
-
-  ticket.image = image;
-  ticket.replyImage = replyImage;
+  ticket.ticketStatus = ticketStatus || ticket.ticketStatus;
+  ticket.scheduleTicket = scheduleTicket || ticket.scheduleTicket;
+  ticket.status = typeof status === "boolean" ? status : ticket.status;
 
   await ticket.save();
 

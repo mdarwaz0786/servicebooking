@@ -104,6 +104,11 @@ import InsuranceListPage from "../pages/Insurance/InsuranceListPage";
 import InsuranceFormPage from "../pages/Insurance/InsuranceFornPage";
 import WalletListPage from "../pages/Wallet/WalletListPage";
 import WalletFormPage from "../pages/Wallet/WalletFormPage";
+import SupportFormPage from "../pages/Support/SupportFormPage";
+import CustomerSupportListPage from "../pages/Support/CustomerSupportListPage";
+import ProviderSupportListPage from "../pages/Support/ProviderSupportListPage";
+import CancelledBookingListPage from "../pages/Booking/CancelledBookingListPage";
+import CompletedBookingListPage from "../pages/Booking/CompletedBookingListPage";
 
 const routesConfig = {
   private: [
@@ -133,6 +138,8 @@ const routesConfig = {
     { path: "/update-time-slot/:id", element: UpdateTimeSlotPage },
 
     { path: "/bookings", element: BookingListPage },
+    { path: "/cancelled-bookings", element: CancelledBookingListPage },
+    { path: "/completed-bookings", element: CompletedBookingListPage },
     { path: "/booking-detail/:id", element: BookingDetailPage },
 
     { path: "/transactions", element: TransactionListPage },
@@ -253,6 +260,11 @@ const routesConfig = {
     { path: "/wallet", element: WalletListPage },
     { path: "/add-wallet", element: WalletFormPage },
     { path: "/update-wallet/:id", element: WalletFormPage },
+
+    { path: "/add-support", element: SupportFormPage },
+    { path: "/update-support/:id", element: SupportFormPage },
+    { path: "/customer-support", element: CustomerSupportListPage },
+    { path: "/provider-support", element: ProviderSupportListPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },

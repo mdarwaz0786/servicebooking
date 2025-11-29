@@ -41,6 +41,7 @@ const AdminListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          role: "admin"
         },
       });
 
@@ -143,7 +144,7 @@ const AdminListPage = () => {
                 </thead>
                 <tbody>
                   {users?.length > 0 ? (
-                    users?.filter?.((u) => u?.role === "admin")?.map((d, index) => (
+                    users?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>-</td>

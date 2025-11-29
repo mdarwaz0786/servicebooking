@@ -16,8 +16,8 @@ const WalletFormPage = () => {
   const [formData, setFormData] = useState({
     providerId: "",
     depositAmount: "",
-    depositStatus: "Unpaid",
-    dateOfDeposit: "",
+    depositStatus: "Paid",
+    dateOfDeposit: new Date().toISOString().split("T")[0],
     paymentMode: "",
     transactionType: "",
     transactionId: "",
@@ -166,51 +166,54 @@ const WalletFormPage = () => {
 
                 {/* Deposit Amount */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Deposit Amount</label>
+                  <label className="form-label">Deposit Amount <span className="text-danger">*</span></label>
                   <input
                     type="number"
                     name="depositAmount"
                     value={formData.depositAmount}
                     onChange={handleChange}
                     className="form-control"
+                    required
                   />
                 </div>
 
                 {/* Deposit Status */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Deposit Status</label>
-                  <select
+                  <label className="form-label">Deposit Status <span className="text-danger">*</span></label>
+                  <input
                     name="depositStatus"
                     value={formData.depositStatus}
                     onChange={handleChange}
-                    className="form-select"
-                  >
-                    <option value="Paid">Paid</option>
-                    <option value="Unpaid">Unpaid</option>
-                  </select>
+                    className="form-control"
+                    disabled={true}
+                    aria-readonly
+                  />
                 </div>
 
                 {/* Date of Deposit */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Date of Deposit</label>
+                  <label className="form-label">Date of Deposit <span className="text-danger">*</span></label>
                   <input
                     type="date"
                     name="dateOfDeposit"
                     value={formData.dateOfDeposit}
                     onChange={handleChange}
                     className="form-control"
+                    required
                   />
                 </div>
 
                 {/* Payment Mode */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Payment Mode</label>
+                  <label className="form-label">Payment Mode <span className="text-danger">*</span></label>
                   <select
                     name="paymentMode"
                     value={formData.paymentMode}
                     onChange={handleChange}
                     className="form-select"
+                    required
                   >
+                    <option value="">Select Mode</option>
                     <option value="Online">Online</option>
                     <option value="Cash">Cash</option>
                   </select>
@@ -218,41 +221,47 @@ const WalletFormPage = () => {
 
                 {/* Transaction Type */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Transaction Type</label>
+                  <label className="form-label">Transaction Type <span className="text-danger">*</span></label>
                   <select
                     name="transactionType"
                     value={formData.transactionType}
                     onChange={handleChange}
                     className="form-select"
+                    required
                   >
+                    <option value="">Select Type</option>
                     <option value="Debit">Debit</option>
                     <option value="Credit">Credit</option>
                   </select>
                 </div>
 
-                {/* Transaction Id */}
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Transaction ID</label>
-                  <input
-                    type="text"
-                    name="transactionId"
-                    value={formData.transactionId}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
+                {formData?.paymentMode === "Online" && (
+                  <>
+                    {/* Transaction Id */}
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Transaction ID</label>
+                      <input
+                        type="text"
+                        name="transactionId"
+                        value={formData.transactionId}
+                        onChange={handleChange}
+                        className="form-control"
+                      />
+                    </div>
 
-                {/* Transaction Number */}
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Transaction Number</label>
-                  <input
-                    type="text"
-                    name="transactionNumber"
-                    value={formData.transactionNumber}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
+                    {/* Transaction Number */}
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Transaction Number</label>
+                      <input
+                        type="text"
+                        name="transactionNumber"
+                        value={formData.transactionNumber}
+                        onChange={handleChange}
+                        className="form-control"
+                      />
+                    </div>
+                  </>
+                )}
 
                 {/* Purpose */}
                 <div className="col-12 mb-3">

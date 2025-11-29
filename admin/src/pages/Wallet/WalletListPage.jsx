@@ -167,7 +167,7 @@ const WalletListPage = () => {
                     data.map((d, index) => (
                       <tr key={d._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.transactionId}</td>
+                        <td>{d?.transactionId || "-"}</td>
                         <td>{d?.providerId?.name}</td>
                         <td>{d?.creditPoints}</td>
                         <td>{d?.paymentMode}</td>

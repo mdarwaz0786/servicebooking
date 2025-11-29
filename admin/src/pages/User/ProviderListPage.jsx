@@ -41,6 +41,7 @@ const ProviderListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          role: "serviceman"
         },
       });
 
@@ -135,7 +136,7 @@ const ProviderListPage = () => {
                 </thead>
                 <tbody>
                   {users?.length > 0 ? (
-                    users?.filter?.((u) => u?.role === "provider")?.map((d, index) => (
+                    users?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>-</td>

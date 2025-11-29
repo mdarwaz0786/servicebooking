@@ -7,7 +7,7 @@ import { useAuth } from "../../context/auth.context";
 import ServicemanBookingModal from "./ServicemanBookingModal";
 import apis from "../../apis/apis";
 
-const BookingListPage = () => {
+const CompletedBookingListPage = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const { validToken } = useAuth();
   const [bookings, setBookings] = useState([]);
@@ -43,7 +43,7 @@ const BookingListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
-          status: "active"
+          status: "completed"
         },
       });
 
@@ -98,7 +98,7 @@ const BookingListPage = () => {
       <div className="page-wrapper page-settings">
         <div className="content">
           <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-            <h5>Active Bookings {bookings?.length}</h5>
+            <h5>Completed Bookings {bookings?.length}</h5>
 
             <div className="d-flex gap-2 align-items-center">
               {/* Search */}
@@ -265,4 +265,4 @@ const BookingListPage = () => {
   );
 };
 
-export default BookingListPage;
+export default CompletedBookingListPage;

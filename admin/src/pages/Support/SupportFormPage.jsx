@@ -5,15 +5,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import SingleSelect from "../../components/Form/SingleSelect";
 
-const SupportFormPageFormPage = () => {
+const SupportFormPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const [ticketStatus, setTicketStatus] = useState("");
   const [formData, setFormData] = useState({
-    ticketNumber: "",
     name: "",
     userType: "",
     mobile: "",
@@ -24,8 +23,10 @@ const SupportFormPageFormPage = () => {
     scheduleTicket: "",
   });
 
-  const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [replyImage, setReplyImage] = useState(null);
+  const [replyPreview, setReplyPreview] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,49 +36,52 @@ const SupportFormPageFormPage = () => {
           const res = await axios.get(`${apis.supportTicket.get}/${id}`, {
             headers: { Authorization: validToken },
           });
+
           if (res.data.success) {
+            const d = res.data.data;
+
             setFormData({
-              ticketNumber: res.data.data.ticketNumber || "",
-              name: res.data.data.name || "",
-              userType: res.data.data.userType || "",
-              mobile: res.data.data.mobile || "",
-              subject: res.data.data.subject || "",
-              priority: res.data.data.priority || "",
-              description: res.data.data.description || "",
-              reply: res.data.data.reply || "",
-              scheduleTicket: res.data.data.scheduleTicket || "",
+              name: d.name || "",
+              userType: d.userType || "",
+              mobile: d.mobile || "",
+              subject: d.subject || "",
+              priority: d.priority || "",
+              description: d.description || "",
+              reply: d.reply || "",
+              scheduleTicket: d.scheduleTicket || "",
             });
-            if (res.data.data.image) {
-              setPreview(`${BASE_URL}/${res.data.data.image}`);
-            };
+
+            if (d?.image) setPreview(`${BASE_URL}/${d.image}`);
+            if (d?.replyImage) setReplyPreview(`${BASE_URL}/${d.replyImage}`);
           }
         } catch (err) {
           toast.error(err?.response?.data?.message || "Failed to fetch data");
         }
       };
+
       fetchData();
     }
   }, [id, validToken]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  const handleBrandChange = (selectedId) => {
-    setFormData({ ...formData, brandId: selectedId });
-  };
-
-  const onDropImage = useCallback((acceptedFiles) => {
+  const onDropReplyImage = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
+      setReplyImage(file);
+      setReplyPreview(URL.createObjectURL(file));
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: onDropImage,
+  const replyDrop = useDropzone({
+    onDrop: onDropReplyImage,
     accept: { "image/*": [] },
     multiple: false,
   });
@@ -85,18 +89,17 @@ const SupportFormPageFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name.trim()) {
-      toast.error("Name is required");
-      return;
-    }
-
     const data = new FormData();
-    Object.keys(formData).forEach((key) => data.append(key, formData[key]));
-    if (image) data.append("image", image);
+
+    if (replyImage) data.append("replyImage", replyImage);
+    if (ticketStatus) data.append("ticketStatus", ticketStatus);
+    if (formData.scheduleTicket) data.append("scheduleTicket", formData.scheduleTicket);
+    if (formData.reply) data.append("reply", formData.reply);
 
     try {
       setLoading(true);
       let res;
+
       if (id) {
         res = await axios.patch(`${apis.supportTicket.update}/${id}`, data, {
           headers: { Authorization: validToken, "Content-Type": "multipart/form-data" },
@@ -121,8 +124,9 @@ const SupportFormPageFormPage = () => {
   useEffect(() => {
     return () => {
       if (preview && !id) URL.revokeObjectURL(preview);
+      if (replyPreview && !id) URL.revokeObjectURL(replyPreview);
     };
-  }, [preview, id]);
+  }, [preview, replyPreview, id]);
 
   return (
     <div className="page-wrapper">
@@ -130,136 +134,146 @@ const SupportFormPageFormPage = () => {
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
             <h5 className="mb-0">{id ? "Update" : "Add"}</h5>
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm"
-              onClick={() => navigate(-1)}
-            >
+            <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => navigate(-1)}>
               ← Back
             </button>
           </div>
+
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               <div className="row">
-                <div className="col-md-4">
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Name <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="form-control"
-                      required
-                    />
-                  </div>
+                {/* Name */}
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">
+                    Name
+                  </label>
+                  <input type="text" name="name" value={formData.name} className="form-control" readOnly />
                 </div>
-                <div className="col-md-4">
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Stock <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="stock"
-                      value={formData.stock}
-                      onChange={handleChange}
-                      className="form-control"
-                      required
-                    />
-                  </div>
+
+                {/* Subject */}
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Subject</label>
+                  <input type="text" name="subject" value={formData.subject} className="form-control" readOnly />
                 </div>
-                <div className="col-md-4">
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Price <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="price"
-                      value={formData.price}
-                      onChange={handleChange}
-                      className="form-control"
-                      required
-                    />
-                  </div>
+
+                {/* User Type */}
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">User Type</label>
+                  <select name="userType" value={formData.userType} className="form-select" readOnly>
+                    <option value="">Select</option>
+                    <option value="Customer">Customer</option>
+                    <option value="Provider">Provider</option>
+                  </select>
                 </div>
               </div>
 
               <div className="row">
-                {/* Brand */}
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Brand <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <SingleSelect
-                      optionsList={brand}
-                      value={formData.brandId}
-                      onChange={handleBrandChange}
-                      placeholder="Select brand"
-                      labelKey="name"
-                      valueKey="_id"
-                    />
-                  </div>
+                {/* Mobile */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Mobile</label>
+                  <input type="text" name="mobile" value={formData.mobile} readOnly
+                    className="form-control" />
                 </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Part Type
-                    </label>
-                    <input
-                      type="text"
-                      name="partType"
-                      value={formData.partType}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                  </div>
+
+                {/* Priority */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Priority</label>
+                  <select name="priority" value={formData.priority} className="form-select" readOnly>
+                    <option value="">Select</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
                 </div>
               </div>
 
+              {/* Description */}
               <div className="mb-3">
+                <label className="form-label">Description</label>
+                <textarea name="description" value={formData.description} readOnly className="form-control" rows="3"></textarea>
+              </div>
+
+              {/* Image */}
+              <div className="mb-5">
                 <label className="form-label">Image</label>
-                <div
-                  {...getRootProps()}
-                  className={`border p-4 text-center rounded ${isDragActive ? "bg-light" : ""}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getInputProps()} />
-                  {isDragActive ? (
-                    <p>Drop the image here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop image here, or <span className="text-primary">browse</span>
-                    </p>
-                  )}
-                </div>
                 {preview && (
                   <div className="mt-3 text-center">
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
-                    />
+                    <img src={preview} alt="Preview" style={{ maxWidth: "200px", borderRadius: "8px" }} />
                   </div>
                 )}
               </div>
-              <div className="text-end">
+
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Reply Image */}
+                  {id && (
+                    <div className="mb-3">
+                      <label className="form-label">Attachment</label>
+                      <div
+                        {...replyDrop.getRootProps()}
+                        className={`border text-center rounded ${replyDrop.isDragActive ? "bg-light" : ""}`}
+                        style={{ cursor: "pointer", padding: "10px" }}
+                      >
+                        <input {...replyDrop.getInputProps()} />
+                        {replyDrop.isDragActive ? (
+                          <p>Drop Attachment...</p>
+                        ) : (
+                          <span className="text-center">Drag & Drop Attachment or <span className="text-primary">Browse</span></span>
+                        )}
+                      </div>
+
+                      {replyPreview && (
+                        <div className="mt-3 text-center">
+                          <img src={replyPreview} alt="Reply Preview" style={{ maxWidth: "200px", borderRadius: "8px" }} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="col-md-6">
+                  {id && (
+                    <div className="mb-3">
+                      <label className="form-label">Schedule Ticket</label>
+                      <select
+                        name="scheduleTicket"
+                        value={formData.scheduleTicket}
+                        onChange={handleChange}
+                        className="form-select"
+                      >
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Reply */}
+              {id && (
+                <div className="mb-3">
+                  <label className="form-label">Reply</label>
+                  <textarea
+                    name="reply"
+                    value={formData.reply}
+                    onChange={handleChange}
+                    className="form-control"
+                    rows="4"
+                  ></textarea>
+                </div>
+              )}
+
+              {/* Buttons */}
+              <div className="text-end mt-3">
                 <button
-                  type="reset"
+                  type="submit"
                   className="btn btn-secondary me-2"
-                  onClick={() => {
-                    setFormData({ name: "", code: "", description: "" });
-                    setImage(null);
-                    setPreview(null);
-                  }}
+                  disabled={loading}
+                  onClick={() => setTicketStatus("Completed")}
                 >
-                  Cancel
+                  Close Ticket
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+
+                <button type="submit" className="btn btn-primary" disabled={loading} onClick={() => setTicketStatus("Active")}>
                   {loading ? (id ? "Updating..." : "Saving...") : id ? "Update" : "Save"}
                 </button>
               </div>

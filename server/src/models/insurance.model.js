@@ -11,7 +11,6 @@ const insuranceSchema = new mongoose.Schema(
       type: String,
       required: [true, "Company name is required"],
       trim: true,
-      maxlength: [150, "Company name cannot exceed 150 characters"],
     },
     slug: {
       type: String,
@@ -47,7 +46,6 @@ const insuranceSchema = new mongoose.Schema(
     remarks: {
       type: String,
       trim: true,
-      maxlength: [300, "Remarks cannot exceed 300 characters"],
     },
     image: {
       type: String,

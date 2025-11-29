@@ -165,22 +165,22 @@ const TrainingListPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.length > 0 ? (
-                    data.map((d, index) => (
+                  {data?.length > 0 ? (
+                    data?.map((d, index) => (
                       <tr key={d._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d.category.name}</td>
-                        <td>{d.subject}</td>
-                        <td>{d.firstName + " " + d?.lastName}</td>
-                        <td>{formatDate(d.startDate)}</td>
-                        <td>{d.startTime}</td>
+                        <td>{d?.category?.name}</td>
+                        <td>{d?.subject}</td>
+                        <td>{d?.firstName + " " + d?.lastName}</td>
+                        <td>{formatDate(d?.startDate)}</td>
+                        <td>{d?.startTime} To {d?.endTime}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">
                               <input
                                 type="checkbox"
                                 checked={d.status}
-                                onChange={() => toggleStatus(d._id, d.status)}
+                                onChange={() => toggleStatus(d?._id, d?.status)}
                               />
                               <span className="sliders round" />
                             </label>
