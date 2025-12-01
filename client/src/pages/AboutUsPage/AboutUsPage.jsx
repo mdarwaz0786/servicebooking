@@ -12,7 +12,7 @@ const AboutUsPage = () => {
       name: "SARVESH KUMAR MISHRA",
       role: "(CEO & FOUNDER)",
       img: "assets/img/profile.jpg",
-      description: "Lorem ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum ipsum.",
+      description: "Sarvesh Mishra founded Green India Team with a vision to make home appliance repair simple, reliable, and accessible. His strong leadership and commitment to quality have guided the company toward excellence and customer trust.",
     }
   ];
 
@@ -45,17 +45,19 @@ const AboutUsPage = () => {
             {/* Right Content Section */}
             <div className="col-lg-6">
               <div className="about-content">
-                <h6>ABOUT OUR COMPANY</h6>
-                <h2>Green India Team Services</h2>
+                {/* <h6>ABOUT OUR COMPANY</h6> */}
+                <h6>Sarv Laxmi Green India Private Limited – Delivering Trusted Home Services in Delhi NCR</h6>
                 <p>
-                  Sarv Laxmi Green India Private Limited and its affiliates (collectively,
-                    <strong> GREEN INDIA TEAM </strong>) is focused on revolutionizing the
-                    home services industry by combining convenience, quality, and technology.
-                    The ability for customers to book services from a variety of categories,
-                    all while ensuring a seamless, standardized experience, is a key
-                    differentiator. You also place a significant emphasis on empowering
-                    service professional Team, providing them with tools and resources to
-                    deliver on this promise of quality.
+                  Sarv Laxmi Green India Private Limited is committed to offering reliable, affordable, and expert home services across Delhi NCR. Our mission is to make everyday life easier by bringing skilled professionals straight to your doorstep. With a focus on quality and customer satisfaction, we ensure smooth and stress-free service experiences for every household. 
+
+Green India Team has specialized in the repair and maintenance of home appliances, providing efficient services to households. Our products are quite diverse. We offer Doorstep services like Home Appliance repair services, Cleaning services, Unisex Salon Services, electrician plumber and carpenter, Refrigerators, washing machines, microwaves, etc.
+
+
+We have a series of skilled technicians in our team with wide experience and know-how to deliver appliances at their optimum performance. We are customer-centric, transparent, and timely with solutions and offer high-quality repairs at reasonable and competitive prices.
+
+
+In the Green India Team, we have the mission of ensuring that the maintenance of the home appliances is made easy, reliable, and stress-free for all customers.
+
                 </p>
 
                 <div className="row">
@@ -109,10 +111,7 @@ const AboutUsPage = () => {
           <div className="col-md-12 text-center">
             <div className="section-heading">
               <h2>How It Works</h2>
-              <p>
-                Straightforward process designed to make your experience seamless
-                and hassle-free.
-              </p>
+              
             </div>
           </div>
         </div>
@@ -131,10 +130,9 @@ const AboutUsPage = () => {
                     />
                   </span>
                 </div>
-                <h5>1. Search and Browse</h5>
+                <h5>1. Book Your Service </h5>
                 <p>
-                  Customers can browse or search for specific products or
-                  services using categories, filters, or search bars.
+                  Choose the service you need, select your preferred time slot, and confirm your booking. The process is quick and requires only a few clicks.
                 </p>
                 <h4>01</h4>
               </div>
@@ -153,10 +151,9 @@ const AboutUsPage = () => {
                     />
                   </span>
                 </div>
-                <h5>2. Add to Cart or Book Now</h5>
+                <h5>2. Get a Verified Professional</h5>
                 <p>
-                  Customers can add items to their shopping cart. For services,
-                  they may select a service and proceed to book.
+                  We assign experienced and background-checked professionals for every job. They arrive on time and carry the tools required for the service.
                 </p>
                 <h4>02</h4>
               </div>
@@ -175,10 +172,9 @@ const AboutUsPage = () => {
                     />
                   </span>
                 </div>
-                <h5>3. Amazing Places</h5>
+                <h5>3. Transparent Payment</h5>
                 <p>
-                  The customer fulfills the order by either providing the
-                  service to the buyer.
+                  Once the service is complete, you can pay securely using any preferred payment method. We maintain clear pricing without hidden charges.
                 </p>
                 <h4>03</h4>
               </div>
@@ -195,8 +191,9 @@ const AboutUsPage = () => {
           {/* Left Content */}
           <div className="col-md-6">
             <div className="choose-content">
-              <h2>Why Choose Us</h2>
-              <p>Transforming the way home services are delivered, with cutting-edge technology, expertly trained professionals, and a commitment to excellence, ensuring an experience like never before."</p>
+              <h2 style={{lineHeight: '1',marginBottom: '13px'}}>Why Choose Us - The Smart Choice for Home Services</h2>
+              <h6>Skilled and Verified Professionals</h6>
+              <p>We work with trained specialists who have expertise in their specific categories. Every professional goes through background verification for customer safety.</p>
 
               <div className="accordion" id="faq_accordion">
                 {/* Accordion Item 1 */}
@@ -210,7 +207,7 @@ const AboutUsPage = () => {
                       aria-expanded="true"
                       aria-controls="panelsStayOpen-collapseOne"
                     >
-                      24/7 Supports
+                      Wide Range of Services
                     </button>
                   </h2>
                   <div
@@ -220,7 +217,7 @@ const AboutUsPage = () => {
                   >
                     <div className="accordion-body">
                       <p>
-                        Access round-the-clock support through our dedicated helpdesk, available 24/7 to address any issues or queries you may have. Whether it’s day or night, our team is here to ensure you receive timely assistance and seamless service.
+                        From home cleaning to appliance repair, we offer multiple categories under one platform. You can book any service without switching to different providers.
                       </p>
                     </div>
                   </div>
@@ -237,7 +234,7 @@ const AboutUsPage = () => {
                       aria-expanded="false"
                       aria-controls="panelsStayOpen-collapseTwo"
                     >
-                      Client’s Reviews
+                      Quality Assurance
                     </button>
                   </h2>
                   <div
@@ -247,7 +244,7 @@ const AboutUsPage = () => {
                   >
                     <div className="accordion-body">
                       <p>
-                        Access round-the-clock support through our dedicated helpdesk, available 24/7 to address any issues or queries you may have. Whether it’s day or night, our team is here to ensure you receive timely assistance and seamless service.
+                        We follow strict quality standards to ensure consistent service delivery. Our team monitors every job to maintain high customer satisfaction.
                       </p>
                     </div>
                   </div>
@@ -264,7 +261,7 @@ const AboutUsPage = () => {
                       aria-expanded="false"
                       aria-controls="panelsStayOpen-collapseThree"
                     >
-                      Professional Team
+                      Transparent Pricing
                     </button>
                   </h2>
                   <div
@@ -274,7 +271,7 @@ const AboutUsPage = () => {
                   >
                     <div className="accordion-body">
                       <p>
-                        Access round-the-clock support through our dedicated helpdesk, available 24/7 to address any issues or queries you may have. Whether it’s day or night, our team is here to ensure you receive timely assistance and seamless service.
+                        We provide clear pricing without unexpected charges. Customers always know what they are paying for before the service begins.
                       </p>
                     </div>
                   </div>
@@ -291,7 +288,7 @@ const AboutUsPage = () => {
                       aria-expanded="false"
                       aria-controls="panelsStayOpen-collapse4"
                     >
-                      Best Services
+                      Fast Response and Support
                     </button>
                   </h2>
                   <div
@@ -301,11 +298,69 @@ const AboutUsPage = () => {
                   >
                     <div className="accordion-body">
                       <p>
-                        Access round-the-clock support through our dedicated helpdesk, available 24/7 to address any issues or queries you may have. Whether it’s day or night, our team is here to ensure you receive timely assistance and seamless service.
+                        Our customer support team responds quickly to queries. We ensure complete guidance throughout the service process.
                       </p>
                     </div>
                   </div>
                 </div>
+
+
+                {/* Accordion Item 5 */}
+                <div className="accordion-item">
+                  <h2 className="accordion-header">
+                    <button
+                      className="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapse4"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapse4"
+                    >
+                      Convenient and Reliable
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapse4"
+                    className="accordion-collapse collapse"
+                    data-bs-parent="#faq_accordion"
+                  >
+                    <div className="accordion-body">
+                      <p>
+                        You can book any service at your convenience. We deliver on time and complete every task with professionalism and care.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Accordion Item 6 */}
+                <div className="accordion-item">
+                  <h2 className="accordion-header">
+                    <button
+                      className="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapse4"
+                      aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapse4"
+                    >
+                      Secure and Safe Services
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapse4"
+                    className="accordion-collapse collapse"
+                    data-bs-parent="#faq_accordion"
+                  >
+                    <div className="accordion-body">
+                      <p>
+                        We prioritize safety in all our services. Our professionals follow hygiene protocols and use safe methods while working.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+
+
               </div>
             </div>
           </div>

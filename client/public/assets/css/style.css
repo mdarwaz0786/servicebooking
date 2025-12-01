@@ -10265,7 +10265,7 @@ html.menu-opened body {
 
   .review-pagination ul li a,
   .page-item .page-link {
-    width: 25px;
+    width: fit-content;
     height: 25px;
   }
 
@@ -16417,6 +16417,17 @@ fieldset#first-availability {
   .service-list {
     flex-direction: column;
     row-gap: 10px;
+    padding: 5px 5px;
+    margin-bottom: 5px;
+  }
+  .service-cont-info p span {
+      font-size: 10px !important;
+  }
+  .service-cont-info p span {
+    margin: 0 !important;
+  }
+  .catelistmaintitle {
+      margin: 0px 0 5px 0 !important;
   }
 }
 
@@ -16487,12 +16498,17 @@ fieldset#first-availability {
 
 @media (max-width: 575.98px) {
   .service-cont {
-    display: inherit;
+    /* display: inherit; */
     margin: 0;
+    align-items: start;
+    -webkit-box-align: start;
   }
   .col-md-4, .col-md-8 {
       width: 100%;
       max-width: 100%;
+  }
+  .service-cont-info ul {
+    padding-left: 15px;
   }
 }
 
@@ -19261,7 +19277,7 @@ input[type=password]::-ms-clear {
 
 @media (max-width: 991.98px) {
   .booking-wizard {
-    padding: 30px 0;
+    padding: 0px 0;
   }
 }
 
@@ -36514,7 +36530,9 @@ span.select2-container.select2-container--default.select2-container--open {
 .swiper-slide {
     padding-right: 5px;
 }
-
+.mobile-cart-close-btn {
+    display: none;
+}
 @media(max-width: 767px)
 {
   .navbar-brand.logo-small img {
@@ -36548,12 +36566,11 @@ span.select2-container.select2-container--default.select2-container--open {
   .work-section img {
       border-radius: 5px;
   }
-  .service-cont-img img {
-      width: 100%;
-  }
   .service-cont-info
   {
-    margin: 5px 0 0 0;
+    margin: 0px 0 0 0;
+    max-width: 70%;
+    padding: 0 5px 0 15px;
   }
   .service-item-add-btn-section {
       margin: 10px 0 0 0 !important;
@@ -36650,6 +36667,111 @@ span.select2-container.select2-container--default.select2-container--open {
   .category-service h6 {
       font-size: 12px;
   }
+
+  .cart-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99999;
+      display: none;
+  }
+  .mobile-cart-close-btn, .user-sidebar-close-btn {
+      position: absolute;
+      top: 11px;
+      right: 15px;
+      font-size: 25px;
+      display: block;
+      z-index: 99;
+  }
+  .cart-sidebar.show, .user-sidebar.show {
+    display: block;
+  }
+  .mobile-cart-fixed-btn {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 9;
+      padding: 0 5px 5px 5px;
+  }
+  .service-cont-img {
+    max-width: 30%;
+  }
+  .service-item-add-btn-section .btn {
+    padding: 5px 10px !important;
+    font-size: 10px !important;
+  }
+  .service-cont-info h3 {
+    font-size: 14px;
+    margin-bottom: 0;
+  }
+  .service-pro-img span i {
+    font-size: 10px;
+  }
+  .service-pro-img span {
+    font-size: 10px;
+  }
+  .service-cont-info p {
+      font-size: 10px;
+  }
+  .service-cont-info ul li span {
+      font-size: 10px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+  }
+  .service-cont-info ul li {
+      line-height: 1;
+  }
+  .check-mobile-nav {
+      display: flex;
+  }
+  .check-mobile-nav li span {
+      font-size: 10px;
+      padding: 0 5px !important;
+  }
+  .checkout-theiaStickySidebar {
+      padding: 0 !important;
+      margin: -12px 0 0 0 !important;
+  }
+  .checkout-theiaStickySidebar .card-body {
+      padding: 0px 5px;
+  }
+  .checkout-theiaStickySidebar .card {
+      border-radius: 7px !important;
+      margin: 0 !important;
+  }
+  .tranaction-summary {
+      margin: 8px 0 0 0;
+  }
+  .tranaction-summary-div {
+      margin: 0 0 5px 0 !important;
+  }
+  .tranaction-summary-nav-buttons{
+    width: 100%;
+    display: block !important;
+    text-align: center;
+  }
+  .provider-page .content {
+      padding-left: 0;
+      padding-right: 0;
+  }
+  .user-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 99999;
+      border-radius: 0;
+      width: 70%;
+      height: 100%;
+      display: none;
+  }
+ 
+
 }
 
 

@@ -30,7 +30,7 @@ const UserBookingPage = () => {
     <div className="col-xl-9 col-lg-8">
       <div className="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-4">
         <h4>Booking List</h4>
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center d-none">
           <p className="text-dark me-2 mb-0">Sort</p>
           <div className="dropdown me-2">
             <a href="javascript:void(0);" className="dropdown-toggle" data-bs-toggle="dropdown">

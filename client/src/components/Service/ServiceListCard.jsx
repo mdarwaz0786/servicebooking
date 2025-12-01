@@ -69,7 +69,7 @@ const ServiceListCard = ({ slug }) => {
                     >
                         <div className="service-cont row">
 
-                            <div className="service-cont-img col-md-4">
+                            <div className="service-cont-img">
                                 <Link>
                                     <img
                                         className="img-fluid serv-img"
@@ -120,7 +120,7 @@ const ServiceListCard = ({ slug }) => {
                                 </div>
                             </div>
 
-                            <div className="service-cont-info col-md-8">
+                            <div className="service-cont-info">
                                 <h3 className="title">
                                     <Link>{value.name}</Link>
                                 </h3>
@@ -184,7 +184,7 @@ const ServiceListCard = ({ slug }) => {
                                 style={{ marginBottom: cat.name ? "0px" : "" }}
                             >
 
-                                {cat.name && <h3 className="fw-bold mb-3">{cat.name}</h3>}
+                                {cat.name && <h3 className="fw-bold mb-3 catelistmaintitle">{cat.name}</h3>}
 
                                 {groupedServices[catId].map((value) => (
                                     <div
@@ -193,7 +193,7 @@ const ServiceListCard = ({ slug }) => {
                                     >
                                         <div className="service-cont row">
 
-                                            <div className="service-cont-img col-md-4">
+                                            <div className="service-cont-img ">
                                                 <Link>
                                                     <img
                                                         className="img-fluid serv-img"
@@ -244,7 +244,7 @@ const ServiceListCard = ({ slug }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="service-cont-info col-md-8">
+                                            <div className="service-cont-info ">
                                                 <h3 className="title">
                                                     <Link>{value.name}</Link>
                                                 </h3>

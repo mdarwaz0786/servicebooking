@@ -57,6 +57,8 @@ export const AppProvider = ({ children }) => {
   
   const [cartItems, setcartItems] = useState([]);
   const [cartAmount, setcartAmount] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [userSidebaOpen, setUserSidebaOpen] = useState(false);
   
   const [user, setuser] = useState();
   
@@ -737,6 +739,12 @@ export const AppProvider = ({ children }) => {
 
       cartItems,
       setcartItems,
+
+      setCartOpen,
+      cartOpen,
+
+      setUserSidebaOpen,
+      userSidebaOpen,
 
       cartAmount,
       setcartAmount,

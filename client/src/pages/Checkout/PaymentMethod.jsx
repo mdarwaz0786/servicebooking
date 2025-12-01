@@ -109,10 +109,10 @@ const PaymentMethod = () => {
       <div className="book-card">
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <h5 className="fw-bold text-success">Transaction Summary</h5>
+          <div className="d-flex align-items-center justify-content-between mb-3 tranaction-summary-div">
+            <h5 className="fw-bold text-success tranaction-summary">Transaction Summary</h5>
           </div>
-          <div className="d-flex align-items-center mb-2">
+          <div className="d-flex align-items-center mb-2 tranaction-summary-nav-buttons">
 
             <Link className="btn btn-sm btn-success d-inline-flex align-items-center prev_btn mb-2 me-2"
             onClick={() => toggleModal("paymentModeModal", true)}

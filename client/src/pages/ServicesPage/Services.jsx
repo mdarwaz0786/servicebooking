@@ -29,7 +29,7 @@ const Services = ({search, slug}) => {
   }, []);
 
 
-  const { servicePageCategoryData, servicePageName, cartAmount, cartItems, servicePageCartShow } = useContext(AppContext);
+  const { servicePageCategoryData, servicePageName, cartAmount, cartItems, servicePageCartShow, PriceFormat, setCartOpen } = useContext(AppContext);
   return ( 
     <div className="page-wrapper m-0">
       <div className="content">
@@ -117,9 +117,19 @@ const Services = ({search, slug}) => {
             {/* 3rd box */}
             {(cartItems.length > 0) ? (
               <div className="col-xl-3 col-lg-2">
-                <CartSidebar />
+                <>
+                  <CartSidebar />
+                  {width<767?
+                  <div className="mobile-cart-fixed-btn">      
+                    <button className="btn btn-primary w-100" onClick={()=> setCartOpen(true)}> 
+                      {PriceFormat(cartAmount.payableAmount)}
+                      <span className="ms-2">View Cart</span>
+                    </button>
+                  </div>:null}
+                </>
               </div>
             ) : (null)}
+
 
 
           </div>

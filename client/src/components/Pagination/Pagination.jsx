@@ -11,8 +11,8 @@ const Pagination = ({ handlePagination }) => {
       
       {(pagination.totalPages)?(
 
-        <div className="d-flex justify-content-between align-items-center flex-wrap row-gap-3">
-          <div className="value d-flex align-items-center">
+        <div className="d-flex justify-content-center align-items-center flex-wrap row-gap-3">
+          <div className="value d-flex align-items-center d-none">
             <span>Show</span>
             <select onChange={(e) => handlePagination(1, Number(e.target.value))}>
               <option value={10}>10</option>
@@ -22,7 +22,7 @@ const Pagination = ({ handlePagination }) => {
             <span>entries</span>
           </div>
           <div className="d-flex align-items-center justify-content-center">
-            <span className="me-2 text-gray-9">{pagination.currentPage==1?pagination.currentPage:pagination.currentPage*pagination.limit} - {pagination.currentPage*pagination.limit} of {pagination.totalPages}</span>
+            <span className="me-2 text-gray-9 d-none">{pagination.currentPage==1?pagination.currentPage:pagination.currentPage*pagination.limit} - {pagination.currentPage*pagination.limit} of {pagination.totalPages}</span>
             <nav aria-label="Page navigation">
               <ul className="paginations d-flex justify-content-center align-items-center">
                 <li className={`page-item me-3 ${pagination.currentPage === 1 ? "disabled" : ""}`}>

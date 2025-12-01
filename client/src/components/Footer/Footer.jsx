@@ -49,7 +49,7 @@ const Footer = () => {
                 </ul>
               </div>
             </div>
-            <div className="col-md-6 col-xl-3 col-sm-4"></div>
+            {/* <div className="col-md-6 col-xl-3 col-sm-4 d-md-none"></div> */}
 
             {/* Newsletter */}
             <div className="col-md-12 col-xl-3 footer-sm footer-sm-mt">

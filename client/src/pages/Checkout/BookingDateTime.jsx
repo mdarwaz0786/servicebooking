@@ -66,7 +66,7 @@ const BookingDateTime = () => {
             <h6 className="fs-13 fw-medium mb-2">Select Time</h6>
             <div className="row g-2">
               {timeSlots.map((slot, index) => (
-                <div className="col-lg-3 col-md-4" key={index}>
+                <div className="col-lg-3 col-md-4 col-sm-6" key={index}>
                   <div
                     className={`time-item p-2 text-center rounded-3 shadow-sm ${slot.disabled ? "bg-light text-muted" : "bg-white cursor-pointer"
                       } ${selectedTime === slot.time ? "border border-3 border-success bg-success text-white" : ""}`}

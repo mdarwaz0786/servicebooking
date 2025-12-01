@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { scrollToService, scrollToTop } from "../../helper/scrollToTop";
 
 const Navbar = () => {
-  const { toggleModal, handleLogout, user } = useContext(AppContext);
+  const { toggleModal, handleLogout, user, setUserSidebaOpen, userSidebaOpen } = useContext(AppContext);
 
   const handleLinkClick = () => {
     // Scroll to top instantly
@@ -133,7 +133,14 @@ const Navbar = () => {
                 {(localStorage.getItem("user")) ? (
                   <>
                     {(user?.role == 'user') ? (
-                      <Link to={'/user'} className="btn btn-linear-primary" onClick={handleLinkClick} >
+                      <Link to={'/user'} className="btn btn-linear-primary" onClick={()=> {
+                        if(width<=767)
+                        {
+                          setUserSidebaOpen(true);
+                        console.log(userSidebaOpen)
+                        }
+                      }
+                      } >
                         <i className={`ti ti-user ${width>767?'me-2':''}`} />{width>767?'Account':null}
                       </Link>
                     ) : (
