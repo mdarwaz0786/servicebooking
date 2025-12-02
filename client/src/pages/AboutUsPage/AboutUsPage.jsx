@@ -28,9 +28,9 @@ const AboutUsPage = () => {
           <div className="row align-items-center">
             {/* Left Image Section */}
             <div className="col-lg-6">
-              <div className="about-img d-none d-md-block">
+              <div className="about-img d-md-block">
                 <div className="about-exp">
-                  <span>12+ years of experiences</span>
+                  <span>10+ years skill experience</span>
                 </div>
                 <div className="abt-img">
                   <img
@@ -47,7 +47,9 @@ const AboutUsPage = () => {
               <div className="about-content">
                 {/* <h6>ABOUT OUR COMPANY</h6> */}
                 <h6>Sarv Laxmi Green India Private Limited – Delivering Trusted Home Services in Delhi NCR</h6>
-                <p>
+                <p 
+                // style={{textAlign: 'justify'}}
+                >
                   Sarv Laxmi Green India Private Limited is committed to offering reliable, affordable, and expert home services across Delhi NCR. Our mission is to make everyday life easier by bringing skilled professionals straight to your doorstep. With a focus on quality and customer satisfaction, we ensure smooth and stress-free service experiences for every household. 
 
 Green India Team has specialized in the repair and maintenance of home appliances, providing efficient services to households. Our products are quite diverse. We offer Doorstep services like Home Appliance repair services, Cleaning services, Unisex Salon Services, electrician plumber and carpenter, Refrigerators, washing machines, microwaves, etc.
@@ -98,12 +100,7 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
 
       <section className="work-section px-0 my-0 work-bg">
       {/* Background Images */}
-      <div className="work-bg-2 d-none d-md-block">
-        <img src="assets/img/bg/dotted.png" alt="img" className="img-fluid" />
-      </div>
-      <div className="work-bg-1 d-none d-md-block">
-        <img src="assets/img/bg/bg-13.png" alt="img" className="img-fluid" />
-      </div>
+      
 
       <div className="container">
         {/* Section Heading */}
@@ -134,7 +131,6 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
                 <p>
                   Choose the service you need, select your preferred time slot, and confirm your booking. The process is quick and requires only a few clicks.
                 </p>
-                <h4>01</h4>
               </div>
             </div>
           </div>
@@ -155,7 +151,6 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
                 <p>
                   We assign experienced and background-checked professionals for every job. They arrive on time and carry the tools required for the service.
                 </p>
-                <h4>02</h4>
               </div>
             </div>
           </div>
@@ -176,7 +171,6 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
                 <p>
                   Once the service is complete, you can pay securely using any preferred payment method. We maintain clear pricing without hidden charges.
                 </p>
-                <h4>03</h4>
               </div>
             </div>
           </div>
@@ -189,18 +183,27 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
       <div className="container">
         <div className="row align-items-center">
           {/* Left Content */}
+
+
+          <div className="col-md-12">
+            <div className="choose-content m-0">
+                <h2 style={{lineHeight: '1',marginBottom: '13px'}}>Why Choose Us - The Smart Choice for Home Services</h2>
+              </div>
+          </div>
+
+
           <div className="col-md-6">
             <div className="choose-content">
-              <h2 style={{lineHeight: '1',marginBottom: '13px'}}>Why Choose Us - The Smart Choice for Home Services</h2>
               <h6>Skilled and Verified Professionals</h6>
-              <p>We work with trained specialists who have expertise in their specific categories. Every professional goes through background verification for customer safety.</p>
+                <p className="mb-3">We work with trained specialists who have expertise in their specific categories. Every professional goes through background verification for customer safety.</p>
+              
 
               <div className="accordion" id="faq_accordion">
                 {/* Accordion Item 1 */}
                 <div className="accordion-item">
                   <h2 className="accordion-header">
                     <button
-                      className="accordion-button"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#panelsStayOpen-collapseOne"
@@ -212,7 +215,7 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
                   </h2>
                   <div
                     id="panelsStayOpen-collapseOne"
-                    className="accordion-collapse collapse show"
+                    className="accordion-collapse collapse "
                     data-bs-parent="#faq_accordion"
                   >
                     <div className="accordion-body">
@@ -452,16 +455,16 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
 
         <div className="row">
           {providers.map((provider, index) => (
-            <div className="col-lg-6 col-md-6 col-sm-6 m-auto" key={index}>
+            <div className="col-lg-6 col-md-6 m-auto" key={index}>
               <div className="card providerset p-0 flex-fill">
                 <div className="card-body row">
-                  <div className="providerset-img col-4">
+                  <div className="providerset-img col-4 col-sm-12">
                     <a href="provider-details.html">
                       <img src={provider.img} alt={provider.name} />
                     </a>
                   </div>
 
-                  <div className="providerset-content col-8">
+                  <div className="providerset-content col-8 col-sm-12">
                     <div className="providerset-price">
                       <div className="d-flex justify-content-between align-items-center flex-fill">
                         <div className="providerset-name">

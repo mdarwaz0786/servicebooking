@@ -78,7 +78,7 @@ const AllServices = ({ value = [] }) => {
                 <SwiperSlide key={index2}>
                   <div
                     className="service-item text-center"
-                    onClick={() => handleServiceDetail(item._id)}
+                    onClick={() => handleServiceDetail(item._id, item)}
                   >
                     <div className="service-img mb-2">
                       <Link>
