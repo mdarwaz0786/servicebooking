@@ -60,6 +60,13 @@ reviewSchema.virtual("booking", {
   justOne: true,
 });
 
+reviewSchema.virtual("serviceman", {
+  ref: "ServiceManProfile",
+  localField: "servicemanId",
+  foreignField: "_id",
+  justOne: true,
+});
+
 const ReviewModel = mongoose.model("Review", reviewSchema);
 
 export default ReviewModel;
