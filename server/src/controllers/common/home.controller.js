@@ -71,15 +71,21 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     cartItems = await CartModel.find({ userId }).lean();
   }
 
-  const servicesWithQuantity = services?.map((service) => {
-    const sid = service?._id?.toString();
+  const servicesWithQuantity = services.map((serviceBlock) => {
+    const updatedServices = serviceBlock.services.map((s) => {
+      const cartItem = cartItems.find(
+        (item) => item?.serviceId?.toString() === s?._id?.toString()
+      );
 
-    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
-    const quantity = cartItem ? cartItem?.quantity : 0;
+      return {
+        ...s,
+        quantity: cartItem ? cartItem.quantity : 0,
+      };
+    });
 
     return {
-      ...service,
-      quantity,
+      ...serviceBlock,
+      services: updatedServices,
     };
   });
 
@@ -109,7 +115,12 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   // Map totalBooked count to service
   const mostBooked = mostBookedServicesAgg.map((item) => {
     const service = mostBookedServices.find((s) => s?._id?.toString() === item?._id?.toString());
-    return service ? { ...service, totalBooked: item?.totalBooked } : null;
+
+    const cartItem = cartItems.find(
+      (c) => c.serviceId?.toString() === item._id.toString()
+    );
+
+    return service ? { ...service, totalBooked: item?.totalBooked, quantity: cartItem ? cartItem.quantity : 0 } : null;
   }).filter(Boolean);
 
   return res.status(200).json({
