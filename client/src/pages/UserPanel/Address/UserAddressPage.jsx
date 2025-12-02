@@ -54,7 +54,7 @@ const UserAddressPage = () => {
 
     <div className="col-xl-9 col-lg-8">
       <div className="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-4">
-        <h4>Booking List</h4>
+        <h4>Addresses</h4>
       </div>
 
 
