@@ -1,5 +1,6 @@
 import asyncHandler from "../../helpers/asyncHandler.js";
 import CategoryModel from "../../models/category.model.js";
+import CartModel from "../../models/cart.model.js";
 import HomePageServiceModel from "../../models/homePageService.model.js";
 import HomePageBannerModel from "../../models/homePageBanner.model.js";
 import HomePageSliderModel from "../../models/homePageSlider.model.js";
@@ -65,6 +66,23 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     .sort({ createdAt: 1 })
     .lean();
 
+  let cartItems = [];
+  if (userId) {
+    cartItems = await CartModel.find({ userId }).lean();
+  }
+
+  const servicesWithQuantity = services?.map((service) => {
+    const sid = service?._id?.toString();
+
+    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
+    const quantity = cartItem ? cartItem?.quantity : 0;
+
+    return {
+      ...service,
+      quantity,
+    };
+  });
+
   // Fetch active home page banners
   const banners = await HomePageBannerModel.find({ status: true })
     .sort({ createdAt: -1 })
@@ -100,7 +118,7 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     data: {
       category: categories,
       cart: cart,
-      services: services,
+      services: servicesWithQuantity,
       banners: banners,
       sliders: sliders,
       mostBookedServices: mostBooked,
