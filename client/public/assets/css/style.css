@@ -5205,7 +5205,7 @@ Form help
   align-items: center;
   justify-content: center;
   border-radius: 3.125rem;
-  color: #656B76;
+  color: #006834;
   background-image: none;
 }
 
@@ -20695,10 +20695,11 @@ fieldset.booking-content#first-field {
 }
 
 .about-content h6 {
-  font-size: 16px;
+  font-size: 20px;
   color: #111827;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 15px;
+  line-height: 1.4;
 }
 
 .about-content h2 {
@@ -20898,7 +20899,7 @@ fieldset.booking-content#first-field {
   -ms-flex-align: center;
   align-items: center;
   margin-bottom: 20px;
-  border-right: 1px dashed #FF008A;
+  border-right: 1px dashed #006f3a;
 }
 
 .choose-icon img {
@@ -20908,7 +20909,7 @@ fieldset.booking-content#first-field {
 .choose-info p {
   font-size: 16px;
   margin-bottom: 0;
-  color: #656B76;
+  color: #006f3a;
 }
 
 .chooseus-img {
@@ -23348,7 +23349,7 @@ fieldset.booking-content#first-field {
 .work-icon span {
   width: 83px;
   height: 72px;
-  background: #FFECF5;
+  background: #d7fff0;
   border-radius: 15px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -36533,6 +36534,15 @@ span.select2-container.select2-container--default.select2-container--open {
 .mobile-cart-close-btn {
     display: none;
 }
+
+p span {
+    line-height: 1.4;
+    font-family: "Inter", sans-serif !important;
+}
+.policy ul, .policy ol {
+    margin: 0 0 0 20px !important;
+}
+
 @media(max-width: 767px)
 {
   .navbar-brand.logo-small img {
@@ -36769,6 +36779,17 @@ span.select2-container.select2-container--default.select2-container--open {
       width: 70%;
       height: 100%;
       display: none;
+  }
+  .col-sm-12{
+    width: 100%;
+  }
+  .about-img .about-exp span {
+      font-size: 17px;
+      margin: 110px -70px;
+  }
+  .choose-icon
+  {
+    border: 0;
   }
  
 

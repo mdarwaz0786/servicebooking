@@ -66,7 +66,7 @@ const CareerPage = () => {
 
                     {/* Short description */}
                     <div
-                      className="mt-3"
+                      className="mt-3" style={{textAlign: 'justify'}}
                       dangerouslySetInnerHTML={{ __html: job.shortDescription }}
                     />
 

@@ -130,6 +130,8 @@ export const AppProvider = ({ children }) => {
       createTransaction: `${commurl}payment/create-order`,
       verifyTransaction: `${commurl}payment/verify-payment`,
 
+      allReview: `${commurl}review`,
+
       createBooking: `${userUrl}booking/create-booking`,
       myBooking: `${userUrl}booking`,
       myBookingDetail: `${userUrl}booking`,
