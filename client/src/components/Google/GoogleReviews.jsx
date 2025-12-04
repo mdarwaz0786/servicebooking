@@ -1,18 +1,47 @@
 import React, { useEffect, useState } from "react";
 
-const GoogleReviews = ({ placeId }) => {
+const GoogleReviews = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [placeDetails, setPlaceDetails] = useState(null);
 
+  const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+  const PLACE_ID = import.meta.env.VITE_PLACE_ID;
+
+  // Load Google Maps Script Dynamically
+  const loadGoogleScript = () => {
+    return new Promise((resolve) => {
+      if (window.google) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+
+      script.onload = resolve;
+
+      document.body.appendChild(script);
+    });
+  };
+
   useEffect(() => {
-    if (!window.google) return;
+    loadGoogleScript().then(() => {
+      setIsLoaded(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded || !window.google) return;
 
     const dummyDiv = document.createElement("div");
     const service = new window.google.maps.places.PlacesService(dummyDiv);
 
     service.getDetails(
       {
-        placeId: placeId,
+        placeId: PLACE_ID,
         fields: ["name", "rating", "reviews"],
       },
       (place, status) => {
@@ -24,12 +53,12 @@ const GoogleReviews = ({ placeId }) => {
         }
       }
     );
-  }, [placeId]);
+  }, [isLoaded]);
 
   return (
     <div style={{ maxWidth: 600, margin: "auto" }}>
-      <h2>{placeDetails?.name}</h2>
-      <p>Rating: ⭐ {placeDetails?.rating}</p>
+      <h2>{placeDetails?.name || "Loading..."}</h2>
+      {placeDetails && <p>Rating: ⭐ {placeDetails.rating}</p>}
 
       {reviews.map((r, i) => (
         <div key={i} style={{ borderBottom: "1px solid #ddd", padding: 10 }}>
