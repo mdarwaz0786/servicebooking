@@ -159,6 +159,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/privacy-policy`,
     delete: `${BASE_URL}/api/v1/admin/privacy-policy`,
   },
+  disclaimer: {
+    create: `${BASE_URL}/api/v1/admin/disclaimer`,
+    get: `${BASE_URL}/api/v1/admin/disclaimer`,
+    update: `${BASE_URL}/api/v1/admin/disclaimer`,
+    delete: `${BASE_URL}/api/v1/admin/disclaimer`,
+  },
   refundPolicy: {
     create: `${BASE_URL}/api/v1/admin/refund-policy`,
     get: `${BASE_URL}/api/v1/admin/refund-policy`,

@@ -1,4 +1,5 @@
 import RateCardModel from "../../models/rateCard.model.js";
+import ServiceModel from "../../models/service.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -76,19 +77,53 @@ export const getRateCardById = asyncHandler(async (req, res) => {
   });
 });
 
+// ==================== GET RATE CARD BY SERVICE ID ====================
 export const getRateCardByServiceId = asyncHandler(async (req, res) => {
   const { serviceId } = req.params;
 
-  // Find all rate cards that contain this service ID in the 'services' array
-  const rateCards = await RateCardModel.findOne({ services: serviceId }).populate("services");
+  if (!serviceId) {
+    return res.status(400).json({
+      success: false,
+      message: "Service ID is required",
+    });
+  };
 
-  if (!rateCards || rateCards.length === 0) {
-    throw new ApiError(404, "No rate card found for this service");
+  const service = await ServiceModel.findById(serviceId).lean();
+
+  if (!service) {
+    return res.status(404).json({
+      success: false,
+      message: "Service not found",
+    });
+  }
+
+  let rateCard = null;
+
+  if (service.subCategoryId) {
+    rateCard = await RateCardModel.findOne({
+      subCategory: service.subCategoryId
+    })
+      .populate("category subCategory")
+      .lean();
+  } else {
+    rateCard = await RateCardModel.findOne({
+      category: service.categoryId
+    })
+      .populate("category subCategory")
+      .lean();
+  }
+
+  if (!rateCard) {
+    return res.status(404).json({
+      success: false,
+      message: "No rate card found for this service",
+    });
   }
 
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
-    data: rateCards,
+    data: rateCard,
   });
 });
+

@@ -49,6 +49,7 @@ import trainingAttendanceRoutes from "./trainingAttendance.routes.js";
 import walletRoutes from "./wallet.routes.js";
 import localityRoutes from "./locality.routes.js";
 import areaZoneRoutes from "./areaZone.routes.js";
+import disclaimerRoutes from "./discliamer.routes.js";
 
 const router = express.Router();
 
@@ -86,6 +87,7 @@ router.use("/blog", blogRoutes);
 router.use("/terms-conditions", termsConditionsRoutes);
 router.use("/privacy-policy", privacyPolicyRoutes);
 router.use("/refund-policy", refundPolicyRoutes);
+router.use("/disclaimer", disclaimerRoutes);
 router.use("/impact", impactRoutes);
 router.use("/contact-enquiry", contactEnquiryRoutes);
 router.use("/job-posting", jobPostingRoutes);

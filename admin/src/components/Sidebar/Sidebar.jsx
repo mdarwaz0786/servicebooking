@@ -487,6 +487,14 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/add-disclaimer"
+                    className={currentPath === "/add-disclaimer" ? "active" : ""}
+                  >
+                    <span>Disclaimer</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/add-impact"
                     className={currentPath === "/add-impact" ? "active" : ""}
                   >
