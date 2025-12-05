@@ -4,6 +4,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
 import OtpModel from "../../models/otp.model.js";
+import compressImage from "../../helpers/compressImage.js";
 
 const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -56,6 +57,52 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     message: "Login successful",
     user,
     token: generateToken(user._id),
+  });
+});
+
+// Update Profile
+export const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) throw new ApiError(401, "Unauthorized");
+
+  const { name, email, mobile, dob } = req.body;
+
+  // Fetch existing user
+  const user = await UserModel.findById(userId);
+  if (!user) throw new ApiError(404, "User not found");
+
+  // Validate email if updating
+  if (email) {
+    const emailExists = await UserModel.findOne({ email, _id: { $ne: userId } });
+    if (emailExists) throw new ApiError(400, "Email is already taken");
+  }
+
+  // Validate mobile if updating
+  // if (mobile) {
+  //   const mobileExists = await UserModel.findOne({ mobile, _id: { $ne: userId } });
+  //   if (mobileExists) throw new ApiError(400, "Mobile number already registered");
+  // }
+
+  if (req.files?.profileImage?.[0]) {
+    if (user.profileImage && fs.existsSync(path.join(process.cwd(), user.profileImage))) {
+      fs.unlinkSync(path.join(process.cwd(), user.profileImage));
+    };
+    user.profileImage = await compressImage(req.files.profileImage[0].buffer, "user");
+  };
+
+  // Update fields safely
+  user.name = name || user?.name;
+  user.email = email || user?.email;
+  // user.mobile = mobile || user?.mobile;
+  user.dob = dob || user?.dob;
+
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+    data: user,
   });
 });
 
