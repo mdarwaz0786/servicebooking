@@ -153,7 +153,7 @@ const ServiceDetail = () => {
 
               {data.serviceIncluded && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-5 br-10">
+                  <div className="bg-light-500 p-5 pb-5 br-10 service-detail-section">
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <h3
                         style={{
@@ -185,7 +185,7 @@ const ServiceDetail = () => {
 
               {data?.requirementFromCustomer && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 br-10 text-center">
+                  <div className="bg-light-500 p-5 br-10 text-center service-detail-section">
                     {/* Title */}
                     <h3
                       style={{
@@ -193,6 +193,7 @@ const ServiceDetail = () => {
                         fontWeight: "600",
                         color: "#00522c",
                         marginBottom: "30px",
+                        textAlign:'center'
                       }}
                     >
                       {data.requirementFromCustomer.mainTitle}
@@ -237,7 +238,7 @@ const ServiceDetail = () => {
 
               {
                 (data?.whyChooseUs) && (
-                  <div className="container bg-light-500 p-3 mb-5 rounded-3">
+                  <div className="container bg-light-500 p-3 mb-5 rounded-3 service-detail-section">
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <h3
                         style={{
@@ -250,7 +251,8 @@ const ServiceDetail = () => {
                           borderRadius: "12px",
                           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                           display: "inline-block",
-                          marginTop: "16px"
+                          marginTop: "16px",
+                          textAlign:'center'
                         }}
                       >
                         {data?.whyChooseUs?.mainTitle}
@@ -280,7 +282,7 @@ const ServiceDetail = () => {
 
               {data?.expertTechnician && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-3 pb-5 br-10">
+                  <div className="bg-light-500 p-3 pb-5 br-10 service-detail-section">
                     <div className="row align-items-stretch">
                       {/* Left Section*/}
                         <h3
@@ -289,6 +291,7 @@ const ServiceDetail = () => {
                             fontWeight: "700",
                             color: "#00522c",
                             marginBottom: "20px",
+                            textAlign:'center'
                           }}
                         >
                           {data?.expertTechnician?.mainTitle}
@@ -342,7 +345,7 @@ const ServiceDetail = () => {
 
               {data?.brandLogo && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-4 br-10 text-center">
+                  <div className="bg-light-500 p-5 pb-4 br-10 text-center service-detail-section">
                     {/* Title */}
                     <h3
                       style={{
@@ -405,7 +408,7 @@ const ServiceDetail = () => {
 
               {data?.gIPromise && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-5 br-10">
+                  <div className="bg-light-500 p-5 pb-5 br-10 service-detail-section">
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <h3
                         style={{
@@ -438,7 +441,7 @@ const ServiceDetail = () => {
 
               {(data?.serviceFaq) ? (
                 <>
-                  <h2 className="">
+                  <h2 className="service-detail-section-h3">
                     {data?.serviceFaq?.mainTitle}
                   </h2>
                   <div id="faq" className="accordion-collapse collapse show">
