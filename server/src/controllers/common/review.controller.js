@@ -68,65 +68,94 @@ export const getReviewById = asyncHandler(async (req, res) => {
 
 // google reviews
 export const getGoogleReviews = asyncHandler(async (req, res) => {
-  console.log("runs")
   try {
     const placeId = "ChIJN7R4GfofDTkRtUWu8aAYjeM";
     const mapUrl = `https://www.google.com/maps/place/?q=place_id:${placeId}`;
 
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu"
+      ],
     });
 
     const page = await browser.newPage();
-    await page.goto(mapUrl, { waitUntil: "networkidle2" });
 
-    // Wait for review section
-    await page.waitForSelector(".jftiEf");
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0 Safari/537.36"
+    );
 
-    const scrollable = await page.$(".m6QErb"); // review scroll container
+    await page.goto(mapUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
+
+    // ⭐ Google now renders reviews inside a shadow iframe → must wait properly
+    await page.waitForSelector("button[jsaction='pane.reviewChart.moreReviews']", {
+      timeout: 30000,
+    });
+
+    // Click "More reviews" button
+    await page.click("button[jsaction='pane.reviewChart.moreReviews']");
+
+    // Wait until review list loads
+    await page.waitForSelector("div[data-review-id]", { timeout: 30000 });
 
     let reviews = [];
-    let prevScrollTop = -1;
+    let lastHeight = 0;
 
     while (true) {
-      // Scrape current visible reviews
-      const newReviews = await page.$$eval(".jftiEf", (nodes) =>
+      const newReviews = await page.$$eval("div[data-review-id]", (nodes) =>
         nodes.map((el) => ({
-          author_name: el.querySelector(".d4r55")?.innerText || "",
-          rating: el.querySelector(".kvMYJc")?.getAttribute("aria-label") || "",
-          profile_photo_url: el.querySelector("img")?.src || "",
-          text: el.querySelector(".MyEned")?.innerText || "",
-          relative_time_description: el.querySelector(".rsqaWe")?.innerText || "",
+          author_name:
+            el.querySelector(".d4r55, .ODSEW-ShBeI-title")?.innerText || "",
+          rating:
+            el.querySelector(".kvMYJc")?.getAttribute("aria-label") || "",
+          profile_photo_url:
+            el.querySelector("img")?.src || "",
+          text:
+            el.querySelector(".ODSEW-ShBeI-text, .MyEned")?.innerText || "",
+          relative_time_description:
+            el.querySelector(".ODSEW-ShBeI-RgZmSc-date, .rsqaWe")?.innerText ||
+            "",
         }))
       );
 
-      // Merge unique reviews by text + author
-      newReviews.forEach(r => {
-        if (!reviews.some(ex => ex.author_name === r.author_name && ex.text === r.text)) {
+      // Merge unique
+      newReviews.forEach((r) => {
+        if (!reviews.some((x) => x.author_name === r.author_name && x.text === r.text)) {
           reviews.push(r);
         }
       });
 
-      // Scroll inside review container
-      await scrollable.evaluate((el) => {
-        el.scrollBy(0, el.scrollHeight);
-      });
+      // Scroll automatically
+      let newHeight = await page.evaluate(
+        "document.querySelector('div.m6QErb[role=\"region\"]').scrollHeight"
+      );
+
+      if (newHeight === lastHeight) break;
+
+      lastHeight = newHeight;
+
+      await page.evaluate(
+        "document.querySelector('div.m6QErb[role=\"region\"]').scrollTo(0, document.querySelector('div.m6QErb[role=\"region\"]').scrollHeight)"
+      );
 
       await page.waitForTimeout(1500);
-
-      // Stop if no new scroll happened
-      const newScrollTop = await scrollable.evaluate((el) => el.scrollTop);
-      if (newScrollTop === prevScrollTop) break;
-      prevScrollTop = newScrollTop;
     }
 
     await browser.close();
-    return res.json({ total: reviews.length, reviews });
+
+    return res.json({ success: true, total: reviews.length, reviews });
 
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Scraping failed" });
+    console.error("Google Review Scraping Error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Scraping failed",
+      error: err.message,
+    });
   }
 });
+
 

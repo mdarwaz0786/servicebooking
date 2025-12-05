@@ -4,7 +4,7 @@ import { getGoogleReviews, getReviewById, getReviews } from "../../controllers/c
 const router = express.Router();
 
 router.get("/", getReviews);
+router.get("/google-reviews", getGoogleReviews);
 router.get("/:id", getReviewById);
-router.get("/google-review", getGoogleReviews);
 
 export default router;
