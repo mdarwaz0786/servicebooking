@@ -109,6 +109,7 @@ import CustomerSupportListPage from "../pages/Support/CustomerSupportListPage";
 import ProviderSupportListPage from "../pages/Support/ProviderSupportListPage";
 import CancelledBookingListPage from "../pages/Booking/CancelledBookingListPage";
 import CompletedBookingListPage from "../pages/Booking/CompletedBookingListPage";
+import AddDisclaimerPage from "../pages/Disclaimer/AddDisclaimerPage";
 
 const routesConfig = {
   private: [
@@ -214,6 +215,8 @@ const routesConfig = {
     { path: "/add-terms-conditions", element: AddTermsConditionsPage },
 
     { path: "/add-privacy-policy", element: AddPrivacyPolicyPage },
+
+    { path: "/add-disclaimer", element: AddDisclaimerPage },
 
     { path: "/add-refund-policy", element: AddRefundPolicyPage },
 

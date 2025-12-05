@@ -31,7 +31,7 @@ const removeServices = (doc) => {
 // ==================== GET ALL SERVICES ====================
 export const getServices = asyncHandler(async (req, res) => {
   let { search, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
-
+  console.log("runs")
   page = parseInt(page, 10) || 1;
   limit = parseInt(limit, 10) || 10;
 
@@ -43,7 +43,6 @@ export const getServices = asyncHandler(async (req, res) => {
   }
 
   const skip = (page - 1) * limit;
-
 
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
@@ -94,8 +93,6 @@ export const getServices = asyncHandler(async (req, res) => {
 
   const services = await ServiceModel.aggregate([
     { $match: filters },
-
-    // JOIN CATEGORY
     {
       $lookup: {
         from: "categories",
@@ -105,8 +102,6 @@ export const getServices = asyncHandler(async (req, res) => {
       }
     },
     { $unwind: "$category" },
-
-    // JOIN SUBCATEGORY
     {
       $lookup: {
         from: "subcategories",
@@ -116,8 +111,6 @@ export const getServices = asyncHandler(async (req, res) => {
       }
     },
     { $unwind: { path: "$subCategory", preserveNullAndEmptyArrays: true } },
-
-    // JOIN SUBSUBCATEGORY
     {
       $lookup: {
         from: "subsubcategories",
@@ -127,8 +120,6 @@ export const getServices = asyncHandler(async (req, res) => {
       }
     },
     { $unwind: { path: "$subSubCategory", preserveNullAndEmptyArrays: true } },
-
-    // JOIN SUBSUBSUBCATEGORY
     {
       $lookup: {
         from: "subsubsubcategories",
@@ -138,8 +129,6 @@ export const getServices = asyncHandler(async (req, res) => {
       }
     },
     { $unwind: { path: "$subSubSubCategory", preserveNullAndEmptyArrays: true } },
-
-    // 🚨 MAIN FIX — REMOVE SERVICES OF INACTIVE CATEGORIES
     {
       $match: {
         "category.status": true,
@@ -156,11 +145,9 @@ export const getServices = asyncHandler(async (req, res) => {
     { $limit: limit }
   ]);
 
-
-  // 🔹 Fetch rate cards related to these services
   const serviceIds = services.map((s) => s._id);
-  const rateCards = await RateCardModel.find({ services: { $in: serviceIds } }).select("services");
-  const serviceIdsWithRateCards = new Set(rateCards.flatMap(r => r.services.map(id => id.toString())));
+  // const rateCards = await RateCardModel.find({ services: { $in: serviceIds } }).select("services");
+  // const serviceIdsWithRateCards = new Set(rateCards.flatMap(r => r.services.map(id => id.toString())));
 
   let cartItems = [];
   if (userId) {
@@ -183,34 +170,53 @@ export const getServices = asyncHandler(async (req, res) => {
   const bookingRatings = {};
   reviews.forEach((r) => (bookingRatings[r?.bookingId?.toString()] = r?.rating));
 
-  const servicesWithRatings = services?.map((service) => {
-    const sid = service?._id?.toString();
-    const bookingIds = serviceToBookingIds[sid] || [];
-    let sum = 0;
-    let count = 0;
+  const servicesWithRatings = await Promise.all(
+    services.map(async (service) => {
+      const sid = service?._id?.toString();
 
-    bookingIds.forEach((bid) => {
-      const rating = bookingRatings[bid?.toString()];
-      if (rating) {
-        sum += rating;
-        count++;
+      let rateCard = null;
+
+      if (service.subCategoryId) {
+        rateCard = await RateCardModel.findOne({
+          subCategory: service.subCategoryId,
+        })
+          .populate("category subCategory")
+          .lean();
+      } else {
+        rateCard = await RateCardModel.findOne({
+          category: service.categoryId,
+        })
+          .populate("category subCategory")
+          .lean();
       }
-    });
 
-    const averageRating = count > 0 ? Number((sum / count).toFixed(1)) : 0;
-    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
-    const quantity = cartItem ? cartItem?.quantity : 0;
+      const bookingIds = serviceToBookingIds[sid] || [];
+      let sum = 0;
+      let count = 0;
 
-    return {
-      ...service,
-      ratings: {
-        totalRatings: count,
-        averageRating,
-      },
-      quantity,
-      rateCard: serviceIdsWithRateCards.has(sid), // 🔹 true/false
-    };
-  });
+      bookingIds.forEach((bid) => {
+        const rating = bookingRatings[bid?.toString()];
+        if (rating) {
+          sum += rating;
+          count++;
+        }
+      });
+
+      const averageRating = count > 0 ? Number((sum / count).toFixed(1)) : 0;
+      const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
+      const quantity = cartItem ? cartItem?.quantity : 0;
+
+      return {
+        ...service,
+        ratings: {
+          totalRatings: count,
+          averageRating,
+        },
+        quantity,
+        rateCard: rateCard || null,
+      };
+    })
+  );
 
   const total = await ServiceModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -243,10 +249,21 @@ export const getServiceById = asyncHandler(async (req, res) => {
 
   if (!service) throw new ApiError(404, "Service not found");
 
-  // 🔹 Fetch full rate card for this service
-  const rateCard = await RateCardModel.findOne({ services: serviceId })
-    .populate("services")
-    .lean();
+  let rateCard = null;
+
+  if (service.subCategoryId) {
+    rateCard = await RateCardModel.findOne({
+      subCategory: service.subCategoryId
+    })
+      .populate("category subCategory")
+      .lean();
+  } else {
+    rateCard = await RateCardModel.findOne({
+      category: service.categoryId
+    })
+      .populate("category subCategory")
+      .lean();
+  }
 
   removeServices(service?.serviceIncluded);
   removeServices(service?.requirementFromCustomer);
@@ -304,8 +321,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   };
   service.quantity = quantity;
 
-  // 🔹 Add full rateCard details
-  service.rateCard = rateCard || null;
+  service.rateCard = rateCard;
 
   return res.status(200).json({
     success: true,
