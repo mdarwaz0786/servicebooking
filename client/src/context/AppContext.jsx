@@ -116,6 +116,7 @@ export const AppProvider = ({ children }) => {
       privacyPolicy: `${commurl}privacy-policy/68f9c40128f9e5ad117c82a1`,
       refundPolicy: `${commurl}refund-policy/68f9c555819007e42b718e67`,
       GreenIndiaTeamImpact: `${commurl}impact/68f9c71c3cb87f459f74c3d7`,
+      Disclaimer: `${commurl}disclaimer/68f9c71c3cb87f459f74c3d7`,
 
       contactEnquiry: `${commurl}contact-enquiry`,
 

@@ -24,6 +24,7 @@ const CompanyReviewModal = ({ bookingId }) => {
         bookingId: bookingId,
         rating:rating,
         description:review,
+        type:2,
       };
       
 
