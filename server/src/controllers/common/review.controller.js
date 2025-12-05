@@ -90,15 +90,32 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
 
     await page.goto(mapUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-    // ⭐ Google now renders reviews inside a shadow iframe → must wait properly
-    await page.waitForSelector("button[jsaction='pane.reviewChart.moreReviews']", {
-      timeout: 30000,
-    });
+    // ⭐ NEW BUTTON SELECTORS (2025)
+    const reviewBtnSelectors = [
+      "button[aria-label='See all reviews']",
+      "button[jsaction*='reviews']",
+      "button[aria-label*='reviews']",
+      ".hh2c6",
+      "button[data-item-id*='reviews']"
+    ];
 
-    // Click "More reviews" button
-    await page.click("button[jsaction='pane.reviewChart.moreReviews']");
+    // ⭐ Wait for any review button to appear
+    await page.waitForFunction(
+      (sels) => sels.some(sel => document.querySelector(sel)),
+      { timeout: 30000 },
+      reviewBtnSelectors
+    );
 
-    // Wait until review list loads
+    // ⭐ Click the first available review button
+    for (const sel of reviewBtnSelectors) {
+      const btn = await page.$(sel);
+      if (btn) {
+        await btn.click();
+        break;
+      }
+    }
+
+    // ⭐ Now wait for review container
     await page.waitForSelector("div[data-review-id]", { timeout: 30000 });
 
     let reviews = [];
@@ -111,8 +128,7 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
             el.querySelector(".d4r55, .ODSEW-ShBeI-title")?.innerText || "",
           rating:
             el.querySelector(".kvMYJc")?.getAttribute("aria-label") || "",
-          profile_photo_url:
-            el.querySelector("img")?.src || "",
+          profile_photo_url: el.querySelector("img")?.src || "",
           text:
             el.querySelector(".ODSEW-ShBeI-text, .MyEned")?.innerText || "",
           relative_time_description:
@@ -121,14 +137,14 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
         }))
       );
 
-      // Merge unique
+      // ⭐ Merge unique reviews
       newReviews.forEach((r) => {
         if (!reviews.some((x) => x.author_name === r.author_name && x.text === r.text)) {
           reviews.push(r);
         }
       });
 
-      // Scroll automatically
+      // ⭐ Auto scroll reviews
       let newHeight = await page.evaluate(
         "document.querySelector('div.m6QErb[role=\"region\"]').scrollHeight"
       );
@@ -157,5 +173,6 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
     });
   }
 });
+
 
 
