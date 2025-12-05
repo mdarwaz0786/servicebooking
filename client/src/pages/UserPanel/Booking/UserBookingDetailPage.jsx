@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { Link, useParams } from "react-router-dom";
 import BookignReviewModal from "../../../components/Modal/BookignReviewModal";
+import CompanyReviewModal from "../../../components/Modal/CompanyReviewModal";
 
 const UserBookingDetailPage = () => {
     const { bookingId } = useParams();
@@ -267,6 +268,8 @@ const UserBookingDetailPage = () => {
 </div>
 
   <BookignReviewModal bookingId={data._id} />
+  <CompanyReviewModal bookingId={data._id} />
+
   </>
 
 

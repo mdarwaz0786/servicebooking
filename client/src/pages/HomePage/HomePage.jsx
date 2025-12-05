@@ -24,6 +24,7 @@ import CategoryModal from "../../components/Modal/CategoryModal";
 
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
  
 const HomePage = () => {
@@ -71,11 +72,13 @@ useEffect(() => {
               {/* Har 2 service ke baad banner dikhana */}
               {(index + 1) % 2 === 0 && homePageData.banners && homePageData.banners[bannerIndex] && (
                 <div className="container mt-4">
-                  <img
-                    src={imageCheck(width>767?homePageData.banners[bannerIndex].image:homePageData.banners[bannerIndex].mobileBanner)}
-                    className="img-fluid"
-                    alt={`Banner ${bannerIndex}`}
-                  />
+                  <Link to={homePageData.banners[bannerIndex].link} target="_blank">
+                    <img
+                      src={imageCheck(width>767?homePageData.banners[bannerIndex].image:homePageData.banners[bannerIndex].mobileBanner)}
+                      className="img-fluid"
+                      alt={`Banner ${bannerIndex}`}
+                    />
+                  </Link>
                 </div>
               )}
             </div>

@@ -66,6 +66,9 @@ export const getReviewById = asyncHandler(async (req, res) => {
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: review });
 });
 
+
+
+
 // google reviews
 export const getGoogleReviews = asyncHandler(async (req, res) => {
   try {
@@ -90,8 +93,8 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
 
     await page.goto(mapUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-    // ⭐ NEW BUTTON SELECTORS (2025)
-    const reviewBtnSelectors = [
+    // ⭐ All updated review buttons (2025)
+    const reviewBtns = [
       "button[aria-label='See all reviews']",
       "button[jsaction*='reviews']",
       "button[aria-label*='reviews']",
@@ -99,15 +102,15 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
       "button[data-item-id*='reviews']"
     ];
 
-    // ⭐ Wait for any review button to appear
+    // Wait for ANY review button
     await page.waitForFunction(
-      (sels) => sels.some(sel => document.querySelector(sel)),
+      (selectors) => selectors.some(sel => document.querySelector(sel)),
       { timeout: 30000 },
-      reviewBtnSelectors
+      reviewBtns
     );
 
-    // ⭐ Click the first available review button
-    for (const sel of reviewBtnSelectors) {
+    // Click first available button
+    for (const sel of reviewBtns) {
       const btn = await page.$(sel);
       if (btn) {
         await btn.click();
@@ -115,8 +118,25 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
       }
     }
 
-    // ⭐ Now wait for review container
     await page.waitForSelector("div[data-review-id]", { timeout: 30000 });
+
+   
+   
+   // Detect scroll container (2023–2025)
+    const scrollHandle = await page.evaluateHandle(() => {
+      return (
+        document.querySelector('div.m6QErb[role="region"]') || 
+        document.querySelector('.OJRYGc') ||
+        document.querySelector('.fzUZNc') ||
+        document.querySelector('.jftiEf') || 
+        document.querySelector('.h3zW0') ||
+        null
+      );
+    });
+
+    if (!scrollHandle) {
+      throw new Error("Scroll container not found");
+    }
 
     let reviews = [];
     let lastHeight = 0;
@@ -124,41 +144,30 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
     while (true) {
       const newReviews = await page.$$eval("div[data-review-id]", (nodes) =>
         nodes.map((el) => ({
-          author_name:
-            el.querySelector(".d4r55, .ODSEW-ShBeI-title")?.innerText || "",
-          rating:
-            el.querySelector(".kvMYJc")?.getAttribute("aria-label") || "",
+          author_name: el.querySelector(".d4r55, .ODSEW-ShBeI-title")?.innerText || "",
+          rating: el.querySelector(".kvMYJc")?.getAttribute("aria-label") || "",
           profile_photo_url: el.querySelector("img")?.src || "",
-          text:
-            el.querySelector(".ODSEW-ShBeI-text, .MyEned")?.innerText || "",
+          text: el.querySelector(".ODSEW-ShBeI-text, .MyEned")?.innerText || "",
           relative_time_description:
-            el.querySelector(".ODSEW-ShBeI-RgZmSc-date, .rsqaWe")?.innerText ||
-            "",
+            el.querySelector(".ODSEW-ShBeI-RgZmSc-date, .rsqaWe")?.innerText || "",
         }))
       );
 
-      // ⭐ Merge unique reviews
       newReviews.forEach((r) => {
         if (!reviews.some((x) => x.author_name === r.author_name && x.text === r.text)) {
           reviews.push(r);
         }
       });
 
-      // ⭐ Auto scroll reviews
-      let newHeight = await page.evaluate(
-        "document.querySelector('div.m6QErb[role=\"region\"]').scrollHeight"
-      );
+      const newHeight = await scrollHandle.evaluate((el) => el.scrollHeight);
 
       if (newHeight === lastHeight) break;
-
       lastHeight = newHeight;
 
-      await page.evaluate(
-        "document.querySelector('div.m6QErb[role=\"region\"]').scrollTo(0, document.querySelector('div.m6QErb[role=\"region\"]').scrollHeight)"
-      );
-
-      await page.waitForTimeout(1500);
+      await scrollHandle.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
     }
+
 
     await browser.close();
 
@@ -173,6 +182,8 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
     });
   }
 });
+
+
 
 
 

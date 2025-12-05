@@ -104,7 +104,7 @@ const Services = ({search, slug}) => {
           :null}
 
             {/* -- 2nd  box- */}
-            <div className={`${cartItems.length > 0 ? slug?'col-xl-6 col-lg-6':'col-xl-9 col-lg-12' : 'col-xl-8'}`}>
+            <div className={`${cartItems.length > 0 ? slug?'col-xl-6 col-lg-6':'col-xl-9 col-lg-12' : 'col-xl-8'} ${!slug?'m-auto':''}`}>
 
               <div className="row justify-content-center align-items-center">
 

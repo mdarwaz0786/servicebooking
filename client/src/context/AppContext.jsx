@@ -142,8 +142,8 @@ export const AppProvider = ({ children }) => {
 
       serviceManReview: `${userUrl}review`,
 
-      myManProfileDetail: `${userUrl}profile/detail`,
-      myManProfileUpdate: `${userUrl}profile`,
+      myProfileDetail: `${userUrl}auth/loggedIn`,
+      myProfileUpdate: `${userUrl}auth/update-profile`,
 
       // service man urls
       serviceManlogin: `${servicemanUrl}auth/login`,
@@ -427,6 +427,7 @@ export const AppProvider = ({ children }) => {
     serviceManJoinModal: false,
     addressModal: false,
     BookignStartModal: false,
+    CompanyReviewModal: false,
     ServiceDetailModal: false,
     RateCardModal: false,
     paymentModeModal: false,

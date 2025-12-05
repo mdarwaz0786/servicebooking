@@ -151,7 +151,7 @@ export const getServices = asyncHandler(async (req, res) => {
       }
     },
 
-    { $sort: sort === "-createdAt" ? { createdAt: -1 } : { createdAt: 1 } },
+    { $sort: sort === "-createdAt" ? { createdAt: 1 } : { createdAt: 1 } },
     { $skip: skip },
     { $limit: limit }
   ]);

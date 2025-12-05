@@ -6,7 +6,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // Create Review
 export const createReview = asyncHandler(async (req, res) => {
-  const { bookingId, rating, description } = req.body;
+  const { bookingId, rating, description, type } = req.body;
 
   if (!bookingId) throw new ApiError(400, "Booking ID is required");
   if (!rating) throw new ApiError(400, "Rating is required");
@@ -18,6 +18,7 @@ export const createReview = asyncHandler(async (req, res) => {
     bookingId,
     servicemanId: servicemanId ? servicemanId?.servicemanId : null,
     rating,
+    type,
     description,
     createdBy: req.user?._id,
   });

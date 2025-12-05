@@ -480,7 +480,7 @@ const ServiceDetail = () => {
 
                     {ratingArray.map((item, index) =>
                       <span key={index + '' + item}>
-                        {(item <= data?.averageRating) ? (
+                        {(item <= rating?.averageRating) ? (
                           <i className="ti ti-star-filled text-warning me-1" key={index} />
                         ) : (<i className="ti ti-star text-warning me-1" key={index} />)}
                       </span>

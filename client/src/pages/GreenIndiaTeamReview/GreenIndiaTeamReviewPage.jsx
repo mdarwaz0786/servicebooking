@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import Pagination from "../../components/Pagination/Pagination";
 import { Link } from "react-router-dom";
+import GoogleReviews from "../../components/Google/GoogleReviews";
 
 
 const GreenIndiaTeamReviewPage = () => {
@@ -48,6 +49,7 @@ const GreenIndiaTeamReviewPage = () => {
 
               <>
 
+              {/* <GoogleReviews /> */}
               
               {reviews.map((item, index)=>(
                   <div className="col-xxl-12 col-lg-12" key={index}>

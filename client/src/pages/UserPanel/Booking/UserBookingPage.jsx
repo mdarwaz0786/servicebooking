@@ -27,7 +27,7 @@ const UserBookingPage = () => {
   }, [page, limit]);  
 
   return (
-    <div className="col-xl-9 col-lg-8">
+    <div className="col-xl-9 col-lg-8 card pt-2 pb-2">
       <div className="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-4">
         <h4>Booking List</h4>
         <div className="d-flex align-items-center d-none">

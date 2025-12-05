@@ -30,6 +30,9 @@ const reviewSchema = new mongoose.Schema({
     trim: true,
     maxlength: [1000, "Description must not exceed 1000 characters"],
   },
+  type: {
+    type: Number, // 1==service,2==company
+  },
   status: {
     type: Boolean,
     default: true,

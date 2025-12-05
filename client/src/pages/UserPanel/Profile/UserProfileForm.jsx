@@ -10,7 +10,7 @@ const UserProfileForm = () => {
     const fetchData = async () => {
         try {
             let userId = generateUniqueId();
-            const response = await postData({}, Urls.myManProfileDetail, "GET", 1, 1); 
+            const response = await postData({}, Urls.myProfileDetail, "GET", 1, 1); 
             if(response.success)
             {
                 setFormData((prev) => ({
@@ -51,7 +51,7 @@ const UserProfileForm = () => {
 
         try {
             let userId = generateUniqueId();
-            const response = await postData(formData, Urls.myManProfileUpdate, "POST", 0, 0,1); 
+            const response = await postData(formData, Urls.myProfileUpdate, "POST", 0, 0,1); 
             if(response.success)
             {
                 
@@ -109,7 +109,7 @@ const UserProfileForm = () => {
 
             <>
                 
-                    <div className="col-xxl-8 col-lg-8">
+                    <div className="col-xxl-8 col-lg-8 card pt-2 pb-2">
                         <div className="row">
                             <div className="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-1">
                                 <h4>Profile</h4>
@@ -157,7 +157,7 @@ const UserProfileForm = () => {
                                     </div>
                                     
                                     <div className="col-md-6 mb-3">
-                                        <label className="form-label">Reference Name 1</label>
+                                        <label className="form-label">Mobile</label>
                                         <input
                                             type="text"
                                             name="mobile"
@@ -165,6 +165,7 @@ const UserProfileForm = () => {
                                             value={formData.mobile}
                                             onChange={handleChange}
                                             placeholder="Enter Name"
+                                            disabled
                                         />
                                     </div>
                                     

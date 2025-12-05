@@ -10,7 +10,7 @@ router.post("/login", loginUser);
 router.post("/verify-otp", verifyOtp);
 router.get("/loggedIn", isLoggedIn, loggedInUser);
 
-router.patch(
+router.post(
   "/update-profile",
   isLoggedIn,
   upload.fields([

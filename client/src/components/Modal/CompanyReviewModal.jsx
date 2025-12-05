@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { FaStar } from "react-icons/fa";
 
-const BookignReviewModal = ({ bookingId }) => {
+const CompanyReviewModal = ({ bookingId }) => {
   const { modals, toggleModal, Urls, postData, toast } = useContext(AppContext);
 
   
@@ -32,8 +32,7 @@ const BookignReviewModal = ({ bookingId }) => {
 
       if (response?.success) {
         toast.success(response.message);
-        toggleModal("BookignReviewModal", false);
-        toggleModal("CompanyReviewModal", true);
+        toggleModal("CompanyReviewModal", false);
         setRating(0);
         setReview("");
       } else {
@@ -50,18 +49,18 @@ const BookignReviewModal = ({ bookingId }) => {
   return (
     <>
       <div
-        className={`modal fade ${modals.BookignReviewModal ? "show" : ""}`}
+        className={`modal fade ${modals.CompanyReviewModal ? "show" : ""}`}
         id="provider"
-        style={{ display: modals.BookignReviewModal ? "block" : "none" }}
+        style={{ display: modals.CompanyReviewModal ? "block" : "none" }}
       >
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header d-flex align-items-center justify-content-between">
-              <h5>Write A Service Review</h5>
+              <h5>Write A Company Review</h5>
               <a
                 data-bs-dismiss="modal"
                 aria-label="Close"
-                onClick={() => toggleModal("BookignReviewModal", false)}
+                onClick={() => toggleModal("CompanyReviewModal", false)}
                 style={{ cursor: "pointer" }}
               >
                 <i className="ti ti-circle-x-filled fs-20"></i>
@@ -134,4 +133,4 @@ const BookignReviewModal = ({ bookingId }) => {
   );
 };
 
-export default BookignReviewModal;
+export default CompanyReviewModal;

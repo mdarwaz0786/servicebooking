@@ -123,7 +123,7 @@ const HeroSection = ({categoryData, handleSubCategory}) => {
                       {homePageData.sliders && homePageData.sliders.length > 0 ? (
                         homePageData.sliders.map((value, index) => (
                           <SwiperSlide key={index}>
-                            <Link to={value.link ?? "#"}> 
+                            <Link to={value.link ?? "#"} target="_blank"> 
                               <img src={imageCheck(width>767?value.image:value.mobileBanner)} alt={`Slide ${index}`} />
                             </Link>
                           </SwiperSlide>
