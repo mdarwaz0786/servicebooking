@@ -32,6 +32,8 @@ const reviewSchema = new mongoose.Schema({
   },
   type: {
     type: Number, // 1==service,2==company
+    enum: [1, 2],
+    default: 1,
   },
   status: {
     type: Boolean,

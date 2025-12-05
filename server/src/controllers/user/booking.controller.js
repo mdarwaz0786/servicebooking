@@ -82,19 +82,19 @@ export const getBookings = asyncHandler(async (req, res) => {
   let { page = 1, limit = 10, sort = "desc", search } = req.query;
 
   const userId = req.user?._id;
-  
+
   if (!userId) {
     throw new ApiError(401, "Unauthorized: Please login to view your bookings");
   };
-  
+
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
-  
+
   const filters = {};
-  
+
   filters.userId = userId;
-  
+
 
   // if (userId) filters.userId = userId;
 
@@ -156,7 +156,7 @@ export const getBookings = asyncHandler(async (req, res) => {
     };
 
     const review = await ReviewModel.findOne({
-      bookingId: booking?._id,
+      bookingId: booking?._id, type: 1,
       userId: userId,
     })
       .populate({
@@ -244,7 +244,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   };
 
   const review = await ReviewModel.findOne({
-    bookingId: booking?._id,
+    bookingId: booking?._id, type: 1,
     userId,
   })
     .populate({

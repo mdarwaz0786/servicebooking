@@ -145,9 +145,7 @@ export const getServices = asyncHandler(async (req, res) => {
     { $limit: limit }
   ]);
 
-  const serviceIds = services.map((s) => s._id);
-  // const rateCards = await RateCardModel.find({ services: { $in: serviceIds } }).select("services");
-  // const serviceIdsWithRateCards = new Set(rateCards.flatMap(r => r.services.map(id => id.toString())));
+  const serviceIds = services.map((s) => s?._id);
 
   let cartItems = [];
   if (userId) {
@@ -165,7 +163,7 @@ export const getServices = asyncHandler(async (req, res) => {
   });
 
   const allBookingIds = bookingItems.map((b) => b?.bookingId);
-  const reviews = await ReviewModel.find({ bookingId: { $in: allBookingIds }, status: true }).select("bookingId rating");
+  const reviews = await ReviewModel.find({ bookingId: { $in: allBookingIds }, status: true, type: 1 }).select("bookingId rating");
 
   const bookingRatings = {};
   reviews.forEach((r) => (bookingRatings[r?.bookingId?.toString()] = r?.rating));
@@ -277,7 +275,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   const bookingIds = bookingItems.map((b) => b?.bookingId);
 
   const ratingStats = await ReviewModel.aggregate([
-    { $match: { bookingId: { $in: bookingIds }, status: true } },
+    { $match: { bookingId: { $in: bookingIds }, status: true, type: 1 } },
     {
       $group: {
         _id: "$rating",
@@ -299,7 +297,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
 
   const latestReviews = await ReviewModel
-    .find({ bookingId: { $in: bookingIds }, status: true })
+    .find({ bookingId: { $in: bookingIds }, status: true, type: 1 })
     .select("rating description userId createdAt updatedAt")
     .populate("user", "-password -role -createdAt -updatedAt")
     .sort({ createdAt: -1 })

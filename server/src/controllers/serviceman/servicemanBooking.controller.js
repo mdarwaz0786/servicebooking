@@ -76,7 +76,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   for (let b of bookings) {
     const review = await ReviewModel
       .findOne({
-        bookingId: b?.booking?._id,
+        bookingId: b?.booking?._id, type: 1
       })
       .populate({
         path: "userId",
@@ -154,7 +154,7 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
   };
 
   const review = await ReviewModel.findOne({
-    bookingId: booking.booking?._id,
+    bookingId: booking.booking?._id, type: 1
   })
     .populate({
       path: "userId",

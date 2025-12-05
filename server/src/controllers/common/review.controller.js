@@ -20,6 +20,7 @@ export const getReviews = asyncHandler(async (req, res) => {
   }
 
   filters.status = true;
+  filters.type = 1;
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
@@ -120,15 +121,15 @@ export const getGoogleReviews = asyncHandler(async (req, res) => {
 
     await page.waitForSelector("div[data-review-id]", { timeout: 30000 });
 
-   
-   
-   // Detect scroll container (2023–2025)
+
+
+    // Detect scroll container (2023–2025)
     const scrollHandle = await page.evaluateHandle(() => {
       return (
-        document.querySelector('div.m6QErb[role="region"]') || 
+        document.querySelector('div.m6QErb[role="region"]') ||
         document.querySelector('.OJRYGc') ||
         document.querySelector('.fzUZNc') ||
-        document.querySelector('.jftiEf') || 
+        document.querySelector('.jftiEf') ||
         document.querySelector('.h3zW0') ||
         null
       );

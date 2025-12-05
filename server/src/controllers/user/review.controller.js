@@ -28,7 +28,7 @@ export const createReview = asyncHandler(async (req, res) => {
 
 // Get All Reviews
 export const getReviews = asyncHandler(async (req, res) => {
-  let { bookingId, status, sort = "desc", page = 1, limit = 10 } = req.query;
+  let { bookingId, type, status, sort = "desc", page = 1, limit = 10 } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -36,6 +36,7 @@ export const getReviews = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (bookingId) filters.bookingId = bookingId;
+  if (type) filters.type = type;
 
   filters.userId = req.user?._id;
 
