@@ -23,6 +23,7 @@ const Footer = () => {
                   <li><Link to="/term-condition" onClick={handleLinkClick}>Terms & conditions</Link></li>
                   <li><Link to="/privacy-policy" onClick={handleLinkClick}>Privacy policy</Link></li>
                   <li><Link to="/refund-policy" onClick={handleLinkClick}>Refund Policy</Link></li>
+                  <li><Link to="/disclaimer" onClick={handleLinkClick}>Disclaimer</Link></li>
                   <li><Link to="/green-india-team-impact" onClick={handleLinkClick}>GI Team impact</Link></li>
                   <li><Link to="/career" onClick={handleLinkClick}>Career</Link></li>
                 </ul>

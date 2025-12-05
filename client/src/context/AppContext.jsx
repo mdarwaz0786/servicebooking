@@ -142,6 +142,9 @@ export const AppProvider = ({ children }) => {
 
       serviceManReview: `${userUrl}review`,
 
+      myManProfileDetail: `${userUrl}profile/detail`,
+      myManProfileUpdate: `${userUrl}profile`,
+
       // service man urls
       serviceManlogin: `${servicemanUrl}auth/login`,
       serviceManverifyOtp: `${servicemanUrl}auth/verify-otp`,

@@ -15,10 +15,7 @@ const BookignReviewModal = ({ bookingId }) => {
   // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!rating || !review.trim()) {
-      alert("Please provide rating and review before submitting.");
-      return;
-    }
+    
 
     setLoading(true);
 

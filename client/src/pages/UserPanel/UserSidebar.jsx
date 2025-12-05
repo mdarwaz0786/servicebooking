@@ -37,6 +37,12 @@ const UserSidebar = () => {
                 Bookings
               </Link>
             </li>
+            <li className="mb-4">
+              <Link to="/user/profile" className="d-flex align-items-center" onClick={handleClicksNav}>
+                <i className="ti ti-user me-2" />
+                Update Profile
+              </Link>
+            </li>
             {/* <li className="mb-4">
               <Link to="/user-favourites" className="d-flex align-items-center">
                 <i className="ti ti-heart me-2" />

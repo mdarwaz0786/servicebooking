@@ -73,7 +73,8 @@ const PaymentMethod = () => {
           if (success) {
             // toggleStep('confirmation', true);   // ✅ move forward
             toggleStep('payment', false);
-            navigate("/user/booking/"+response.data.booking._id);
+            // navigate("/user/booking/"+response.data.booking._id);
+            navigate("/user");
           }
           else{
             navigate("/");

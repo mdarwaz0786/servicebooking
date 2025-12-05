@@ -26,6 +26,7 @@ import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
 import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
 import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
 import Checkoutpage from "./pages/Checkout/Checkoutpage";
+import UserProfileForm from "./pages/UserPanel/Profile/UserProfileForm";
 import Test from "../Test";
 
 import ServiceManLayout from "./pages/ServiceManPanel/ServiceManLayout";
@@ -37,6 +38,7 @@ import ServiceManReviewPage from "./pages/ServiceManPanel/Review/ServiceManRevie
 
 import TermsConditionsPage from "./pages/TermsConditions/TermsConditionsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy/PrivacyPolicyPage";
+import DisclaimerPage from "./pages/Disclaimer/DisclaimerPage";
 import RefundPolicyPage from "./pages/RefundPolicy/RefundPolicyPage";
 import GreenIndiaTeamImpactPage from "./pages/GreenIndiaTeamImpact/GreenIndiaTeamImpactPage";
 import CareerPage from "./pages/Career/CareerPage";
@@ -58,6 +60,7 @@ const App = () => {
           <Route path="/addresses" element={<AddressesPage />} />
           <Route path="/term-condition" element={<TermsConditionsPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/refund-policy" element={<RefundPolicyPage />} />
           <Route path="/green-india-team-impact" element={<GreenIndiaTeamImpactPage />} />
           <Route path="/career" element={<CareerPage />} />
@@ -85,6 +88,7 @@ const App = () => {
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
           <Route path="/user/booking/invoice/:bookingId" element={<UserBookingInvoice />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
+          <Route path="/user/profile" element={<UserProfileForm />} />
           <Route path="/user/address" element={<UserAddressPage />} />
           <Route path="/user/reviews" element={<UserReviewsPage />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />
