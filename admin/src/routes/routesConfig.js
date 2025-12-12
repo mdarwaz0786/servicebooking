@@ -110,6 +110,8 @@ import ProviderSupportListPage from "../pages/Support/ProviderSupportListPage";
 import CancelledBookingListPage from "../pages/Booking/CancelledBookingListPage";
 import CompletedBookingListPage from "../pages/Booking/CompletedBookingListPage";
 import AddDisclaimerPage from "../pages/Disclaimer/AddDisclaimerPage";
+import MetaTagListPage from "../pages/MetaTag/MetaTagListPage";
+import MetaTagFormPage from "../pages/MetaTag/MetaTagFormPage";
 
 const routesConfig = {
   private: [
@@ -268,6 +270,10 @@ const routesConfig = {
     { path: "/update-support/:id", element: SupportFormPage },
     { path: "/customer-support", element: CustomerSupportListPage },
     { path: "/provider-support", element: ProviderSupportListPage },
+
+    { path: "/meta-tag", element: MetaTagListPage },
+    { path: "/add-meta-tag", element: MetaTagFormPage },
+    { path: "/update-meta-tag/:id", element: MetaTagFormPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },
