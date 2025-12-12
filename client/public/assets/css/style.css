@@ -36793,6 +36793,14 @@ p span {
   {
     border: 0;
   }
+  .service-detail-section {
+    padding: 10px !important;
+    padding-bottom: 25px !important;
+  }
+  .service-detail-section h3, .service-detail-section-h3 {
+      font-size: 20px !important;
+      margin-top: 10px;
+  }
  
 
 }

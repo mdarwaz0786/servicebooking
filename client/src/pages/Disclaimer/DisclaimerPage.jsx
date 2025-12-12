@@ -10,7 +10,7 @@ const DisclaimerPage = () => {
 
   const fetchDetail = async () => {
     try {
-      const response = await postData({}, Urls.privacyPolicy, "GET", 0, 1);
+      const response = await postData({}, Urls.Disclaimer, "GET", 0, 1);
       if (response.data) {
         setData(response.data);
       }

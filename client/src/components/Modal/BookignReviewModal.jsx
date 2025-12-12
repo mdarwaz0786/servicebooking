@@ -24,6 +24,7 @@ const BookignReviewModal = ({ bookingId }) => {
         bookingId: bookingId,
         rating:rating,
         description:review,
+        type:1,
       };
       
 
