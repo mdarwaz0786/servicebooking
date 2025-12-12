@@ -11,7 +11,7 @@ const AboutUsPage = () => {
     {
       name: "SARVESH KUMAR MISHRA",
       role: "(CEO & FOUNDER)",
-      img: "assets/img/profile.jpg",
+      img: "assets/img/home/sarvesh-mishra.svg",
       description: "Sarvesh Mishra founded Green India Team with a vision to make home appliance repair simple, reliable, and accessible. His strong leadership and commitment to quality have guided the company toward excellence and customer trust.",
     }
   ];
@@ -34,7 +34,7 @@ const AboutUsPage = () => {
                 </div>
                 <div className="abt-img">
                   <img
-                    src="assets/img/providers/provider-23.jpg"
+                    src="assets/img/home/top-about.svg"
                     className="img-fluid"
                     alt="img"
                   />
@@ -372,7 +372,7 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
           <div className="col-md-6">
             <div className="chooseus-img">
               <img
-                src="assets/img/services/service-75.jpg"
+                src="assets/img/home/why-choose-us.svg"
                 className="img-fluid"
                 alt="img"
               />

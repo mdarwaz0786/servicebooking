@@ -55,11 +55,16 @@ export const getMetaTags = asyncHandler(async (req, res) => {
 export const getMetaTagBySlug = asyncHandler(async (req, res) => {
   const { slug } = req.params;
 
-  const metaTag = await MetaTagModel.findOne({ slug })
+  let metaTag = await MetaTagModel.findOne({ slug })
     .populate("createdBy updatedBy", "name");
 
   if (!metaTag) {
-    throw new ApiError(404, "Meta tag not found");
+    metaTag = await MetaTagModel.findOne({ slug:'home' })
+    .populate("createdBy updatedBy", "name");
+  }
+
+  if (!metaTag) {
+    throw new ApiError(400, "Meta tag not found");
   }
 
   return res.status(200).json({
