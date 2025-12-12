@@ -253,6 +253,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/area-zone`,
     delete: `${BASE_URL}/api/v1/admin/area-zone`,
   },
+  metaTag: {
+    create: `${BASE_URL}/api/v1/admin/meta-tag`,
+    get: `${BASE_URL}/api/v1/admin/meta-tag`,
+    update: `${BASE_URL}/api/v1/admin/meta-tag`,
+    delete: `${BASE_URL}/api/v1/admin/meta-tag`,
+  },
   user: {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,
