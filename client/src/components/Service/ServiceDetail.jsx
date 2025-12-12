@@ -133,7 +133,7 @@ const ServiceDetail = () => {
 
                   {data?.rateCard ? (
                       <button
-                          className="btn btn-primary-ghost d-flex align-items-center"
+                          className="btn btn-primary-ghost d-flex align-items-center w-100 justify-content-sm-center"
                           onClick={() =>
                               handleRateCardDetail(data._id, data)
                           }

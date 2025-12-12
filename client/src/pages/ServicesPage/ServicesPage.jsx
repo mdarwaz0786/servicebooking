@@ -6,10 +6,11 @@ import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import RateCardModal from "../../components/Modal/RateCardModal";
+import FullPageLoader from "../../components/Loader/FullPageLoader";
 
 const ServicesPage = () => {    
  const { slug, search } = useParams();
-  const { Urls, postData, setserviceListData, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
+  const { Urls, postData, setserviceListData, pageLoading, setpageLoading, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
   const fetchData = async () => {
     try { 
 
@@ -27,10 +28,12 @@ const ServicesPage = () => {
         const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
 
           
-      
+        
         setserviceListData(response.data?response.data:[]);
         setservicePageCategoryData(response.categoryList?response.categoryList:[]);
         setservicePageName(response.name?response.name:'');
+
+        setpageLoading(false)
        
     } catch (error) { 
       console.error("Cart API Error:", error);
@@ -42,6 +45,9 @@ useEffect(() => {
   fetchData(); 
 }, []);  
 
+
+if(pageLoading) return(<FullPageLoader />)
+ 
 
 
   return (

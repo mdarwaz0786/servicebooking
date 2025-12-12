@@ -1,0 +1,56 @@
+/* FullPageLoader.css */
+.full-page-loader {
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  width: 100%;
+  /* height: 100%; */
+  background: rgba(255, 255, 255, 0.95);
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  /* z-index: 9999; */
+  backdrop-filter: blur(5px);
+}
+
+.loader-content {
+  text-align: center;
+}
+
+.spinner {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  animation-delay: -1.0s;
+}
+
+.loader-text {
+  margin-top: 20px;
+  color: #4b5563;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+@keyframes sk-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+  }
+}

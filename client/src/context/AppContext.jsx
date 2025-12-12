@@ -40,6 +40,7 @@ export const AppProvider = ({ children }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
+  const [pageLoading, setpageLoading] = useState(true);
   
   const [serviceDetailData, setserviceDetailData] = useState([]);
   const [serviceDetailDataItem, setserviceDetailDataItem] = useState();
@@ -95,6 +96,7 @@ export const AppProvider = ({ children }) => {
       logout: `${userUrl}logout`,
       
       homeDetail: `${commurl}home`,
+      metaDetail: `${commurl}meta-tag`,
       
 
       categoryList: `${commurl}category`,
@@ -728,6 +730,8 @@ export const AppProvider = ({ children }) => {
 
       serviceListData,
       setserviceListData,
+      pageLoading,
+      setpageLoading,
       serviceItemData,
       setserviceItemData,
 

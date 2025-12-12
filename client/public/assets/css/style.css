@@ -1836,8 +1836,8 @@ button:focus {
 
 .btn.btn-primary-ghost {
   background-color: transparent;
-  color: #FF008A;
-  border: 1px solid #FF008A;
+  color: #00723e;
+  border: 1px solid #00723e;
 }
 
 .btn.btn-primary-ghost:active {
@@ -20656,7 +20656,7 @@ fieldset.booking-content#first-field {
 
 .about-img .about-exp {
   position: absolute;
-  background: #111827;
+  background: #009258;
   border-radius: 10px;
   width: 370px;
   height: 100%;
