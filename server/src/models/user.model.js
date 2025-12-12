@@ -51,8 +51,25 @@ const userSchema = new mongoose.Schema(
       required: false,
     }
   },
-  { timestamps: true },
+  { timestamps: true,  toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
+
+
+userSchema.virtual("profile", {
+  ref: "ServiceManProfile",
+  localField: "_id",
+  foreignField: "userId",
+  justOne: true,
+});
+
+
+userSchema.virtual("kyc", {
+  ref: "KYC",
+  localField: "_id",
+  foreignField: "userId",
+  justOne: true,
+});
+
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
