@@ -10,7 +10,6 @@ const MetaTagSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
       trim: true,
       unique: [true, "Slug is unique"],
     },

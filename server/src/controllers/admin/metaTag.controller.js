@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { buildPagination } from "../../utils/pagination.js";
 import compressImage from "../../helpers/compressImage.js";
+import { generateMetaSlug } from "../../helpers/generateMetaSlug.js";
 
 // --------------------- CREATE META TAG ---------------------
 export const createMetaTag = asyncHandler(async (req, res) => {
@@ -31,7 +32,6 @@ export const createMetaTag = asyncHandler(async (req, res) => {
 
     const metaTag = await MetaTagModel.create({
       pageName,
-      slug,
       metaTitle,
       metaAuthor,
       metaKeywords,
@@ -40,6 +40,11 @@ export const createMetaTag = asyncHandler(async (req, res) => {
       status,
       createdBy: req.user?._id,
     });
+
+    const generatedSlug = await generateMetaSlug(slug);
+
+    metaTag.slug = generatedSlug;
+    await metaTag.save();
 
     return res.status(201).json({
       success: true,
@@ -142,8 +147,12 @@ export const updateMetaTag = asyncHandler(async (req, res) => {
     metaTag.image = await compressImage(req.files.image[0].buffer, "meta");
   };
 
+  if (slug && slug !== metaTag.slug) {
+    const newSlug = await generateMetaSlug(slug);
+    metaTag.slug = newSlug;
+  };
+
   metaTag.pageName = pageName || metaTag.pageName;
-  metaTag.slug = slug || metaTag.slug;
   metaTag.metaTitle = metaTitle || metaTag.metaTitle;
   metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
   metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;

@@ -51,9 +51,11 @@ export const getMetaTags = asyncHandler(async (req, res) => {
   });
 });
 
-// --------------------- GET SINGLE META TAG ---------------------
-export const getMetaTagById = asyncHandler(async (req, res) => {
-  const metaTag = await MetaTagModel.findById(req.params.id)
+// --------------------- GET META TAG BY SLUG ---------------------
+export const getMetaTagBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+
+  const metaTag = await MetaTagModel.findOne({ slug })
     .populate("createdBy updatedBy", "name");
 
   if (!metaTag) {
@@ -66,4 +68,5 @@ export const getMetaTagById = asyncHandler(async (req, res) => {
     data: metaTag,
   });
 });
+
 
