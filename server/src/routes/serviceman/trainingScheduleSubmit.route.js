@@ -4,7 +4,7 @@ import { createTrainingScheduleSubmit, getTrainingScheduleSubmitById, getTrainin
 
 const router = express.Router();
 
-router.post("/", createTrainingScheduleSubmit);
+router.post("/", isLoggedIn, createTrainingScheduleSubmit);
 router.get("/", isLoggedIn, getTrainingScheduleSubmits);
 router.get("/:id", isLoggedIn, getTrainingScheduleSubmitById);
 
