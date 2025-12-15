@@ -19,6 +19,7 @@ router.post(
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "icon", maxCount: 1 },
+    { name: "metaImage", maxCount: 1 },
   ]),
   validateFileSize,
   createCategory
@@ -37,6 +38,7 @@ router.patch(
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "icon", maxCount: 1 },
+    { name: "metaImage", maxCount: 1 },
   ]),
   validateFileSize,
   updateCategory

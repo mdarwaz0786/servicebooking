@@ -4,37 +4,37 @@ const MetaTagSchema = new mongoose.Schema(
   {
     pageName: {
       type: String,
-      default: null,
       trim: true,
-      maxlength: 100,
+      default: null,
     },
     slug: {
       type: String,
       trim: true,
-      unique: [true, "Slug is unique"],
+      unique: [true, "Slug should be unique"],
     },
     metaTitle: {
       type: String,
-      default: null,
       trim: true,
+      default: null,
     },
     metaAuthor: {
       type: String,
-      default: null,
       trim: true,
+      default: null,
     },
     metaKeywords: {
       type: String,
-      default: null,
       trim: true,
+      default: null,
     },
     metaDescription: {
       type: String,
-      default: null,
       trim: true,
+      default: null,
     },
     image: {
       type: String,
+      trim: true,
       default: null,
     },
     status: {

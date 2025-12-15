@@ -30,7 +30,7 @@ const blogSchema = new mongoose.Schema({
   },
   frontImageAlt: {
     type: String,
-    required: false,
+    default: null,
   },
   detailImage: {
     type: String,
@@ -38,13 +38,13 @@ const blogSchema = new mongoose.Schema({
   },
   detailImageAlt: {
     type: String,
-    required: false,
+    default: null,
   },
   meta: {
-    title: { type: String, trim: true },
-    keywords: { type: String, trim: true },
-    author: { type: String, trim: true },
-    description: { type: String, trim: true },
+    title: { type: String, trim: true, default: null },
+    keywords: { type: String, trim: true, default: null },
+    author: { type: String, trim: true, default: null },
+    description: { type: String, trim: true, default: null },
   },
   status: {
     type: Boolean,

@@ -53,6 +53,8 @@ VITE_API_BASE_URL=http://145.223.18.56:3001
 VITE_API_SERVER_BASE_URL=http://145.223.18.56:3001/
 VITE_RAZORPAY_KEY_ID=rzp_test_RHmDyqCFCKQ5XV
 VITE_APP_NAME=Green India Team
+VITE_GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+VITE_PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
 
 // Server ENV
 MONGODB_URL=mongodb://admin:Shaurya1819@127.0.0.1:27017/greenindiateam?authSource=admin&replicaSet=rs0
@@ -62,7 +64,6 @@ JWT_SECRET_KEY=servicebooking@app
 EXPIRES_IN=999d
 RAZORPAY_KEY_ID=rzp_test_RHmDyqCFCKQ5XV
 RAZORPAY_KEY_SECRET=H83uZwcFKA08ij3l9CdP1FA8
-
 
 // Push Notification-> provider id[multiple], title, description, toAll (all provider)
 // Brand list-> name, code, image, description

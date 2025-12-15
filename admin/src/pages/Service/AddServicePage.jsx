@@ -22,6 +22,8 @@ const AddServicePage = () => {
   const [preview, setPreview] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
   const [popupImagePreview, setPopupImagePreview] = useState(null);
+  const [metaImage, setMetaImage] = useState(null);
+  const [metaImagePreview, setMetaImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -43,6 +45,11 @@ const AddServicePage = () => {
     transactionCharge: "",
     shortDescription: "",
     fullDescription: "",
+    pageName: "",
+    metaTitle: "",
+    metaAuthor: "",
+    metaKeywords: "",
+    metaDescription: "",
   });
 
   useEffect(() => {
@@ -168,6 +175,24 @@ const AddServicePage = () => {
     multiple: false,
   });
 
+  const onDropMetaImage = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setMetaImage(file);
+      setMetaImagePreview(URL.createObjectURL(file));
+    };
+  }, []);
+
+  const {
+    getRootProps: getMetaImageRootProps,
+    getInputProps: getMetaImageInputProps,
+    isDragActive: isMetaImageActive
+  } = useDropzone({
+    onDrop: onDropMetaImage,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -186,6 +211,7 @@ const AddServicePage = () => {
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
       if (popupImage) data.append("popupImage", popupImage);
+      if (metaImage) data.append("metaImage", metaImage);
 
       const response = await axios.post(apis.service.create, data, {
         headers: {
@@ -235,8 +261,9 @@ const AddServicePage = () => {
       if (preview) URL.revokeObjectURL(preview);
       if (iconPreview) URL.revokeObjectURL(iconPreview);
       if (popupImagePreview) URL.revokeObjectURL(popupImagePreview);
+      if (metaImagePreview) URL.revokeObjectURL(metaImagePreview);
     };
-  }, [preview, iconPreview, popupImagePreview]);
+  }, [preview, iconPreview, popupImagePreview, metaImagePreview]);
 
   useEffect(() => {
     const mrp = parseFloat(formData.mrpPrice);
@@ -266,114 +293,124 @@ const AddServicePage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category */}
-              <div className="mb-3">
-                <label className="form-label">Product <span className="text-danger">*</span></label>
-                <select
-                  name="categoryId"
-                  value={formData.categoryId}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      categoryId: e.target.value,
-                      subCategoryId: "",
-                      subSubCategoryId: "",
-                      subSubSubCategoryId: "",
-                    })
-                  }
-                  className="form-control"
-                  required
-                >
-                  <option value="">-- Select Product --</option>
-                  {categories?.map((cat) => (
-                    <option key={cat?._id} value={cat?._id}>
-                      {cat?.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                {/* Category */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Product <span className="text-danger">*</span></label>
+                  <select
+                    name="categoryId"
+                    value={formData.categoryId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        categoryId: e.target.value,
+                        subCategoryId: "",
+                        subSubCategoryId: "",
+                        subSubSubCategoryId: "",
+                      })
+                    }
+                    className="form-control"
+                    required
+                  >
+                    <option value="">-- Select Product --</option>
+                    {categories?.map((cat) => (
+                      <option key={cat?._id} value={cat?._id}>
+                        {cat?.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Sub Category */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Variant</label>
+                  <select
+                    name="subCategoryId"
+                    value={formData.subCategoryId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        subCategoryId: e.target.value,
+                        subSubCategoryId: "",
+                        subSubSubCategoryId: "",
+                      })
+                    }
+                    className="form-control"
+                    disabled={!formData.categoryId}
+                  >
+                    <option value="">-- Select Variant --</option>
+                    {subCategories?.map((sub) => (
+                      <option key={sub?._id} value={sub?._id}>
+                        {sub?.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Variant</label>
-                <select
-                  name="subCategoryId"
-                  value={formData.subCategoryId}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      subCategoryId: e.target.value,
-                      subSubCategoryId: "",
-                      subSubSubCategoryId: "",
-                    })
-                  }
-                  className="form-control"
-                  disabled={!formData.categoryId}
-                >
-                  <option value="">-- Select Variant --</option>
-                  {subCategories?.map((sub) => (
-                    <option key={sub?._id} value={sub?._id}>
-                      {sub?.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                {/* Sub Sub Category */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Service Process</label>
+                  <select
+                    name="subSubCategoryId"
+                    value={formData.subSubCategoryId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        subSubCategoryId: e.target.value,
+                        subSubSubCategoryId: "",
+                      })
+                    }
+                    className="form-control"
+                    disabled={!formData.subCategoryId}
+                  >
+                    <option value="">-- Select Service Process --</option>
+                    {subSubCategories?.map((subsub) => (
+                      <option key={subsub?._id} value={subsub?._id}>
+                        {subsub?.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Sub Sub Sub Category */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Nested Service Process</label>
+                  <select
+                    name="subSubSubCategoryId"
+                    value={formData.subSubSubCategoryId}
+                    onChange={handleChange}
+                    className="form-control"
+                    disabled={!formData.subSubCategoryId}
+                  >
+                    <option value="">-- Select Nested Service Process --</option>
+                    {subSubSubCategories?.map((sss) => (
+                      <option key={sss?._id} value={sss?._id}>
+                        {sss?.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Service Process</label>
-                <select
-                  name="subSubCategoryId"
-                  value={formData.subSubCategoryId}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      subSubCategoryId: e.target.value,
-                      subSubSubCategoryId: "",
-                    })
-                  }
-                  className="form-control"
-                  disabled={!formData.subCategoryId}
-                >
-                  <option value="">-- Select Service Process --</option>
-                  {subSubCategories?.map((subsub) => (
-                    <option key={subsub?._id} value={subsub?._id}>
-                      {subsub?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sub Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Nested Service Process</label>
-                <select
-                  name="subSubSubCategoryId"
-                  value={formData.subSubSubCategoryId}
-                  onChange={handleChange}
-                  className="form-control"
-                  disabled={!formData.subSubCategoryId}
-                >
-                  <option value="">-- Select Nested Service Process --</option>
-                  {subSubSubCategories?.map((sss) => (
-                    <option key={sss?._id} value={sss?._id}>
-                      {sss?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Name */}
-              <div className="mb-3">
-                <label className="form-label">Name <span className="text-danger">*</span></label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                {/* Name */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Name <span className="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="form-control"
+                    required
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Max Booking Quantity</label>
+                  <input type="number" placeholder="0" name="maxBookingQuantity" value={formData.maxBookingQuantity} onChange={handleChange} className="form-control" />
+                </div>
               </div>
 
               {/* Prices */}
@@ -440,11 +477,11 @@ const AddServicePage = () => {
               </div>
 
               <div className="row">
-                <div className="col-md-3 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
                   <input required type="number" placeholder="for e.g. 299 or 199" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
                   <select
                     name="repairingDiagnostic"
@@ -456,13 +493,9 @@ const AddServicePage = () => {
                     <option value={false}>No</option>
                   </select>
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Off Price</label>
                   <input type="number" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" readOnly disabled={true} />
-                </div>
-                <div className="col-md-3 mb-3">
-                  <label className="form-label">Max Booking Quantity</label>
-                  <input type="number" placeholder="0" name="maxBookingQuantity" value={formData.maxBookingQuantity} onChange={handleChange} className="form-control" />
                 </div>
               </div>
 
@@ -501,94 +534,186 @@ const AddServicePage = () => {
                 />
               </div>
 
-              {/* Image */}
-              <div className="mb-3">
-                <label className="form-label">Image</label>
-                <div
-                  {...getImageRootProps()}
-                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getImageInputProps()} />
-                  {isImageActive ? (
-                    <p>Drop the image here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop image here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
+              <div className="row">
+                {/* Image */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Image</label>
+                  <div
+                    {...getImageRootProps()}
+                    className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
+                      }`}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <input {...getImageInputProps()} />
+                    {isImageActive ? (
+                      <p>Drop the image here...</p>
+                    ) : (
+                      <p>
+                        Drag & drop image here, or{" "}
+                        <span className="text-primary">browse</span>
+                      </p>
+                    )}
+                  </div>
+                  {preview && (
+                    <div className="mt-3 text-center">
+                      <img
+                        src={preview}
+                        alt="Preview"
+                        style={{ maxWidth: "200px", borderRadius: "8px" }}
+                      />
+                    </div>
                   )}
                 </div>
-                {preview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
-                    />
+
+                {/* Icon */}
+                <div className="col-md-6 mb-3 d-none">
+                  <label className="form-label">Icon</label>
+                  <div
+                    {...getIconRootProps()}
+                    className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""
+                      }`}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <input {...getIconInputProps()} />
+                    {isIconActive ? (
+                      <p>Drop the icon here...</p>
+                    ) : (
+                      <p>
+                        Drag & drop icon here, or{" "}
+                        <span className="text-primary">browse</span>
+                      </p>
+                    )}
                   </div>
-                )}
+                  {iconPreview && (
+                    <div className="mt-3 text-center">
+                      <img
+                        src={iconPreview}
+                        alt="Icon Preview"
+                        style={{ maxWidth: "100px", borderRadius: "8px" }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Popup Image */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Popup Image</label>
+                  <div
+                    {...getPopupImageRootProps()}
+                    className={`border p-4 text-center rounded ${isPopupImageActive ? "bg-light" : ""
+                      }`}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <input {...getPopupImageInputProps()} />
+                    {isPopupImageActive ? (
+                      <p>Drop the popup image here...</p>
+                    ) : (
+                      <p>
+                        Drag & drop popup image here, or{" "}
+                        <span className="text-primary">browse</span>
+                      </p>
+                    )}
+                  </div>
+                  {popupImagePreview && (
+                    <div className="mt-3 text-center">
+                      <img
+                        src={popupImagePreview}
+                        alt="Popup image Preview"
+                        style={{ maxWidth: "100px", borderRadius: "8px" }}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Icon */}
-              <div className="mb-3 d-none">
-                <label className="form-label">Icon</label>
-                <div
-                  {...getIconRootProps()}
-                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getIconInputProps()} />
-                  {isIconActive ? (
-                    <p>Drop the icon here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop icon here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
-                  )}
+              <h4 className="mt-5 mb-4 text-center">Meta Information</h4>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Page Name
+                  </label>
+                  <input
+                    type="text"
+                    name="pageName"
+                    value={formData.pageName}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
                 </div>
-                {iconPreview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={iconPreview}
-                      alt="Icon Preview"
-                      style={{ maxWidth: "100px", borderRadius: "8px" }}
-                    />
-                  </div>
-                )}
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Title
+                  </label>
+                  <input
+                    type="text"
+                    name="metaTitle"
+                    value={formData.metaTitle}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
               </div>
 
-              {/* Popup Image */}
-              <div className="mb-3">
-                <label className="form-label">Popup Image</label>
-                <div
-                  {...getPopupImageRootProps()}
-                  className={`border p-4 text-center rounded ${isPopupImageActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getPopupImageInputProps()} />
-                  {isPopupImageActive ? (
-                    <p>Drop the popup image here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop popup image here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Author
+                  </label>
+                  <input
+                    type="text"
+                    name="metaAuthor"
+                    value={formData.metaAuthor}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Keywords
+                  </label>
+                  <input
+                    type="text"
+                    name="metaKeywords"
+                    value={formData.metaKeywords}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Description
+                  </label>
+                  <input
+                    type="text"
+                    name="metaDescription"
+                    value={formData.metaDescription}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Meta Image</label>
+                  <div
+                    {...getMetaImageRootProps()}
+                    className={`border text-center rounded ${isMetaImageActive ? "bg-light" : ""}`}
+                    style={{ cursor: "pointer", padding: "9px" }}
+                  >
+                    <input {...getMetaImageInputProps()} />
+                    {isMetaImageActive ? <p style={{ marginBottom: "0px" }}>Drop the meta image here...</p> : <p style={{ marginBottom: "0px" }}>Drag & drop meta image here, or <span className="text-primary">browse</span></p>}
+                  </div>
+                  {metaImagePreview && (
+                    <div className="mt-3 text-center">
+                      <img src={metaImagePreview} alt="Meta Image Preview" style={{ maxWidth: "100px", borderRadius: "8px" }} />
+                    </div>
                   )}
                 </div>
-                {popupImagePreview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={popupImagePreview}
-                      alt="Popup image Preview"
-                      style={{ maxWidth: "100px", borderRadius: "8px" }}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Buttons */}

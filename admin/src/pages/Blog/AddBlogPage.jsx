@@ -16,6 +16,8 @@ const AddBlogPage = () => {
   const [detailImage, setDetailImage] = useState(null);
   const [frontPreview, setFrontPreview] = useState(null);
   const [detailPreview, setDetailPreview] = useState(null);
+  const [metaImage, setMetaImage] = useState(null);
+  const [metaImagePreview, setMetaImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
 
@@ -26,8 +28,10 @@ const AddBlogPage = () => {
     fullDescription: "",
     frontImageAlt: "",
     detailImageAlt: "",
-    metaKeywords: "",
+    pageName: "",
+    metaTitle: "",
     metaAuthor: "",
+    metaKeywords: "",
     metaDescription: "",
   });
 
@@ -95,6 +99,24 @@ const AddBlogPage = () => {
     multiple: false,
   });
 
+  const onDropMetaImage = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setMetaImage(file);
+      setMetaImagePreview(URL.createObjectURL(file));
+    };
+  }, []);
+
+  const {
+    getRootProps: getMetaImageRootProps,
+    getInputProps: getMetaImageInputProps,
+    isDragActive: isMetaImageActive
+  } = useDropzone({
+    onDrop: onDropMetaImage,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -119,12 +141,15 @@ const AddBlogPage = () => {
       data.append("frontImageAlt", formData.frontImageAlt);
       data.append("detailImageAlt", formData.detailImageAlt);
 
-      data.append("meta[keywords]", formData.metaKeywords);
-      data.append("meta[author]", formData.metaAuthor);
-      data.append("meta[description]", formData.metaDescription);
+      if (formData.pageName) data.append("pageName", formData.pageName);
+      if (formData.metaTitle) data.append("metaTitle", formData.metaTitle);
+      if (formData.metaAuthor) data.append("metaAuthor", formData.metaAuthor);
+      if (formData.metaKeywords) data.append("metaKeywords", formData.metaKeywords);
+      if (formData.metaDescription) data.append("metaDescription", formData.metaDescription);
 
       if (frontImage) data.append("frontImage", frontImage);
       if (detailImage) data.append("detailImage", detailImage);
+      if (metaImage) data.append("metaImage", metaImage);
 
       const res = await axios.post(apis.blog.create, data, {
         headers: {
@@ -152,8 +177,9 @@ const AddBlogPage = () => {
     return () => {
       if (frontPreview) URL.revokeObjectURL(frontPreview);
       if (detailPreview) URL.revokeObjectURL(detailPreview);
+      if (metaImagePreview) URL.revokeObjectURL(metaImagePreview);
     };
-  }, [frontPreview, detailPreview]);
+  }, [frontPreview, detailPreview, metaImagePreview]);
 
   return (
     <div className="page-wrapper">
@@ -222,7 +248,6 @@ const AddBlogPage = () => {
                   value={formData.shortDescription}
                   onChange={handleChange}
                   className="form-control"
-                  maxLength="250"
                 />
               </div>
 
@@ -242,14 +267,14 @@ const AddBlogPage = () => {
                     <label className="form-label">Front Image</label>
                     <div
                       {...getFrontRootProps()}
-                      className={`border p-4 text-center rounded ${isFrontActive ? "bg-light" : ""}`}
-                      style={{ cursor: "pointer" }}
+                      className={`border text-center rounded ${isFrontActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer", padding: "9px" }}
                     >
                       <input {...getFrontInputProps()} />
                       {isFrontActive ? (
-                        <p>Drop the image here...</p>
+                        <p style={{ marginBottom: "0px" }}>Drop the image here...</p>
                       ) : (
-                        <p>
+                        <p style={{ marginBottom: "0px" }}>
                           Drag & drop front image here, or{" "}
                           <span className="text-primary">browse</span>
                         </p>
@@ -288,14 +313,14 @@ const AddBlogPage = () => {
                     <label className="form-label">Detail Image</label>
                     <div
                       {...getDetailRootProps()}
-                      className={`border p-4 text-center rounded ${isDetailActive ? "bg-light" : ""}`}
-                      style={{ cursor: "pointer" }}
+                      className={`border text-center rounded ${isDetailActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer", padding: "9px" }}
                     >
                       <input {...getDetailInputProps()} />
                       {isDetailActive ? (
-                        <p>Drop the image here...</p>
+                        <p style={{ marginBottom: "0px" }}>Drop the image here...</p>
                       ) : (
-                        <p>
+                        <p style={{ marginBottom: "0px" }}>
                           Drag & drop detail image here, or{" "}
                           <span className="text-primary">browse</span>
                         </p>
@@ -327,45 +352,94 @@ const AddBlogPage = () => {
                 </div>
               </div>
 
-              {/* META FIELDS */}
-              <h6 className="mt-4 mb-3 text-center">SEO Meta Information</h6>
+              <h4 className="mt-5 mb-4 text-center">Meta Information</h4>
 
               <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Meta Keywords</label>
-                    <input
-                      type="text"
-                      name="metaKeywords"
-                      className="form-control"
-                      value={formData.metaKeywords}
-                      onChange={handleChange}
-                    />
-                  </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Page Name
+                  </label>
+                  <input
+                    type="text"
+                    name="pageName"
+                    value={formData.pageName}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
                 </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Meta Author</label>
-                    <input
-                      type="text"
-                      name="metaAuthor"
-                      className="form-control"
-                      value={formData.metaAuthor}
-                      onChange={handleChange}
-                    />
-                  </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Title
+                  </label>
+                  <input
+                    type="text"
+                    name="metaTitle"
+                    value={formData.metaTitle}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
                 </div>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Meta Description</label>
-                <textarea
-                  name="metaDescription"
-                  className="form-control"
-                  rows="3"
-                  value={formData.metaDescription}
-                  onChange={handleChange}
-                ></textarea>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Author
+                  </label>
+                  <input
+                    type="text"
+                    name="metaAuthor"
+                    value={formData.metaAuthor}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Keywords
+                  </label>
+                  <input
+                    type="text"
+                    name="metaKeywords"
+                    value={formData.metaKeywords}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Description
+                  </label>
+                  <input
+                    type="text"
+                    name="metaDescription"
+                    value={formData.metaDescription}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Meta Image</label>
+                  <div
+                    {...getMetaImageRootProps()}
+                    className={`border text-center rounded ${isMetaImageActive ? "bg-light" : ""}`}
+                    style={{ cursor: "pointer", padding: "9px" }}
+                  >
+                    <input {...getMetaImageInputProps()} />
+                    {isMetaImageActive ? <p style={{ marginBottom: "0px" }}>Drop the meta image here...</p> : <p style={{ marginBottom: "0px" }}>Drag & drop meta image here, or <span className="text-primary">browse</span></p>}
+                  </div>
+                  {metaImagePreview && (
+                    <div className="mt-3 text-center">
+                      <img src={metaImagePreview} alt="Meta Image Preview" style={{ maxWidth: "100px", borderRadius: "8px" }} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Buttons */}
