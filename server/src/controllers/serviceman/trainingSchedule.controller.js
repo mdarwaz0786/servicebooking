@@ -8,7 +8,7 @@ export const getNextTrainingSchedule = asyncHandler(async (req, res) => {
     .findOne({
       status: true,
       scheduleDate: { $gte: new Date() },
-    })
+    }).populate("trainingId").populate("providerId")
     .sort({ scheduleDate: 1 });
 
   if (!nextSchedule) {
