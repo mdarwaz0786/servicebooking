@@ -10,7 +10,11 @@ export const getNextTrainingSchedule = asyncHandler(async (req, res) => {
       status: true,
       scheduleDate: { $gte: new Date() },
     }).populate("trainingId").populate("providerId")
+<<<<<<< HEAD
+    .sort({ scheduleDate: 1 });
+=======
     .sort({ scheduleDate: 1 }).lean();
+>>>>>>> 4e8ba3d71b47fe34a897f14d5a077bfe019293c0
 
   if (!nextSchedule) {
     throw new ApiError(404, "No upcoming training schedule found");
