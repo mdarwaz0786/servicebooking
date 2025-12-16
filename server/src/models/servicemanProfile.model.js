@@ -128,6 +128,20 @@ serviceManProfileSchema.virtual("kyc", {
   localField: "userId",
   foreignField: "userId",
   justOne: true,
+  options: { 
+    sort: { 
+      createdAt: -1,  // Descending order (latest first)
+      // OR updatedAt: -1 // Agar aapko updatedAt ke basis par sort karna hai
+    } 
+  },
+});
+
+
+serviceManProfileSchema.virtual("training", {
+  ref: "TrainingScheduleSubmit",
+  localField: "_id",
+  foreignField: "providerId",
+  justOne: true,
 });
 
 const ServiceManProfileModel = mongoose.model("ServiceManProfile", serviceManProfileSchema);
