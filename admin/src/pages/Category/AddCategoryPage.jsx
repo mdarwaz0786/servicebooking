@@ -14,10 +14,17 @@ const AddCategoryPage = () => {
   const [icon, setIcon] = useState(null);
   const [preview, setPreview] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
+  const [metaImage, setMetaImage] = useState(null);
+  const [metaImagePreview, setMetaImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     fullDescription: "",
+    pageName: "",
+    metaTitle: "",
+    metaAuthor: "",
+    metaKeywords: "",
+    metaDescription: "",
   });
 
   const handleChange = (e) => {
@@ -61,6 +68,24 @@ const AddCategoryPage = () => {
     multiple: false,
   });
 
+  const onDropMetaImage = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setMetaImage(file);
+      setMetaImagePreview(URL.createObjectURL(file));
+    };
+  }, []);
+
+  const {
+    getRootProps: getMetaImageRootProps,
+    getInputProps: getMetaImageInputProps,
+    isDragActive: isMetaImageActive
+  } = useDropzone({
+    onDrop: onDropMetaImage,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,6 +100,7 @@ const AddCategoryPage = () => {
       Object.keys(formData).forEach((key) => data.append(key, formData[key]));
       if (image) data.append("image", image);
       if (icon) data.append("icon", icon);
+      if (metaImage) data.append("metaImage", metaImage);
 
       const response = await axios.post(apis.category.create, data, {
         headers: {
@@ -103,8 +129,9 @@ const AddCategoryPage = () => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
       if (iconPreview) URL.revokeObjectURL(iconPreview);
+      if (metaImagePreview) URL.revokeObjectURL(metaImagePreview);
     };
-  }, [preview, iconPreview]);
+  }, [preview, iconPreview, metaImagePreview]);
 
   return (
     <div className="page-wrapper">
@@ -122,68 +149,161 @@ const AddCategoryPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category Name */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Name <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="100"
-                  required
-                />
-              </div>
-
-              {/* Description */}
-              <div className="mb-3">
-                <label className="form-label">Description</label>
-                <textarea
-                  name="fullDescription"
-                  value={formData.fullDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  rows="3"
-                ></textarea>
-              </div>
-
-              {/* Category Image */}
-              <div className="mb-3">
-                <label className="form-label">Banner</label>
-                <div
-                  {...getImageRootProps()}
-                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getImageInputProps()} />
-                  {isImageActive ? <p>Drop the banner here...</p> : <p>Drag & drop banner here, or <span className="text-primary">browse</span></p>}
+              <div className="row">
+                {/* Category Name */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Name <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="form-control"
+                    required
+                  />
                 </div>
-                {preview && (
-                  <div className="mt-3 text-center">
-                    <img src={preview} alt="Preview" style={{ maxWidth: "200px", borderRadius: "8px" }} />
-                  </div>
-                )}
+
+                {/* Description */}
+                <div className=" col-md-6 mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    name="fullDescription"
+                    value={formData.fullDescription}
+                    onChange={handleChange}
+                    className="form-control"
+                    rows="1"
+                  ></textarea>
+                </div>
               </div>
 
-              {/* Category Icon */}
-              <div className="mb-3">
-                <label className="form-label">Icon</label>
-                <div
-                  {...getIconRootProps()}
-                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getIconInputProps()} />
-                  {isIconActive ? <p>Drop the icon here...</p> : <p>Drag & drop icon here, or <span className="text-primary">browse</span></p>}
-                </div>
-                {iconPreview && (
-                  <div className="mt-3 text-center">
-                    <img src={iconPreview} alt="Icon Preview" style={{ maxWidth: "100px", borderRadius: "8px" }} />
+              <div className="row">
+                {/* Category Image */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Banner</label>
+                  <div
+                    {...getImageRootProps()}
+                    className={`border text-center rounded ${isImageActive ? "bg-light" : ""}`}
+                    style={{ cursor: "pointer", padding: "9px" }}
+                  >
+                    <input {...getImageInputProps()} />
+                    {isImageActive ? <p style={{ marginBottom: "0px" }}>Drop the banner here...</p> : <p style={{ marginBottom: "0px" }}>Drag & drop banner here, or <span className="text-primary">browse</span></p>}
                   </div>
-                )}
+                  {preview && (
+                    <div className="mt-3 text-center">
+                      <img src={preview} alt="Preview" style={{ maxWidth: "200px", borderRadius: "8px" }} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Category Icon */}
+                <div className=" col-md-6 mb-3">
+                  <label className="form-label">Icon</label>
+                  <div
+                    {...getIconRootProps()}
+                    className={`border text-center rounded ${isIconActive ? "bg-light" : ""}`}
+                    style={{ cursor: "pointer", padding: "9px" }}
+                  >
+                    <input {...getIconInputProps()} />
+                    {isIconActive ? <p style={{ marginBottom: "0px" }}>Drop the icon here...</p> : <p style={{ marginBottom: "0px" }}>Drag & drop icon here, or <span className="text-primary">browse</span></p>}
+                  </div>
+                  {iconPreview && (
+                    <div className="mt-3 text-center">
+                      <img src={iconPreview} alt="Icon Preview" style={{ maxWidth: "100px", borderRadius: "8px" }} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <h4 className="mt-5 mb-4 text-center">Meta Information</h4>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Page Name
+                  </label>
+                  <input
+                    type="text"
+                    name="pageName"
+                    value={formData.pageName}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Title
+                  </label>
+                  <input
+                    type="text"
+                    name="metaTitle"
+                    value={formData.metaTitle}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Author
+                  </label>
+                  <input
+                    type="text"
+                    name="metaAuthor"
+                    value={formData.metaAuthor}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Keywords
+                  </label>
+                  <input
+                    type="text"
+                    name="metaKeywords"
+                    value={formData.metaKeywords}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Meta Description
+                  </label>
+                  <input
+                    type="text"
+                    name="metaDescription"
+                    value={formData.metaDescription}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Meta Image</label>
+                  <div
+                    {...getMetaImageRootProps()}
+                    className={`border text-center rounded ${isMetaImageActive ? "bg-light" : ""}`}
+                    style={{ cursor: "pointer", padding: "9px" }}
+                  >
+                    <input {...getMetaImageInputProps()} />
+                    {isMetaImageActive ? <p style={{ marginBottom: "0px" }}>Drop the meta image here...</p> : <p style={{ marginBottom: "0px" }}>Drag & drop meta image here, or <span className="text-primary">browse</span></p>}
+                  </div>
+                  {metaImagePreview && (
+                    <div className="mt-3 text-center">
+                      <img src={metaImagePreview} alt="Meta Image Preview" style={{ maxWidth: "100px", borderRadius: "8px" }} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Buttons */}
