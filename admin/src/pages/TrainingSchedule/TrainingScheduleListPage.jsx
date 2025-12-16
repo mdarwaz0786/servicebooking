@@ -165,6 +165,8 @@ const TrainingScheduleListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Trainer</th>
+                    <th>Provider</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
@@ -176,6 +178,8 @@ const TrainingScheduleListPage = () => {
                     trainingSchedule?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>{d?.trainingId?.fullName}</td>
+                        <td>{d?.providerId?.name}</td>
                         <td>{formatDate(d?.scheduleDate)}</td>
                         <td>{d?.scheduleTime}</td>
                         <td>

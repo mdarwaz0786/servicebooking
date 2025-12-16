@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -10,6 +11,16 @@ const AddServiceFaqPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
+
+  const [category, setCategory] = useState();
+  const [subCategory, setSubCategory] = useState();
+  const [subSubCategory, setSubSubCategory] = useState();
+  const [subSubSubCategory, setSubSubSubCategory] = useState();
+
   const [mainTitle, setMainTitle] = useState("");
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -17,19 +28,105 @@ const AddServiceFaqPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await axios.get(apis.service.get, {
+        const res = await axios.get(apis.category.get, {
           headers: { Authorization: validToken },
         });
-        if (res?.data?.success) setServices(res.data.data || []);
+        if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.error(error);
-        toast.error("Failed to load services");
-      }
+        console.log(error);
+        toast.error("Failed to load categories");
+      };
     };
-    fetchServices();
+    fetchCategories();
   }, [validToken]);
+
+  useEffect(() => {
+    if (!category) return;
+    const fetchSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subCategory.get}?categoryId=${category}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [category, validToken]);
+
+  useEffect(() => {
+    if (!subCategory) return;
+    const fetchSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubCategory.get}?subCategoryId=${subCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [subCategory, validToken]);
+
+  useEffect(() => {
+    if (!subSubCategory) return;
+    const fetchSubSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub sub categories");
+      };
+    };
+    fetchSubSubSubCategories();
+  }, [subSubCategory, validToken]);
+
+  const fetchServices = async () => {
+    try {
+      const params = {};
+      if (category) params.categoryId = category;
+      if (subCategory) params.subCategoryId = subCategory;
+      if (subSubCategory) params.subSubCategoryId = subSubCategory;
+      if (subSubSubCategory) params.subSubSubCategoryId = subSubSubCategory;
+
+      const res = await axios.get(apis.service.get, {
+        params,
+        headers: {
+          Authorization: validToken,
+        },
+      });
+      setServices(res?.data?.data || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleFaqChange = (index, field, value) => {
     const updatedFaqs = [...faqs];
@@ -65,6 +162,10 @@ const AddServiceFaqPage = () => {
         mainTitle,
         services: selectedServices,
         faqs,
+        category,
+        subCategory,
+        subSubCategory,
+        subSubSubCategory
       };
 
       const res = await axios.post(apis.serviceFaq.create, payload, {
@@ -73,6 +174,7 @@ const AddServiceFaqPage = () => {
 
       if (res?.data?.success) {
         toast.success("Service FAQ created successfully");
+        navigate(-1);
         setMainTitle("");
         setSelectedServices([]);
         setFaqs([{ question: "", answer: "" }]);
@@ -101,6 +203,98 @@ const AddServiceFaqPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Category */}
+              <div className="mb-3">
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                <select
+                  name="category"
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setSubCategory();
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  required
+                >
+                  <option value="">-- Select Product --</option>
+                  {categories?.map((cat) => (
+                    <option key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Variant</label>
+                <select
+                  name="subCategory"
+                  value={subCategory}
+                  onChange={(e) => {
+                    setSubCategory(e.target.value);
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  disabled={!category}
+                >
+                  <option value="">-- Select Variant --</option>
+                  {subCategories?.map((sub) => (
+                    <option key={sub?._id} value={sub?._id}>
+                      {sub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Service Process</label>
+                <select
+                  name="subSubCategory"
+                  value={subSubCategory}
+                  onChange={(e) => {
+                    setSubSubCategory(e.target.value);
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }
+                  }
+                  className="form-control"
+                  disabled={!subCategory}
+                >
+                  <option value="">-- Select Service Process --</option>
+                  {subSubCategories?.map((subsub) => (
+                    <option key={subsub?._id} value={subsub?._id}>
+                      {subsub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Nested Service Process</label>
+                <select
+                  name="subSubSubCategory"
+                  value={subSubSubCategory}
+                  onChange={(e) => setSubSubSubCategory(e.target.value)}
+                  className="form-control"
+                  disabled={!subSubCategory}
+                >
+                  <option value="">-- Select Nested Service Process --</option>
+                  {subSubSubCategories?.map((sss) => (
+                    <option key={sss?._id} value={sss?._id}>
+                      {sss?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
@@ -129,28 +323,30 @@ const AddServiceFaqPage = () => {
 
               {/* FAQs */}
               <div className="mb-3">
-                <label className="form-label">FAQs</label>
+                <label className="form-label">FAQs <span style={{ color: "red" }}>*</span></label>
                 {faqs.map((faq, index) => (
                   <div key={index} className="border p-3 mb-2 rounded">
                     <div className="mb-2">
-                      <label className="form-label">Question</label>
+                      <label className="form-label">Question <span style={{ color: "red" }}>*</span></label>
                       <input
                         type="text"
                         className="form-control"
                         placeholder="Enter question"
                         value={faq.question}
+                        required
                         onChange={(e) =>
                           handleFaqChange(index, "question", e.target.value)
                         }
                       />
                     </div>
                     <div className="mb-2">
-                      <label className="form-label">Answer</label>
+                      <label className="form-label">Answer <span style={{ color: "red" }}>*</span></label>
                       <textarea
                         className="form-control"
                         rows={2}
                         placeholder="Enter answer"
                         value={faq.answer}
+                        required
                         onChange={(e) =>
                           handleFaqChange(index, "answer", e.target.value)
                         }
@@ -161,6 +357,7 @@ const AddServiceFaqPage = () => {
                         type="button"
                         className="btn btn-danger btn-sm me-2"
                         onClick={() => removeFaqField(index)}
+                        required
                         disabled={faqs.length === 1}
                       >
                         -

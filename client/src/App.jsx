@@ -4,6 +4,7 @@ import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";
 import AboutUsPage from "./pages/AboutUsPage/AboutUsPage";
 import ContactUsPage from "./pages/ContactUsPage/ContactUsPage";
+import AddressesPage from "./pages/ContactUsPage/AddressesPage";
 import ServicesPage from "./pages/ServicesPage/ServicesPage";
 import LoginPage from "./pages/Login/LoginPage";
 import RegisterPage from "./pages/Register/RegisterPage";
@@ -19,11 +20,13 @@ import UserDashboard from "./pages/UserPanel/UserDashboard";
 import UserBookingPage from "./pages/UserPanel/Booking/UserBookingPage";
 import UserAddressPage from "./pages/UserPanel/Address/UserAddressPage";
 import UserBookingDetailPage from "./pages/UserPanel/Booking/UserBookingDetailPage";
+import UserBookingInvoice from "./pages/UserPanel/Booking/UserBookingInvoice";
 import UserFavouritesPage from "./pages/UserPanel/Favourites/UserFavouritesPage";
 import UserWalletPage from "./pages/UserPanel/Wallet/UserWalletPage";
 import UserReviewsPage from "./pages/UserPanel/Reviews/UserReviewsPage";
 import SubCategoriesPage from "./pages/SubCategories/SubCategoriesPage";
 import Checkoutpage from "./pages/Checkout/Checkoutpage";
+import UserProfileForm from "./pages/UserPanel/Profile/UserProfileForm";
 import Test from "../Test";
 
 import ServiceManLayout from "./pages/ServiceManPanel/ServiceManLayout";
@@ -35,6 +38,7 @@ import ServiceManReviewPage from "./pages/ServiceManPanel/Review/ServiceManRevie
 
 import TermsConditionsPage from "./pages/TermsConditions/TermsConditionsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy/PrivacyPolicyPage";
+import DisclaimerPage from "./pages/Disclaimer/DisclaimerPage";
 import RefundPolicyPage from "./pages/RefundPolicy/RefundPolicyPage";
 import GreenIndiaTeamImpactPage from "./pages/GreenIndiaTeamImpact/GreenIndiaTeamImpactPage";
 import CareerPage from "./pages/Career/CareerPage";
@@ -53,8 +57,10 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/addresses" element={<AddressesPage />} />
           <Route path="/term-condition" element={<TermsConditionsPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/refund-policy" element={<RefundPolicyPage />} />
           <Route path="/green-india-team-impact" element={<GreenIndiaTeamImpactPage />} />
           <Route path="/career" element={<CareerPage />} />
@@ -63,11 +69,13 @@ const App = () => {
           <Route path="/blog/:slug" element={<BlogDetailPage />} />
           <Route path="/green-india-team-review" element={<GreenIndiaTeamReviewPage />} />
           <Route path="/services/:slug" element={<ServicesPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/search/:search" element={<ServicesPage />} />
           <Route path="/service-details" element={<ServicesDetailsPage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/sub-categories/:slug/:id" element={<SubCategoriesPage />} />
-          <Route path="/search" element={<SearchPage />} />
+          {/* <Route path="/search" element={<SearchPage />} /> */}
           <Route path="/providers" element={<ProvidersPage />} />
           <Route path="/provider-details" element={<ProviderDetailsPage />} />
           <Route path="/Checkout" element={<Checkoutpage />} />
@@ -78,7 +86,9 @@ const App = () => {
         <Route element={<UserLayout />}>
           <Route path="/user" element={<UserBookingPage />} />
           <Route path="/user/booking/:bookingId" element={<UserBookingDetailPage />} />
+          <Route path="/user/booking/invoice/:bookingId" element={<UserBookingInvoice />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
+          <Route path="/user/profile" element={<UserProfileForm />} />
           <Route path="/user/address" element={<UserAddressPage />} />
           <Route path="/user/reviews" element={<UserReviewsPage />} />
           <Route path="/user-favourites" element={<UserFavouritesPage />} />

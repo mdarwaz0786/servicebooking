@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
+import Select from "react-select";
 
 const RateCardListPage = () => {
   const { validToken } = useAuth();
@@ -24,6 +25,46 @@ const RateCardListPage = () => {
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+
+  const categoryId = searchParams.get("categoryId") || "";
+  const subCategoryId = searchParams.get("subCategoryId") || "";
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(apis.category.get, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch categories");
+      };
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
+
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchInput), 500);
     return () => clearTimeout(handler);
@@ -34,7 +75,14 @@ const RateCardListPage = () => {
       setLoading(true);
       const response = await axios.get(apis.rateCard.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: {
+          page,
+          limit,
+          search: debouncedSearch,
+          sort,
+          category: categoryId,
+          subCategory: subCategoryId,
+        },
       });
 
       if (response?.data?.success) {
@@ -91,7 +139,7 @@ const RateCardListPage = () => {
 
   useEffect(() => {
     fetchRateCards();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, categoryId, subCategoryId]);
 
   return (
     <div className="page-wrapper page-settings">
@@ -147,6 +195,57 @@ const RateCardListPage = () => {
           </div>
         </div>
 
+
+        <div className="d-flex justify-content-start align-items-center gap-2 mt-4">
+          {/* Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Products"
+              value={
+                categoryId
+                  ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  categoryId: selected ? selected.value : "",
+                  page: 1,
+                  subCategoryId,
+                })
+              }
+              options={categories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Variants"
+              value={
+                subCategoryId
+                  ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                })
+              }
+              options={subCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+        </div>
+
         {/* Table */}
         <div className="row">
           <div className="col-12">
@@ -155,7 +254,8 @@ const RateCardListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Service(s)</th>
+                    <th>Product</th>
+                    <th>Variant</th>
                     <th>Rate Group Titles</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -166,15 +266,8 @@ const RateCardListPage = () => {
                     rateCards?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>
-                          {d?.services?.length > 0 ? (
-                            d.services.map((service, index) => (
-                              <div key={index}>{service?.name || "Unnamed"}</div>
-                            ))
-                          ) : (
-                            <span className="text-muted">No Services</span>
-                          )}
-                        </td>
+                        <td>{d?.category?.name}</td>
+                        <td>{d?.subCategory?.name}</td>
                         <td>
                           {d?.rateGroups?.length > 0 ? (
                             d.rateGroups.map((group, index) => (

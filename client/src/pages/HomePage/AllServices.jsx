@@ -12,7 +12,7 @@ const AllServices = ({ value = [] }) => {
 
   // ✅ Create refs for custom buttons
   const prevRef = useRef(null);
-  const nextRef = useRef(null); 
+  const nextRef = useRef(null);
 
   return (
     <section className={`section popular-section m-0 p-0`}>
@@ -48,7 +48,7 @@ const AllServices = ({ value = [] }) => {
         <div className="service-slider-wrapper all-service">
           <Swiper
             modules={[Navigation, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={10}
             slidesPerView={5}
             loop={false}
             // autoplay={{
@@ -66,9 +66,10 @@ const AllServices = ({ value = [] }) => {
             centeredSlides={false}
             grabCursor={true}
             breakpoints={{
-              320: { slidesPerView: 1 },
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 5 },
+              0: { slidesPerView: 3 },      // Extra small screens
+              640: { slidesPerView: 2 },    // Mobile / small tablets
+              768: { slidesPerView: 2 },    // Tablets
+              1024: { slidesPerView: 5 },   // Desktop
             }}
           >
             {value.services &&
@@ -77,7 +78,7 @@ const AllServices = ({ value = [] }) => {
                 <SwiperSlide key={index2}>
                   <div
                     className="service-item text-center"
-                    onClick={() => handleServiceDetail(item._id)}
+                    onClick={() => handleServiceDetail(item._id, item)}
                   >
                     <div className="service-img mb-2">
                       <Link>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Autocomplete } from "@react-google-maps/api";
 
+const GOOGLE_API_KEY  = import.meta.env.VITE_GOOGLE_API_KEY;
 const containerStyle = {
   width: "100%",
   height: "400px"
@@ -38,7 +39,7 @@ const GoogleMapPicker = ({ setLatLng, latLng  }) => {
   };
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko" libraries={["places"]}>
+    <LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={["places"]}>
       <div className="mb-3">
         <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
           <input

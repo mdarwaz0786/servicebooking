@@ -50,19 +50,22 @@ const SubSubCategoryListPage = () => {
     };
   };
 
-  const fetchSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub categories");
     };
-  };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
 
   const fetchSubSubCategories = async () => {
     try {
@@ -141,7 +144,6 @@ const SubSubCategoryListPage = () => {
 
   useEffect(() => {
     fetchCategories();
-    fetchSubCategories();
   }, []);
 
   useEffect(() => {
@@ -152,7 +154,7 @@ const SubSubCategoryListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Sub Sub Categories {subSubCategories?.length}</h5>
+          <h5>Service Process {subSubCategories?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -203,7 +205,7 @@ const SubSubCategoryListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Categories"
+              placeholder="All Products"
               value={
                 categoryId
                   ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
@@ -227,7 +229,7 @@ const SubSubCategoryListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Sub Categories"
+              placeholder="All Variants"
               value={
                 subCategoryId
                   ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
@@ -258,8 +260,8 @@ const SubSubCategoryListPage = () => {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Category</th>
-                    <th>Sub Category</th>
+                    <th>Product</th>
+                    <th>Variant</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -271,7 +273,7 @@ const SubSubCategoryListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>
                           <img
-                            src={d?.image ? `${BASE_URL}/${d?.image}` : "https://via.placeholder.com/50"}
+                            src={d?.icon ? `${BASE_URL}/${d?.icon}` : "https://via.placeholder.com/50"}
                             className="me-2"
                             alt="image"
                             style={{ width: "50px", height: "50px", objectFit: "cover" }}

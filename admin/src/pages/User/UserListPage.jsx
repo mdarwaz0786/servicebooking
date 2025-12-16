@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -41,6 +41,7 @@ const UserListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          role: "user"
         },
       });
 
@@ -77,7 +78,7 @@ const UserListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Users {users?.length}</h5>
+          <h5>Customer</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -125,8 +126,12 @@ const UserListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Mobile Number</th>
-                    <th>Action</th>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>DOB</th>
+                    <th>Can Update</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -134,18 +139,15 @@ const UserListPage = () => {
                     users?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
+                        <td>-</td>
+                        <td>-</td>
                         <td>{d?.mobile}</td>
-                        <div className="d-flex">
-                          <button
-                            className="btn delete-table"
-                            type="button"
-                          >
-                            <i className="fe fe-trash-2" />
-                          </button>
-                        </div>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                       </tr>
                     ))
-                  ) : !loading ? (
+                  ) : !loading && users?.filter?.((u) => u?.role === "user")?.length == 0 ? (
                     <tr>
                       <td colSpan="6" className="text-center">
                         No users found

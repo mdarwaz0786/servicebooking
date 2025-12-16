@@ -45,8 +45,9 @@ const bookingSchema = new mongoose.Schema({
   },
   status: { // booking status 
     type: String,
-    enum: ["new", "accept", "reject", "ongoing", "complete", "cancel"],
+    enum: ["new", "assign", "accept", "ongoing", "reject", "complete", "cancel"],
     default: "new",
+    index: true,
   },
   actionById: {
     type: mongoose.Schema.Types.ObjectId,

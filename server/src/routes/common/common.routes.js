@@ -19,6 +19,9 @@ import contactEnquiryRoutes from "./contactEnquiry.routes.js";
 import jobPostingRoutes from "./jobPosting.routes.js";
 import jobApplicationRoutes from "./jobApplication.routes.js";
 import rateCardRoutes from "./rateCard.routes.js";
+import reviewRoutes from "./review.routes.js";
+import disclaimerRoutes from "./disclaimer.routes.js";
+import metaTagRoutes from "./metaTag.route.js";
 
 const router = express.Router();
 
@@ -42,5 +45,8 @@ router.use("/contact-enquiry", contactEnquiryRoutes);
 router.use("/job-posting", jobPostingRoutes);
 router.use("/job-application", jobApplicationRoutes);
 router.use("/rate-card", rateCardRoutes);
+router.use("/review", reviewRoutes);
+router.use("/disclaimer", disclaimerRoutes);
+router.use("/meta-tag", metaTagRoutes);
 
 export default router;

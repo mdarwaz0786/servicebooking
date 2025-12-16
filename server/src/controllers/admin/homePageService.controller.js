@@ -20,7 +20,6 @@ export const createHomePageService = asyncHandler(async (req, res) => {
   return res.status(201).json({ success: true, message: "Created successfully", data: newService });
 });
 
-
 // Get all
 export const getHomePageServices = asyncHandler(async (req, res) => {
   const { status, search, page = 1, limit = 10 } = req.query;
@@ -64,13 +63,13 @@ export const getHomePageServiceById = asyncHandler(async (req, res) => {
 
 // Update
 export const updateHomePageService = asyncHandler(async (req, res) => {
-  const { services = [], title, status } = req.body;
+  const { services, title, status } = req.body;
   const userId = req.user?._id;
 
   const service = await HomePageServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Home Page Service not found");
 
-  service.services = services;
+  if (services) service.services = services;
 
   if (title) service.title = title;
   if (status !== undefined) service.status = status;

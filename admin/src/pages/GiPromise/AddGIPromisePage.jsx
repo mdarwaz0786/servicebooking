@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -10,6 +11,16 @@ const AddGIPromisePage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
+
+  const [category, setCategory] = useState();
+  const [subCategory, setSubCategory] = useState();
+  const [subSubCategory, setSubSubCategory] = useState();
+  const [subSubSubCategory, setSubSubSubCategory] = useState();
+
   const [mainTitle, setMainTitle] = useState("");
   const [titles, setTitles] = useState([""]);
   const [services, setServices] = useState([]);
@@ -17,19 +28,105 @@ const AddGIPromisePage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await axios.get(apis.service.get, {
+        const res = await axios.get(apis.category.get, {
           headers: { Authorization: validToken },
         });
-        setServices(res?.data?.data || []);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load services");
-      }
+        if (res?.data?.success) setCategories(res?.data?.data || []);
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load categories");
+      };
     };
-    fetchServices();
+    fetchCategories();
   }, [validToken]);
+
+  useEffect(() => {
+    if (!category) return;
+    const fetchSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subCategory.get}?categoryId=${category}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [category, validToken]);
+
+  useEffect(() => {
+    if (!subCategory) return;
+    const fetchSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubCategory.get}?subCategoryId=${subCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [subCategory, validToken]);
+
+  useEffect(() => {
+    if (!subSubCategory) return;
+    const fetchSubSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub sub categories");
+      };
+    };
+    fetchSubSubSubCategories();
+  }, [subSubCategory, validToken]);
+
+  const fetchServices = async () => {
+    try {
+      const params = {};
+      if (category) params.categoryId = category;
+      if (subCategory) params.subCategoryId = subCategory;
+      if (subSubCategory) params.subSubCategoryId = subSubCategory;
+      if (subSubSubCategory) params.subSubSubCategoryId = subSubSubCategory;
+
+      const res = await axios.get(apis.service.get, {
+        params,
+        headers: {
+          Authorization: validToken,
+        },
+      });
+      setServices(res?.data?.data || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleTitleChange = (index, value) => {
     const updated = [...titles];
@@ -59,6 +156,10 @@ const AddGIPromisePage = () => {
         mainTitle,
         titles: titles.filter((t) => t?.trim() !== ""),
         services: selectedServices,
+        category,
+        subCategory,
+        subSubCategory,
+        subSubSubCategory
       };
 
       const res = await axios.post(apis.giPromise.create, payload, {
@@ -67,6 +168,7 @@ const AddGIPromisePage = () => {
 
       if (res?.data?.success) {
         toast.success("GI Promise created successfully");
+        navigate(-1);
         setMainTitle("");
         setTitles([""]);
         setSelectedServices([]);
@@ -91,6 +193,98 @@ const AddGIPromisePage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Category */}
+              <div className="mb-3">
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                <select
+                  name="category"
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setSubCategory();
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  required
+                >
+                  <option value="">-- Select Product --</option>
+                  {categories?.map((cat) => (
+                    <option key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Variant</label>
+                <select
+                  name="subCategory"
+                  value={subCategory}
+                  onChange={(e) => {
+                    setSubCategory(e.target.value);
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  disabled={!category}
+                >
+                  <option value="">-- Select Variant --</option>
+                  {subCategories?.map((sub) => (
+                    <option key={sub?._id} value={sub?._id}>
+                      {sub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Service Process</label>
+                <select
+                  name="subSubCategory"
+                  value={subSubCategory}
+                  onChange={(e) => {
+                    setSubSubCategory(e.target.value);
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }
+                  }
+                  className="form-control"
+                  disabled={!subCategory}
+                >
+                  <option value="">-- Select Service Process --</option>
+                  {subSubCategories?.map((subsub) => (
+                    <option key={subsub?._id} value={subsub?._id}>
+                      {subsub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Nested Service Process</label>
+                <select
+                  name="subSubSubCategory"
+                  value={subSubSubCategory}
+                  onChange={(e) => setSubSubSubCategory(e.target.value)}
+                  className="form-control"
+                  disabled={!subSubCategory}
+                >
+                  <option value="">-- Select Nested Service Process --</option>
+                  {subSubSubCategories?.map((sss) => (
+                    <option key={sss?._id} value={sss?._id}>
+                      {sss?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
@@ -119,7 +313,7 @@ const AddGIPromisePage = () => {
 
               {/* Multiple Titles */}
               <div className="mb-3">
-                <label className="form-label">Titles</label>
+                <label className="form-label">Titles <span style={{ color: "red" }}>*</span></label>
                 {titles.map((title, index) => (
                   <div key={index} className="d-flex mb-2">
                     <input

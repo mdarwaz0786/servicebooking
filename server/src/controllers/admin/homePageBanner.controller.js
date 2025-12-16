@@ -17,14 +17,21 @@ export const createHomePageBanner = asyncHandler(async (req, res) => {
   const { title, link, status } = req.body;
   const userId = req.user?._id;
 
-  if (!req.file || !req.file.buffer) throw new ApiError(400, "Image is required");
-
-  let imagePath;
+  let imagePath = null;
+  let mobileBannerPath = null;
 
   try {
-    imagePath = await compressImage(req.file.buffer, "homePageBanner");
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "homePageBanner");
+    };
+
+    if (req.files?.mobileBanner?.[0]) {
+      mobileBannerPath = await compressImage(req.files.mobileBanner[0].buffer, "homePageBanner");
+    };
+
     const newBanner = await HomePageBannerModel.create({
       image: imagePath,
+      mobileBanner: mobileBannerPath,
       title,
       link,
       status: status !== undefined ? status : true,
@@ -34,6 +41,7 @@ export const createHomePageBanner = asyncHandler(async (req, res) => {
     return res.status(201).json({ success: true, message: "Created successfully", data: newBanner });
   } catch (error) {
     removeFile(imagePath);
+    removeFile(mobileBannerPath);
     throw error;
   };
 });
@@ -46,13 +54,19 @@ export const updateHomePageBanner = asyncHandler(async (req, res) => {
   const banner = await HomePageBannerModel.findById(req.params.id);
   if (!banner) throw new ApiError(404, "Banner not found");
 
-  let oldImage = banner.image;
-  let newImagePath;
-
   try {
-    if (req.file && req.file.buffer) {
-      newImagePath = await compressImage(req.file.buffer, "homePageBanner");
-      banner.image = newImagePath;
+    if (req.files?.image?.[0]) {
+      if (banner.image && fs.existsSync(path.join(process.cwd(), banner.image))) {
+        fs.unlinkSync(path.join(process.cwd(), banner.image));
+      };
+      banner.image = await compressImage(req.files.image[0].buffer, "homePageBanner");
+    };
+
+    if (req.files?.mobileBanner?.[0]) {
+      if (banner.mobileBanner && fs.existsSync(path.join(process.cwd(), banner.mobileBanner))) {
+        fs.unlinkSync(path.join(process.cwd(), banner.mobileBanner));
+      };
+      banner.mobileBanner = await compressImage(req.files.mobileBanner[0].buffer, "homePageBanner");
     };
 
     if (title) banner.title = title;
@@ -62,11 +76,8 @@ export const updateHomePageBanner = asyncHandler(async (req, res) => {
 
     await banner.save();
 
-    if (newImagePath && oldImage) removeFile(oldImage);
-
     return res.status(200).json({ success: true, message: "Updated successfully", data: banner });
   } catch (error) {
-    if (newImagePath) removeFile(newImagePath);
     throw error;
   };
 });
@@ -114,6 +125,7 @@ export const deleteHomePageBanner = asyncHandler(async (req, res) => {
   if (!banner) throw new ApiError(404, "Banner not found");
 
   if (banner.image) removeFile(banner.image);
+  if (banner.mobileBanner) removeFile(banner.mobileBanner);
 
   await banner.deleteOne();
 

@@ -53,6 +53,8 @@ VITE_API_BASE_URL=http://145.223.18.56:3001
 VITE_API_SERVER_BASE_URL=http://145.223.18.56:3001/
 VITE_RAZORPAY_KEY_ID=rzp_test_RHmDyqCFCKQ5XV
 VITE_APP_NAME=Green India Team
+VITE_GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+VITE_PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
 
 // Server ENV
 MONGODB_URL=mongodb://admin:Shaurya1819@127.0.0.1:27017/greenindiateam?authSource=admin&replicaSet=rs0
@@ -62,3 +64,21 @@ JWT_SECRET_KEY=servicebooking@app
 EXPIRES_IN=999d
 RAZORPAY_KEY_ID=rzp_test_RHmDyqCFCKQ5XV
 RAZORPAY_KEY_SECRET=H83uZwcFKA08ij3l9CdP1FA8
+
+// Push Notification-> provider id[multiple], title, description, toAll (all provider)
+// Brand list-> name, code, image, description
+// Provider certificate-> provider name (provider table id), title, number, issued from, issue date, expiry date, description, upload certificate.
+// Training->category, trainig subject, first name, last name, start date, start time, end time, location, max participant, description
+// Trainig attendance-> provider name (provider table id), date, trainer name (training table id), location, interview status, staus (Active, Inactive)
+// Training schedule-> date, time, provider id, training id, attendance status (join pe aayega training attendance and training table se)
+// Wallet-> provider id, credit points, deposit amount, deposit status (paid, unpaid), date of deposit, payment mode(online, cash), transaction type(debit, credit), transaction id, transaction number, purpose, status(show, hide)  
+// Insurance-> provider id, company name, policy number, insurance type, issue date, expiry date, coverage detail, emergency number, remarks, upload policy, isRenewed
+// City-> city name, status, city code
+// Locality-> city id, Locality name, latitude, longitude
+// Area Zone List-> locality id (mutiple), area zone name, radius, latitude, longitude, description
+// product store-> name, stock, price, brand list id, part type, image
+// customer/provider suport-> ticket number, name, role (customer, provider), mobile, subject, priority(high, medium, low), image, description, reply, reply image, schedule ticket(true, false)
+
+// Service man profile->category id (multiple), name, email, DOB, working history(Fresher, or Experience(compnay name, number of year)), permanenet address, current address, reference person name 1, reference person name 2,
+   reference person 1 mobile , reference person 2 mobile, profile image,
+

@@ -1,5 +1,6 @@
 import CategoryModel from "../../models/category.model.js";
 import SlugModel from "../../models/slug.model.js";
+import MetaTagModel from "../../models/metaTag.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
@@ -10,13 +11,14 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // Create Category
 export const createCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription } = req.body;
+  const { name, shortDescription, fullDescription, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription } = req.body;
 
   if (!name || !name.trim()) {
     throw new ApiError(400, "Category name is required");
   };
 
   let imagePath = null;
+  let metaImagePath = null;
   let iconPath = null;
 
   try {
@@ -26,6 +28,10 @@ export const createCategory = asyncHandler(async (req, res) => {
 
     if (req.files?.icon?.[0]) {
       iconPath = await compressImage(req.files.icon[0].buffer, "category");
+    };
+
+    if (req.files?.metaImage?.[0]) {
+      metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
     };
 
     const category = await CategoryModel.create({
@@ -42,14 +48,33 @@ export const createCategory = asyncHandler(async (req, res) => {
     category.slug = slug;
     await category.save();
 
-    return res.status(201).json({ success: true, data: category });
+    const metaTag = await MetaTagModel.create({
+      pageName,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      metaAuthor,
+      image: metaImagePath,
+      slug,
+      createdBy: req.user?._id,
+    });
+
+    await metaTag.save();
+
+    return res.status(201).json({ success: true, data: { category, metaTag } });
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
       fs.unlinkSync(path.join(process.cwd(), imagePath));
     };
+    if (metaImagePath && fs.existsSync(path.join(process.cwd(), metaImagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), metaImagePath));
+    };
     if (iconPath && fs.existsSync(path.join(process.cwd(), iconPath))) {
       fs.unlinkSync(path.join(process.cwd(), iconPath));
     };
+    if (error.code === 11000) {
+      throw new ApiError(409, "Product already exists");
+    }
     throw new ApiError(500, error.message || "Something went wrong");
   };
 });
@@ -180,17 +205,21 @@ export const getCategoryById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Category not found");
   };
 
-  return res.status(200).json({ success: true, data: category });
+  const metaTag = await MetaTagModel.findOne({ slug: category?.slug });
+
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: category, meta: metaTag });
 });
 
 //  Update Category
 export const updateCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription, status } = req.body;
+  const { name, shortDescription, fullDescription, status, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription } = req.body;
 
   const category = await CategoryModel.findById(req.params.id);
   if (!category) {
     throw new ApiError(404, "Category not found");
   };
+
+  const metaTag = await MetaTagModel.findOne({ slug: category?.slug });
 
   if (req.files?.image?.[0]) {
     if (category.image && fs.existsSync(path.join(process.cwd(), category.image))) {
@@ -206,13 +235,14 @@ export const updateCategory = asyncHandler(async (req, res) => {
     category.icon = await compressImage(req.files.icon[0].buffer, "category");
   };
 
+  let newSlug = null;
   if (name && name !== category.name) {
     await SlugModel.deleteOne({
       collectionName: "Category",
       documentId: category?._id,
     });
 
-    const newSlug = await generateUniqueSlug(name, "Category", category?._id, "categories");
+    newSlug = await generateUniqueSlug(name, "Category", category?._id, "categories");
     category.slug = newSlug;
   };
 
@@ -224,7 +254,43 @@ export const updateCategory = asyncHandler(async (req, res) => {
 
   await category.save();
 
-  return res.status(200).json({ success: true, data: category });
+  if (metaTag) {
+    if (req.files?.metaImage?.[0]) {
+      if (metaTag.image && fs.existsSync(path.join(process.cwd(), metaTag.image))) {
+        fs.unlinkSync(path.join(process.cwd(), metaTag.image));
+      };
+      metaTag.image = await compressImage(req.files.metaImage[0].buffer, "meta");
+    };
+
+    metaTag.pageName = pageName || metaTag.pageName;
+    metaTag.metaTitle = metaTitle || metaTag.metaTitle;
+    metaTag.metaDescription = metaDescription || metaTag.metaDescription;
+    metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
+    metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
+    newSlug ? metaTag.slug = newSlug : metaTag.slug = metaTag.slug;
+    metaTag.updatedBy = req.user?._id;
+
+    await metaTag.save();
+
+  } else {
+    let metaImagePath = null;
+    if (req.files?.metaImage?.[0]) {
+      metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
+    }
+
+    await MetaTagModel.create({
+      pageName,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      metaAuthor,
+      image: metaImagePath,
+      slug: newSlug || category?.slug,
+      createdBy: req.user?._id,
+    });
+  }
+
+  return res.status(200).json({ success: true, message: "Updated successfully", data: { category, metaTag } });
 });
 
 //  Delete Category
@@ -233,6 +299,8 @@ export const deleteCategory = asyncHandler(async (req, res) => {
   if (!category) {
     throw new ApiError(404, "Category not found");
   };
+
+  const metaTag = await MetaTagModel.findOne({ slug: category?.slug });
 
   if (category.image && fs.existsSync(path.join(process.cwd(), category.image))) {
     fs.unlinkSync(path.join(process.cwd(), category.image));
@@ -248,6 +316,13 @@ export const deleteCategory = asyncHandler(async (req, res) => {
   });
 
   await category.deleteOne();
+
+  if (metaTag) {
+    if (metaTag.image && fs.existsSync(path.join(process.cwd(), metaTag.image))) {
+      fs.unlinkSync(path.join(process.cwd(), metaTag.image));
+    };
+    await metaTag.deleteOne();
+  };
 
   return res.status(200).json({ success: true, message: "Category deleted successfully" });
 });

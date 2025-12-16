@@ -3,10 +3,16 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const UserSidebar = () => {
-  const { user, imageCheck, formatDate, handleLogout } = useContext(AppContext);
+  const { user, imageCheck, formatDate, handleLogout, setUserSidebaOpen, userSidebaOpen } = useContext(AppContext);
+
+  const handleClicksNav = () =>{
+    setUserSidebaOpen(false);
+  }
+
   return (
     <div className="col-xl-3 col-lg-4 theiaStickySidebar">
-      <div className="card user-sidebar mb-4 mb-lg-0">
+      <div className={`card user-sidebar mb-4 mb-lg-0 ${userSidebaOpen?'show':''}`}>
+        <i className="fa fa-times mobile-cart-close-btn" onClick={()=> setUserSidebaOpen(false)}></i>
         <div className="card-header user-sidebar-header mb-4">
           <div className="d-flex justify-content-center align-items-center flex-column">
             <span className="user rounded-circle avatar avatar-xxl mb-2">
@@ -19,16 +25,22 @@ const UserSidebar = () => {
         </div>
         <div className="card-body user-sidebar-body p-0">
           <ul>
-            <li className="mb-4">
-              <Link to="/user" className="d-flex align-items-center active">
+            {/* <li className="mb-4">
+              <Link to="/user" className="d-flex align-items-center active" onClick={handleClicksNav}>
                 <i className="ti ti-layout-grid me-2" />
                 Dashboard
               </Link>
-            </li>
+            </li> */}
             <li className="mb-4">
-              <Link to="/user" className="d-flex align-items-center">
+              <Link to="/user" className="d-flex align-items-center" onClick={handleClicksNav}>
                 <i className="ti ti-device-mobile me-2" />
                 Bookings
+              </Link>
+            </li>
+            <li className="mb-4">
+              <Link to="/user/profile" className="d-flex align-items-center" onClick={handleClicksNav}>
+                <i className="ti ti-user me-2" />
+                Update Profile
               </Link>
             </li>
             {/* <li className="mb-4">
@@ -44,13 +56,13 @@ const UserSidebar = () => {
               </Link>
             </li> */}
             <li className="mb-4">
-              <Link to="/user/address" className="d-flex align-items-center">
+              <Link to="/user/address" className="d-flex align-items-center" onClick={handleClicksNav}>
                 <i className="ti ti-map-pin me-2" />
                 Address
               </Link>
             </li>
             <li className="mb-4">
-              <Link to="/user/reviews" className="d-flex align-items-center">
+              <Link to="/user/reviews" className="d-flex align-items-center" onClick={handleClicksNav}>
                 <i className="ti ti-star me-2" />
                 Reviews
               </Link>

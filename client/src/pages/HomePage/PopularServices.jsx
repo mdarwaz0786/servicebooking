@@ -13,7 +13,7 @@ const PopularServices = () => {
   const prevRef = useRef(null);
     const nextRef = useRef(null); 
   return (
-    <section className="section popular-section pt-0">
+    <section className="section popular-section popular-section2 pt-0">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-12  wow fadeInUp" data-wow-delay="0.2s">
@@ -29,7 +29,7 @@ const PopularServices = () => {
 
               <Swiper
             modules={[Navigation, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={10}
             slidesPerView={5}
             loop={true}
             autoplay={{
@@ -47,14 +47,15 @@ const PopularServices = () => {
             centeredSlides={false}
             grabCursor={true}
             breakpoints={{
-              320: { slidesPerView: 1 },
+              0: { slidesPerView: 3 },
               640: { slidesPerView: 2 },
+              768: { slidesPerView: 2 },
               1024: { slidesPerView: 5 },
             }}
           >
               {homePageData.mostBookedServices.map((item, index) => (
                 <SwiperSlide key={index}>
-                  <div className="col-md-12" key={index} onClick={() => handleServiceDetail(item._id)}>
+                  <div className="col-md-12" key={index} onClick={() => handleServiceDetail(item._id, item)}>
                     <div className="service-item">
                       <div className="service-img">
                         <div className=" nav-center">

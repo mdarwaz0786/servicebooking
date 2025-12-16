@@ -37,14 +37,39 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: {
-        values: ["admin", "user", "provider", "serviceman"],
-        message: "Role must be either admin or user or provider or serviceman",
+        values: ["admin", "subadmin", "user", "provider","serviceman"],
+        message: "Role must be either admin or subadmin or user or provider",
       },
       default: "user",
     },
+    profileImage: {
+      type: String,
+      required: false,
+    },
+    dob: {
+      type: String,
+      required: false,
+    }
   },
-  { timestamps: true },
+  { timestamps: true,  toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
+
+
+userSchema.virtual("profile", {
+  ref: "ServiceManProfile",
+  localField: "_id",
+  foreignField: "userId",
+  justOne: true,
+});
+
+
+userSchema.virtual("kyc", {
+  ref: "KYC",
+  localField: "_id",
+  foreignField: "userId",
+  justOne: true,
+});
+
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

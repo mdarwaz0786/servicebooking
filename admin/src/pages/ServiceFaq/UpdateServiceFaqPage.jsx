@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -11,6 +12,16 @@ const UpdateServiceFaqPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
+
+  const [category, setCategory] = useState();
+  const [subCategory, setSubCategory] = useState();
+  const [subSubCategory, setSubSubCategory] = useState();
+  const [subSubSubCategory, setSubSubSubCategory] = useState();
+
   const [mainTitle, setMainTitle] = useState("");
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -18,18 +29,105 @@ const UpdateServiceFaqPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await axios.get(apis.service.get, {
+        const res = await axios.get(apis.category.get, {
           headers: { Authorization: validToken },
         });
-        if (res?.data?.success) setServices(res?.data?.data || []);
+        if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.log(error.message);
-      }
+        console.log(error);
+        toast.error("Failed to load categories");
+      };
     };
-    fetchServices();
+    fetchCategories();
   }, [validToken]);
+
+  useEffect(() => {
+    if (!category) return;
+    const fetchSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subCategory.get}?categoryId=${category}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [category, validToken]);
+
+  useEffect(() => {
+    if (!subCategory) return;
+    const fetchSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubCategory.get}?subCategoryId=${subCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [subCategory, validToken]);
+
+  useEffect(() => {
+    if (!subSubCategory) return;
+    const fetchSubSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub sub categories");
+      };
+    };
+    fetchSubSubSubCategories();
+  }, [subSubCategory, validToken]);
+
+  const fetchServices = async () => {
+    try {
+      const params = {};
+      if (category) params.categoryId = category;
+      if (subCategory) params.subCategoryId = subCategory;
+      if (subSubCategory) params.subSubCategoryId = subSubCategory;
+      if (subSubSubCategory) params.subSubSubCategoryId = subSubSubCategory;
+
+      const res = await axios.get(apis.service.get, {
+        params,
+        headers: {
+          Authorization: validToken,
+        },
+      });
+      setServices(res?.data?.data || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +138,10 @@ const UpdateServiceFaqPage = () => {
         if (res?.data?.success && res?.data?.data) {
           const data = res.data.data;
           setMainTitle(data?.mainTitle || "");
+          setCategory(data?.category?._id);
+          setSubCategory(data?.subCategory?._id);
+          setSubSubCategory(data?.subSubCategory?._id);
+          setSubSubSubCategory(data?.subSubSubSubCategory?._id);
           setSelectedServices(data?.services?.map(s => s?._id) || []);
           setFaqs(data?.faqs?.length ? data.faqs : [{ question: "", answer: "" }]);
         }
@@ -111,6 +213,98 @@ const UpdateServiceFaqPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
+              {/* Category */}
+              <div className="mb-3">
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                <select
+                  name="category"
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setSubCategory();
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  required
+                >
+                  <option value="">-- Select Product --</option>
+                  {categories?.map((cat) => (
+                    <option key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Variant</label>
+                <select
+                  name="subCategory"
+                  value={subCategory}
+                  onChange={(e) => {
+                    setSubCategory(e.target.value);
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  disabled={!category}
+                >
+                  <option value="">-- Select Variant --</option>
+                  {subCategories?.map((sub) => (
+                    <option key={sub?._id} value={sub?._id}>
+                      {sub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Service Process</label>
+                <select
+                  name="subSubCategory"
+                  value={subSubCategory}
+                  onChange={(e) => {
+                    setSubSubCategory(e.target.value);
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }
+                  }
+                  className="form-control"
+                  disabled={!subCategory}
+                >
+                  <option value="">-- Select Service Process --</option>
+                  {subSubCategories?.map((subsub) => (
+                    <option key={subsub?._id} value={subsub?._id}>
+                      {subsub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Nested Service Process</label>
+                <select
+                  name="subSubSubCategory"
+                  value={subSubSubCategory}
+                  onChange={(e) => setSubSubSubCategory(e.target.value)}
+                  className="form-control"
+                  disabled={!subSubCategory}
+                >
+                  <option value="">-- Select Nested Service Process --</option>
+                  {subSubSubCategories?.map((sss) => (
+                    <option key={sss?._id} value={sss?._id}>
+                      {sss?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Services */}
               <div className="mb-3">
                 <label className="form-label">
@@ -132,13 +326,14 @@ const UpdateServiceFaqPage = () => {
                   type="text"
                   className="form-control"
                   value={mainTitle}
+                  required
                   onChange={(e) => setMainTitle(e.target.value)}
                 />
               </div>
 
               {/* FAQs */}
               <div className="mb-3">
-                <label className="form-label">FAQs</label>
+                <label className="form-label">FAQs <span style={{ color: "red" }}>*</span></label>
                 {faqs.map((faq, index) => (
                   <div key={index} className="mb-2 border p-2 rounded">
                     <input
@@ -146,12 +341,14 @@ const UpdateServiceFaqPage = () => {
                       className="form-control mb-1"
                       placeholder="Question"
                       value={faq.question}
+                      required
                       onChange={(e) => handleFaqChange(index, "question", e.target.value)}
                     />
                     <textarea
                       className="form-control mb-1"
                       placeholder="Answer"
                       value={faq.answer}
+                      required
                       onChange={(e) => handleFaqChange(index, "answer", e.target.value)}
                     />
                     <div className="d-flex justify-content-end">

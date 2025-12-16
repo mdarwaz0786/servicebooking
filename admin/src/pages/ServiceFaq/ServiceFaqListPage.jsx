@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
+import Select from "react-select";
 
 const ServiceFaqListPage = () => {
   const { validToken } = useAuth();
@@ -24,6 +25,89 @@ const ServiceFaqListPage = () => {
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [service, setService] = useState([]);
+  const categoryId = searchParams.get("categoryId") || "";
+  const subCategoryId = searchParams.get("subCategoryId") || "";
+  const subSubCategoryId = searchParams.get("subSubCategoryId") || "";
+  const services = searchParams.get("services") || "";
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(apis.category.get, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch categories");
+      };
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
+
+  useEffect(() => {
+    const fetchSubSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subSubCategory.get}?subCategoryId=${subCategoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [subCategoryId, validToken]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(apis.service.get, {
+          headers: { Authorization: validToken },
+          params: {
+            categoryId,
+            subCategoryId,
+            subSubCategoryId,
+          },
+        });
+
+        if (response?.data?.success) {
+          setService(response?.data?.data || []);
+        };
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Failed to fetch services");
+      };
+    };
+    fetchServices();
+  }, [categoryId, subCategoryId, subSubCategoryId, validToken]);
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchInput);
@@ -41,6 +125,10 @@ const ServiceFaqListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          category: categoryId,
+          subCategory: subCategoryId,
+          subSubCategory: subSubCategoryId,
+          services,
         },
       });
 
@@ -105,7 +193,7 @@ const ServiceFaqListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, services, categoryId, subCategoryId, subSubCategoryId]);
 
   return (
     <div className="page-wrapper page-settings">
@@ -159,6 +247,109 @@ const ServiceFaqListPage = () => {
           </div>
         </div>
 
+        <div className="d-flex justify-content-start align-items-center gap-2 mt-4">
+          {/* Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Products"
+              value={
+                categoryId
+                  ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  categoryId: selected ? selected.value : "",
+                  page: 1,
+                  subCategoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={categories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Variants"
+              value={
+                subCategoryId
+                  ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={subCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Service Process"
+              value={
+                subSubCategoryId
+                  ? { value: subSubCategoryId, label: subSubCategories.find((c) => c?._id === subSubCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subSubCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subCategoryId,
+                })
+              }
+              options={subSubCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Services */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Services"
+              value={
+                service
+                  .map((s) => ({ value: s?._id, label: s?.name }))
+                  .find((s) => s?.value === services) || null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  services: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subCategoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={service.map((s) => ({
+                value: s?._id,
+                label: s?.name,
+              }))}
+            />
+          </div>
+        </div>
+
         {/* Table */}
         <div className="row">
           <div className="col-12">
@@ -168,6 +359,10 @@ const ServiceFaqListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Title</th>
+                    <th>Product</th>
+                    <th>Variant</th>
+                    <th>Service Process</th>
+                    <th>Services</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -178,6 +373,14 @@ const ServiceFaqListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.mainTitle}</td>
+                        <td>{d?.category?.name}</td>
+                        <td>{d?.subCategory?.name}</td>
+                        <td>{d?.subSubCategory?.name}</td>
+                        <td>
+                          {d?.services?.map((n) => (
+                            <p>{n?.name}</p>
+                          ))}
+                        </td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

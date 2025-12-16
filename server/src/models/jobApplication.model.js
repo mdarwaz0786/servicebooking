@@ -21,6 +21,26 @@ const jobApplicationSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  highestQualification: {
+    type: String,
+    trim: true,
+  },
+  skills: {
+    type: String,
+    trim: true,
+  },
+  totalExprienceYear: {
+    type: String,
+    trim: true,
+  },
+  totalExprienceMonth: {
+    type: String,
+    trim: true,
+  },
+  lastCompanyName: {
+    type: String,
+    trim: true,
+  },
   resume: {
     type: String,
     required: true,

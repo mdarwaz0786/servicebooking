@@ -20,6 +20,7 @@ router.post(
     { name: "image", maxCount: 1 },
     { name: "icon", maxCount: 1 },
     { name: "popupImage", maxCount: 1 },
+    { name: "metaImage", maxCount: 1 },
   ]),
   validateFileSize,
   createService
@@ -39,6 +40,7 @@ router.patch(
     { name: "image", maxCount: 1 },
     { name: "icon", maxCount: 1 },
     { name: "popupImage", maxCount: 1 },
+    { name: "metaImage", maxCount: 1 },
   ]),
   validateFileSize,
   updateService

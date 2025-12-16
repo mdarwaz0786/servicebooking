@@ -49,7 +49,7 @@ const UserReviewsPage = () => {
 
 
   return (
-    <div className="col-xl-9 col-lg-8">
+    <div className="col-xl-9 col-lg-8 card pt-2 pb-2">
       <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
         <h4 className="mb-3">Reviews</h4>
       </div>

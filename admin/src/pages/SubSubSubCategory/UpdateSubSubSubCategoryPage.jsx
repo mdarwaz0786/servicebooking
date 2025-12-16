@@ -22,7 +22,6 @@ const UpdateSubSubSubCategoryPage = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    shortDescription: "",
     fullDescription: "",
     categoryId: "",
     subCategoryId: "",
@@ -38,7 +37,7 @@ const UpdateSubSubSubCategoryPage = () => {
         if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error.message);
-        toast.error("Failed to load categories");
+        toast.error("Failed to load products");
       };
     };
     fetchCategories();
@@ -55,7 +54,7 @@ const UpdateSubSubSubCategoryPage = () => {
         if (res?.data?.success) setSubCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub categories");
+        toast.error("Failed to load varinats");
       };
     };
     fetchSubCategories();
@@ -72,7 +71,7 @@ const UpdateSubSubSubCategoryPage = () => {
         if (res?.data?.success) setSubSubCategories(res?.data?.data || []);
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub sub categories");
+        toast.error("Failed to load service process");
       };
     };
     fetchSubSubCategories();
@@ -88,7 +87,6 @@ const UpdateSubSubSubCategoryPage = () => {
           const data = res.data.data;
           setFormData({
             name: data.name || "",
-            shortDescription: data?.shortDescription || "",
             fullDescription: data?.fullDescription || "",
             categoryId: data?.categoryId || "",
             subCategoryId: data?.subCategoryId || "",
@@ -100,7 +98,7 @@ const UpdateSubSubSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub sub sub category details");
+        toast.error("Failed to load Nested Service Process details");
       };
     };
     fetchDetails();
@@ -174,13 +172,17 @@ const UpdateSubSubSubCategoryPage = () => {
       );
 
       if (response?.data?.success) {
-        toast.success("Sub Sub Sub Category updated successfully");
+        toast.success("Nested Service Process updated successfully");
         navigate(-1);
       };
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || error.message || "Something Went Wrong"
-      );
+      const status = error?.response?.status;
+      if (status === 409) {
+        toast.error("Nested service process already exists");
+      }
+      else {
+        toast.error("Something went wrong");
+      }
     } finally {
       setLoading(false);
     };
@@ -198,7 +200,7 @@ const UpdateSubSubSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Sub Sub Sub Category</h5>
+            <h5 className="mb-0">Update Nested Service Process</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -211,7 +213,7 @@ const UpdateSubSubSubCategoryPage = () => {
             <form onSubmit={handleSubmit}>
               {/* Category */}
               <div className="mb-3">
-                <label className="form-label">Category *</label>
+                <label className="form-label">Product *</label>
                 <select
                   name="categoryId"
                   value={formData.categoryId}
@@ -226,7 +228,7 @@ const UpdateSubSubSubCategoryPage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -237,7 +239,7 @@ const UpdateSubSubSubCategoryPage = () => {
 
               {/* Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Category *</label>
+                <label className="form-label">Variant *</label>
                 <select
                   name="subCategoryId"
                   value={formData.subCategoryId}
@@ -252,7 +254,7 @@ const UpdateSubSubSubCategoryPage = () => {
                   required
                   disabled={!formData.categoryId}
                 >
-                  <option value="">-- Select Sub Category --</option>
+                  <option value="">-- Select Variant --</option>
                   {subCategories.map((sub) => (
                     <option key={sub?._id} value={sub?._id}>
                       {sub?.name}
@@ -263,7 +265,7 @@ const UpdateSubSubSubCategoryPage = () => {
 
               {/* Sub Sub Category */}
               <div className="mb-3">
-                <label className="form-label">Sub Sub Category *</label>
+                <label className="form-label">Service Process *</label>
                 <select
                   name="subSubCategoryId"
                   value={formData.subSubCategoryId}
@@ -272,7 +274,7 @@ const UpdateSubSubSubCategoryPage = () => {
                   required
                   disabled={!formData.subCategoryId}
                 >
-                  <option value="">-- Select Sub Sub Category --</option>
+                  <option value="">-- Select Service Process --</option>
                   {subSubCategories.map((subsub) => (
                     <option key={subsub?._id} value={subsub?._id}>
                       {subsub?.name}
@@ -295,22 +297,9 @@ const UpdateSubSubSubCategoryPage = () => {
                 />
               </div>
 
-              {/* Short Description */}
+              {/* Description */}
               <div className="mb-3">
-                <label className="form-label">Short Description</label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="250"
-                />
-              </div>
-
-              {/* Full Description */}
-              <div className="mb-3">
-                <label className="form-label">Full Description</label>
+                <label className="form-label">Description</label>
                 <textarea
                   name="fullDescription"
                   value={formData.fullDescription}
@@ -320,9 +309,9 @@ const UpdateSubSubSubCategoryPage = () => {
                 ></textarea>
               </div>
 
-              {/* Image */}
+              {/* Banner */}
               <div className="mb-3">
-                <label className="form-label">Image</label>
+                <label className="form-label">Banner</label>
                 <div
                   {...getImageRootProps()}
                   className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
@@ -331,10 +320,10 @@ const UpdateSubSubSubCategoryPage = () => {
                 >
                   <input {...getImageInputProps()} />
                   {isImageActive ? (
-                    <p>Drop the image here...</p>
+                    <p>Drop the banner here...</p>
                   ) : (
                     <p>
-                      Drag & drop image here, or{" "}
+                      Drag & drop banner here, or{" "}
                       <span className="text-primary">browse</span>
                     </p>
                   )}

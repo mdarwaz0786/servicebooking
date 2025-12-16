@@ -1,5 +1,6 @@
 import asyncHandler from "../../helpers/asyncHandler.js";
 import CategoryModel from "../../models/category.model.js";
+import CartModel from "../../models/cart.model.js";
 import HomePageServiceModel from "../../models/homePageService.model.js";
 import HomePageBannerModel from "../../models/homePageBanner.model.js";
 import HomePageSliderModel from "../../models/homePageSlider.model.js";
@@ -65,6 +66,29 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     .sort({ createdAt: 1 })
     .lean();
 
+  let cartItems = [];
+  if (userId) {
+    cartItems = await CartModel.find({ userId }).lean();
+  }
+
+  const servicesWithQuantity = services.map((serviceBlock) => {
+    const updatedServices = serviceBlock.services.map((s) => {
+      const cartItem = cartItems.find(
+        (item) => item?.serviceId?.toString() === s?._id?.toString()
+      );
+
+      return {
+        ...s,
+        quantity: cartItem ? cartItem.quantity : 0,
+      };
+    });
+
+    return {
+      ...serviceBlock,
+      services: updatedServices,
+    };
+  });
+
   // Fetch active home page banners
   const banners = await HomePageBannerModel.find({ status: true })
     .sort({ createdAt: -1 })
@@ -91,7 +115,12 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   // Map totalBooked count to service
   const mostBooked = mostBookedServicesAgg.map((item) => {
     const service = mostBookedServices.find((s) => s?._id?.toString() === item?._id?.toString());
-    return service ? { ...service, totalBooked: item?.totalBooked } : null;
+
+    const cartItem = cartItems.find(
+      (c) => c.serviceId?.toString() === item._id.toString()
+    );
+
+    return service ? { ...service, totalBooked: item?.totalBooked, quantity: cartItem ? cartItem.quantity : 0 } : null;
   }).filter(Boolean);
 
   return res.status(200).json({
@@ -100,7 +129,7 @@ export const getHomePageData = asyncHandler(async (req, res) => {
     data: {
       category: categories,
       cart: cart,
-      services: services,
+      services: servicesWithQuantity,
       banners: banners,
       sliders: sliders,
       mostBookedServices: mostBooked,

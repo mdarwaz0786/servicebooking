@@ -1,5 +1,6 @@
 import ServiceModel from "../../models/service.model.js";
 import SlugModel from "../../models/slug.model.js";
+import MetaTagModel from "../../models/metaTag.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
@@ -12,6 +13,8 @@ import { buildPagination } from "../../utils/pagination.js";
 export const createService = asyncHandler(async (req, res) => {
   const {
     name,
+    rating,
+    review,
     mrpPrice,
     salePrice,
     taxablePrice,
@@ -28,6 +31,11 @@ export const createService = asyncHandler(async (req, res) => {
     taxPercent,
     creditPoint,
     transactionCharge,
+    pageName,
+    metaTitle,
+    metaAuthor,
+    metaKeywords,
+    metaDescription,
   } = req.body;
 
   if (!name || !name.trim()) throw new ApiError(400, "Service name is required");
@@ -36,6 +44,7 @@ export const createService = asyncHandler(async (req, res) => {
   let imagePath = null;
   let iconPath = null;
   let popupImagePath = null;
+  let metaImagePath = null;
 
   try {
     if (req.files?.image?.[0]) {
@@ -50,8 +59,14 @@ export const createService = asyncHandler(async (req, res) => {
       popupImagePath = await compressImage(req.files.popupImage[0].buffer, "service");
     };
 
+    if (req.files?.metaImage?.[0]) {
+      metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
+    };
+
     const service = await ServiceModel.create({
       name,
+      rating,
+      review,
       mrpPrice,
       salePrice,
       taxablePrice,
@@ -78,6 +93,19 @@ export const createService = asyncHandler(async (req, res) => {
     service.slug = slug;
     await service.save();
 
+    const metaTag = await MetaTagModel.create({
+      pageName,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      metaAuthor,
+      image: metaImagePath,
+      slug,
+      createdBy: req.user?._id,
+    });
+
+    await metaTag.save();
+
     return res.status(201).json({ success: true, message: "Created successfully", data: service });
   } catch (error) {
     if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
@@ -89,13 +117,19 @@ export const createService = asyncHandler(async (req, res) => {
     if (popupImagePath && fs.existsSync(path.join(process.cwd(), popupImagePath))) {
       fs.unlinkSync(path.join(process.cwd(), popupImagePath));
     };
+    if (metaImagePath && fs.existsSync(path.join(process.cwd(), metaImagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), metaImagePath));
+    };
+    if (error.code === 11000) {
+      throw new ApiError(409, "Service already exists");
+    }
     throw new ApiError(500, error.message || "Something went wrong");
   };
 });
 
 // Get all services
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
+  let { search, status, sort = "desc", page, limit, categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -168,13 +202,18 @@ export const getServiceById = asyncHandler(async (req, res) => {
     .lean();
 
   if (!service) throw new ApiError(404, "Service not found");
-  return res.status(200).json({ success: true, message: "Data fetched successfully", data: service });
+
+  const metaTag = await MetaTagModel.findOne({ slug: service?.slug });
+
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: service, meta: metaTag });
 });
 
 // Update service
 export const updateService = asyncHandler(async (req, res) => {
   const {
     name,
+    rating,
+    review,
     mrpPrice,
     salePrice,
     taxablePrice,
@@ -192,10 +231,17 @@ export const updateService = asyncHandler(async (req, res) => {
     taxPercent,
     creditPoint,
     transactionCharge,
+    pageName,
+    metaTitle,
+    metaAuthor,
+    metaKeywords,
+    metaDescription,
   } = req.body;
 
   const service = await ServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
+
+  const metaTag = await MetaTagModel.findOne({ slug: service?.slug });
 
   if (req.files?.image?.[0]) {
     if (service.image && fs.existsSync(path.join(process.cwd(), service.image))) {
@@ -218,13 +264,16 @@ export const updateService = asyncHandler(async (req, res) => {
     service.popupImage = await compressImage(req.files.popupImage[0].buffer, "service");
   };
 
+  let newSlug = null;
   if (name && name !== service.name) {
     await SlugModel.deleteOne({ collectionName: "Service", documentId: service._id });
-    const newSlug = await generateUniqueSlug(name, "Service", service._id, "services");
+    newSlug = await generateUniqueSlug(name, "Service", service._id, "services");
     service.slug = newSlug;
   };
 
   service.name = name || service.name;
+  service.rating = rating || service.rating;
+  service.review = review || service.review;
   service.mrpPrice = mrpPrice !== undefined ? mrpPrice : service.mrpPrice;
   service.salePrice = salePrice !== undefined ? salePrice : service.salePrice;
   service.timeTaking = timeTaking || service.timeTaking;
@@ -245,6 +294,43 @@ export const updateService = asyncHandler(async (req, res) => {
   service.updatedBy = req.user?._id;
 
   await service.save();
+
+  if (metaTag) {
+    if (req.files?.metaImage?.[0]) {
+      if (metaTag?.image && fs.existsSync(path.join(process.cwd(), metaTag?.image))) {
+        fs.unlinkSync(path.join(process.cwd(), metaTag.image));
+      };
+      metaTag.image = await compressImage(req.files.metaImage[0].buffer, "meta");
+    };
+
+    metaTag.pageName = pageName || metaTag.pageName;
+    metaTag.metaTitle = metaTitle || metaTag.metaTitle;
+    metaTag.metaDescription = metaDescription || metaTag.metaDescription;
+    metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
+    metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
+    newSlug ? metaTag.slug = newSlug : metaTag.slug = metaTag.slug;
+    metaTag.updatedBy = req.user?._id;
+
+    await metaTag.save();
+
+  } else {
+    let metaImagePath = null;
+    if (req.files?.metaImage?.[0]) {
+      metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
+    }
+
+    await MetaTagModel.create({
+      pageName,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      metaAuthor,
+      image: metaImagePath,
+      slug: newSlug || service?.slug,
+      createdBy: req.user?._id,
+    });
+  }
+
   return res.status(200).json({ success: true, message: "Updated successfully", data: service });
 });
 
@@ -252,6 +338,8 @@ export const updateService = asyncHandler(async (req, res) => {
 export const deleteService = asyncHandler(async (req, res) => {
   const service = await ServiceModel.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
+
+  const metaTag = await MetaTagModel.findOne({ slug: service?.slug });
 
   if (service?.image && fs.existsSync(path.join(process.cwd(), service?.image))) {
     fs.unlinkSync(path.join(process.cwd(), service?.image));
@@ -267,6 +355,13 @@ export const deleteService = asyncHandler(async (req, res) => {
 
   await SlugModel.deleteOne({ collectionName: "Service", documentId: service?._id });
   await service.deleteOne();
+
+  if (metaTag) {
+    if (metaTag.image && fs.existsSync(path.join(process.cwd(), metaTag.image))) {
+      fs.unlinkSync(path.join(process.cwd(), metaTag.image));
+    };
+    await metaTag.deleteOne();
+  };
 
   return res.status(200).json({ success: true, message: "Deleted successfully" });
 });

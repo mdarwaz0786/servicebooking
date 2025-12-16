@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -10,6 +11,16 @@ const AddExpertTechnicianPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
+
+  const [category, setCategory] = useState();
+  const [subCategory, setSubCategory] = useState();
+  const [subSubCategory, setSubSubCategory] = useState();
+  const [subSubSubCategory, setSubSubSubCategory] = useState();
+
   const [mainTitle, setMainTitle] = useState("");
   const [points, setPoints] = useState([{ icon: "", title: "" }]);
   const [pointIcons, setPointIcons] = useState([]);
@@ -19,21 +30,106 @@ const AddExpertTechnicianPage = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch services
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await axios.get(apis.service.get, {
+        const res = await axios.get(apis.category.get, {
           headers: { Authorization: validToken },
         });
-        if (res?.data?.success) setServices(res.data.data || []);
+        if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.error(error);
-        toast.error("Failed to load services");
-      }
+        console.log(error);
+        toast.error("Failed to load categories");
+      };
     };
-    fetchServices();
+    fetchCategories();
   }, [validToken]);
+
+  useEffect(() => {
+    if (!category) return;
+    const fetchSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subCategory.get}?categoryId=${category}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [category, validToken]);
+
+  useEffect(() => {
+    if (!subCategory) return;
+    const fetchSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubCategory.get}?subCategoryId=${subCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [subCategory, validToken]);
+
+  useEffect(() => {
+    if (!subSubCategory) return;
+    const fetchSubSubSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subSubSubCategory.get}?subSubCategoryId=${subSubCategory}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubSubSubCategories(res?.data?.data || []);
+          if (res?.data.data.length < 1) {
+            fetchServices();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub sub sub categories");
+      };
+    };
+    fetchSubSubSubCategories();
+  }, [subSubCategory, validToken]);
+
+  const fetchServices = async () => {
+    try {
+      const params = {};
+      if (category) params.categoryId = category;
+      if (subCategory) params.subCategoryId = subCategory;
+      if (subSubCategory) params.subSubCategoryId = subSubCategory;
+      if (subSubSubCategory) params.subSubSubCategoryId = subSubSubCategory;
+
+      const res = await axios.get(apis.service.get, {
+        params,
+        headers: {
+          Authorization: validToken,
+        },
+      });
+      setServices(res?.data?.data || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handlePointChange = (index, field, value) => {
     const updated = [...points];
@@ -85,6 +181,11 @@ const AddExpertTechnicianPage = () => {
       const formData = new FormData();
       formData.append("mainTitle", mainTitle);
 
+      if (category) formData.append("category", category);
+      if (subCategory) formData.append("subCategory", subCategory);
+      if (subSubCategory) formData.append("subSubCategory", subSubCategory);
+      if (subSubSubCategory) formData.append("subSubSubCategory", subSubSubCategory);
+
       const filteredPoints = points.filter((p) => p.title.trim() !== "");
       formData.append(
         "points",
@@ -113,6 +214,7 @@ const AddExpertTechnicianPage = () => {
 
       if (res?.data?.success) {
         toast.success("Expert Technician created successfully");
+        navigate(-1);
         setMainTitle("");
         setPoints([{ icon: "", title: "" }]);
         setPointIcons([]);
@@ -142,18 +244,96 @@ const AddExpertTechnicianPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Main Title */}
+              {/* Category */}
               <div className="mb-3">
-                <label className="form-label">
-                  Main Title <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                <select
+                  name="category"
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setSubCategory();
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
                   className="form-control"
-                  value={mainTitle}
-                  onChange={(e) => setMainTitle(e.target.value)}
                   required
-                />
+                >
+                  <option value="">-- Select Product --</option>
+                  {categories?.map((cat) => (
+                    <option key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Variant</label>
+                <select
+                  name="subCategory"
+                  value={subCategory}
+                  onChange={(e) => {
+                    setSubCategory(e.target.value);
+                    setSubSubCategory();
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }}
+                  className="form-control"
+                  disabled={!category}
+                >
+                  <option value="">-- Select Variant --</option>
+                  {subCategories?.map((sub) => (
+                    <option key={sub?._id} value={sub?._id}>
+                      {sub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Service Process</label>
+                <select
+                  name="subSubCategory"
+                  value={subSubCategory}
+                  onChange={(e) => {
+                    setSubSubCategory(e.target.value);
+                    setSubSubSubCategory();
+                    setSelectedServices([]);
+                  }
+                  }
+                  className="form-control"
+                  disabled={!subCategory}
+                >
+                  <option value="">-- Select Service Process --</option>
+                  {subSubCategories?.map((subsub) => (
+                    <option key={subsub?._id} value={subsub?._id}>
+                      {subsub?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Sub Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Nested Service Process</label>
+                <select
+                  name="subSubSubCategory"
+                  value={subSubSubCategory}
+                  onChange={(e) => setSubSubSubCategory(e.target.value)}
+                  className="form-control"
+                  disabled={!subSubCategory}
+                >
+                  <option value="">-- Select Nested Service Process --</option>
+                  {subSubSubCategories?.map((sss) => (
+                    <option key={sss?._id} value={sss?._id}>
+                      {sss?.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Services */}
@@ -168,13 +348,28 @@ const AddExpertTechnicianPage = () => {
                 />
               </div>
 
+              {/* Main Title */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Main Title <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={mainTitle}
+                  onChange={(e) => setMainTitle(e.target.value)}
+                  required
+                />
+              </div>
+
               {/* Image */}
               <div className="mb-3">
-                <label className="form-label">Main Image</label>
+                <label className="form-label">Main Image <span style={{ color: "red" }}>*</span></label>
                 <input
                   type="file"
                   className="form-control"
                   accept="image/*"
+                  required
                   onChange={(e) => handleImageChange(e.target.files[0])}
                 />
                 {imagePreview && (
@@ -194,7 +389,7 @@ const AddExpertTechnicianPage = () => {
 
               {/* Points */}
               <div className="mb-3">
-                <label className="form-label">Points (Icon + Title)</label>
+                <label className="form-label">Points (Icon + Title) <span style={{ color: "red" }}>*</span></label>
                 {points.map((point, index) => (
                   <div key={index} className="border p-3 mb-2 rounded">
                     <div className="row align-items-center">
@@ -203,6 +398,7 @@ const AddExpertTechnicianPage = () => {
                           type="file"
                           className="form-control"
                           accept="image/*"
+                          required
                           onChange={(e) =>
                             handlePointIconChange(index, e.target.files[0])
                           }
@@ -214,6 +410,7 @@ const AddExpertTechnicianPage = () => {
                           className="form-control"
                           placeholder="Title"
                           value={point.title}
+                          required
                           onChange={(e) =>
                             handlePointChange(index, "title", e.target.value)
                           }

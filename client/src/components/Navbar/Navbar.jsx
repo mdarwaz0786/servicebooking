@@ -1,18 +1,56 @@
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { scrollToService, scrollToTop } from "../../helper/scrollToTop";
 
 const Navbar = () => {
-  const { toggleModal, handleLogout, user } = useContext(AppContext);
+  const { toggleModal, handleLogout, user, setUserSidebaOpen, userSidebaOpen } = useContext(AppContext);
 
   const handleLinkClick = () => {
-    scrollToTop("instant");
+    // Scroll to top instantly
+    window.scrollTo({
+      top: 0,
+      behavior: "instant" // Some browsers ignore "instant", use "auto"
+    });
+
+    // Remove class from HTML element
+    document.documentElement.classList.remove("menu-opened");
+    
+
+    // .sidebar-overlay element से class हटाना
+    const overlay = document.querySelector(".sidebar-overlay");
+    overlay?.classList.remove("opened");
   };
 
   const handleLinkClickService = () => {
     scrollToService("instant");
+
+    // Scroll to top instantly
+    window.scrollTo({
+      top: 0,
+      behavior: "instant" // Some browsers ignore "instant", use "auto"
+    });
+
+    // Remove class from HTML element
+    document.documentElement.classList.remove("menu-opened");
+    
+    
+    // .sidebar-overlay element से class हटाना
+    const overlay = document.querySelector(".sidebar-overlay");
+    overlay?.classList.remove("opened");
+
   };
+
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <header className="header header-new">
@@ -56,14 +94,31 @@ const Navbar = () => {
                 <Link to="/about-us" onClick={handleLinkClick}>About Us </Link>
               </li>
               <li className="has-submenu">
-                <Link to="/" onClick={handleLinkClickService}>Services </Link>
+                <Link to="/services" onClick={handleLinkClickService}>Services </Link>
               </li>
               <li className="nav-item d-sm-none">
-                <Link to="/login" className="nav-link" onClick={handleLinkClick}>Sign In</Link>
+                {/* <Link to="/login" className="nav-link" onClick={handleLinkClick}>Sign In</Link> */}
+                <Link className="nav-link" 
+                onClick={() => {
+                  toggleModal("serviceManJoinModal", true);
+                   // Remove class from HTML element
+                    document.documentElement.classList.remove("menu-opened");
+                    
+                    
+                    // .sidebar-overlay element से class हटाना
+                    const overlay = document.querySelector(".sidebar-overlay");
+                    overlay?.classList.remove("opened");
+
+
+                }}
+                >
+                  Join As Team
+                </Link>
               </li>
-              <li className="nav-item d-sm-none">
-                <Link to="/register" className="nav-link" onClick={handleLinkClick}>Join Us</Link>
-              </li>
+
+
+
+              
             </ul>
           </div>
 
@@ -78,24 +133,31 @@ const Navbar = () => {
                 {(localStorage.getItem("user")) ? (
                   <>
                     {(user?.role == 'user') ? (
-                      <Link to={'/user'} className="btn btn-linear-primary" onClick={handleLinkClick} >
-                        <i className="ti ti-user me-2" />Account
+                      <Link to={'/user'} className="btn btn-linear-primary" onClick={()=> {
+                        if(width<=767)
+                        {
+                          setUserSidebaOpen(true);
+                        console.log(userSidebaOpen)
+                        }
+                      }
+                      } >
+                        <i className={`ti ti-user ${width>767?'me-2':''}`} />{width>767?'Account':null}
                       </Link>
                     ) : (
                       <Link to={'/serviceman/dashboard'} className="btn btn-linear-primary" onClick={handleLinkClick} >
-                        <i className="ti ti-user me-2" />Account
+                        <i className={`ti ti-user ${width>767?'me-2':''}`} />Account
                       </Link>
                     )}
                     <Link className="btn btn-linear-primary  m-2" onClick={handleLogout}>
-                      <i className="ti ti-lock me-2" />Logout
+                      <i className={`ti ti-logout ${width>767?'me-2':''}`} / >{width>767?'Logout':null}
                     </Link>
                   </>
                 ) : (
                   <>
-                    <Link className="btn btn-linear-primary me-1 " onClick={() => toggleModal("loginModal", true)}>
-                      <i className="ti ti-lock me-2" />Login
+                    <Link className="btn btn-linear-primary me-1 user-login-navbtn" onClick={() => toggleModal("loginModal", true)}>
+                      <i className="ti ti-login me-2" /> Login
                     </Link>
-                    <Link className="btn btn-linear-primary" onClick={() => toggleModal("serviceManJoinModal", true)}><i className="ti ti-user-filled me-2"></i>Join As Team</Link>
+                    <Link className="btn btn-linear-primary provider-login-navbtn" onClick={() => toggleModal("serviceManJoinModal", true)}><i className="ti ti-user-filled me-2"></i>Join As Team</Link>
 
                   </>
                 )}

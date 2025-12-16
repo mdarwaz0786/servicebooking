@@ -73,7 +73,8 @@ const PaymentMethod = () => {
           if (success) {
             // toggleStep('confirmation', true);   // ✅ move forward
             toggleStep('payment', false);
-            navigate("/user/booking/"+response.data.booking._id);
+            // navigate("/user/booking/"+response.data.booking._id);
+            navigate("/user");
           }
           else{
             navigate("/");
@@ -109,10 +110,10 @@ const PaymentMethod = () => {
       <div className="book-card">
         {/* Title */}
         <div className="d-flex align-items-center justify-content-between flex-wrap booking-title">
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <h5 className="fw-bold text-success">Payment Method</h5>
+          <div className="d-flex align-items-center justify-content-between mb-3 tranaction-summary-div">
+            <h5 className="fw-bold text-success tranaction-summary">Transaction Summary</h5>
           </div>
-          <div className="d-flex align-items-center mb-2">
+          <div className="d-flex align-items-center mb-2 tranaction-summary-nav-buttons">
 
             <Link className="btn btn-sm btn-success d-inline-flex align-items-center prev_btn mb-2 me-2"
             onClick={() => toggleModal("paymentModeModal", true)}
@@ -149,23 +150,28 @@ const PaymentMethod = () => {
                 <div>
                   <div className="total-wrap">
                     <div className="mb-2 d-flex align-items-center justify-content-between">
-                      <h6 className="fw-medium">Sub Total</h6>
-                      <p className="text-gray-9">{PriceFormat(cartAmount.amount)}</p>
+                      <h6 className="fw-medium">Item Value</h6>
+                      <p className="text-gray-9">
+                        <span className="old-price text-muted text-decoration-line-through me-2">
+                          {PriceFormat(cartAmount.mrpAmount)}
+                        </span>
+                        {PriceFormat(cartAmount.amount)}
+                      </p>
                     </div>
                     <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
-                        GST <span className="text-default fw-normal">({cartAmount.gstPercent})</span>
+                        Taxes & fee  
                       </h6>
                       <p className="text-gray-9">{PriceFormat(cartAmount.gstAmount)}</p>
                     </div>
-                    <div className="mb-2 d-flex align-items-center justify-content-between">
+                    {/* <div className="mb-2 d-flex align-items-center justify-content-between">
                       <h6 className="fw-medium">
                         Discount <span className="text-default fw-normal"></span>
                       </h6>
                       <p className="text-gray-9">-{PriceFormat(cartAmount.discountAmount)}</p>
-                    </div>
+                    </div> */}
                     <div className="d-flex align-items-center justify-content-between">
-                      <h6 className="fs-14">Total</h6>
+                      <h6 className="fs-14">Grand Total</h6>
                       <h6 className="fs-14">{PriceFormat(cartAmount.payableAmount)}</h6>
                     </div>
                   </div>
@@ -176,7 +182,7 @@ const PaymentMethod = () => {
                     {(paymentMode=='online')
                     ?
                     (
-                      <>Pay {PriceFormat(cartAmount.payableAmount)}</>
+                      <>Pay Now {PriceFormat(cartAmount.payableAmount)}</>
                     )
                     :
                     (

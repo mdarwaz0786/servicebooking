@@ -6,20 +6,34 @@ import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import RateCardModal from "../../components/Modal/RateCardModal";
+import FullPageLoader from "../../components/Loader/FullPageLoader";
 
 const ServicesPage = () => {    
- const { slug } = useParams();
-  const { Urls, postData, setserviceListData, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
+ const { slug, search } = useParams();
+  const { Urls, postData, setserviceListData, pageLoading, setpageLoading, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
   const fetchData = async () => {
     try { 
 
       let userId = generateUniqueId();
 
-      const response = await postData({slug:slug,userId:userId,limit:5000}, Urls.serviceList, "GET", 0, 1);
-      
+        let payload = {userId:userId,limit:5000};
+        if(search) 
+        {          
+          payload = {search:search,userId:userId,limit:5000};
+        }
+        else if(slug)
+        {
+          payload = {slug:slug,userId:userId,limit:5000};
+        }
+        const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
+
+          
+        
         setserviceListData(response.data?response.data:[]);
         setservicePageCategoryData(response.categoryList?response.categoryList:[]);
         setservicePageName(response.name?response.name:'');
+
+        setpageLoading(false)
        
     } catch (error) { 
       console.error("Cart API Error:", error);
@@ -32,11 +46,29 @@ useEffect(() => {
 }, []);  
 
 
+if(pageLoading) return(<FullPageLoader />)
+ 
+
 
   return (
     <>
+    <style>
+      {`.header {
+        position: relative !important;
+      }
+      .provider-page .page-wrapper {
+        padding-top: 5px;
+      }
+        @media(max-width: 767px)
+        {
+        .provider-page .content {
+            padding: 0px;
+          }
+        }
+      `}
+    </style>
       {/* <BreadCrumb /> */}
-      <Services />
+      <Services search={search} slug={slug} />
       <RateCardModal />
     </>
   );

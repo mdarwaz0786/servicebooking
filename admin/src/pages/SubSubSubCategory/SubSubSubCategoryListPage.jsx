@@ -48,37 +48,42 @@ const SubSubSubCategoryListPage = () => {
       };
     } catch (error) {
       console.log(error.message);
-      toast.error("Failed to fetch categories");
+      toast.error("Failed to fetch products");
     };
   };
-
-  const fetchSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub categories");
     };
-  };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
 
-  const fetchSubSubCategories = async () => {
-    try {
-      const response = await axios.get(apis.subSubCategory.get, {
-        headers: { Authorization: validToken },
-      });
-      if (response?.data?.success) {
-        setSubSubCategories(response?.data?.data || []);
+  useEffect(() => {
+    const fetchSubSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subSubCategory.get}?subCategoryId=${subCategoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub sub categories");
       };
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Failed to fetch sub categories");
     };
-  };
+    fetchSubSubCategories();
+  }, [subCategoryId, validToken]);
 
   const fetchSubSubSubCategories = async () => {
     try {
@@ -104,7 +109,7 @@ const SubSubSubCategoryListPage = () => {
         setHasPrevPage(response?.data?.hasPrevPage);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to fetch categories");
+      toast.error(error?.response?.data?.message || "Failed to fetch products");
     } finally {
       setLoading(false);
     };
@@ -141,7 +146,7 @@ const SubSubSubCategoryListPage = () => {
   };
 
   const deleteCategory = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
+    if (!window.confirm("Are you sure you want to delete this?")) return;
 
     try {
       const response = await axios.delete(`${apis.subSubSubCategory.delete}/${id}`, {
@@ -149,18 +154,16 @@ const SubSubSubCategoryListPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Category deleted successfully");
+        toast.success("Deleted successfully");
         fetchSubSubSubCategories();
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete category");
+      toast.error(error?.response?.data?.message || "Failed to delete");
     };
   };
 
   useEffect(() => {
     fetchCategories();
-    fetchSubCategories();
-    fetchSubSubCategories();
   }, []);
 
   useEffect(() => {
@@ -171,7 +174,7 @@ const SubSubSubCategoryListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Sub Sub Sub Categories {subSubSubCategories?.length}</h5>
+          <h5>Nested Service Process {subSubSubCategories?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -224,7 +227,7 @@ const SubSubSubCategoryListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Categories"
+              placeholder="All Products"
               value={
                 categoryId
                   ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
@@ -249,7 +252,7 @@ const SubSubSubCategoryListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Sub Categories"
+              placeholder="All Variants"
               value={
                 subCategoryId
                   ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
@@ -274,7 +277,7 @@ const SubSubSubCategoryListPage = () => {
           <div style={{ minWidth: "200px" }}>
             <Select
               isClearable
-              placeholder="All Sub Sub Categories"
+              placeholder="All Service Process"
               value={
                 subSubCategoryId
                   ? { value: subSubCategoryId, label: subSubCategories.find((c) => c?._id === subSubCategoryId)?.name }
@@ -306,9 +309,9 @@ const SubSubSubCategoryListPage = () => {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Category</th>
-                    <th>Sub Category</th>
-                    <th>Sub Sub Category</th>
+                    <th>Product</th>
+                    <th>Variant</th>
+                    <th>Service Process</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -320,7 +323,7 @@ const SubSubSubCategoryListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>
                           <img
-                            src={d?.image ? `${BASE_URL}/${d?.image}` : "https://via.placeholder.com/50"}
+                            src={d?.icon ? `${BASE_URL}/${d?.icon}` : "https://via.placeholder.com/50"}
                             className="me-2"
                             alt="image"
                             style={{ width: "50px", height: "50px", objectFit: "cover" }}

@@ -8,7 +8,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE BRAND LOGO ---------------------
 export const createBrandLogo = asyncHandler(async (req, res) => {
-  const { mainTitle, description, services } = req.body;
+  const { mainTitle, description, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!mainTitle || !mainTitle.trim()) {
     throw new ApiError(400, "Main title is required");
@@ -29,6 +29,10 @@ export const createBrandLogo = asyncHandler(async (req, res) => {
       description,
       services,
       icons: iconsPaths,
+      category,
+      subCategory,
+      subSubCategory,
+      subSubSubCategory
     });
 
     return res.status(201).json({ success: true, message: "Created successfully", data: brandLogo });
@@ -44,7 +48,7 @@ export const createBrandLogo = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL BRAND LOGOS ---------------------
 export const getBrandLogos = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", services, category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -55,10 +59,20 @@ export const getBrandLogos = asyncHandler(async (req, res) => {
     filters.mainTitle = { $regex: search, $options: "i" };
   };
 
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+  if (services) filters.services = services;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const brandLogos = await BrandLogoModel.find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -83,7 +97,14 @@ export const getBrandLogos = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE BRAND LOGO ---------------------
 export const getBrandLogoById = asyncHandler(async (req, res) => {
-  const brandLogo = await BrandLogoModel.findById(req.params.id).populate("services").lean();
+  const brandLogo = await BrandLogoModel.findById(req.params.id)
+    .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
+    .lean();
+
   if (!brandLogo) {
     throw new ApiError(404, "Brand logo not found");
   };
@@ -92,55 +113,79 @@ export const getBrandLogoById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE BRAND LOGO ---------------------
 export const updateBrandLogo = asyncHandler(async (req, res) => {
-  const { mainTitle, description, services } = req.body;
+  const { mainTitle, description, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
-  let existingIcons = [];
-  if (req.body.existingIcons) {
+  let removeIcons = [];
+  if (req.body.removeIcons) {
     try {
-      existingIcons = JSON.parse(req.body.existingIcons);
-    } catch (err) {
-      throw new ApiError(400, "Invalid existingIcons format");
-    };
-  };
+      removeIcons = JSON.parse(req.body.removeIcons);
+    } catch {
+      throw new ApiError(400, "Invalid removeIcons format");
+    }
+  }
 
   const brandLogo = await BrandLogoModel.findById(req.params.id);
-  if (!brandLogo) {
-    throw new ApiError(404, "Brand logo not found");
-  };
+  if (!brandLogo) throw new ApiError(404, "Brand logo not found");
 
-  let updatedIcons = [];
+  let icons = [...brandLogo.icons];
 
-  if (existingIcons.length > 0) {
-    updatedIcons = brandLogo.icons.filter((icon) => existingIcons.includes(icon));
+  if (removeIcons?.length > 0) {
+    removeIcons
+      .sort((a, b) => b - a)
+      .forEach((index) => {
+        const imgPath = icons[index];
 
-    brandLogo.icons.forEach((icon) => {
-      if (!existingIcons.includes(icon) && fs.existsSync(path.join(process.cwd(), icon))) {
-        fs.unlinkSync(path.join(process.cwd(), icon));
-      };
-    });
-  } else {
-    brandLogo.icons.forEach((icon) => {
-      if (fs.existsSync(path.join(process.cwd(), icon))) fs.unlinkSync(path.join(process.cwd(), icon));
-    });
-  };
+        if (imgPath) {
+          const fullPath = path.join(process.cwd(), imgPath);
+          if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+        }
+
+        icons.splice(index, 1);
+      });
+  }
 
   if (req.files?.icons?.length) {
     for (const file of req.files.icons) {
-      const compressedPath = await compressImage(file.buffer, "service");
-      updatedIcons.push(compressedPath);
-    };
-  };
+      const savedPath = await compressImage(file.buffer, "service");
+      icons.push(savedPath);
+    }
+  }
 
-  brandLogo.icons = updatedIcons;
+  let updatedServices = brandLogo?.services || [];
+
+  if (services !== undefined) {
+    let parsedServices = services;
+
+    if (typeof parsedServices === "string") {
+      try {
+        parsedServices = JSON.parse(parsedServices);
+      } catch (err) {
+        throw new ApiError(400, "Invalid services format");
+      }
+    }
+
+    if (!Array.isArray(parsedServices)) {
+      throw new ApiError(400, "services must be an array");
+    }
+
+    updatedServices = parsedServices;
+  }
+
   brandLogo.mainTitle = mainTitle || brandLogo.mainTitle;
   brandLogo.description = description || brandLogo.description;
+  brandLogo.category = category || brandLogo?.category;
+  brandLogo.subCategory = subCategory || brandLogo?.subCategory;
+  brandLogo.subSubCategory = subSubCategory || brandLogo?.subSubCategory;
+  brandLogo.subSubSubCategory = subSubSubCategory || brandLogo?.subSubSubCategory;
+  brandLogo.services = updatedServices;
+  brandLogo.icons = icons;
 
   await brandLogo.save();
 
   return res.status(200).json({
     success: true,
-    message: "Brand logo updated successfully",
-    data: brandLogo
+    message: "Updated successfully",
+    data: brandLogo,
   });
 });
 

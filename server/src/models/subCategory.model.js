@@ -5,7 +5,6 @@ const subCategorySchema = new mongoose.Schema({
     type: String,
     required: [true, "Subcategory name is required"],
     trim: true,
-    unique: true,
     maxlength: [100, "Subcategory name must not exceed 100 characters"],
   },
   slug: {
@@ -20,7 +19,7 @@ const subCategorySchema = new mongoose.Schema({
   },
   icon: {
     type: String,
-    required: false,
+    required: [true, "Icon is required"],
     trim: true,
   },
   shortDescription: {
@@ -55,8 +54,7 @@ const subCategorySchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-subCategorySchema.index({ name: 1 });
-subCategorySchema.index({ categoryId: 1 });
+subCategorySchema.index({ name: 1, categoryId: 1 }, { unique: true });
 
 subCategorySchema.virtual("category", {
   ref: "Category",

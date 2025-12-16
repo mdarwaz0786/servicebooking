@@ -3,12 +3,12 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const CategoryMiniCard = ({ value = [] }) => {
-  const { handleCategoryClick, imageCheck } = useContext(AppContext);
+  const { handleCategoryClick, setSelectedCategory, imageCheck } = useContext(AppContext);
   return (
 
     <>
       {/* style={{boxShadow: '0px 0px 17px -9px rgba(0, 0, 0, 0.5)'}} */}
-      <div className="category-service rounded-3 cursor-pointer " style={{ cursor: 'pointer' }} >
+      <div className="category-service rounded-3 cursor-pointer " style={{ cursor: 'pointer' }} onClick={() => setSelectedCategory(value._id)} >
         {/* card-body d-flex align-items-center gap-3 modal-category-card */}
 
           {/* Right Side Content */}
@@ -22,7 +22,7 @@ const CategoryMiniCard = ({ value = [] }) => {
               />
             </div>
             <div className="p-2 col-7">
-              <h6 className="fw-bold mb-0 d-block"><Link to={'#' + value._id}>{value.name}</Link></h6>
+              <h6 className="fw-bold mb-0 d-block">{value.name}</h6>
               {/* <p
                 style={{
                   overflow: 'hidden',

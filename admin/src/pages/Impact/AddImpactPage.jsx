@@ -3,15 +3,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
-import TextEditor from "../../components/Form/TextEditor";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 import apis from "../../apis/apis";
 
 const AddImpactPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
-  let id = 'fdgfd';
-  const [descriptionKey, setdescriptionKey] = useState(1);
+  const id = "68f9c71c3cb87f459f74c3d7";
 
   const [formData, setFormData] = useState({
     title: "Green India Team Impact",
@@ -23,6 +22,10 @@ const AddImpactPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -40,7 +43,7 @@ const AddImpactPage = () => {
       });
 
       if (res.data.success) {
-        toast.success("Impact created successfully");
+        toast.success("Saved successfully");
         navigate(-1);
       }
     } catch (error) {
@@ -57,28 +60,24 @@ const AddImpactPage = () => {
     });
   };
 
-
-  useEffect(() => { 
-    if (id || id=='') {
+  useEffect(() => {
+    if (id) {
       setLoading(true);
-      axios.get(`${apis.impact.get}/${id}`, { headers: { Authorization: validToken } })
-        .then(res => {
+      axios
+        .get(`${apis.impact.get}/${id}`, { headers: { Authorization: validToken } })
+        .then((res) => {
           if (res.data?.success) {
-            const { title, description, effectiveDate } = res.data.data;
+            const { title, description } = res.data.data;
             setFormData({
-              title: title || 'Green India Team Impact', // Ensure title has a default if missing
-              description: description || '', // Ensure description is not null
-              effectiveDate: effectiveDate
-              ? effectiveDate.split("T")[0]
-              : "", // format YYYY-MM-DD
+              title: title || "Green India Team Impact",
+              description: description || "",
             });
-            setdescriptionKey(2)            
-          };
+          }
         })
-        .catch(err => toast.error(err?.response?.data?.message || err.message))
+        .catch((err) => toast.error(err?.response?.data?.message || err.message))
         .finally(() => setLoading(false));
-    };
-  }, []);
+    }
+  }, [id, validToken]);
 
   return (
     <div className="page-wrapper">
@@ -111,14 +110,9 @@ const AddImpactPage = () => {
 
               <div className="mb-3">
                 <label className="form-label">Description</label>
-                <TextEditor
-                  key={descriptionKey}
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(value) =>
-                    setFormData((prev) => ({ ...prev, description: value }))
-                  }
-                  placeholder="Enter impact description..."
-                  height={300}
+                  onChange={handleDescriptionChange}
                 />
               </div>
 

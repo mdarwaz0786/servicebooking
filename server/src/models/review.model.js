@@ -30,6 +30,11 @@ const reviewSchema = new mongoose.Schema({
     trim: true,
     maxlength: [1000, "Description must not exceed 1000 characters"],
   },
+  type: {
+    type: Number, // 1==service,2==company
+    enum: [1, 2],
+    default: 1,
+  },
   status: {
     type: Boolean,
     default: true,
@@ -56,6 +61,13 @@ reviewSchema.virtual("user", {
 reviewSchema.virtual("booking", {
   ref: "Booking",
   localField: "bookingId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+reviewSchema.virtual("serviceman", {
+  ref: "ServiceManProfile",
+  localField: "servicemanId",
   foreignField: "_id",
   justOne: true,
 });

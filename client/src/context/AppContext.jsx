@@ -37,8 +37,10 @@ export const AppProvider = ({ children }) => {
   const [subsubsubcategoryListData, setsubsubsubcategoryListData] = useState([]);
   const [subsubsubcategoryItemData, setsubsubsubcategoryItemData] = useState([]);
   
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [serviceListData, setserviceListData] = useState([]);
   const [serviceItemData, setserviceItemData] = useState([]);
+  const [pageLoading, setpageLoading] = useState(true);
   
   const [serviceDetailData, setserviceDetailData] = useState([]);
   const [serviceDetailDataItem, setserviceDetailDataItem] = useState();
@@ -56,6 +58,8 @@ export const AppProvider = ({ children }) => {
   
   const [cartItems, setcartItems] = useState([]);
   const [cartAmount, setcartAmount] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [userSidebaOpen, setUserSidebaOpen] = useState(false);
   
   const [user, setuser] = useState();
   
@@ -92,6 +96,7 @@ export const AppProvider = ({ children }) => {
       logout: `${userUrl}logout`,
       
       homeDetail: `${commurl}home`,
+      metaDetail: `${commurl}meta-tag`,
       
 
       categoryList: `${commurl}category`,
@@ -113,6 +118,7 @@ export const AppProvider = ({ children }) => {
       privacyPolicy: `${commurl}privacy-policy/68f9c40128f9e5ad117c82a1`,
       refundPolicy: `${commurl}refund-policy/68f9c555819007e42b718e67`,
       GreenIndiaTeamImpact: `${commurl}impact/68f9c71c3cb87f459f74c3d7`,
+      Disclaimer: `${commurl}disclaimer/68f9c71c3cb87f459f74c3d7`,
 
       contactEnquiry: `${commurl}contact-enquiry`,
 
@@ -127,12 +133,20 @@ export const AppProvider = ({ children }) => {
       createTransaction: `${commurl}payment/create-order`,
       verifyTransaction: `${commurl}payment/verify-payment`,
 
+      allReview: `${commurl}review`,
+
       createBooking: `${userUrl}booking/create-booking`,
       myBooking: `${userUrl}booking`,
       myBookingDetail: `${userUrl}booking`,
 
       myReview: `${userUrl}review`,
       myReviewRemove: `${userUrl}review`,
+      myReviewAdd: `${userUrl}review`,
+
+      serviceManReview: `${userUrl}review`,
+
+      myProfileDetail: `${userUrl}auth/loggedIn`,
+      myProfileUpdate: `${userUrl}auth/update-profile`,
 
       // service man urls
       serviceManlogin: `${servicemanUrl}auth/login`,
@@ -143,7 +157,6 @@ export const AppProvider = ({ children }) => {
       serviceManProfileDetail: `${servicemanUrl}profile/detail`,
       serviceManProfileUpdate: `${servicemanUrl}profile`,
 
-      serviceManReview: `${userUrl}review`,
 
       serviceManBooking: `${servicemanUrl}booking`,
       serviceManBookingAccept: `${servicemanUrl}booking/accept`,
@@ -336,6 +349,18 @@ export const AppProvider = ({ children }) => {
   };
 
 
+  const bookingStatus = (value) => {
+    let status = '';
+    if(value=='new')
+        status = <span className="badge badge-soft-info ms-2">Confirm</span>
+    else if(value=='assign')
+        status = <span className="badge badge-soft-info ms-2">Process</span>
+    else    
+        status = <span className="badge badge-soft-info ms-2">{value}</span>
+    return status;
+  };
+
+
 
 
   const formatDateTime = (isoString) => {
@@ -405,6 +430,7 @@ export const AppProvider = ({ children }) => {
     serviceManJoinModal: false,
     addressModal: false,
     BookignStartModal: false,
+    CompanyReviewModal: false,
     ServiceDetailModal: false,
     RateCardModal: false,
     paymentModeModal: false,
@@ -569,13 +595,13 @@ export const AppProvider = ({ children }) => {
   }
 
   const handleRateCardDetail = async (id, item) => {
-    
     try {
       const response = await postData({userId:generateUniqueId()}, Urls.rateCardDetail + '/' + id, "GET", 0, 1);
       if (response.success) {
         if (response?.success) {
           setrateCardDetailData(response.data);
           toggleModal("RateCardModal", true)
+          toggleModal("ServiceDetailModal", false);
         }
       }
     } catch (error) {
@@ -612,6 +638,7 @@ export const AppProvider = ({ children }) => {
     storage.delete('user');
     storage.delete('token');
     setuser(null);
+    window.location.reload();
   }
 
 
@@ -633,6 +660,8 @@ export const AppProvider = ({ children }) => {
       VITE_APP_NAME,
       toggleModal,
       modals,
+
+      bookingStatus,
       
       checkoutpageloading,
       setcheckoutpageloading,
@@ -686,6 +715,8 @@ export const AppProvider = ({ children }) => {
       subsubsubcategoryItemData,
       setsubsubsubcategoryItemData,
 
+      selectedCategory,
+      setSelectedCategory,
       serviceDetailData,
       setserviceDetailData,
       serviceDetailDataItem,
@@ -699,6 +730,8 @@ export const AppProvider = ({ children }) => {
 
       serviceListData,
       setserviceListData,
+      pageLoading,
+      setpageLoading,
       serviceItemData,
       setserviceItemData,
 
@@ -717,6 +750,12 @@ export const AppProvider = ({ children }) => {
 
       cartItems,
       setcartItems,
+
+      setCartOpen,
+      cartOpen,
+
+      setUserSidebaOpen,
+      userSidebaOpen,
 
       cartAmount,
       setcartAmount,

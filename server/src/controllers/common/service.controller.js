@@ -30,15 +30,23 @@ const removeServices = (doc) => {
 
 // ==================== GET ALL SERVICES ====================
 export const getServices = asyncHandler(async (req, res) => {
-  let { search, status, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
+  let { search, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
+  console.log("runs")
+  page = parseInt(page, 10) || 1;
+  limit = parseInt(limit, 10) || 10;
 
-  page = parseInt(page, 10);
-  limit = parseInt(limit, 10);
+  if (isNaN(page) || isNaN(limit)) {
+    return res.status(400).json({
+      success: false,
+      message: "page & limit must be valid numbers"
+    });
+  }
+
   const skip = (page - 1) * limit;
 
   const filters = {};
   if (search) filters.$or = [{ name: { $regex: search, $options: "i" } }];
-  if (status !== undefined) filters.status = status === "true";
+  filters.status = true;
 
   if (categoryId) filters.categoryId = categoryId;
   if (subCategoryId) filters.subCategoryId = subCategoryId;
@@ -60,40 +68,84 @@ export const getServices = asyncHandler(async (req, res) => {
     if (slugData.collectionName === "Category") {
       filters.categoryId = slugData.documentId;
       data = await CategoryModel.findById(slugData.documentId);
-      categoryList = await SubCategoryModel.find({ categoryId: data._id });
+      categoryList = await SubCategoryModel.find({ categoryId: data._id, status: true });
       name = data.name;
     } else if (slugData.collectionName === "SubCategory") {
       filters.subCategoryId = slugData.documentId;
       data = await SubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubCategoryModel.find({ subCategoryId: data._id });
+      categoryList = await SubSubCategoryModel.find({ subCategoryId: data._id, status: true });
       name = data.name;
     } else if (slugData.collectionName === "SubSubCategory") {
       filters.subSubCategoryId = slugData.documentId;
       data = await SubSubCategoryModel.findById(slugData.documentId);
-      categoryList = await SubSubSubCategoryModel.find({ subSubCategoryId: data._id });
+      categoryList = await SubSubSubCategoryModel.find({ subSubCategoryId: data._id, status: true });
       name = data.name;
     } else if (slugData.collectionName === "SubSubSubCategory") {
       filters.subSubSubCategoryId = slugData.documentId;
-      data = await SubSubSubCategoryModel.findById(slugData.documentId);
+      data = await SubSubSubCategoryModel.findById({ _id: slugData.documentId, status: true });
       name = data.name;
     } else if (slugData.collectionName === "Service") {
       filters._id = slugData.documentId;
-      data = await ServiceModel.findById(slugData.documentId);
+      data = await ServiceModel.findById({ _id: slugData.documentId, status: true });
       name = data.name;
     }
   }
 
-  const services = await ServiceModel
-    .find(filters)
-    .sort(sort)
-    .skip(skip)
-    .limit(limit)
-    .lean();
+  const services = await ServiceModel.aggregate([
+    { $match: filters },
+    {
+      $lookup: {
+        from: "categories",
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "category"
+      }
+    },
+    { $unwind: "$category" },
+    {
+      $lookup: {
+        from: "subcategories",
+        localField: "subCategoryId",
+        foreignField: "_id",
+        as: "subCategory"
+      }
+    },
+    { $unwind: { path: "$subCategory", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "subsubcategories",
+        localField: "subSubCategoryId",
+        foreignField: "_id",
+        as: "subSubCategory"
+      }
+    },
+    { $unwind: { path: "$subSubCategory", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "subsubsubcategories",
+        localField: "subSubSubCategoryId",
+        foreignField: "_id",
+        as: "subSubSubCategory"
+      }
+    },
+    { $unwind: { path: "$subSubSubCategory", preserveNullAndEmptyArrays: true } },
+    {
+      $match: {
+        "category.status": true,
+        $and: [
+          { $or: [{ subCategory: null }, { "subCategory.status": true }] },
+          { $or: [{ subSubCategory: null }, { "subSubCategory.status": true }] },
+          { $or: [{ subSubSubCategory: null }, { "subSubSubCategory.status": true }] }
+        ]
+      }
+    },
 
-  // 🔹 Fetch rate cards related to these services
-  const serviceIds = services.map((s) => s._id);
-  const rateCards = await RateCardModel.find({ services: { $in: serviceIds } }).select("services");
-  const serviceIdsWithRateCards = new Set(rateCards.flatMap(r => r.services.map(id => id.toString())));
+    { $sort: sort === "-createdAt" ? { createdAt: 1 } : { createdAt: 1 } },
+    { $skip: skip },
+    { $limit: limit }
+  ]);
+
+  const serviceIds = services.map((s) => s?._id);
 
   let cartItems = [];
   if (userId) {
@@ -111,39 +163,58 @@ export const getServices = asyncHandler(async (req, res) => {
   });
 
   const allBookingIds = bookingItems.map((b) => b?.bookingId);
-  const reviews = await ReviewModel.find({ bookingId: { $in: allBookingIds }, status: true }).select("bookingId rating");
+  const reviews = await ReviewModel.find({ bookingId: { $in: allBookingIds }, status: true, type: 1 }).select("bookingId rating");
 
   const bookingRatings = {};
   reviews.forEach((r) => (bookingRatings[r?.bookingId?.toString()] = r?.rating));
 
-  const servicesWithRatings = services?.map((service) => {
-    const sid = service?._id?.toString();
-    const bookingIds = serviceToBookingIds[sid] || [];
-    let sum = 0;
-    let count = 0;
+  const servicesWithRatings = await Promise.all(
+    services.map(async (service) => {
+      const sid = service?._id?.toString();
 
-    bookingIds.forEach((bid) => {
-      const rating = bookingRatings[bid?.toString()];
-      if (rating) {
-        sum += rating;
-        count++;
+      let rateCard = null;
+
+      if (service.subCategoryId) {
+        rateCard = await RateCardModel.findOne({
+          subCategory: service.subCategoryId,
+        })
+          .populate("category subCategory")
+          .lean();
+      } else {
+        rateCard = await RateCardModel.findOne({
+          category: service.categoryId,
+        })
+          .populate("category subCategory")
+          .lean();
       }
-    });
 
-    const averageRating = count > 0 ? Number((sum / count).toFixed(1)) : 0;
-    const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
-    const quantity = cartItem ? cartItem?.quantity : 0;
+      const bookingIds = serviceToBookingIds[sid] || [];
+      let sum = 0;
+      let count = 0;
 
-    return {
-      ...service,
-      ratings: {
-        totalRatings: count,
-        averageRating,
-      },
-      quantity,
-      rateCard: serviceIdsWithRateCards.has(sid), // 🔹 true/false
-    };
-  });
+      bookingIds.forEach((bid) => {
+        const rating = bookingRatings[bid?.toString()];
+        if (rating) {
+          sum += rating;
+          count++;
+        }
+      });
+
+      const averageRating = count > 0 ? Number((sum / count).toFixed(1)) : 0;
+      const cartItem = cartItems?.find((item) => item?.serviceId?.toString() === sid);
+      const quantity = cartItem ? cartItem?.quantity : 0;
+
+      return {
+        ...service,
+        ratings: {
+          totalRatings: count,
+          averageRating,
+        },
+        quantity,
+        rateCard: rateCard || null,
+      };
+    })
+  );
 
   const total = await ServiceModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
@@ -176,10 +247,21 @@ export const getServiceById = asyncHandler(async (req, res) => {
 
   if (!service) throw new ApiError(404, "Service not found");
 
-  // 🔹 Fetch full rate card for this service
-  const rateCard = await RateCardModel.findOne({ services: serviceId })
-    .populate("services")
-    .lean();
+  let rateCard = null;
+
+  if (service.subCategoryId) {
+    rateCard = await RateCardModel.findOne({
+      subCategory: service.subCategoryId
+    })
+      .populate("category subCategory")
+      .lean();
+  } else {
+    rateCard = await RateCardModel.findOne({
+      category: service.categoryId
+    })
+      .populate("category subCategory")
+      .lean();
+  }
 
   removeServices(service?.serviceIncluded);
   removeServices(service?.requirementFromCustomer);
@@ -193,7 +275,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   const bookingIds = bookingItems.map((b) => b?.bookingId);
 
   const ratingStats = await ReviewModel.aggregate([
-    { $match: { bookingId: { $in: bookingIds }, status: true } },
+    { $match: { bookingId: { $in: bookingIds }, status: true, type: 1 } },
     {
       $group: {
         _id: "$rating",
@@ -215,7 +297,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
 
   const latestReviews = await ReviewModel
-    .find({ bookingId: { $in: bookingIds }, status: true })
+    .find({ bookingId: { $in: bookingIds }, status: true, type: 1 })
     .select("rating description userId createdAt updatedAt")
     .populate("user", "-password -role -createdAt -updatedAt")
     .sort({ createdAt: -1 })
@@ -237,8 +319,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
   };
   service.quantity = quantity;
 
-  // 🔹 Add full rateCard details
-  service.rateCard = rateCard || null;
+  service.rateCard = rateCard;
 
   return res.status(200).json({
     success: true,

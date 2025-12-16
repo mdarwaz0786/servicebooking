@@ -5,7 +5,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE GI PROMISE ---------------------
 export const createGIPromise = asyncHandler(async (req, res) => {
-  const { mainTitle, titles, services } = req.body;
+  const { mainTitle, titles, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   if (!mainTitle) {
     throw new ApiError(400, "Main title is required");
@@ -15,6 +15,10 @@ export const createGIPromise = asyncHandler(async (req, res) => {
     mainTitle,
     titles,
     services,
+    category,
+    subCategory,
+    subSubCategory,
+    subSubSubCategory
   });
 
   return res.status(201).json({ success: true, data: giPromise });
@@ -22,7 +26,7 @@ export const createGIPromise = asyncHandler(async (req, res) => {
 
 // --------------------- GET ALL GI PROMISES ---------------------
 export const getGIPromises = asyncHandler(async (req, res) => {
-  let { search, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, page = 1, limit = 10, sort = "desc", services, category, subCategory, subSubCategory, subSubSubCategory } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -33,10 +37,21 @@ export const getGIPromises = asyncHandler(async (req, res) => {
     filters.mainTitle = { $regex: search, $options: "i" };
   };
 
+
+  if (category) filters.category = category;
+  if (subCategory) filters.subCategory = subCategory;
+  if (subSubCategory) filters.subSubCategory = subSubCategory;
+  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
+  if (services) filters.services = services;
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const giPromises = await GIPromiseModel.find(filters)
     .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -61,7 +76,14 @@ export const getGIPromises = asyncHandler(async (req, res) => {
 
 // --------------------- GET SINGLE GI PROMISE ---------------------
 export const getGIPromiseById = asyncHandler(async (req, res) => {
-  const giPromise = await GIPromiseModel.findById(req.params.id).populate("services").lean();
+  const giPromise = await GIPromiseModel.findById(req.params.id)
+    .populate("services")
+    .populate("category")
+    .populate("subCategory")
+    .populate("subSubCategory")
+    .populate("subSubSubCategory")
+    .lean();
+
   if (!giPromise) {
     throw new ApiError(404, "GI Promise not found");
   };
@@ -70,7 +92,7 @@ export const getGIPromiseById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE GI PROMISE ---------------------
 export const updateGIPromise = asyncHandler(async (req, res) => {
-  const { mainTitle, status, titles, services } = req.body;
+  const { mainTitle, status, titles, services, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
 
   const giPromise = await GIPromiseModel.findById(req.params.id);
   if (!giPromise) {
@@ -101,6 +123,10 @@ export const updateGIPromise = asyncHandler(async (req, res) => {
   };
   giPromise.titles = updatedTitles;
   giPromise.services = updatedServices;
+  giPromise.category = category || giPromise?.category;
+  giPromise.subCategory = subCategory || giPromise?.subCategory;
+  giPromise.subSubCategory = subSubCategory || giPromise?.subSubCategory;
+  giPromise.subSubSubCategory = subSubSubCategory || giPromise?.subSubSubCategory;
   giPromise.updatedAt = new Date();
 
   await giPromise.save();

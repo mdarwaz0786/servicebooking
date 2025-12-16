@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
 const ServiceDetail = () => {
-  const { serviceDetailData, PriceFormat, imageCheck, handleCartAddRemove, serviceDetailDataItem, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
+  const { handleRateCardDetail, serviceDetailData, PriceFormat, imageCheck, handleCartAddRemove, serviceDetailDataItem, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
   const data = serviceDetailData;
   const rating = data.ratings;
   const ratingCount = rating?.ratingCount;
@@ -54,7 +54,7 @@ const ServiceDetail = () => {
                 style={{ height: "220px" }}
               >
                 <img
-                  src={imageCheck(data.image)}
+                  src={imageCheck(data.popupImage)}
                   className="w-100 h-100"
                   alt="Service"
                 />
@@ -98,9 +98,25 @@ const ServiceDetail = () => {
                     <div className=" mt-1 justify-content-around align-items-center service-item-add-btn-section mb-0 mt-0">
                         {(serviceDetailDataItem?.quantity) ? (
                             <>
-                              <button className="btn btn-light border cart-item-btn" onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)} >-</button>
-                              <span className="mx-3 item-qty">{serviceDetailDataItem?.quantity ? serviceDetailDataItem?.quantity : 0}</span>
-                              <button className="btn btn-light border cart-item-btn" onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}>+</button>
+                              <button
+                                className="btn btn-light border cart-item-btn"
+                                onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)}
+                                disabled={serviceDetailDataItem?.quantity <= 0}
+                              >
+                                -
+                              </button>
+
+                              <span className="mx-3 item-qty">
+                                {serviceDetailDataItem?.quantity || 0}
+                              </span>
+
+                              <button
+                                className="btn btn-light border cart-item-btn"
+                                onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
+                                disabled={serviceDetailDataItem?.quantity >= serviceDetailDataItem?.maxBookingQuantity}
+                              >
+                                +
+                              </button>
                             </>
                         ) : (
                             <button
@@ -114,6 +130,19 @@ const ServiceDetail = () => {
                   </div>
 
                   <br />
+
+                  {data?.rateCard ? (
+                      <button
+                          className="btn btn-primary-ghost d-flex align-items-center w-100 justify-content-sm-center"
+                          onClick={() =>
+                              handleRateCardDetail(data._id, data)
+                          }
+                      >
+                        <img src="/assets/img/favicon.jpg" style={{width: '25px',marginRight: '5px'}} />
+                          Standard Transparent Rate List
+                          <i className="fa fa-angle-right" style={{marginLeft: '5px'}}></i>
+                      </button>
+                  ) : null}
                   
                   <div
                   className="mt-1"
@@ -124,7 +153,7 @@ const ServiceDetail = () => {
 
               {data.serviceIncluded && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-5 br-10">
+                  <div className="bg-light-500 p-5 pb-5 br-10 service-detail-section">
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <h3
                         style={{
@@ -156,7 +185,7 @@ const ServiceDetail = () => {
 
               {data?.requirementFromCustomer && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 br-10 text-center">
+                  <div className="bg-light-500 p-5 br-10 text-center service-detail-section">
                     {/* Title */}
                     <h3
                       style={{
@@ -164,6 +193,7 @@ const ServiceDetail = () => {
                         fontWeight: "600",
                         color: "#00522c",
                         marginBottom: "30px",
+                        textAlign:'center'
                       }}
                     >
                       {data.requirementFromCustomer.mainTitle}
@@ -208,7 +238,7 @@ const ServiceDetail = () => {
 
               {
                 (data?.whyChooseUs) && (
-                  <div className="container bg-light-500 p-3 mb-5 rounded-3">
+                  <div className="container bg-light-500 p-3 mb-5 rounded-3 service-detail-section">
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <h3
                         style={{
@@ -221,7 +251,8 @@ const ServiceDetail = () => {
                           borderRadius: "12px",
                           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                           display: "inline-block",
-                          marginTop: "16px"
+                          marginTop: "16px",
+                          textAlign:'center'
                         }}
                       >
                         {data?.whyChooseUs?.mainTitle}
@@ -251,20 +282,21 @@ const ServiceDetail = () => {
 
               {data?.expertTechnician && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-5 br-10">
+                  <div className="bg-light-500 p-3 pb-5 br-10 service-detail-section">
                     <div className="row align-items-stretch">
                       {/* Left Section*/}
-                      <div className="col-md-7 d-flex flex-column justify-content-center">
                         <h3
                           style={{
                             fontSize: "40px",
                             fontWeight: "700",
                             color: "#00522c",
                             marginBottom: "20px",
+                            textAlign:'center'
                           }}
                         >
                           {data?.expertTechnician?.mainTitle}
                         </h3>
+                      <div className="col-md-7 d-flex flex-column justify-content-center">
 
                         {data?.expertTechnician?.points?.map((item, index) => (
                           <div key={index} className="d-flex align-items-center mb-3">
@@ -278,7 +310,7 @@ const ServiceDetail = () => {
                                 objectFit: "contain",
                               }}
                             />
-                            <span style={{ fontSize: "20px", color: "#00522c" }}>
+                            <span style={{ fontSize: "16px", color: "#00522c" }}>
                               {item?.title}
                             </span>
                           </div>
@@ -313,7 +345,7 @@ const ServiceDetail = () => {
 
               {data?.brandLogo && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-4 br-10 text-center">
+                  <div className="bg-light-500 p-5 pb-4 br-10 text-center service-detail-section">
                     {/* Title */}
                     <h3
                       style={{
@@ -331,7 +363,7 @@ const ServiceDetail = () => {
                       {data?.brandLogo?.icons?.map((icon, index) => (
                         <div
                           key={index}
-                          className="col-6 col-sm-6 col-md-3 d-flex justify-content-center"
+                          className="col-6 col-sm-6 col-md-4 d-flex justify-content-center"
                         >
                           <div
                             className="d-flex align-items-center justify-content-center"
@@ -368,7 +400,7 @@ const ServiceDetail = () => {
                         color: "#555",
                       }}
                     >
-                      * {data?.brandLogo?.description}
+                      {data?.brandLogo?.description}
                     </p>
                   </div>
                 </div>
@@ -376,7 +408,7 @@ const ServiceDetail = () => {
 
               {data?.gIPromise && (
                 <div className="mb-5">
-                  <div className="bg-light-500 p-5 pb-5 br-10">
+                  <div className="bg-light-500 p-5 pb-5 br-10 service-detail-section">
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <h3
                         style={{
@@ -409,7 +441,7 @@ const ServiceDetail = () => {
 
               {(data?.serviceFaq) ? (
                 <>
-                  <h2 className="">
+                  <h2 className="service-detail-section-h3">
                     {data?.serviceFaq?.mainTitle}
                   </h2>
                   <div id="faq" className="accordion-collapse collapse show">
@@ -451,7 +483,7 @@ const ServiceDetail = () => {
 
                     {ratingArray.map((item, index) =>
                       <span key={index + '' + item}>
-                        {(item <= data?.averageRating) ? (
+                        {(item <= rating?.averageRating) ? (
                           <i className="ti ti-star-filled text-warning me-1" key={index} />
                         ) : (<i className="ti ti-star text-warning me-1" key={index} />)}
                       </span>

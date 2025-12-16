@@ -86,7 +86,7 @@ export const getReviewById = asyncHandler(async (req, res) => {
 
 // Update Review
 export const updateReview = asyncHandler(async (req, res) => {
-  const { rating, description, status } = req.body;
+  const { rating, description, status, type } = req.body;
 
   const review = await ReviewModel.findById(req.params.id);
   if (!review) throw new ApiError(404, "Review not found");
@@ -96,6 +96,7 @@ export const updateReview = asyncHandler(async (req, res) => {
   };
 
   review.rating = rating || review.rating;
+  review.type = type || review.type;
   review.description = description || review.description;
   review.status = typeof status === "boolean" ? status : review.status;
   review.updatedBy = req.user?._id;

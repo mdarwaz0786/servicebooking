@@ -3,15 +3,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
-import TextEditor from "../../components/Form/TextEditor";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 import apis from "../../apis/apis";
 
 const AddRefundPolicyPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
-  let id = 'fdgfd';
-  const [descriptionKey, setdescriptionKey] = useState(1);
+  const id = "68f9c555819007e42b718e67";
 
   const [formData, setFormData] = useState({
     title: "Refund Policy",
@@ -24,6 +23,10 @@ const AddRefundPolicyPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -41,8 +44,7 @@ const AddRefundPolicyPage = () => {
       });
 
       if (res.data.success) {
-        toast.success("Refund Policy created successfully");
-        navigate(-1);
+        toast.success("Saved successfully");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -59,28 +61,25 @@ const AddRefundPolicyPage = () => {
     });
   };
 
-
-  useEffect(() => { 
-    if (id || id=='') {
+  useEffect(() => {
+    if (id) {
       setLoading(true);
-      axios.get(`${apis.refundPolicy.get}/${id}`, { headers: { Authorization: validToken } })
-        .then(res => {
+      axios
+        .get(`${apis.refundPolicy.get}/${id}`, { headers: { Authorization: validToken } })
+        .then((res) => {
           if (res.data?.success) {
             const { title, description, effectiveDate } = res.data.data;
             setFormData({
-              title: title || 'Refund Policy', // Ensure title has a default if missing
-              description: description || '', // Ensure description is not null
-              effectiveDate: effectiveDate
-              ? effectiveDate.split("T")[0]
-              : "", // format YYYY-MM-DD
+              title: title || "Refund Policy",
+              description: description || "",
+              effectiveDate: effectiveDate ? effectiveDate.split("T")[0] : "",
             });
-            setdescriptionKey(2)            
-          };
+          }
         })
-        .catch(err => toast.error(err?.response?.data?.message || err.message))
+        .catch((err) => toast.error(err?.response?.data?.message || err.message))
         .finally(() => setLoading(false));
-    };
-  }, []);
+    }
+  }, [id, validToken]);
 
   return (
     <div className="page-wrapper">
@@ -125,14 +124,9 @@ const AddRefundPolicyPage = () => {
 
               <div className="mb-3">
                 <label className="form-label">Description</label>
-                <TextEditor
-                  key={descriptionKey}
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(value) =>
-                    setFormData((prev) => ({ ...prev, description: value }))
-                  }
-                  placeholder="Enter refund policy description..."
-                  height={300}
+                  onChange={handleDescriptionChange}
                 />
               </div>
 

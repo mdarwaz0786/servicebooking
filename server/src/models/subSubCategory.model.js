@@ -20,7 +20,7 @@ const subSubCategorySchema = new mongoose.Schema({
   },
   icon: {
     type: String,
-    required: false,
+    required: [true, "Icon is required"],
     trim: true,
   },
   shortDescription: {
@@ -61,8 +61,8 @@ const subSubCategorySchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-subSubCategorySchema.index({ name: 1 });
-subSubCategorySchema.index({ categoryId: 1, subCategoryId: 1 });
+
+subSubCategorySchema.index({ name: 1, categoryId: 1, subCategoryId: 1 }, { unique: true });
 
 subSubCategorySchema.virtual("category", {
   ref: "Category",

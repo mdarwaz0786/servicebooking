@@ -66,6 +66,6 @@
 
 @media (max-width: 768px) {
   .cart-wrapper {
-    width: 80vw;
+    width: 100%;
   }
 }

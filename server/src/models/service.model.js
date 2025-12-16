@@ -12,6 +12,14 @@ const serviceSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+  review: {
+    type: Number,
+  },
   image: {
     type: String,
     required: false,
@@ -41,7 +49,7 @@ const serviceSchema = new mongoose.Schema({
   shortDescription: {
     type: String,
     trim: true,
-    maxlength: [500, "Short description must not exceed 250 characters"],
+    maxlength: [5000000, "Short description must not exceed 250 characters"],
   },
   fullDescription: {
     type: String,
@@ -80,9 +88,6 @@ const serviceSchema = new mongoose.Schema({
   maxBookingQuantity: {
     type: String,
   },
-  taxPercent: {
-    type: String,
-  },
   creditPoint: {
     type: String,
   },
@@ -104,8 +109,7 @@ const serviceSchema = new mongoose.Schema({
   },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-serviceSchema.index({ name: 1 });
-serviceSchema.index({ categoryId: 1, subCategoryId: 1, subSubCategoryId: 1, subSubSubCategoryId: 1 });
+serviceSchema.index({ name: 1, categoryId: 1, subCategoryId: 1, subSubCategoryId: 1, subSubSubCategoryId: 1 }, { unique: true });
 
 serviceSchema.virtual("category", {
   ref: "Category",

@@ -18,7 +18,6 @@ const AddSubCategoryPage = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    shortDescription: "",
     fullDescription: "",
     categoryId: "",
   });
@@ -90,7 +89,7 @@ const AddSubCategoryPage = () => {
     };
 
     if (!formData.name.trim()) {
-      toast.error("Subcategory name is required");
+      toast.error("Variant name is required");
       return;
     };
 
@@ -109,17 +108,17 @@ const AddSubCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Subcategory created successfully");
+        toast.success("Variant created successfully");
         setFormData((prev) => ({
           ...prev,
           name: "",
-          shortDescription: "",
           fullDescription: "",
         }));
         setImage(null);
         setPreview(null);
         setIcon(null);
         setIconPreview(null);
+        navigate(-1);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
@@ -140,7 +139,7 @@ const AddSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Add Sub Category</h5>
+            <h5 className="mb-0">Add Variant</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -154,7 +153,7 @@ const AddSubCategoryPage = () => {
               {/* Select Category */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Category <span style={{ color: "red" }}>*</span>
+                  Select Product <span style={{ color: "red" }}>*</span>
                 </label>
                 <select
                   name="categoryId"
@@ -163,7 +162,7 @@ const AddSubCategoryPage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -188,22 +187,9 @@ const AddSubCategoryPage = () => {
                 />
               </div>
 
-              {/* Short Description */}
+              {/* Description */}
               <div className="mb-3">
-                <label className="form-label">Short Description</label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="250"
-                />
-              </div>
-
-              {/* Full Description */}
-              <div className="mb-3">
-                <label className="form-label">Full Description</label>
+                <label className="form-label">Description</label>
                 <textarea
                   name="fullDescription"
                   value={formData.fullDescription}
@@ -215,7 +201,7 @@ const AddSubCategoryPage = () => {
 
               {/* Subcategory Image */}
               <div className="mb-3">
-                <label className="form-label">Image</label>
+                <label className="form-label">Banner</label>
                 <div
                   {...getImageRootProps()}
                   className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
@@ -223,10 +209,10 @@ const AddSubCategoryPage = () => {
                 >
                   <input {...getImageInputProps()} />
                   {isImageActive ? (
-                    <p>Drop the image here...</p>
+                    <p>Drop the banner here...</p>
                   ) : (
                     <p>
-                      Drag & drop image here, or <span className="text-primary">browse</span>
+                      Drag & drop banner here, or <span className="text-primary">browse</span>
                     </p>
                   )}
                 </div>

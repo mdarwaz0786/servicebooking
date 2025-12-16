@@ -4,11 +4,11 @@ const blogSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "BlogCategory",
-    required: true,
+    required: [true, "Category is required"],
   },
   title: {
     type: String,
-    required: true,
+    required: [true, "Title is required"],
     trim: true,
   },
   slug: {
@@ -17,7 +17,7 @@ const blogSchema = new mongoose.Schema({
   },
   shortDescription: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
   },
   fullDescription: {
@@ -26,11 +26,25 @@ const blogSchema = new mongoose.Schema({
   },
   frontImage: {
     type: String,
-    required: true,
+    required: false,
+  },
+  frontImageAlt: {
+    type: String,
+    default: null,
   },
   detailImage: {
     type: String,
     required: false,
+  },
+  detailImageAlt: {
+    type: String,
+    default: null,
+  },
+  meta: {
+    title: { type: String, trim: true, default: null },
+    keywords: { type: String, trim: true, default: null },
+    author: { type: String, trim: true, default: null },
+    description: { type: String, trim: true, default: null },
   },
   status: {
     type: Boolean,
@@ -47,6 +61,41 @@ const blogSchema = new mongoose.Schema({
     default: null,
   },
 }, { timestamps: true });
+
+blogSchema.pre("save", function (next) {
+  if (!this.meta) this.meta = {};
+
+  if (!this.meta.title || this.meta.title.trim() === "") {
+    this.meta.title = this.title;
+  }
+
+  next();
+});
+
+blogSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+
+  if (!update.meta) update.meta = {};
+
+  if (update.meta && (!update.meta.title || update.meta.title.trim() === "")) {
+    if (update.title) {
+      update.meta.title = update.title;
+    }
+  }
+
+  if (update.$set) {
+    if (
+      update.$set.meta &&
+      (!update.$set.meta.title || update.$set.meta.title.trim() === "")
+    ) {
+      if (update.$set.title) {
+        update.$set.meta.title = update.$set.title;
+      }
+    }
+  }
+
+  next();
+});
 
 const BlogModel = mongoose.model("Blog", blogSchema);
 

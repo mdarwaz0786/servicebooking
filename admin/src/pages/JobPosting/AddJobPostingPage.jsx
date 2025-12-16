@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
-import TextEditor from "../../components/Form/TextEditor";
 import apis from "../../apis/apis";
+import RichTextEditor from "../../components/Form/RichTextEditor";
 
 const AddJobPostingPage = () => {
   const { validToken } = useAuth();
@@ -26,8 +26,8 @@ const AddJobPostingPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFullDescriptionChange = (value) => {
-    setFormData({ ...formData, fullDescription: value });
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -130,11 +130,9 @@ const AddJobPostingPage = () => {
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <TextEditor
-                  value={formData.fullDescription}
-                  onChange={handleFullDescriptionChange}
-                  placeholder="Enter full job description..."
-                  height="200px"
+                <RichTextEditor
+                  value={formData.description}
+                  onChange={handleDescriptionChange}
                 />
               </div>
 

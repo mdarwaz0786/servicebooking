@@ -4,31 +4,55 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
-import SelectMultipleService from "../../components/Form/SelectMultipleService";
 
 const AddRateCardPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
-  const [services, setServices] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+
+  const [category, setCategory] = useState();
+  const [subCategory, setSubCategory] = useState();
+
   const [rateGroups, setRateGroups] = useState([
-    { title: "", rates: [{ description: "", price: "", labourCharge: "" }] },
+    { title: "", rates: [{ description: "", price: "", discountPrice: "", labourCharge: "" }] },
   ]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch all available services
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await axios.get(apis.service.get);
-        setServices(res?.data?.data || []);
+        const res = await axios.get(apis.category.get, {
+          headers: { Authorization: validToken },
+        });
+        if (res?.data?.success) setCategories(res?.data?.data || []);
       } catch (error) {
-        console.error(error);
-      }
+        console.log(error);
+        toast.error("Failed to load categories");
+      };
     };
-    fetchServices();
-  }, []);
+    fetchCategories();
+  }, [validToken]);
+
+  useEffect(() => {
+    if (!category) return;
+    const fetchSubCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${apis.subCategory.get}?categoryId=${category}`,
+          { headers: { Authorization: validToken } }
+        );
+        if (res?.data?.success) {
+          setSubCategories(res?.data?.data || []);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [category, validToken]);
 
   // Handle title change for rate group
   const handleGroupTitleChange = (index, value) => {
@@ -54,7 +78,7 @@ const AddRateCardPage = () => {
   // Add new rate inside group
   const addRateField = (groupIndex) => {
     const updated = [...rateGroups];
-    updated[groupIndex].rates.push({ description: "", price: "", labourCharge: "" });
+    updated[groupIndex].rates.push({ description: "", price: "", discountPrice: "", labourCharge: "" });
     setRateGroups(updated);
   };
 
@@ -69,7 +93,7 @@ const AddRateCardPage = () => {
   const addGroupField = () => {
     setRateGroups([
       ...rateGroups,
-      { title: "", rates: [{ description: "", price: "", labourCharge: "" }] },
+      { title: "", rates: [{ description: "", price: "", discountPrice: "", labourCharge: "" }] },
     ]);
   };
 
@@ -82,11 +106,6 @@ const AddRateCardPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (selectedServices?.length === 0) {
-      toast.error("Please select at least one service");
-      return;
-    }
-
     // Validate rateGroups
     const validGroups = rateGroups.filter(
       (g) => g.title.trim() !== "" && g.rates.some((r) => r.description.trim() !== "")
@@ -98,13 +117,15 @@ const AddRateCardPage = () => {
     }
 
     const payload = {
-      services: selectedServices,
+      category,
+      subCategory,
       rateGroups: rateGroups.map((group) => ({
         title: group.title,
         rates: group.rates.map((rate) => ({
           description: rate.description,
           serviceCharge: {
             price: rate.price,
+            discountPrice: rate.discountPrice,
             labourCharge: rate.labourCharge,
           },
         })),
@@ -119,8 +140,8 @@ const AddRateCardPage = () => {
 
       if (response?.data?.success) {
         toast.success("Rate Card created successfully!");
-        setSelectedServices([]);
-        setRateGroups([{ title: "", rates: [{ description: "", price: "", labourCharge: "" }] }]);
+        navigate(-1);
+        setRateGroups([{ title: "", rates: [{ description: "", price: "", discountPrice: "", labourCharge: "" }] }]);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -141,21 +162,53 @@ const AddRateCardPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Services */}
+              {/* Category */}
               <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span className="text-danger">*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
-                />
+                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                <select
+                  name="category"
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setSubCategory();
+                  }}
+                  className="form-control"
+                  required
+                >
+                  <option value="">-- Select Product --</option>
+                  {categories?.map((cat) => (
+                    <option key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sub Category */}
+              <div className="mb-3">
+                <label className="form-label">Variant</label>
+                <select
+                  name="subCategory"
+                  value={subCategory}
+                  onChange={(e) => {
+                    setSubCategory(e.target.value);
+                  }}
+                  className="form-control"
+                  disabled={!category}
+                  required
+                >
+                  <option value="">-- Select Variant --</option>
+                  {subCategories?.map((sub) => (
+                    <option key={sub?._id} value={sub?._id}>
+                      {sub?.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Rate Groups */}
               <div className="mb-3">
-                <label className="form-label">Rate Groups</label>
+                <label className="form-label">Rate Groups <span style={{ color: "red" }}>*</span></label>
                 {rateGroups.map((group, gIndex) => (
                   <div key={gIndex} className="border rounded p-3 mb-3 bg-light">
                     <div className="d-flex align-items-center mb-2">
@@ -164,6 +217,7 @@ const AddRateCardPage = () => {
                         className="form-control me-2"
                         placeholder="Group Title"
                         value={group.title}
+                        required
                         onChange={(e) => handleGroupTitleChange(gIndex, e.target.value)}
                       />
                       <button
@@ -182,7 +236,8 @@ const AddRateCardPage = () => {
                         >
                           +
                         </button>
-                      )}
+                      )
+                      }
                     </div>
 
                     {/* Rates */}
@@ -194,12 +249,13 @@ const AddRateCardPage = () => {
                             className="form-control"
                             placeholder="Description"
                             value={rate.description}
+                            required
                             onChange={(e) =>
                               handleRateChange(gIndex, rIndex, "description", e.target.value)
                             }
                           />
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                           <input
                             type="text"
                             className="form-control"
@@ -210,7 +266,18 @@ const AddRateCardPage = () => {
                             }
                           />
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Discount Price"
+                            value={rate.discountPrice}
+                            onChange={(e) =>
+                              handleServiceChargeChange(gIndex, rIndex, "discountPrice", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="col-md-2">
                           <input
                             type="text"
                             className="form-control"

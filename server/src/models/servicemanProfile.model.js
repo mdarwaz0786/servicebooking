@@ -23,9 +23,17 @@ const serviceManProfileSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  mobile: {
+    type: String,
+    trim: true,
+  },
   dob: {
     type: Date,
     required: true,
+  },
+  profileImage: {
+    type: String,
+    required: false,
   },
   experienceLevel: {
     type: String,
@@ -76,22 +84,23 @@ const serviceManProfileSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  profileImage: {
+  profileStatus: {
     type: String,
-    required: false,
-  },
-  status: {
-    type: String,
-    enum: ["pending", "approved", "rejected"],
-    default: "pending",
+    enum: ["Pending", "Approved", "Rejected"],
+    default: "Pending",
   },
   remarks: {
     type: String,
+    trim: true,
+  },
+  status: {
+    type: Boolean,
+    default: false,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    default: null,
   },
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,

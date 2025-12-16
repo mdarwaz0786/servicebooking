@@ -3,11 +3,19 @@ import mongoose from "mongoose";
 const trainingScheduleSchema = new mongoose.Schema({
   scheduleDate: {
     type: Date,
-    required: true,
+    required: false,
   },
   scheduleTime: {
     type: String,
-    required: true,
+    required: false,
+  },
+  providerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManProfile",
+  },
+  trainingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Training",
   },
   status: {
     type: Boolean,

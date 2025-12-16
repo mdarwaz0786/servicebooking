@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
-import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 import { AppContext } from "../../context/AppContext";
 import BreadCrumb from "../BreadCrumb/BreadCrumb";
+import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const ContactUsPage = () => {
   const { Urls, postData, toast } = useContext(AppContext);
@@ -27,14 +28,12 @@ const ContactUsPage = () => {
       const response = await postData(formData, Urls.contactEnquiry, "POST");
       if (response.success) {
         setFormData({
-            name: "",
-            email: "",
-            mobile: "",
-            subject: "",
-            message: "",
-          });
-        // setformTitle("Enter Otp");
-        
+          name: "",
+          email: "",
+          mobile: "",
+          subject: "",
+          message: "",
+        });
       }
     } catch (error) {
       console.error("Login Error:", error);
@@ -43,163 +42,148 @@ const ContactUsPage = () => {
 
   return (
     <>
-    <BreadCrumb data={{title:'Contact us'}} />
-    
-    <div className="container py-5">
-      <div className="contact-details">
-        <div className="row justify-content-center">
-          {/* Phone Number */}
-          <div className="col-md-6 col-lg-4 d-flex">
-            <div className="card flex-fill">
-              <div className="card-body">
-                <div className="d-flex align-items-center">
-                  <span className="rounded-circle">
-                    <i className="ti ti-phone text-primary"></i>
-                  </span>
-                  <div className="ms-3">
-                    <h6 className="fs-18 mb-1">Phone Number</h6>
-                    <p className="fs-14 mb-0">(888) 888-8888</p>
-                    <p className="fs-14 mb-0">(123) 456-7890</p>
-                  </div>
-                </div>
+      <BreadCrumb data={{ title: "Contact us" }} />
+
+      <div className="container py-5" style={{ maxWidth: 1200 }}>
+        
+
+        {/* CONTACT CARDS */}
+        <div className="row g-4 mb-5">
+
+          <h5 className="m-0">Sarv Laxmi Green India Team Pvt. Ltd.</h5>
+
+          <div className="col-md-4">
+            <div className="shadow-sm p-4 rounded-3 text-center bg-white h-100 hover-card">
+              <div className="icon-box bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                style={{ width: 60, height: 60 }}>
+                <FaPhoneAlt className="text-primary fs-4" />
               </div>
+              <h6 className="fw-semibold">What is our helpline number?</h6>
+              <p className="contact-p">We have switched from a customer care phone number to a fast, simple-to-use chat based support. Just open our Help Center, select your issue, and initiate a chat with us.</p>
+              
+              {/* <p className="text-muted">+91-80-90-400-401</p> */}
             </div>
           </div>
 
-          {/* Email Address */}
-          <div className="col-md-6 col-lg-4 d-flex">
-            <div className="card flex-fill">
-              <div className="card-body">
-                <div className="d-flex align-items-center">
-                  <span className="rounded-circle">
-                    <i className="ti ti-mail text-primary"></i>
-                  </span>
-                  <div className="ms-3">
-                    <h6 className="fs-18 mb-1">Email Address</h6>
-                    <p className="fs-14 mb-0">truelysell@example.com</p>
-                    <p className="fs-14 mb-0">johnsmith@example.com</p>
-                  </div>
-                </div>
+          <div className="col-md-4">
+            <div className="shadow-sm p-4 rounded-3 bg-white text-center h-100 hover-card">
+              <div className="icon-box bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                style={{ width: 60, height: 60 }}>
+                <FaEnvelope className="text-primary fs-4" />
               </div>
+              <h6 className="fw-semibold">Still facing issues?</h6>
+              <p className="contact-p">If you've already tried chatting with us and are not satisfied with the resolution - please send us an email on greenindiateam2022@gmail.com. We will get back to you within 24-48 hours.</p>
             </div>
           </div>
 
-          {/* Address */}
-          <div className="col-md-6 col-lg-4 d-flex">
-            <div className="card flex-fill">
-              <div className="card-body">
-                <div className="d-flex align-items-center">
-                  <span className="rounded-circle">
-                    <i className="ti ti-map-pin text-primary"></i>
-                  </span>
-                  <div className="ms-3">
-                    <h6 className="fs-18 mb-1">Address</h6>
-                    <p className="fs-14 mb-0">
-                      367 Hillcrest Lane, Irvine, California, United States
-                    </p>
-                  </div>
-                </div>
+          <div className="col-md-4">
+            <div className="shadow-sm p-4 rounded-3 bg-white text-center h-100 hover-card">
+              <div className="icon-box bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                style={{ width: 60, height: 60 }}>
+                <FaMapMarkerAlt className="text-primary fs-4" />
               </div>
+              <h6 className="fw-semibold">Our office addresses</h6>
+              <p className="contact-p">You can view a list of all our office addresses by clicking below</p>
+              <Link to={'/addresses'}>View Addresses</Link>
             </div>
           </div>
+        </div>
+
+        {/* FORM + MAP */}
+        <div className="row g-4 align-items-start">
+          {/* Contact Form */}
+          <div className="col-md-6 m-auto">
+            <div className="shadow-sm p-4 rounded-3 bg-white">
+              <h5 className="fw-bold mb-3">Send us a message</h5>
+
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  className="form-control mb-3 py-2"
+                  placeholder="Your Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+
+                <input
+                  type="email"
+                  className="form-control mb-3 py-2"
+                  placeholder="Your Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+
+                <input
+                  type="text"
+                  className="form-control mb-3 py-2"
+                  placeholder="Your Mobile"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  required
+                />
+
+                <input
+                  type="text"
+                  className="form-control mb-3 py-2"
+                  placeholder="Subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                />
+
+                <textarea
+                  className="form-control mb-3"
+                  rows="4"
+                  placeholder="Message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                ></textarea>
+
+                <button className="btn btn-dark w-100 py-2" type="submit">
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Map Section */}
+          {/* <div className="col-md-6">
+            <div className="shadow-sm rounded-3 overflow-hidden bg-white">
+              <iframe
+                title="Green India Team Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2771.3665711897197!2d77.15764397428771!3d28.496384690252437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1ffa1978b437%3A0xe38d18a0f1ae45b5!2sGreen%20India%20Team!5e1!3m2!1sen!2sin!4v1761026597772!5m2!1sen!2sin"
+                width="100%"
+                height="400"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div> */}
         </div>
       </div>
-      <div className="row align-items-start">
-        {/* Left Side - Contact Form */}
-        <h4 className="fw-bold mb-4">Contact us</h4>
-        <div className="col-md-6 mb-4">
-          <form onSubmit={handleSubmit} >
-            <div className="mb-3">
-              <input
-                type="text"
-                className="form-control rounded-1"
-                placeholder="Your Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <input
-                type="email"
-                className="form-control rounded-1"
-                placeholder="Your Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <input
-                type="text"
-                className="form-control rounded-1"
-                placeholder="Your Mobile"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <input
-                type="text"
-                className="form-control rounded-1"
-                placeholder="Subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <textarea
-                className="form-control rounded-1"
-                rows="4"
-                placeholder="Message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="btn btn-dark text-uppercase px-4 py-2"
-            >
-              Send Message
-            </button>
-          </form>
-        </div>
 
-        {/* Right Side - Map & Info */}
-        <div className="col-md-6">
-          <div className="mb-3">
-            <iframe
-              title="Green India Team Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2771.3665711897197!2d77.15764397428771!3d28.496384690252437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1ffa1978b437%3A0xe38d18a0f1ae45b5!2sGreen%20India%20Team!5e1!3m2!1sen!2sin!4v1761026597772!5m2!1sen!2sin"
-              width="100%"
-              height="250"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-          <div className="d-flex align-items-start mb-2">
-            <FaMapMarkerAlt className="me-2 mt-1 text-dark" />
-            <p className="mb-0 text-muted">
-              365, Lotus Building, Sultanpur, Delhi-110030
-            </p>
-          </div>
-          <div className="d-flex align-items-start">
-            <FaEnvelope className="me-2 mt-1 text-dark" />
-            <p className="mb-0 text-muted">info@greenindiateam.com</p>
-          </div>
-        </div>
-      </div>
-    </div>
+      {/* CSS For Hover Effects */}
+      <style>{`
+        .hover-card:hover {
+          transform: translateY(-5px);
+          transition: 0.3s;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+        }
+          .contact-p {
+            font-size: 13px;
+            line-height: 1.3;
+            margin-top: 8px;
+        }
+      `}</style>
     </>
   );
 };

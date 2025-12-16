@@ -19,7 +19,6 @@ const UpdateSubCategoryPage = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    shortDescription: "",
     fullDescription: "",
     categoryId: "",
   });
@@ -35,7 +34,7 @@ const UpdateSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error.message);
-        toast.error("Failed to load categories");
+        toast.error("Failed to load Variants");
       };
     };
     fetchCategories();
@@ -60,7 +59,7 @@ const UpdateSubCategoryPage = () => {
         };
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load subcategory");
+        toast.error("Failed to load Variant");
       };
     };
     if (id) fetchSubCategory();
@@ -111,12 +110,12 @@ const UpdateSubCategoryPage = () => {
     e.preventDefault();
 
     if (!formData.categoryId) {
-      toast.error("Please select a category");
+      toast.error("Please select a product");
       return;
     };
 
     if (!formData.name.trim()) {
-      toast.error("Sub category name is required");
+      toast.error("Sub Variant name is required");
       return;
     };
 
@@ -135,11 +134,17 @@ const UpdateSubCategoryPage = () => {
       });
 
       if (response?.data?.success) {
-        toast.success("Sub category updated successfully");
+        toast.success("Variant updated successfully");
         navigate(-1);
       };
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
+      const status = error?.response?.status;
+      if (status === 409) {
+        toast.error("Variant already exists");
+      }
+      else {
+        toast.error("Something went wrong");
+      }
     } finally {
       setLoading(false);
     };
@@ -157,7 +162,7 @@ const UpdateSubCategoryPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Update Sub Category</h5>
+            <h5 className="mb-0">Update Variant</h5>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
@@ -171,7 +176,7 @@ const UpdateSubCategoryPage = () => {
               {/* Select Category */}
               <div className="mb-3">
                 <label className="form-label">
-                  Select Category <span style={{ color: "red" }}>*</span>
+                  Select Product <span style={{ color: "red" }}>*</span>
                 </label>
                 <select
                   name="categoryId"
@@ -180,7 +185,7 @@ const UpdateSubCategoryPage = () => {
                   className="form-control"
                   required
                 >
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Select Product --</option>
                   {categories?.map((cat) => (
                     <option key={cat?._id} value={cat?._id}>
                       {cat?.name}
@@ -205,22 +210,9 @@ const UpdateSubCategoryPage = () => {
                 />
               </div>
 
-              {/* Short Description */}
+              {/* Description */}
               <div className="mb-3">
-                <label className="form-label">Short Description</label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="250"
-                />
-              </div>
-
-              {/* Full Description */}
-              <div className="mb-3">
-                <label className="form-label">Full Description</label>
+                <label className="form-label">Description</label>
                 <textarea
                   name="fullDescription"
                   value={formData.fullDescription}
@@ -232,7 +224,7 @@ const UpdateSubCategoryPage = () => {
 
               {/* Subcategory Image */}
               <div className="mb-3">
-                <label className="form-label">Image</label>
+                <label className="form-label">Banner</label>
                 <div
                   {...getImageRootProps()}
                   className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
@@ -240,10 +232,10 @@ const UpdateSubCategoryPage = () => {
                 >
                   <input {...getImageInputProps()} />
                   {isImageActive ? (
-                    <p>Drop the image here...</p>
+                    <p>Drop the banner here...</p>
                   ) : (
                     <p>
-                      Drag & drop image here, or <span className="text-primary">browse</span>
+                      Drag & drop banner here, or <span className="text-primary">browse</span>
                     </p>
                   )}
                 </div>

@@ -65,7 +65,13 @@ import ExpertTechnicianListPage from "../pages/ExportTechnician/ExpertTechnician
 import UpdateBrandLogoPage from "../pages/BrandLogo/UpdateBrandLogoPage";
 import BrandLogoListPage from "../pages/BrandLogo/BrandLogoListPage";
 import AddBlogPage from "../pages/Blog/AddBlogPage";
+import UpdateBlogPage from "../pages/Blog/UpdateBlogPage";
+import BlogListPage from "../pages/Blog/BlogListPage";
+
 import AddBlogCategoryPage from "../pages/BlogCategory/AddBlogCategoryPage";
+import ListBlogCategoryPage from "../pages/BlogCategory/ListBlogCategoryPage";
+import UpdateBlogCategoryPage from "../pages/BlogCategory/UpdateBlogCategoryPage";
+
 import AddTermsConditionsPage from "../pages/TermsConditions/AddTermsConditionsPage";
 import AddPrivacyPolicyPage from "../pages/PrivacyPolicy/AddPrivacyPolicyPage";
 import AddRefundPolicyPage from "../pages/RefundPolicy/AddRefundPolicyPage";
@@ -75,6 +81,37 @@ import AddJobPostingPage from "../pages/JobPosting/AddJobPostingPage";
 import AddRateCardPage from "../pages/RateCard/AddRateCardPage";
 import UpdateRateCardPage from "../pages/RateCard/UpdateRateCardPage";
 import RateCardListPage from "../pages/RateCard/RateCardListPage";
+import ProviderListPage from "../pages/User/ProviderListPage";
+import AdminListPage from "../pages/User/AdminListPage";
+import JobListPage from "../pages/JobPosting/JobListPage";
+import UpdateJobPostingPage from "../pages/JobPosting/UpdateJobPostingPage";
+import TransactionDetailPage from "../pages/Transaction/TransactionDetailPage";
+import BrandListPage from "../pages/Brand/BrandListPage";
+import BrandFormPage from "../pages/Brand/BrandFormPage";
+import CityListPage from "../pages/City/CityListPage";
+import CityFormPage from "../pages/City/CityFormPage";
+import LocalityListPage from "../pages/Locality/LocalityListPage";
+import LocalityFormPage from "../pages/Locality/LocalityFormPage";
+import AreaZoneListPage from "../pages/AreaZone/AreaZoneListPage";
+import AreaZoneFormPage from "../pages/AreaZone/AreaZoneForm";
+import ProductStoreFormPage from "../pages/ProductStore/ProductStoreFormPage";
+import ProductStoreListPage from "../pages/ProductStore/ProductStoreListPage";
+import TrainingListPage from "../pages/Training/TrainingListPage";
+import TrainingFormPage from "../pages/Training/TrainingFormPage";
+import TrainingAttendanceListPage from "../pages/TrainingAttendance/TrainingAttendanceListPage";
+import TrainingAttendanceFormPage from "../pages/TrainingAttendance/TrainingAttendanceForm";
+import InsuranceListPage from "../pages/Insurance/InsuranceListPage";
+import InsuranceFormPage from "../pages/Insurance/InsuranceFornPage";
+import WalletListPage from "../pages/Wallet/WalletListPage";
+import WalletFormPage from "../pages/Wallet/WalletFormPage";
+import SupportFormPage from "../pages/Support/SupportFormPage";
+import CustomerSupportListPage from "../pages/Support/CustomerSupportListPage";
+import ProviderSupportListPage from "../pages/Support/ProviderSupportListPage";
+import CancelledBookingListPage from "../pages/Booking/CancelledBookingListPage";
+import CompletedBookingListPage from "../pages/Booking/CompletedBookingListPage";
+import AddDisclaimerPage from "../pages/Disclaimer/AddDisclaimerPage";
+import MetaTagListPage from "../pages/MetaTag/MetaTagListPage";
+import MetaTagFormPage from "../pages/MetaTag/MetaTagFormPage";
 
 const routesConfig = {
   private: [
@@ -104,9 +141,12 @@ const routesConfig = {
     { path: "/update-time-slot/:id", element: UpdateTimeSlotPage },
 
     { path: "/bookings", element: BookingListPage },
+    { path: "/cancelled-bookings", element: CancelledBookingListPage },
+    { path: "/completed-bookings", element: CompletedBookingListPage },
     { path: "/booking-detail/:id", element: BookingDetailPage },
 
     { path: "/transactions", element: TransactionListPage },
+    { path: "/transaction-detail", element: TransactionDetailPage },
 
     { path: "/kyc", element: KycListPage },
     { path: "/kyc-detail", element: KycDetailsPage },
@@ -166,13 +206,19 @@ const routesConfig = {
     { path: "/add-service-faq", element: AddServiceFaqPage },
     { path: "/update-service-faq/:id", element: UpdateServiceFaqPage },
 
+    { path: "/blog-list", element: BlogListPage },
     { path: "/add-blog", element: AddBlogPage },
+    { path: "/update-blog/:id", element: UpdateBlogPage },
 
+    { path: "/list-blog-category", element: ListBlogCategoryPage },
+    { path: "/update-blog-category/:id", element: UpdateBlogCategoryPage },
     { path: "/add-blog-category", element: AddBlogCategoryPage },
 
     { path: "/add-terms-conditions", element: AddTermsConditionsPage },
 
     { path: "/add-privacy-policy", element: AddPrivacyPolicyPage },
+
+    { path: "/add-disclaimer", element: AddDisclaimerPage },
 
     { path: "/add-refund-policy", element: AddRefundPolicyPage },
 
@@ -181,8 +227,57 @@ const routesConfig = {
     { path: "/contact-enquiry", element: ContactEnquiryListPage },
 
     { path: "/add-job", element: AddJobPostingPage },
+    { path: "/update-job/:id", element: UpdateJobPostingPage },
+    { path: "/job-list", element: JobListPage },
+
+    { path: "/brand", element: BrandListPage },
+    { path: "/add-brand", element: BrandFormPage },
+    { path: "/update-brand/:id", element: BrandFormPage },
+
+    { path: "/city", element: CityListPage },
+    { path: "/add-city", element: CityFormPage },
+    { path: "/update-city/:id", element: CityFormPage },
+
+    { path: "/locality", element: LocalityListPage },
+    { path: "/add-locality", element: LocalityFormPage },
+    { path: "/update-locality/:id", element: LocalityFormPage },
+
+    { path: "/areazone", element: AreaZoneListPage },
+    { path: "/add-areazone", element: AreaZoneFormPage },
+    { path: "/update-areazone/:id", element: AreaZoneFormPage },
+
+    { path: "/product-store", element: ProductStoreListPage },
+    { path: "/add-product-store", element: ProductStoreFormPage },
+    { path: "/update-product-store/:id", element: ProductStoreFormPage },
+
+    { path: "/training", element: TrainingListPage },
+    { path: "/add-training", element: TrainingFormPage },
+    { path: "/update-training/:id", element: TrainingFormPage },
+
+    { path: "/training-attendance", element: TrainingAttendanceListPage },
+    { path: "/add-training-attendance", element: TrainingAttendanceFormPage },
+    { path: "/update-training-attendance/:id", element: TrainingAttendanceFormPage },
+
+    { path: "/insurance", element: InsuranceListPage },
+    { path: "/add-insurance", element: InsuranceFormPage },
+    { path: "/update-insurance/:id", element: InsuranceFormPage },
+
+    { path: "/wallet", element: WalletListPage },
+    { path: "/add-wallet", element: WalletFormPage },
+    { path: "/update-wallet/:id", element: WalletFormPage },
+
+    { path: "/add-support", element: SupportFormPage },
+    { path: "/update-support/:id", element: SupportFormPage },
+    { path: "/customer-support", element: CustomerSupportListPage },
+    { path: "/provider-support", element: ProviderSupportListPage },
+
+    { path: "/meta-tag", element: MetaTagListPage },
+    { path: "/add-meta-tag", element: MetaTagFormPage },
+    { path: "/update-meta-tag/:id", element: MetaTagFormPage },
 
     { path: "/users", element: UserListPage },
+    { path: "/providers", element: ProviderListPage },
+    { path: "/admins", element: AdminListPage },
   ],
   public: [
     { path: "/login", element: LoginPage },

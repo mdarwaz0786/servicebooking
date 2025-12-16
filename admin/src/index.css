@@ -13,3 +13,31 @@
   min-height: 400px;
   min-height: 70vh;
 }
+
+.tooltip-cell {
+  position: relative;
+  max-width: 200px;
+}
+
+.tooltip-text {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.tooltip-box {
+  display: none;
+  position: absolute;
+  background: #333;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+  white-space: normal;
+  width: 310px;
+}
+
+.tooltip-cell:hover .tooltip-box {
+  display: block;
+}

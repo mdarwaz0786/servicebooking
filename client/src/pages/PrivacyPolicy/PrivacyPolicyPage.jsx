@@ -44,7 +44,7 @@ const PrivacyPolicyPage = () => {
             <p className="text-muted mb-4">Effective Date: {formatDate(data.effectiveDate)}</p>
     
             <div
-                className="mt-1"
+                className="mt-1 policy"
                 dangerouslySetInnerHTML={{ __html: data.description }}
                 ></div>
           </div>

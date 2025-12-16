@@ -26,6 +26,8 @@ export const getReviews = asyncHandler(async (req, res) => {
 
   filters.servicemanId = servicemanId;
 
+  filters.type = 1;
+
   if (status !== undefined) filters.status = status === "true";
 
   let sortOption = {};
@@ -84,7 +86,7 @@ export const getReviewById = asyncHandler(async (req, res) => {
   const servicemanId = servicemanProfile._id;
 
   const review = await ReviewModel
-    .findOne({ _id: req.params.id, servicemanId })
+    .findOne({ _id: req.params.id, servicemanId, type: 1 })
     .populate("user")
     .populate({
       path: "booking",

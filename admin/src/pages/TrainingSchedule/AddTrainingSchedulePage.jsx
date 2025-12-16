@@ -1,9 +1,11 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
 import apis from "../../apis/apis";
+import SingleSelect from "../../components/Form/SingleSelect";
 
 const AddTrainingSchedulePage = () => {
   const { validToken, user } = useAuth();
@@ -11,8 +13,34 @@ const AddTrainingSchedulePage = () => {
   const [formData, setFormData] = useState({
     scheduleDate: "",
     scheduleTime: "",
+    providerId: "",
+    trainingId: "",
   });
+
+  const [providers, setProviders] = useState([]);
+  const [trainings, setTrainings] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const providerRes = await axios.get(apis.servicemanProfile.get, {
+          headers: { Authorization: validToken },
+        });
+        const trainingRes = await axios.get(apis.training.get, {
+          headers: { Authorization: validToken },
+        });
+
+        if (providerRes.data.success) setProviders(providerRes.data.data);
+        if (trainingRes.data.success) setTrainings(trainingRes.data.data);
+      } catch (err) {
+        console.log(err)
+        toast.error("Failed to load dropdown data");
+      }
+    };
+
+    fetchOptions();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,19 +51,21 @@ const AddTrainingSchedulePage = () => {
     setFormData({
       scheduleDate: "",
       scheduleTime: "",
+      providerId: "",
+      trainingId: "",
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.scheduleDate) {
-      toast.error("Schedule date is required");
+    if (!formData.trainingId) {
+      toast.error("Trainer is required");
       return;
     };
 
-    if (!formData.scheduleTime) {
-      toast.error("Schedule time is required");
+    if (!formData.providerId) {
+      toast.error("Provider is required");
       return;
     };
 
@@ -55,6 +85,7 @@ const AddTrainingSchedulePage = () => {
 
       if (response?.data?.success) {
         toast.success("Training schedule created successfully");
+        navigate(-1)
         resetForm();
       };
     } catch (error) {
@@ -80,34 +111,73 @@ const AddTrainingSchedulePage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Schedule Date */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Schedule Date <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="date"
-                  name="scheduleDate"
-                  value={formData.scheduleDate}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                {/* Provider */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Provider <span className="text-danger">*</span>
+                  </label>
+                  <SingleSelect
+                    optionsList={providers}
+                    value={formData.providerId}
+                    onChange={(val) =>
+                      setFormData({ ...formData, providerId: val })
+                    }
+                    placeholder="Select Provider"
+                    labelKey="name"
+                    valueKey="_id"
+                  />
+                </div>
+
+                {/* Training */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Trainer <span className="text-danger">*</span>
+                  </label>
+                  <SingleSelect
+                    optionsList={trainings}
+                    value={formData.trainingId}
+                    onChange={(val) =>
+                      setFormData({ ...formData, trainingId: val })
+                    }
+                    placeholder="Select Trainer"
+                    labelKey="fullName"
+                    valueKey="_id"
+                  />
+                </div>
               </div>
 
-              {/* Schedule Time */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Schedule Time <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="time"
-                  name="scheduleTime"
-                  value={formData.scheduleTime}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Schedule Date */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Schedule Date
+                    </label>
+                    <input
+                      type="date"
+                      name="scheduleDate"
+                      value={formData.scheduleDate}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Schedule Time */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Schedule Time
+                    </label>
+                    <input
+                      type="time"
+                      name="scheduleTime"
+                      value={formData.scheduleTime}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Buttons */}

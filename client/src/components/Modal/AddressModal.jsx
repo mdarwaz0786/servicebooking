@@ -25,6 +25,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLatLng({ lat: position.coords.latitude, lng: position.coords.longitude });
+          // console.log(latLng)
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -44,7 +45,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           long: latLng?.lng,
           houseNumber,
           landmark,
-          addresstype,
+          type:addresstype,
         },
         Urls.addAddress,
         "POST"

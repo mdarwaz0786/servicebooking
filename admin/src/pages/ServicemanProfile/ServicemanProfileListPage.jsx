@@ -86,6 +86,22 @@ const ServicemanProfileListPage = () => {
     };
   };
 
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await axios.patch(
+        `${apis.servicemanProfile.update}/${id}`,
+        { status: !currentStatus },
+        { headers: { Authorization: validToken } }
+      );
+      if (response?.data?.success) {
+        toast.success("Updated successfully");
+        fetchServicemanProfile();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   useEffect(() => {
     fetchServicemanProfile();
   }, [page, limit, debouncedSearch, sort]);
@@ -157,7 +173,18 @@ const ServicemanProfileListPage = () => {
                         <td>{d?.name}</td>
                         <td>{d?.email}</td>
                         <td>{d?.user?.mobile}</td>
-                        <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1)}</td>
+                        <td>
+                          <div className="active-switch">
+                            <label className="switch">
+                              <input
+                                type="checkbox"
+                                checked={d.status}
+                                onChange={() => toggleStatus(d._id, d.status)}
+                              />
+                              <span className="sliders round" />
+                            </label>
+                          </div>
+                        </td>
                         <td>
                           <div className="d-flex">
                             <Link to="/service-man-profile-detail" state={{ record: d }}>
@@ -169,6 +196,7 @@ const ServicemanProfileListPage = () => {
                               className="btn delete-table"
                               type="button"
                               onClick={() => deleteServicemanProfile(d?._id)}
+                              disabled={true}
                             >
                               <i className="fe fe-trash-2" />
                             </button>
