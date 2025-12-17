@@ -116,6 +116,57 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 });
 
 // Get Single Booking by ID
+// export const getServiceManBookingById = asyncHandler(async (req, res) => {
+//   const userId = req.user?._id;
+
+//   if (!userId) throw new ApiError(401, "User not found");
+
+//   const serviceman = await ServiceManProfileModel.findOne({ userId });
+//   if (!serviceman) throw new ApiError(404, "Service man profile not found");
+
+//   const booking = await ServiceManBookingModel
+//     .findOne({ _id: req.params.id, servicemanId: serviceman?._id })
+//     .populate("serviceman user")
+//     .populate("bookingId")
+//     .populate("servicemanId")
+//     .populate("userId")
+
+//   if (!booking) {
+//     throw new ApiError(404, "Booking not found");
+//   };
+
+//   const review = await ReviewModel.findOne({
+//     bookingId: booking.bookingId?._id, type: 1
+//   })
+//     .populate({
+//       path: "userId",
+//       select: "mobile",
+//     })
+//     .lean();
+
+//   console.log(review);
+
+//   booking.review = review
+//     ? {
+//       rating: review.rating,
+//       description: review.description,
+//       user: review.userId
+//         ? {
+//           _id: review.userId._id,
+//           mobile: review.userId.mobile,
+//           role: review.userId.role,
+//         }
+//         : null,
+//     }
+//     : null;
+
+//   return res.status(200).json({
+//     success: true,
+//     message: "Data fetched successfully",
+//     data: booking,
+//   });
+// });
+
 export const getServiceManBookingById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
@@ -125,7 +176,10 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
   if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
   const booking = await ServiceManBookingModel
-    .findOne({ _id: req.params.id, servicemanId: serviceman?._id })
+    .findOne({
+      _id: req.params.id,
+      servicemanId: serviceman?._id,
+    })
     .populate("serviceman user")
     .populate({
       path: "booking",
@@ -148,13 +202,16 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
         },
       ],
     })
+    .lean();
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
-  };
+  }
 
+  // 🔹 SAME review logic as getAll
   const review = await ReviewModel.findOne({
-    bookingId: booking.booking?._id, type: 1
+    bookingId: booking?.booking?._id,
+    type: 1,
   })
     .populate({
       path: "userId",
@@ -164,13 +221,12 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
 
   booking.review = review
     ? {
-      rating: review.rating,
-      description: review.description,
-      user: review.userId
+      rating: review?.rating,
+      description: review?.description,
+      user: review?.userId
         ? {
-          _id: review.userId._id,
-          mobile: review.userId.mobile,
-          role: review.userId.role,
+          _id: review?.userId?._id,
+          mobile: review?.userId?.mobile,
         }
         : null,
     }
