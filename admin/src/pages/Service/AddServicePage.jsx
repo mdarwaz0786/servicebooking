@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
-import TextEditor from "../../components/Form/TextEditor";
+import Editor from "../../components/Form/Editor";
 
 const AddServicePage = () => {
   const { validToken } = useAuth();
@@ -120,7 +120,24 @@ const AddServicePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFullDescriptionChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      fullDescription: value,
+    }));
+  };
+
+  const handleShortDescriptionChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      shortDescription: value,
+    }));
   };
 
   const onDropImage = useCallback((acceptedFiles) => {
@@ -513,11 +530,11 @@ const AddServicePage = () => {
               {/* Short Description */}
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
-                <TextEditor
-                  name="shortDescription"
+                <Editor
+                  id="shortDescription"
+                  name="sortDescription"
                   value={formData.shortDescription}
-                  onChange={handleChange}
-                  placeholder="Enter impact Short Description..."
+                  onChange={handleShortDescriptionChange}
                   height={300}
                 />
               </div>
@@ -525,11 +542,11 @@ const AddServicePage = () => {
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <TextEditor
-                  value={formData.fullDescription}
+                <Editor
+                  id="fullDescription"
                   name="fullDescription"
-                  onChange={handleChange}
-                  placeholder="Enter impact Full Description..."
+                  value={formData.fullDescription}
+                  onChange={handleFullDescriptionChange}
                   height={300}
                 />
               </div>

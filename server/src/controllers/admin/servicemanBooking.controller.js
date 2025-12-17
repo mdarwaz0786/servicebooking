@@ -17,6 +17,12 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Required fields are missing");
   };
 
+  const booking = BookingModel.findById(bookingId);
+
+  if (!booking) {
+    throw new ApiError(400, "Booking not found");
+  }
+
   const latestAssignment = await ServiceManBookingModel
     .findOne({ bookingId: bookingId })
     .sort({ createdAt: -1 });
