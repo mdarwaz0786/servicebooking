@@ -112,6 +112,8 @@ import CompletedBookingListPage from "../pages/Booking/CompletedBookingListPage"
 import AddDisclaimerPage from "../pages/Disclaimer/AddDisclaimerPage";
 import MetaTagListPage from "../pages/MetaTag/MetaTagListPage";
 import MetaTagFormPage from "../pages/MetaTag/MetaTagFormPage";
+import TrainingScheduleSubmitListPage from "../pages/TrainingScheduleSubmit/TrainingScheduleSbmitListPage";
+import TrainingScheduleSubmitDetailPage from "../pages/TrainingScheduleSubmit/TrainingScheduleSubmitDetailPage";
 
 const routesConfig = {
   private: [
@@ -154,6 +156,9 @@ const routesConfig = {
     { path: "/training-schedule", element: TrainingScheduleListPage },
     { path: "/add-training-schedule", element: AddTrainingSchedulePage },
     { path: "/update-training-schedule/:id", element: UpdateTrainingSchedulePage },
+
+    { path: "/training-schedule-submit", element: TrainingScheduleSubmitListPage },
+    { path: "/training-schedule-submit-detail", element: TrainingScheduleSubmitDetailPage },
 
     { path: "/earning", element: EarningListPage },
     { path: "/add-earning", element: AddEarningPage },

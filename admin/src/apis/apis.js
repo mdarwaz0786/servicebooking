@@ -63,6 +63,11 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/training-schedule`,
     delete: `${BASE_URL}/api/v1/admin/training-schedule`,
   },
+  trainingScheduleSubmit: {
+    get: `${BASE_URL}/api/v1/admin/training-schedule-submit`,
+    update: `${BASE_URL}/api/v1/admin/training-schedule-submit`,
+    delete: `${BASE_URL}/api/v1/admin/training-schedule-submit`,
+  },
   earning: {
     create: `${BASE_URL}/api/v1/admin/earning`,
     get: `${BASE_URL}/api/v1/admin/earning`,
