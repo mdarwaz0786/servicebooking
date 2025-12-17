@@ -6,7 +6,7 @@ import { useDropzone } from "react-dropzone";
 import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate, useParams } from "react-router-dom";
-import RichTextEditor from "../../components/Form/RichTextEditor";
+import Editor from "../../components/Form/Editor";
 
 const UpdateBlogPage = () => {
   const { validToken } = useAuth();
@@ -290,12 +290,14 @@ const UpdateBlogPage = () => {
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <RichTextEditor
+                <Editor
+                  id="fullDescription"
+                  name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleDescriptionChange}
+                  height={300}
                 />
               </div>
-
 
               <div className="row">
                 <div className="col-md-6">

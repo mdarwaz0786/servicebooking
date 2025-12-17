@@ -46,7 +46,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
       };
 
       const updatedData = {
-        ...req.body, 
+        ...req.body,
         updatedBy: userId,
       };
 
@@ -102,7 +102,8 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     .findOne({ userId })
     .populate("categories")
     .populate("user")
-    .populate("kyc");
+    .populate("kyc")
+    .populate("trainingScheduleSubmit")
 
   if (!profile) throw new ApiError(404, "Profile not found");
 

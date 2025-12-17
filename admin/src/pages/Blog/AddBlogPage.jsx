@@ -6,7 +6,7 @@ import { useDropzone } from "react-dropzone";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
-import RichTextEditor from "../../components/Form/RichTextEditor";
+import Editor from "../../components/Form/Editor";
 
 const AddBlogPage = () => {
   const { validToken } = useAuth();
@@ -55,7 +55,7 @@ const AddBlogPage = () => {
   }, []);
 
   const handleDescriptionChange = (value) => {
-    setFormData((prev) => ({ ...prev, dullDescription: value }));
+    setFormData((prev) => ({ ...prev, fullDescription: value }));
   };
 
   const handleChange = (e) => {
@@ -254,9 +254,12 @@ const AddBlogPage = () => {
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <RichTextEditor
+                <Editor
+                  id="fullDescription"
+                  name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleDescriptionChange}
+                  height={300}
                 />
               </div>
 
