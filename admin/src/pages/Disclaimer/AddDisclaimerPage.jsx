@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
-import RichTextEditor from "../../components/Form/RichTextEditor";
+import Editor from "../../components/Form/Editor";
 import apis from "../../apis/apis";
 
 const AddDisclaimerPage = () => {
@@ -22,11 +22,17 @@ const AddDisclaimerPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleDescriptionChange = (value) => {
-    setFormData((prev) => ({ ...prev, description: value }));
+    setFormData(prev => ({
+      ...prev,
+      description: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -48,6 +54,7 @@ const AddDisclaimerPage = () => {
 
       if (res.data.success) {
         toast.success("Saved successfully");
+        navigate("/");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -131,9 +138,12 @@ const AddDisclaimerPage = () => {
 
               <div className="mb-3">
                 <label className="form-label">Description</label>
-                <RichTextEditor
+                <Editor
+                  id="description"
+                  name="description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
+                  height={300}
                 />
               </div>
 
