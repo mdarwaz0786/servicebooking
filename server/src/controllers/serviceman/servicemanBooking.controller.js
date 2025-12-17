@@ -438,11 +438,17 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     if (status != 'accept')
       if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
 
-    if (req.file && req.file.buffer) {
-      selfiePath = await compressImage(
-        req.file.buffer,
-        "servicemanSelfies",
-      );
+    let selfiePath = null;
+    // if (req.file && req.file.buffer) {
+    //   selfiePath = await compressImage(
+    //     req.file.buffer,
+    //     "servicemanSelfies",
+    //   );
+    //   servicemanBooking.selfie = selfiePath;
+    // };
+
+    if (req.files?.selfie?.[0]) {
+      selfiePath = await compressImage(req.files.selfie[0].buffer, "servicemanSelfies");
       servicemanBooking.selfie = selfiePath;
     };
 

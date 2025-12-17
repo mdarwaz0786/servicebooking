@@ -357,6 +357,14 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/training-schedule-submit"
+                    className={currentPath === "/training-schedule-submit" ? "active" : ""}
+                  >
+                    <span>Training Schedule Submit</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/training-attendance"
                     className={currentPath === "/training-attendance" ? "active" : ""}
                   >

@@ -8,6 +8,7 @@ import bookingRoutes from "./servicemanBooking.routes.js";
 import servicemanBookingUploadsRoutes from "./servicemanBookingUploads.routes.js";
 import reviewRoutes from "./review.routes.js";
 import trainingScheduleSubmitRoutes from "./trainingScheduleSubmit.route.js";
+import walletRoutes from "./wallet.route.js";
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use("/booking", bookingRoutes);
 router.use("/bookingUpload", servicemanBookingUploadsRoutes);
 router.use("/review", reviewRoutes);
 router.use("/training-schedule-submit", trainingScheduleSubmitRoutes);
+router.use("/wallet", walletRoutes);
 
 export default router;
