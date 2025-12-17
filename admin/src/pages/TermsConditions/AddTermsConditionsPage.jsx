@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import RichTextEditor from "../../components/Form/RichTextEditor";
+import Editor from "../../components/Form/Editor";
 
 const AddTermsConditionsPage = () => {
   const { validToken } = useAuth();
@@ -21,11 +21,17 @@ const AddTermsConditionsPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleDescriptionChange = (value) => {
-    setFormData({ ...formData, description: value });
+    setFormData(prev => ({
+      ...prev,
+      description: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -50,6 +56,7 @@ const AddTermsConditionsPage = () => {
 
       if (res.data.success) {
         toast.success("Saved successfully");
+        navigate("/");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -121,9 +128,12 @@ const AddTermsConditionsPage = () => {
 
               <div className="mb-3">
                 <label className="form-label">Description</label>
-                <RichTextEditor
+                <Editor
+                  id="description"
+                  name="description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
+                  height={300}
                 />
               </div>
 

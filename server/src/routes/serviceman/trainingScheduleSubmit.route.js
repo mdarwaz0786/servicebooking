@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/", isLoggedIn, createTrainingScheduleSubmit);
 router.get("/", isLoggedIn, getTrainingScheduleSubmits);
-router.get("/:id", isLoggedIn, getTrainingScheduleSubmitById);
+router.get("/detail", isLoggedIn, getTrainingScheduleSubmitById);
 
 export default router;
