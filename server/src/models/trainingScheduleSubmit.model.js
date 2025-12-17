@@ -75,6 +75,10 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
     enum: ["New", "Confirm", "Reject", "Complete"],
     default: "New",
   },
+  remarks: {
+    type: String,
+    trim: true,
+  },
   status: {
     type: Boolean,
     default: true,

@@ -15,7 +15,7 @@ const ServiceListPage = () => {
   const [subSubSubCategories, setSubSubSubCategories] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pagination, setPagination] = useState(null);
   const [hasPrevPage, setHasPrevPage] = useState();
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
@@ -124,10 +124,10 @@ const ServiceListPage = () => {
 
       if (response?.data?.success) {
         setServices(response?.data?.data || []);
-        setTotalPages(response?.data?.totalPages || 1);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
+        setPagination(response?.data?.pagination || null);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch services");
@@ -430,49 +430,64 @@ const ServiceListPage = () => {
             </div>
 
             {/* Pagination */}
-            <nav aria-label="Page navigation" className="mt-4">
-              <ul className="pagination justify-content-center align-items-center">
-                {/* Prev */}
-                <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-                  <button
-                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
-                    style={{ width: "40px", height: "40px" }}
-                    onClick={() => updateParams({ page: page - 1 })}
-                    disabled={!hasPrevPage}
-                  >
-                    <i className="fa fa-chevron-left"></i>
-                  </button>
-                </li>
-
-                {/* Page Numbers */}
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <li
-                    key={i}
-                    className={`page-item mx-1 ${page === i + 1 ? "active" : ""}`}
-                  >
+            {pagination && (
+              <nav aria-label="Page navigation" className="mt-4">
+                <ul className="pagination justify-content-center align-items-center">
+                  {/* Prev */}
+                  <li className={`page-item ${!hasPrevPage ? "disabled" : ""}`}>
                     <button
-                      className={`page-link rounded-circle shadow-sm ${page === i + 1 ? "bg-primary text-white border-primary" : ""}`}
-                      onClick={() => updateParams({ page: i + 1 })}
+                      className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
                       style={{ width: "40px", height: "40px" }}
+                      onClick={() => updateParams({ page: page - 1 })}
+                      disabled={!hasPrevPage}
                     >
-                      {i + 1}
+                      <i className="fa fa-chevron-left"></i>
                     </button>
                   </li>
-                ))}
-
-                {/* Next */}
-                <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-                  <button
-                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
-                    style={{ width: "40px", height: "40px" }}
-                    onClick={() => updateParams({ page: page + 1 })}
-                    disabled={!hasNextPage}
-                  >
-                    <i className="fa fa-chevron-right"></i>
-                  </button>
-                </li>
-              </ul>
-            </nav>
+                  {/* Pages */}
+                  {pagination.pages.map((p, index) => {
+                    if (p === "...") {
+                      return (
+                        <li key={`dots-${index}`} className="page-item disabled mx-1">
+                          <span
+                            className="page-link rounded-circle shadow-sm"
+                            style={{ width: "40px", height: "40px" }}
+                          >
+                            ...
+                          </span>
+                        </li>
+                      );
+                    }
+                    return (
+                      <li
+                        key={p}
+                        className={`page-item mx-1 ${page === p ? "active" : ""}`}
+                      >
+                        <button
+                          className={`page-link rounded-circle shadow-sm ${page === p ? "bg-primary text-white border-primary" : ""
+                            }`}
+                          onClick={() => updateParams({ page: p })}
+                          style={{ width: "40px", height: "40px" }}
+                        >
+                          {p}
+                        </button>
+                      </li>
+                    );
+                  })}
+                  {/* Next */}
+                  <li className={`page-item ${!hasNextPage ? "disabled" : ""}`}>
+                    <button
+                      className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
+                      style={{ width: "40px", height: "40px" }}
+                      onClick={() => updateParams({ page: page + 1 })}
+                      disabled={!hasNextPage}
+                    >
+                      <i className="fa fa-chevron-right"></i>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            )}
           </div>
         </div>
       </div>

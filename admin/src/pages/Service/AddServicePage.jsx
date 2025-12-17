@@ -535,7 +535,7 @@ const AddServicePage = () => {
                   name="sortDescription"
                   value={formData.shortDescription}
                   onChange={handleShortDescriptionChange}
-                  height={300}
+                  height={200}
                 />
               </div>
 

@@ -6,6 +6,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
+import compressImage from '../../helpers/compressImage.js';
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -421,6 +422,7 @@ export const serviceManBookingStartOtp = asyncHandler(async (req, res) => {
 export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => {
   const { otp } = req.body;
   let status = 'ongoing';
+  let selfiePath = null;
 
   try {
     const userId = req.user?._id;
@@ -437,13 +439,18 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
 
     if (status != 'accept')
       if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
+
     
-    let selfiePath = null;
-    if (req.file && req.file.buffer) {
-      selfiePath = await compressImage(
-        req.file.buffer,
-        "servicemanSelfies",
-      );
+    // if (req.file && req.file.buffer) {
+    //   selfiePath = await compressImage(
+    //     req.file.buffer,
+    //     "servicemanSelfies",
+    //   );
+    //   servicemanBooking.selfie = selfiePath;
+    // };
+
+    if (req.files?.selfie?.[0]) {
+      selfiePath = await compressImage(req.files.selfie[0].buffer, "servicemanSelfies");
       servicemanBooking.selfie = selfiePath;
     };
 
