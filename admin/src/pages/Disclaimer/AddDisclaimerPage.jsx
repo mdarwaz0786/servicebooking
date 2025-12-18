@@ -112,28 +112,33 @@ const AddDisclaimerPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="form-control"
-                  placeholder="Enter title"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Effective Date</label>
-                <input
-                  type="date"
-                  name="effectiveDate"
-                  value={formData.effectiveDate}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Title</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="form-control"
+                      placeholder="Enter title"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Effective Date</label>
+                    <input
+                      type="date"
+                      name="effectiveDate"
+                      value={formData.effectiveDate}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="mb-3">

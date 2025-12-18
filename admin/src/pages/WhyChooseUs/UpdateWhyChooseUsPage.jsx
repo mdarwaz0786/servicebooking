@@ -224,132 +224,147 @@ const UpdateWhyChooseUsPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category */}
-              <div className="mb-3">
-                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
-                <select
-                  name="category"
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                    setSubCategory();
-                    setSubSubCategory();
-                    setSubSubSubCategory();
-                    setSelectedServices([]);
-                  }}
-                  className="form-control"
-                  required
-                >
-                  <option value="">-- Select Product --</option>
-                  {categories?.map((cat) => (
-                    <option key={cat?._id} value={cat?._id}>
-                      {cat?.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                    <select
+                      name="category"
+                      value={category}
+                      onChange={(e) => {
+                        setCategory(e.target.value);
+                        setSubCategory();
+                        setSubSubCategory();
+                        setSubSubSubCategory();
+                        setSelectedServices([]);
+                      }}
+                      className="form-control"
+                      required
+                    >
+                      <option value="">-- Select Product --</option>
+                      {categories?.map((cat) => (
+                        <option key={cat?._id} value={cat?._id}>
+                          {cat?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Sub Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Variant</label>
+                    <select
+                      name="subCategory"
+                      value={subCategory}
+                      onChange={(e) => {
+                        setSubCategory(e.target.value);
+                        setSubSubCategory();
+                        setSubSubSubCategory();
+                        setSelectedServices([]);
+                      }}
+                      className="form-control"
+                      disabled={!category}
+                    >
+                      <option value="">-- Select Varint --</option>
+                      {subCategories?.map((sub) => (
+                        <option key={sub?._id} value={sub?._id}>
+                          {sub?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              {/* Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Variant</label>
-                <select
-                  name="subCategory"
-                  value={subCategory}
-                  onChange={(e) => {
-                    setSubCategory(e.target.value);
-                    setSubSubCategory();
-                    setSubSubSubCategory();
-                    setSelectedServices([]);
-                  }}
-                  className="form-control"
-                  disabled={!category}
-                >
-                  <option value="">-- Select Varint --</option>
-                  {subCategories?.map((sub) => (
-                    <option key={sub?._id} value={sub?._id}>
-                      {sub?.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Sub Sub Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Service Process</label>
+                    <select
+                      name="subSubCategory"
+                      value={subSubCategory}
+                      onChange={(e) => {
+                        setSubSubCategory(e.target.value);
+                        setSubSubSubCategory();
+                        setSelectedServices([]);
+                      }
+                      }
+                      className="form-control"
+                      disabled={!subCategory}
+                    >
+                      <option value="">-- Select Service Process --</option>
+                      {subSubCategories?.map((subsub) => (
+                        <option key={subsub?._id} value={subsub?._id}>
+                          {subsub?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Sub Sub Sub Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Nested Service Process</label>
+                    <select
+                      name="subSubSubCategory"
+                      value={subSubSubCategory}
+                      onChange={(e) => setSubSubSubCategory(e.target.value)}
+                      className="form-control"
+                      disabled={!subSubCategory}
+                    >
+                      <option value="">-- Select Nested Service Process--</option>
+                      {subSubSubCategories?.map((sss) => (
+                        <option key={sss?._id} value={sss?._id}>
+                          {sss?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              {/* Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Service Process</label>
-                <select
-                  name="subSubCategory"
-                  value={subSubCategory}
-                  onChange={(e) => {
-                    setSubSubCategory(e.target.value);
-                    setSubSubSubCategory();
-                    setSelectedServices([]);
-                  }
-                  }
-                  className="form-control"
-                  disabled={!subCategory}
-                >
-                  <option value="">-- Select Service Process --</option>
-                  {subSubCategories?.map((subsub) => (
-                    <option key={subsub?._id} value={subsub?._id}>
-                      {subsub?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sub Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Nested Service Process</label>
-                <select
-                  name="subSubSubCategory"
-                  value={subSubSubCategory}
-                  onChange={(e) => setSubSubSubCategory(e.target.value)}
-                  className="form-control"
-                  disabled={!subSubCategory}
-                >
-                  <option value="">-- Select Nested Service Process--</option>
-                  {subSubSubCategories?.map((sss) => (
-                    <option key={sss?._id} value={sss?._id}>
-                      {sss?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Services */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Services <span className="text-danger">*</span>
-                </label>
-                <SelectMultipleService
-                  optionsList={services}
-                  value={selectedServices}
-                  onChange={setSelectedServices}
-                />
-              </div>
-
-              {/* Main Title */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Main Title <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={mainTitle}
-                  required
-                  onChange={(e) => setMainTitle(e.target.value)}
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Services */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Select Services <span className="text-danger">*</span>
+                    </label>
+                    <SelectMultipleService
+                      optionsList={services}
+                      value={selectedServices}
+                      onChange={setSelectedServices}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Main Title */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Main Title <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={mainTitle}
+                      required
+                      onChange={(e) => setMainTitle(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Reasons */}
               <div className="mb-3">
                 <label className="form-label">Reasons <span style={{ color: "red" }}>*</span></label>
                 {reasons.map((reason, index) => (
-                  <div key={index} className="mb-3 border p-3 rounded">
+                  <div key={index} className="mb-4">
                     <input
                       type="text"
-                      className="form-control mb-2"
+                      className="form-control mb-3"
                       placeholder="Reason title"
                       required
                       value={reason?.title}
@@ -358,7 +373,7 @@ const UpdateWhyChooseUsPage = () => {
                       }
                     />
                     <textarea
-                      className="form-control mb-2"
+                      className="form-control"
                       placeholder="Reason description"
                       value={reason?.description}
                       required
@@ -366,7 +381,7 @@ const UpdateWhyChooseUsPage = () => {
                         handleReasonChange(index, "description", e.target.value)
                       }
                     />
-                    <div className="d-flex justify-content-end">
+                    <div className="d-flex justify-content-end mt-2">
                       <button
                         type="button"
                         className="btn btn-danger btn-sm me-2"

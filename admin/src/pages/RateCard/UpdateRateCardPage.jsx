@@ -181,48 +181,53 @@ const UpdateRateCardPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category */}
-              <div className="mb-3">
-                <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
-                <select
-                  name="category"
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                    setSubCategory();
-                  }}
-                  className="form-control"
-                  required
-                >
-                  <option value="">-- Select Product --</option>
-                  {categories?.map((cat) => (
-                    <option key={cat?._id} value={cat?._id}>
-                      {cat?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Variant</label>
-                <select
-                  name="subCategory"
-                  value={subCategory}
-                  onChange={(e) => {
-                    setSubCategory(e.target.value);
-                  }}
-                  className="form-control"
-                  disabled={!category}
-                  required
-                >
-                  <option value="">-- Select Variant --</option>
-                  {subCategories?.map((sub) => (
-                    <option key={sub?._id} value={sub?._id}>
-                      {sub?.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
+                    <select
+                      name="category"
+                      value={category}
+                      onChange={(e) => {
+                        setCategory(e.target.value);
+                        setSubCategory();
+                      }}
+                      className="form-control"
+                      required
+                    >
+                      <option value="">-- Select Product --</option>
+                      {categories?.map((cat) => (
+                        <option key={cat?._id} value={cat?._id}>
+                          {cat?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Sub Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Variant</label>
+                    <select
+                      name="subCategory"
+                      value={subCategory}
+                      onChange={(e) => {
+                        setSubCategory(e.target.value);
+                      }}
+                      className="form-control"
+                      disabled={!category}
+                      required
+                    >
+                      <option value="">-- Select Variant --</option>
+                      {subCategories?.map((sub) => (
+                        <option key={sub?._id} value={sub?._id}>
+                          {sub?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
               {/* Rate Groups */}
