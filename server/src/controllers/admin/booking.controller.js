@@ -161,51 +161,162 @@ export const getBookings = asyncHandler(async (req, res) => {
 });
 
 // Get Booking by ID
+// export const getBookingById = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
+
+//   const booking = await BookingModel
+//     .findById(id)
+//     .populate({ path: "user", select: "-password" })
+//     .populate({ path: "address", select: "" })
+//     .lean();
+
+//   if (!booking) throw new ApiError(404, "Booking not found");
+
+//   const latestAssignment = await ServiceManBookingModel
+//     .findOne({ bookingId: booking?._id })
+//     .sort({ createdAt: -1 })
+//     .lean();
+
+//   if (latestAssignment) {
+//     const servicemanId = latestAssignment?.servicemanId;
+//     const serviceman = await ServiceManProfile
+//       .findOne({ userId: servicemanId })
+//       .populate("user")
+//       .lean();
+
+//     booking.serviceman = serviceman
+//       ? {
+//         name: serviceman?.name,
+//         email: serviceman?.email,
+//         mobile: serviceman?.user?.mobile,
+//         profileImage: serviceman?.profileImage,
+//       }
+//       : null;
+//   } else {
+//     booking.serviceman = null;
+//   };
+
+//   const items = await BookingItemModel
+//     .find({ bookingId: booking?._id })
+//     .populate({ path: "service", select: "" })
+//     .lean();
+
+//   return res.status(200).json({
+//     success: true,
+//     data: {
+//       booking: booking,
+//       items: items,
+//     },
+//   });
+// });
+
+// Get Booking by ID (Latest + All Serviceman Assignments)
 export const getBookingById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
+  /* ---------------- BOOKING ---------------- */
   const booking = await BookingModel
     .findById(id)
-    .populate({ path: "user", select: "-password" })
-    .populate({ path: "address", select: "" })
+    .populate({ path: "user", select: "-password -role" })
+    .populate({ path: "address" })
     .lean();
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  const latestAssignment = await ServiceManBookingModel
-    .findOne({ bookingId: booking?._id })
+  /* ---------------- ALL ASSIGNMENTS ---------------- */
+  const assignments = await ServiceManBookingModel
+    .find({ bookingId: booking?._id })
     .sort({ createdAt: -1 })
+    .populate({
+      path: "servicemanId",
+      populate: {
+        path: "user",
+        select: "-password -role",
+      },
+    })
+    .populate("actionById")
     .lean();
 
-  if (latestAssignment) {
-    const servicemanId = latestAssignment?.servicemanId;
-    const serviceman = await ServiceManProfile
-      .findOne({ userId: servicemanId })
-      .populate("user")
-      .lean();
+  /* ---------------- LATEST ASSIGNMENT ---------------- */
+  const assign = assignments[0] || null;
 
-    booking.serviceman = serviceman
+  booking.latestServiceman = assign
+    ? {
+      assignmentId: assign?._id,
+      status: assign?.status,
+      assignedDate: assign?.assignedDate,
+      assignedTime: assign?.assignedTime,
+      startDate: assign?.startDate,
+      startTime: assign?.startTime,
+      endDate: assign?.endDate,
+      endTime: assign?.endTime,
+      cancelDate: assign?.cancelDate,
+      cancelTime: assign?.cancelTime,
+      acceptDate: assign?.acceptDate,
+      acceptTime: assign?.acceptTime,
+      rejectDate: assign?.rejectDate,
+      rejectTime: assign?.rejectTime,
+      selfie: assign?.selfie,
+      beforeStartImages: assign?.beforeStartImages,
+      beforeStartVideos: assign?.beforeStartVideos,
+      afterCompleteImages: assign?.afterCompleteImages,
+      afterCompleteVideos: assign?.afterCompleteVideos,
+      serviceman: assign?.servicemanId
+        ? {
+          profileId: assign?.servicemanId?._id,
+          name: assign?.servicemanId?.name,
+          email: assign?.servicemanId?.email,
+          mobile: assign?.servicemanId?.user?.mobile,
+          profileImage: assign?.servicemanId?.profileImage,
+        }
+        : null,
+    }
+    : null;
+
+  /* ---------------- ASSIGNMENT HISTORY ---------------- */
+  booking.servicemanHistory = assignments?.slice(1)?.map((assign) => ({
+    assignmentId: assign?._id,
+    status: assign?.status,
+    assignedDate: assign?.assignedDate,
+    assignedTime: assign?.assignedTime,
+    startDate: assign?.startDate,
+    startTime: assign?.startTime,
+    endDate: assign?.endDate,
+    endTime: assign?.endTime,
+    cancelDate: assign?.cancelDate,
+    cancelTime: assign?.cancelTime,
+    acceptDate: assign?.acceptDate,
+    acceptTime: assign?.acceptTime,
+    rejectDate: assign?.rejectDate,
+    rejectTime: assign?.rejectTime,
+    selfie: assign?.selfie,
+    beforeStartImages: assign?.beforeStartImages,
+    beforeStartVideos: assign?.beforeStartVideos,
+    afterCompleteImages: assign?.afterCompleteImages,
+    afterCompleteVideos: assign?.afterCompleteVideos,
+    serviceman: assign?.servicemanId
       ? {
-        name: serviceman?.name,
-        email: serviceman?.email,
-        mobile: serviceman?.user?.mobile,
-        profileImage: serviceman?.profileImage,
+        profileId: assign?.servicemanId?._id,
+        name: assign?.servicemanId?.name,
+        email: assign?.servicemanId?.email,
+        mobile: assign?.servicemanId?.user?.mobile,
+        profileImage: assign?.servicemanId?.profileImage,
       }
-      : null;
-  } else {
-    booking.serviceman = null;
-  };
+      : null,
+  }));
 
+  /* ---------------- BOOKING ITEMS ---------------- */
   const items = await BookingItemModel
-    .find({ bookingId: booking?._id })
-    .populate({ path: "service", select: "" })
+    .find({ bookingId: booking._id })
+    .populate({ path: "service", select: "-shortDescription -fullDescription" })
     .lean();
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     data: {
-      booking: booking,
-      items: items,
+      booking,
+      items,
     },
   });
 });
