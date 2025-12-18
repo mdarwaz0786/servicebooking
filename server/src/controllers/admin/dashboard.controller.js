@@ -126,6 +126,7 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
         _id: "$service._id",
         name: { $first: "$service.name" },
         image: { $first: "$service.image" },
+        salePrice: { $first: "$service.salePrice" },
 
         avgRating: { $first: "$avgRating" },
         totalReviews: { $first: "$totalReviews" },

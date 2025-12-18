@@ -41,3 +41,7 @@
 .tooltip-cell:hover .tooltip-box {
   display: block;
 }
+
+.home-usercontent {
+  justify-content: center !important;
+}
