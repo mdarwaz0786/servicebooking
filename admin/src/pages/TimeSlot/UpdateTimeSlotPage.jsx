@@ -87,26 +87,30 @@ const UpdateTimeSlotPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Time Input */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Time <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
-                <small className="text-muted">
-                  Please select time (12-hour format).
-                </small>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Time Input */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Time <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="time"
+                      name="time"
+                      value={formData.time}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                    <small className="text-muted">
+                      Please select time (12-hour format).
+                    </small>
+                  </div>
+                </div>
               </div>
 
               {/* Buttons */}
-              <div className="text-end">
+              <div className="text-start">
                 <button type="submit" className="btn btn-primary" disabled={loading}>
                   {loading ? "Updating..." : "Update"}
                 </button>

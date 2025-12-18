@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
-import RichTextEditor from "../../components/Form/RichTextEditor";
+import Editor from "../../components/Form/Editor";
 
 const UpdateJobPostingPage = () => {
   const { validToken } = useAuth();
@@ -25,11 +25,17 @@ const UpdateJobPostingPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleDescriptionChange = (value) => {
-    setFormData((prev) => ({ ...prev, fullDescription: value }));
+    setFormData(prev => ({
+      ...prev,
+      fullDescription: value,
+    }));
   };
 
   // ------------------------------------------------------
@@ -109,85 +115,96 @@ const UpdateJobPostingPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-
-              {/* Title */}
-              <div className="mb-3">
-                <label className="form-label">Job Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Title */}
+                  <div className="mb-3">
+                    <label className="form-label">Job Title</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Location */}
+                  <div className="mb-3">
+                    <label className="form-label">Location</label>
+                    <input
+                      type="text"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-
-              {/* Location */}
-              <div className="mb-3">
-                <label className="form-label">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
-              </div>
-
-              {/* Employment Type */}
-              <div className="mb-3">
-                <label className="form-label">Employment Type</label>
-                <select
-                  name="employmentType"
-                  value={formData.employmentType}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="Full-time">Full-time</option>
-                  <option value="Part-time">Part-time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-                  <option value="Remote">Remote</option>
-                </select>
-              </div>
-
-              {/* Short Description */}
-              <div className="mb-3">
-                <label className="form-label">Short Description</label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Employment Type */}
+                  <div className="mb-3">
+                    <label className="form-label">Employment Type</label>
+                    <select
+                      name="employmentType"
+                      value={formData.employmentType}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Internship">Internship</option>
+                      <option value="Remote">Remote</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Status */}
+                  <div className="mb-3">
+                    <label className="form-label">Status</label>
+                    <select
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value={true}>Active</option>
+                      <option value={false}>Inactive</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  {/* Short Description */}
+                  <div className="mb-3">
+                    <label className="form-label">Short Description</label>
+                    <textarea
+                      name="shortDescription"
+                      value={formData.shortDescription}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                      rows={8}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <RichTextEditor
-                  key={formData.fullDescription}  // ensures editor loads initial value
+                <Editor
+                  id="fullDescription"
+                  name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleDescriptionChange}
+                  height={300}
                 />
-              </div>
-
-              {/* Status */}
-              <div className="mb-3">
-                <label className="form-label">Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value={true}>Active</option>
-                  <option value={false}>Inactive</option>
-                </select>
               </div>
 
               {/* Buttons */}

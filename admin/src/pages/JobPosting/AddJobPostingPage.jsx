@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
-import RichTextEditor from "../../components/Form/RichTextEditor";
+import Editor from "../../components/Form/Editor";
 
 const AddJobPostingPage = () => {
   const { validToken } = useAuth();
@@ -23,11 +23,17 @@ const AddJobPostingPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleDescriptionChange = (value) => {
-    setFormData((prev) => ({ ...prev, description: value }));
+    setFormData(prev => ({
+      ...prev,
+      fullDescription: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -71,68 +77,81 @@ const AddJobPostingPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Title */}
-              <div className="mb-3">
-                <label className="form-label">Job Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Title */}
+                  <div className="mb-3">
+                    <label className="form-label">Job Title</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Location */}
+                  <div className="mb-3">
+                    <label className="form-label">Location</label>
+                    <input
+                      type="text"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Location */}
-              <div className="mb-3">
-                <label className="form-label">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
-              </div>
-
-              {/* Employment Type */}
-              <div className="mb-3">
-                <label className="form-label">Employment Type</label>
-                <select
-                  name="employmentType"
-                  value={formData.employmentType}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="Full-time">Full-time</option>
-                  <option value="Part-time">Part-time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-                  <option value="Remote">Remote</option>
-                </select>
-              </div>
-
-              {/* Short Description */}
-              <div className="mb-3">
-                <label className="form-label">Short Description</label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Employment Type */}
+                  <div className="mb-3">
+                    <label className="form-label">Employment Type</label>
+                    <select
+                      name="employmentType"
+                      value={formData.employmentType}
+                      onChange={handleChange}
+                      className="form-select"
+                    >
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Internship">Internship</option>
+                      <option value="Remote">Remote</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  {/* Short Description */}
+                  <div className="mb-3">
+                    <label className="form-label">Short Description</label>
+                    <textarea
+                      name="shortDescription"
+                      value={formData.shortDescription}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                      rows={8}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Full Description */}
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
-                <RichTextEditor
-                  value={formData.description}
+                <Editor
+                  id="fullDescription"
+                  name="fullDescription"
+                  value={formData.fullDescription}
                   onChange={handleDescriptionChange}
+                  height={300}
                 />
               </div>
 

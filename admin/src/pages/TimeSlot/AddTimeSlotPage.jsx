@@ -61,22 +61,26 @@ const AddTimeSlotPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Time*/}
-              <div className="mb-3">
-                <label className="form-label">
-                  Time <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="time"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  className="form-control"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Time*/}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Time <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Buttons */}
-              <div className="text-end">
+              <div className="text-start">
                 <button
                   type="reset"
                   className="btn btn-secondary me-2"

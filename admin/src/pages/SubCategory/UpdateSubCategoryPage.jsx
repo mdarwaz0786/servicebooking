@@ -173,41 +173,107 @@ const UpdateSubCategoryPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Select Category */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Select Product <span style={{ color: "red" }}>*</span>
-                </label>
-                <select
-                  name="categoryId"
-                  value={formData.categoryId}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                >
-                  <option value="">-- Select Product --</option>
-                  {categories?.map((cat) => (
-                    <option key={cat?._id} value={cat?._id}>
-                      {cat?.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Select Category */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Select Product <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <select
+                      name="categoryId"
+                      value={formData.categoryId}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    >
+                      <option value="">-- Select Product --</option>
+                      {categories?.map((cat) => (
+                        <option key={cat?._id} value={cat?._id}>
+                          {cat?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Sub Category Name */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Name <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="form-control"
+                      maxLength="100"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Sub Category Name */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Name <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="100"
-                  required
-                />
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Subcategory Image */}
+                  <div className="mb-3">
+                    <label className="form-label">Banner</label>
+                    <div
+                      {...getImageRootProps()}
+                      className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <input {...getImageInputProps()} />
+                      {isImageActive ? (
+                        <p>Drop the banner here...</p>
+                      ) : (
+                        <p>
+                          Drag & drop banner here, or <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+                    {preview && (
+                      <div className="mt-3 text-center">
+                        <img
+                          src={preview}
+                          alt="Preview"
+                          style={{ maxWidth: "200px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Subcategory Icon */}
+                  <div className="mb-3">
+                    <label className="form-label">Icon</label>
+                    <div
+                      {...getIconRootProps()}
+                      className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <input {...getIconInputProps()} />
+                      {isIconActive ? (
+                        <p>Drop the icon here...</p>
+                      ) : (
+                        <p>
+                          Drag & drop icon here, or <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+                    {iconPreview && (
+                      <div className="mt-3 text-center">
+                        <img
+                          src={iconPreview}
+                          alt="Icon Preview"
+                          style={{ maxWidth: "100px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Description */}
@@ -220,62 +286,6 @@ const UpdateSubCategoryPage = () => {
                   className="form-control"
                   rows="3"
                 ></textarea>
-              </div>
-
-              {/* Subcategory Image */}
-              <div className="mb-3">
-                <label className="form-label">Banner</label>
-                <div
-                  {...getImageRootProps()}
-                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getImageInputProps()} />
-                  {isImageActive ? (
-                    <p>Drop the banner here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop banner here, or <span className="text-primary">browse</span>
-                    </p>
-                  )}
-                </div>
-                {preview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Subcategory Icon */}
-              <div className="mb-3">
-                <label className="form-label">Icon</label>
-                <div
-                  {...getIconRootProps()}
-                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getIconInputProps()} />
-                  {isIconActive ? (
-                    <p>Drop the icon here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop icon here, or <span className="text-primary">browse</span>
-                    </p>
-                  )}
-                </div>
-                {iconPreview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={iconPreview}
-                      alt="Icon Preview"
-                      style={{ maxWidth: "100px", borderRadius: "8px" }}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Buttons */}

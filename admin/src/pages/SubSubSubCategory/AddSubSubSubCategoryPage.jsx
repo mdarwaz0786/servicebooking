@@ -184,90 +184,166 @@ const AddSubSubSubCategoryPage = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Category */}
-              <div className="mb-3">
-                <label className="form-label">Product *</label>
-                <select
-                  name="categoryId"
-                  value={formData.categoryId}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      categoryId: e.target.value,
-                      subCategoryId: "",
-                      subSubCategoryId: "",
-                    })
-                  }
-                  className="form-control"
-                  required
-                >
-                  <option value="">-- Select Product --</option>
-                  {categories.map((cat) => (
-                    <option key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Product *</label>
+                    <select
+                      name="categoryId"
+                      value={formData.categoryId}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          categoryId: e.target.value,
+                          subCategoryId: "",
+                          subSubCategoryId: "",
+                        })
+                      }
+                      className="form-control"
+                      required
+                    >
+                      <option value="">-- Select Product --</option>
+                      {categories.map((cat) => (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Sub Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Variant *</label>
+                    <select
+                      name="subCategoryId"
+                      value={formData.subCategoryId}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          subCategoryId: e.target.value,
+                          subSubCategoryId: "",
+                        })
+                      }
+                      className="form-control"
+                      required
+                      disabled={!formData.categoryId}
+                    >
+                      <option value="">-- Select Variant --</option>
+                      {subCategories.map((sub) => (
+                        <option key={sub._id} value={sub._id}>
+                          {sub.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              {/* Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Variant *</label>
-                <select
-                  name="subCategoryId"
-                  value={formData.subCategoryId}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      subCategoryId: e.target.value,
-                      subSubCategoryId: "",
-                    })
-                  }
-                  className="form-control"
-                  required
-                  disabled={!formData.categoryId}
-                >
-                  <option value="">-- Select Variant --</option>
-                  {subCategories.map((sub) => (
-                    <option key={sub._id} value={sub._id}>
-                      {sub.name}
-                    </option>
-                  ))}
-                </select>
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Sub Sub Category */}
+                  <div className="mb-3">
+                    <label className="form-label">Service Process *</label>
+                    <select
+                      name="subSubCategoryId"
+                      value={formData.subSubCategoryId}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                      disabled={!formData.subCategoryId}
+                    >
+                      <option value="">-- Select Service Process --</option>
+                      {subSubCategories.map((subsub) => (
+                        <option key={subsub?._id} value={subsub?._id}>
+                          {subsub?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Name */}
+                  <div className="mb-3">
+                    <label className="form-label">Name *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="form-control"
+                      maxLength="100"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Sub Sub Category */}
-              <div className="mb-3">
-                <label className="form-label">Service Process *</label>
-                <select
-                  name="subSubCategoryId"
-                  value={formData.subSubCategoryId}
-                  onChange={handleChange}
-                  className="form-control"
-                  required
-                  disabled={!formData.subCategoryId}
-                >
-                  <option value="">-- Select Service Process --</option>
-                  {subSubCategories.map((subsub) => (
-                    <option key={subsub?._id} value={subsub?._id}>
-                      {subsub?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <div className="row">
+                <div className="col-md-6">
 
-              {/* Name */}
-              <div className="mb-3">
-                <label className="form-label">Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-control"
-                  maxLength="100"
-                  required
-                />
+                  {/* Image */}
+                  <div className="mb-3">
+                    <label className="form-label">Banner</label>
+                    <div
+                      {...getImageRootProps()}
+                      className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
+                        }`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <input {...getImageInputProps()} />
+                      {isImageActive ? (
+                        <p>Drop the banner here...</p>
+                      ) : (
+                        <p>
+                          Drag & drop banner here, or{" "}
+                          <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+                    {preview && (
+                      <div className="mt-3 text-center">
+                        <img
+                          src={preview}
+                          alt="Preview"
+                          style={{ maxWidth: "200px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Icon */}
+                  <div className="mb-3">
+                    <label className="form-label">Icon</label>
+                    <div
+                      {...getIconRootProps()}
+                      className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""
+                        }`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <input {...getIconInputProps()} />
+                      {isIconActive ? (
+                        <p>Drop the icon here...</p>
+                      ) : (
+                        <p>
+                          Drag & drop icon here, or{" "}
+                          <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+                    {iconPreview && (
+                      <div className="mt-3 text-center">
+                        <img
+                          src={iconPreview}
+                          alt="Icon Preview"
+                          style={{ maxWidth: "100px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Full Description */}
@@ -280,66 +356,6 @@ const AddSubSubSubCategoryPage = () => {
                   className="form-control"
                   rows="3"
                 ></textarea>
-              </div>
-
-              {/* Image */}
-              <div className="mb-3">
-                <label className="form-label">Banner</label>
-                <div
-                  {...getImageRootProps()}
-                  className={`border p-4 text-center rounded ${isImageActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getImageInputProps()} />
-                  {isImageActive ? (
-                    <p>Drop the banner here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop banner here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
-                  )}
-                </div>
-                {preview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Icon */}
-              <div className="mb-3">
-                <label className="form-label">Icon</label>
-                <div
-                  {...getIconRootProps()}
-                  className={`border p-4 text-center rounded ${isIconActive ? "bg-light" : ""
-                    }`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input {...getIconInputProps()} />
-                  {isIconActive ? (
-                    <p>Drop the icon here...</p>
-                  ) : (
-                    <p>
-                      Drag & drop icon here, or{" "}
-                      <span className="text-primary">browse</span>
-                    </p>
-                  )}
-                </div>
-                {iconPreview && (
-                  <div className="mt-3 text-center">
-                    <img
-                      src={iconPreview}
-                      alt="Icon Preview"
-                      style={{ maxWidth: "100px", borderRadius: "8px" }}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Buttons */}
