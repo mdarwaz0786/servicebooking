@@ -52,6 +52,7 @@ import localityRoutes from "./locality.routes.js";
 import areaZoneRoutes from "./areaZone.routes.js";
 import disclaimerRoutes from "./discliamer.routes.js";
 import metaTagRoutes from "./metaTag.route.js";
+import dashboardRoutes from "./dashboard.route.js";
 
 const router = express.Router();
 
@@ -108,5 +109,6 @@ router.use("/wallet", walletRoutes);
 router.use("/locality", localityRoutes);
 router.use("/area-zone", areaZoneRoutes);
 router.use("/meta-tag", metaTagRoutes);
+router.use("/dashboard", dashboardRoutes);
 
 export default router;

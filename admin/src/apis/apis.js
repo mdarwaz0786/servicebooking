@@ -1,6 +1,9 @@
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const apis = {
+  dashboard: {
+    get: `${BASE_URL}/api/v1/admin/dashboard`,
+  },
   category: {
     create: `${BASE_URL}/api/v1/admin/category/create-category`,
     get: `${BASE_URL}/api/v1/admin/category`,

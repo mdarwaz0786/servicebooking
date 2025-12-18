@@ -432,7 +432,7 @@ const BookingDetailPage = () => {
                   <>
                     <p className="fw-semibold mb-1">Selfie</p>
                     <img
-                      src={`${BASE_URL}/${h.selfie}`}
+                      src={`${BASE_URL}/${h?.selfie}`}
                       className="img-thumbnail mb-3"
                       style={{ width: 160 }}
                       alt="selfie"
