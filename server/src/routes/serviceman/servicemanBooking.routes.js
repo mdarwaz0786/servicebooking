@@ -5,6 +5,7 @@ import {
   serviceManBookingOtp,
   serviceManBookingVerifyOtp,
   serviceManBookingAccept,
+  serviceManBookingComplete,
   serviceManBookingStartOtp,
   serviceManBookingStartVerifyOtp
 } from "../../controllers/serviceman/servicemanBooking.controller.js";
@@ -19,6 +20,7 @@ router.post("/booking-otp/:id", isLoggedIn, serviceManBookingOtp);
 router.post("/booking-otp-verify/:id", isLoggedIn, serviceManBookingVerifyOtp);
 router.post("/accept/:id", isLoggedIn, serviceManBookingAccept);
 router.post("/booking-start-otp/:id", isLoggedIn, serviceManBookingStartOtp);
+router.post("/complete/:id", isLoggedIn, serviceManBookingComplete);
 router.post(
   "/booking-start-otp-verify/:id",
   isLoggedIn, upload.fields([{ name: "selfie", maxCount: 1 }]),
