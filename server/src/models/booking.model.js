@@ -11,8 +11,12 @@ const bookingSchema = new mongoose.Schema({
   },
   financialYear: {
     type: String,
+<<<<<<< HEAD
     required: false,
+=======
+>>>>>>> 1b01293570e453022c335e57f536b92cccd46515
     index: true,
+    required: false,
   },
   sequenceNumber: {
     type: Number,

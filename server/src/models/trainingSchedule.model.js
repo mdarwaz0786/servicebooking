@@ -17,6 +17,15 @@ const trainingScheduleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Training",
   },
+  trainingScheduleStatus: {
+    type: String,
+    enum: ["New", "Confirm", "Reject", "Complete"],
+    default: "New",
+  },
+  remarks: {
+    type: String,
+    trim: true,
+  },
   status: {
     type: Boolean,
     default: true,
@@ -24,7 +33,7 @@ const trainingScheduleSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    default: null,
   },
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,

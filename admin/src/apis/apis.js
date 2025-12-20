@@ -271,6 +271,12 @@ const apis = {
     get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,
   },
+  servicemanCertificate: {
+    create: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
+    get: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
+    update: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
+    delete: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
+  },
   auth: {
     login: `${BASE_URL}/api/v1/admin/auth/login`,
     loggedIn: `${BASE_URL}/api/v1/admin/auth/loggedIn`,

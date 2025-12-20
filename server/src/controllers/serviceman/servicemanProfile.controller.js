@@ -111,5 +111,8 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     success: true,
     message: "Data fetched successfully",
     data: profile,
+    averageRating: 4.5,
+    totalEarning: 1999,
+    completedJob: 10,
   });
 });

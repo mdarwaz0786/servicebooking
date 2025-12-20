@@ -62,7 +62,6 @@ userSchema.virtual("profile", {
   justOne: true,
 });
 
-
 userSchema.virtual("kyc", {
   ref: "KYC",
   localField: "_id",

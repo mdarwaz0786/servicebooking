@@ -29,8 +29,6 @@ export const loginUser = asyncHandler(async (req, res) => {
 export const verifyOtp = asyncHandler(async (req, res) => {
   const { mobile, otp } = req.body;
 
-  console.log("runs");
-
   const otpRecord = await OtpModel.findOne({ mobile });
   if (!otpRecord) throw new ApiError(400, "OTP not found. Please login again");
 

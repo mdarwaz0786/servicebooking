@@ -13,6 +13,8 @@ const TrainingScheduleSubmitDetailPage = () => {
 
   const { record } = location.state || {};
 
+  console.log(record)
+
   const [trainingScheduleStatus, setTrainingScheduleStatus] = useState(
     record?.trainingScheduleStatus || "New"
   );

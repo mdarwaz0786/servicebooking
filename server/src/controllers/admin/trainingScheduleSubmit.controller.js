@@ -18,6 +18,7 @@ export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {
 
   const data = await TrainingScheduleSubmitModel
     .find()
+    .populate("user")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -42,7 +43,7 @@ export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {
 
 /* --------------------- GET BY ID --------------------- */
 export const getTrainingScheduleSubmitById = asyncHandler(async (req, res) => {
-  const submit = await TrainingScheduleSubmitModel.findById(req.params.id);
+  const submit = await TrainingScheduleSubmitModel.findById(req.params.id).populate("user");
 
   if (!submit) {
     throw new ApiError(404, "Training schedule submit not found");
