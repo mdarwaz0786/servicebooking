@@ -5,18 +5,18 @@ import getFinancialYear from "../utils/getfinancialYear.js";
 const bookingSchema = new mongoose.Schema({
   bookingId: {
     type: String,
-    required: true,
+    required: false,
     unique: true,
     trim: true,
   },
   financialYear: {
     type: String,
-    required: true,
     index: true,
+    required: false,
   },
   sequenceNumber: {
     type: Number,
-    required: true,
+    required: false,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
