@@ -138,9 +138,9 @@ serviceManProfileSchema.virtual("kyc", {
 
 
 serviceManProfileSchema.virtual("trainingScheduleSubmit", {
-  ref: "TrainingScheduleSubmit",
-  localField: "userId",
-  foreignField: "user",
+  ref: "TrainingSchedule",
+  localField: "_id",
+  foreignField: "providerId",
   justOne: true,
   options: {
     sort: {

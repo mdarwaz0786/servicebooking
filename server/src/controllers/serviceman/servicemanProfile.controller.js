@@ -137,14 +137,16 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const avgRating = ratingAgg.length > 0 ? Number(ratingAgg[0].avgRating.toFixed(1)) : 0;
   const totalReviews = ratingAgg.length > 0 ? ratingAgg[0].totalReviews : 0;
 
+  const profileObj = profile.toObject();
+
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
     data: {
-      profile,                     // 👈 full profile object
+      ...profileObj,
       averageRating: avgRating,
       totalReviews,
-      totalEarning: 1999,           // static / calculated later
+      totalEarning: 1999,
       completedJob: completedBookingCount,
     },
   });
