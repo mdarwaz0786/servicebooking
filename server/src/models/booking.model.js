@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import BookingCounterModel from "./bookingCounter.model.js";
+import getFinancialYear from "../utils/getfinancialYear.js";
 
 const bookingSchema = new mongoose.Schema({
   bookingId: {
@@ -6,6 +8,15 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
+  },
+  financialYear: {
+    type: String,
+    required: true,
+    index: true,
+  },
+  sequenceNumber: {
+    type: Number,
+    required: true,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -98,6 +109,26 @@ const bookingSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 bookingSchema.index({ addressId: 1, userId: 1, status: 1 });
+
+bookingSchema.pre("validate", async function (next) {
+  if (this.bookingId) return next();
+
+  const financialYear = getFinancialYear();
+
+  const counter = await BookingCounterModel.findOneAndUpdate(
+    { financialYear },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  );
+
+  const sequenceNumber = counter.seq;
+
+  this.financialYear = financialYear;
+  this.sequenceNumber = sequenceNumber;
+  this.bookingId = `GIT-${String(sequenceNumber).padStart(4, "0")}-${financialYear}`;
+
+  next();
+});
 
 bookingSchema.virtual("address", {
   ref: "Address",

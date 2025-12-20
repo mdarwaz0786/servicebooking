@@ -8,7 +8,6 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
-import generateBookingId from "../../utils/generateBookingId.js";
 
 const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -31,12 +30,8 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
 
-  // Generate bookingId
-  const bookingId = await generateBookingId();
-
   // Create Booking
   const booking = await BookingModel.create({
-    bookingId,
     userId,
     addressId,
     scheduleType,
