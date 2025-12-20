@@ -1,4 +1,7 @@
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
+import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import ReviewModel from "../../models/review.model.js";
+import mongoose from "mongoose";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
@@ -107,12 +110,42 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
 
   if (!profile) throw new ApiError(404, "Profile not found");
 
+  const servicemanId = profile?._id;
+
+  const completedBookingCount = await ServiceManBookingModel.countDocuments({
+    servicemanId,
+    status: "complete",
+  });
+
+  const ratingAgg = await ReviewModel.aggregate([
+    {
+      $match: {
+        servicemanId: new mongoose.Types.ObjectId(servicemanId),
+        status: true,
+        type: 1,
+      },
+    },
+    {
+      $group: {
+        _id: "$servicemanId",
+        avgRating: { $avg: "$rating" },
+        totalReviews: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const avgRating = ratingAgg.length > 0 ? Number(ratingAgg[0].avgRating.toFixed(1)) : 0;
+  const totalReviews = ratingAgg.length > 0 ? ratingAgg[0].totalReviews : 0;
+
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
-    data: profile,
-    averageRating: 4.5,
-    totalEarning: 1999,
-    completedJob: 10,
+    data: {
+      profile,                     // 👈 full profile object
+      averageRating: avgRating,
+      totalReviews,
+      totalEarning: 1999,           // static / calculated later
+      completedJob: completedBookingCount,
+    },
   });
 });
