@@ -6,13 +6,14 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis, { BASE_URL } from "../../apis/apis";
 import Select from "react-select";
+import Pagination from "../../components/Pagination/Pagination";
 
 const BlogListPage = () => {
   const { validToken } = useAuth();
   const [categories, setCategories] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pagination, setPagination] = useState(null);
   const [hasPrevPage, setHasPrevPage] = useState();
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
@@ -67,7 +68,7 @@ const BlogListPage = () => {
 
       if (response?.data?.success) {
         setData(response?.data?.data || []);
-        setTotalPages(response?.data?.totalPages || 1);
+        setPagination(response?.data?.pagination || null);
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
@@ -271,51 +272,13 @@ const BlogListPage = () => {
                 </tbody>
               </table>
             </div>
-
-            {/* Pagination */}
-            <nav aria-label="Page navigation" className="mt-4">
-              <ul className="pagination justify-content-center align-items-center">
-                {/* Prev */}
-                <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-                  <button
-                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
-                    style={{ width: "40px", height: "40px" }}
-                    onClick={() => updateParams({ page: page - 1 })}
-                    disabled={!hasPrevPage}
-                  >
-                    <i className="fa fa-chevron-left"></i>
-                  </button>
-                </li>
-
-                {/* Page Numbers */}
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <li
-                    key={i}
-                    className={`page-item mx-1 ${page === i + 1 ? "active" : ""}`}
-                  >
-                    <button
-                      className={`page-link rounded-circle shadow-sm ${page === i + 1 ? "bg-primary text-white border-primary" : ""}`}
-                      onClick={() => updateParams({ page: i + 1 })}
-                      style={{ width: "40px", height: "40px" }}
-                    >
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
-
-                {/* Next */}
-                <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-                  <button
-                    className="page-link d-flex align-items-center justify-content-center rounded shadow-sm"
-                    style={{ width: "40px", height: "40px" }}
-                    onClick={() => updateParams({ page: page + 1 })}
-                    disabled={!hasNextPage}
-                  >
-                    <i className="fa fa-chevron-right"></i>
-                  </button>
-                </li>
-              </ul>
-            </nav>
+            <Pagination
+              pagination={pagination}
+              page={page}
+              hasPrevPage={hasPrevPage}
+              hasNextPage={hasNextPage}
+              onPageChange={(p) => updateParams({ page: p })}
+            />
           </div>
         </div>
       </div>

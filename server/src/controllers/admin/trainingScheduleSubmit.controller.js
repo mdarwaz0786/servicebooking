@@ -70,6 +70,7 @@ export const updateTrainingScheduleSubmit = asyncHandler(async (req, res) => {
     trainingId,
     status,
     trainingScheduleStatus,
+    remarks,
   } = req.body;
 
   if (providerId && providerId.toString() !== submit.providerId?.toString()) {
@@ -117,6 +118,9 @@ export const updateTrainingScheduleSubmit = asyncHandler(async (req, res) => {
       description: training?.description,
     };
   }
+
+  submit.remarks =
+    remarks !== undefined ? remarks : submit.remarks;
 
   submit.scheduleDate =
     scheduleDate !== undefined ? scheduleDate : submit.scheduleDate;

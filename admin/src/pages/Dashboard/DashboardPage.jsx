@@ -52,7 +52,7 @@ const DashboardPage = () => {
                             <h6>User</h6>
                           </div>
                           <div className="home-useraction">
-                            <Link className="delete-table bg-white" to="#" data-bs-toggle="dropdown" aria-expanded="true">
+                            <Link className="delete-table bg-white" to="/admins" data-bs-toggle="dropdown" aria-expanded="true">
                               <i className="fa fa-ellipsis-v" aria-hidden="true" />
                             </Link>
                             <ul className="dropdown-menu" data-popper-placement="bottom-end">
@@ -91,7 +91,7 @@ const DashboardPage = () => {
                             <h6>Providers</h6>
                           </div>
                           <div className="home-useraction">
-                            <Link className="delete-table bg-white" to="#" data-bs-toggle="dropdown" aria-expanded="true">
+                            <Link className="delete-table bg-white" to="/providers" data-bs-toggle="dropdown" aria-expanded="true">
                               <i className="fa fa-ellipsis-v" aria-hidden="true" />
                             </Link>
                             <ul className="dropdown-menu" data-popper-placement="bottom-end">
@@ -130,7 +130,7 @@ const DashboardPage = () => {
                             <h6 className="text-center">Service</h6>
                           </div>
                           <div className="home-useraction">
-                            <Link className="delete-table bg-white" to="#" data-bs-toggle="dropdown" aria-expanded="true">
+                            <Link to="/services" className="delete-table bg-white" data-bs-toggle="dropdown" aria-expanded="true">
                               <i className="fa fa-ellipsis-v" aria-hidden="true" />
                             </Link>
                             <ul className="dropdown-menu" data-popper-placement="bottom-end">
@@ -186,10 +186,14 @@ const DashboardPage = () => {
                                   <tr>
                                     <td>{i + 1}</td>
                                     <td>
-                                      <Link to="/view-service" className="table-imgname">
+                                      <div className="table-imgname">
                                         <img src={`${BASE_URL}/${d?.image}`} className="me-2" alt="img" />
                                         <span>{d?.name}</span>
-                                      </Link>
+                                      </div>
+                                      {/* <Link to="/view-service" className="table-imgname">
+                                        <img src={`${BASE_URL}/${d?.image}`} className="me-2" alt="img" />
+                                        <span>{d?.name}</span>
+                                      </Link> */}
                                     </td>
                                     <td>{d?.category?.name}</td>
                                     <td>₹{d?.salePrice}</td>
@@ -218,7 +222,6 @@ const DashboardPage = () => {
                               <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Email</th>
                                 <th>Mobile</th>
                               </tr>
                             </thead>
@@ -229,12 +232,11 @@ const DashboardPage = () => {
                                     <td>{i + 1}</td>
                                     <td>
                                       <Link to="#" className="table-profileimage">
-                                        <img src={`${BASE_URL}/${d?.profileImage}`} className="me-2" alt="img" />
+                                        {/* {d?.profileImage && <img src={`${BASE_URL}/${d?.profileImage}`} className="me-2" alt="image" />} */}
                                         <span>{d?.name}</span>
                                       </Link>
                                     </td>
                                     {/* <td><Link to="/https://truelysell.dreamstechnologies.com/cdn-cgi/l/email-protection" className="__cf_email__" data-cfemail="44362b2621363004213c25293428216a272b29">[email&nbsp;protected]</Link></td> */}
-                                    <td>{d?.email || "-"}</td>
                                     <td>{d?.mobile || "-"}</td>
                                   </tr>
                                 ))
@@ -277,10 +279,11 @@ const DashboardPage = () => {
                                     <td>{i + 1}</td>
                                     <td>{formatDate(d?.createdAt)}</td>
                                     <td>
-                                      <Link to="#" className="table-profileimage">
-                                        {/* <img src={`${BASE_URL}/${d?.user?.profileImage}`} className="me-2" alt="img" /> */}
+                                      <span>{d?.user?.name}</span>
+                                      {/* <Link to="#" className="table-profileimage">
+                                        <img src={`${BASE_URL}/${d?.user?.profileImage}`} className="me-2" alt="img" />
                                         <span>{d?.user?.name}</span>
-                                      </Link>
+                                      </Link> */}
                                     </td>
                                     {/* <td>
                                       <Link to="#" className="table-profileimage">
@@ -295,7 +298,7 @@ const DashboardPage = () => {
                                       </Link>
                                     </td> */}
                                     <td>₹{d?.payableAmount}</td>
-                                    <td><h6 className="badge-pending">{d?.status}</h6></td>
+                                    <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1)}</td>
                                   </tr>
                                 ))
                               }
