@@ -21,6 +21,10 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   if (!parts) {
     throw new ApiError(400, "Parts data is required");
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 207ac91340bee06a1b5babb4087292acdc544d9f
   let parsedParts = parts;
   // try {
   //   parsedParts = JSON.parse(parts);
@@ -62,5 +66,33 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
     success: true,
     message: "Additional parts added successfully",
     data: savedParts,
+  });
+});
+
+
+// ================= CREATE ADDITIONAL PARTs CANCEL =================
+export const bookingAdditionalPartsCancel = asyncHandler(async (req, res) => {
+
+  const {
+    bookingId,
+    servicemanBookingId,
+  } = req.body;
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    { status: "ongoing" },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    { status: "ongoing" },
+    { new: true }
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: "Cancelled successfully",
+    data: {},
   });
 });

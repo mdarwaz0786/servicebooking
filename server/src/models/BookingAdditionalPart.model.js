@@ -26,7 +26,7 @@ const bookingAdditionalPartSchema = new mongoose.Schema({
   },
   serviceItemId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Booking",
+    ref: "BookingItem",
   },
   status: {
     type: Boolean,
