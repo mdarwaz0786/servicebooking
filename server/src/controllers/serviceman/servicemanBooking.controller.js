@@ -198,7 +198,7 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
           populate: {
             path: "service",
             model: "Service",
-            select: "name image",
+            select: "name image categoryId subCategoryId",
             strictPopulate: false,
           },
         },
