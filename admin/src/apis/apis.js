@@ -195,6 +195,11 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/job-posting`,
     delete: `${BASE_URL}/api/v1/admin/job-posting`,
   },
+  jobApplication: {
+    get: `${BASE_URL}/api/v1/admin/job-application`,
+    update: `${BASE_URL}/api/v1/admin/job-application`,
+    delete: `${BASE_URL}/api/v1/admin/job-application`,
+  },
   brand: {
     create: `${BASE_URL}/api/v1/admin/brand`,
     get: `${BASE_URL}/api/v1/admin/brand`,
