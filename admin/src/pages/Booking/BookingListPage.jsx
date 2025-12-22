@@ -18,6 +18,7 @@ const BookingListPage = () => {
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [statusMap, setStatusMap] = useState({});
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
@@ -54,6 +55,12 @@ const BookingListPage = () => {
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
+        const data = response?.data?.data || [];
+        const initialStatus = {};
+        data.forEach((b) => {
+          initialStatus[b?._id] = b?.status;
+        });
+        setStatusMap(initialStatus)
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch bookings");
@@ -93,6 +100,39 @@ const BookingListPage = () => {
   useEffect(() => {
     fetchBookings();
   }, [page, limit, debouncedSearch, sort]);
+
+  const BOOKING_STATUSES = [
+    "partstatusnew",
+    "partstatusconfirm",
+    "partstatusapprove",
+    "partstatusreject",
+    "new",
+    "assign",
+    "accept",
+    "ongoing",
+    "reject",
+    "complete",
+    "cancel",
+  ];
+
+  const updateBookingStatus = async (bookingId) => {
+    try {
+      const response = await axios.patch(
+        `${apis.booking.update}/${bookingId}`,
+        { status: statusMap[bookingId] },
+        {
+          headers: { Authorization: validToken },
+        }
+      );
+
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
+        fetchBookings();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
 
   return (
     <>
@@ -180,7 +220,35 @@ const BookingListPage = () => {
                               {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
                             </button>
                           </td>
-                          <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1) || "New"}</td>
+                          <td>
+                            <div className="d-flex align-items-center gap-2">
+                              <select
+                                className="form-select form-select-sm"
+                                value={statusMap[d._id] || d.status}
+                                onChange={(e) =>
+                                  setStatusMap({
+                                    ...statusMap,
+                                    [d._id]: e.target.value,
+                                  })
+                                }
+                              >
+                                {BOOKING_STATUSES.map((status) => (
+                                  <option key={status} value={status}>
+                                    {status.toUpperCase()}
+                                  </option>
+                                ))}
+                              </select>
+
+                              <button
+                                className="btn btn-sm btn-success"
+                                type="button"
+                                onClick={() => updateBookingStatus(d._id)}
+                                disabled={statusMap[d._id] === d.status}
+                              >
+                                Update
+                              </button>
+                            </div>
+                          </td>
                           <td>
                             <div className="d-flex">
                               {/* View Button */}

@@ -56,7 +56,7 @@ const bookingSchema = new mongoose.Schema({
   },
   status: { // booking status 
     type: String,
-    enum: ["new", "assign", "accept", "ongoing", "reject", "complete", "cancel"],
+    enum: ["new", "assign", "accept", "ongoing", "reject", "complete", "cancel", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
     index: true,
   },
@@ -74,12 +74,12 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
-  gstAmount: {
-    type: Number,
-    default: 0,
-  },
   gstPercent: {
     type: String,
+    default: 0,
+  },
+  gstAmount: {
+    type: Number,
     default: 0,
   },
   discountAmount: {

@@ -87,7 +87,7 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   if (status) {
     if (status === "active") {
-      filters.status = { $in: ["new", "assign", "accept", "ongoing", "reject"] };
+      filters.status = { $in: ["new", "assign", "accept", "ongoing", "reject", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"] };
     }
     else if (status === "completed") {
       filters.status = "complete";
@@ -337,6 +337,24 @@ export const updateBooking = asyncHandler(async (req, res) => {
   const booking = await BookingModel.findByIdAndUpdate(id, updateData, { new: true });
 
   if (!booking) throw new ApiError(404, "Booking not found");
+
+  if (req.body.status) {
+    const lastServicemanBooking = await ServiceManBookingModel.findOne({
+      bookingId: booking?._id,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (lastServicemanBooking) {
+      const b = await ServiceManBookingModel.findByIdAndUpdate(
+        lastServicemanBooking?._id,
+        {
+          status: req.body.status,
+          updatedBy: req.user?._id,
+        },
+      );
+    };
+  };
 
   return res.status(200).json({
     success: true,

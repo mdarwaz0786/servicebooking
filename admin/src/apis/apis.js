@@ -43,6 +43,7 @@ const apis = {
   booking: {
     get: `${BASE_URL}/api/v1/admin/booking`,
     delete: `${BASE_URL}/api/v1/admin/booking/delete-booking`,
+    update: `${BASE_URL}/api/v1/admin/booking/update-booking`,
   },
   transaction: {
     get: `${BASE_URL}/api/v1/admin/transaction`,

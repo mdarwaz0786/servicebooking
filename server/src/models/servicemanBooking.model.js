@@ -29,7 +29,7 @@ const serviceManBookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["new", "accept", "reject", "ongoing", "complete", "cancel"],
+    enum: ["new", "accept", "reject", "ongoing", "complete", "cancel", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
   },
   actionById: {
