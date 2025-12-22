@@ -21,10 +21,6 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   if (!parts) {
     throw new ApiError(400, "Parts data is required");
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> 207ac91340bee06a1b5babb4087292acdc544d9f
   let parsedParts = parts;
   // try {
   //   parsedParts = JSON.parse(parts);
