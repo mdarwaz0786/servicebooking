@@ -2,6 +2,7 @@ import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model
 import BookingModel from "../../models/booking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 
 // ================= CREATE ADDITIONAL PARTS =================
 export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
@@ -9,6 +10,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
 
   const {
     bookingId,
+    servicemanBookingId,
     parts
   } = req.body;
 
@@ -20,12 +22,12 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Parts data is required");
   }
 
-  let parsedParts;
-  try {
-    parsedParts = JSON.parse(parts);
-  } catch (err) {
-    throw new ApiError(400, "Invalid parts JSON format");
-  }
+  let parsedParts = parts;
+  // try {
+  //   parsedParts = JSON.parse(parts);
+  // } catch (err) {
+  //   throw new ApiError(400, "Invalid parts JSON format");
+  // }
 
   if (!Array.isArray(parsedParts) || parsedParts.length === 0) {
     throw new ApiError(400, "Parts must be a non-empty array");
@@ -49,11 +51,45 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    { status: "partstatusnew" },
+    { new: true }
+  );
+
   const savedParts = await BookingAdditionalPartModel.insertMany(documents);
 
   return res.status(201).json({
     success: true,
     message: "Additional parts added successfully",
     data: savedParts,
+  });
+});
+
+
+// ================= CREATE ADDITIONAL PARTs CANCEL =================
+export const bookingAdditionalPartsCancel = asyncHandler(async (req, res) => {
+
+  const {
+    bookingId,
+    servicemanBookingId,
+  } = req.body;
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    { status: "ongoing" },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    { status: "ongoing" },
+    { new: true }
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: "Cancelled successfully",
+    data: {},
   });
 });
