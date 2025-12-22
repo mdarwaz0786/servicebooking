@@ -2,6 +2,7 @@ import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model
 import BookingModel from "../../models/booking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 
 // ================= CREATE ADDITIONAL PARTS =================
 export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
@@ -9,6 +10,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
 
   const {
     bookingId,
+    servicemanBookingId,
     parts
   } = req.body;
 
@@ -19,13 +21,12 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   if (!parts) {
     throw new ApiError(400, "Parts data is required");
   }
-
-  let parsedParts;
-  try {
-    parsedParts = JSON.parse(parts);
-  } catch (err) {
-    throw new ApiError(400, "Invalid parts JSON format");
-  }
+  let parsedParts = parts;
+  // try {
+  //   parsedParts = JSON.parse(parts);
+  // } catch (err) {
+  //   throw new ApiError(400, "Invalid parts JSON format");
+  // }
 
   if (!Array.isArray(parsedParts) || parsedParts.length === 0) {
     throw new ApiError(400, "Parts must be a non-empty array");
@@ -45,6 +46,12 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
+    { status: "partstatusnew" },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
     { status: "partstatusnew" },
     { new: true }
   );
