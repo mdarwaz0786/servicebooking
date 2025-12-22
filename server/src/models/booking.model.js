@@ -86,6 +86,10 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  additionalPartAmount: {
+    type: Number,
+    default: 0,
+  },
   payableAmount: {
     type: Number,
     required: true,

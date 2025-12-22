@@ -1,4 +1,5 @@
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model.js";
 import BookingModel from "../../models/booking.model.js";
 import ReviewModel from "../../models/review.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
@@ -208,6 +209,16 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
   if (!booking) {
     throw new ApiError(404, "Booking not found");
   }
+
+  const additionalParts = await BookingAdditionalPartModel.find({
+    bookingId: booking?.booking?._id,
+    status: true,
+  })
+    .populate("rateId")
+    .lean();
+
+  // attach as `parts`
+  booking.parts = additionalParts;
 
   // 🔹 SAME review logic as getAll
   const review = await ReviewModel.findOne({
@@ -483,7 +494,7 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     if (status != 'accept')
       if (otp !== booking.otp) throw new ApiError(400, "Invalid OTP");
 
-    
+
     // if (req.file && req.file.buffer) {
     //   selfiePath = await compressImage(
     //     req.file.buffer,
