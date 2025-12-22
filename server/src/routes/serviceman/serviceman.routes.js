@@ -10,6 +10,7 @@ import reviewRoutes from "./review.routes.js";
 import trainingScheduleSubmitRoutes from "./trainingScheduleSubmit.route.js";
 import walletRoutes from "./wallet.route.js";
 import rateCardRoutes from "./rateCard.route.js";
+import bookingAdditionalPartRoute from "./bookingAdditionalPart.route.js";
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.use("/review", reviewRoutes);
 router.use("/training-schedule-submit", trainingScheduleSubmitRoutes);
 router.use("/wallet", walletRoutes);
 router.use("/rate-card", rateCardRoutes);
+router.use("/booking-additional-item", bookingAdditionalPartRoute);
 
 export default router;

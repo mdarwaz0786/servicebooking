@@ -4,7 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
 
 const ResumeListPage = () => {
@@ -160,6 +160,7 @@ const ResumeListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Resume</th>
                     <th>Candidate Detail</th>
                     <th>Applied For</th>
                     <th>Status</th>
@@ -168,52 +169,71 @@ const ResumeListPage = () => {
                 </thead>
                 <tbody>
                   {data?.length > 0 ? (
-                    data?.map((d, index) => (
-                      <tr key={d?._id}>
-                        <td>{(page - 1) * limit + index + 1}</td>
-                        <td>
-                          <p className="mb-1">Name: {d?.name || "-"}</p>
-                          <p className="mb-1">Email: {d?.email || "-"}</p>
-                          <p className="mb-1">Mobile: {d?.mobile || "-"}</p>
-                          <p className="mb-1">Qualification: {d?.highestQualification || "-"}</p>
-                          <p className="mb-1">Experience: {d?.totalExprienceYear || 0} Year {d?.totalExprienceMonth || 0} Month</p>
-                          <p className="mb-1">Last Company: {d?.lastCompanyName || "-"}</p>
-                        </td>
-                        <td>
-                          <p className="mb-1">Role: {d?.jobId?.title || "-"}</p>
-                          <p className="mb-1">Location: {d?.jobId?.location || "-"}</p>
-                          <p className="mb-1">Job Type: {d?.jobId?.employmentType || "-"}</p>
-                        </td>
-                        <td>
-                          <div className="active-switch">
-                            <label className="switch">
-                              <input
-                                type="checkbox"
-                                checked={d?.status}
-                                onChange={() => toggleStatus(d?._id, d?.status)}
+                    data?.map((d, index) => {
+                      const isPdf = d?.resume?.toLowerCase().endsWith(".pdf");
+                      const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(d?.resume);
+
+                      return (
+                        <tr key={d?._id}>
+                          <td>{(page - 1) * limit + index + 1}</td>
+                          <td>
+                            {isImage && (
+                              <img
+                                src={`${BASE_URL}/${d?.resume}`}
+                                alt="resume"
+                                style={{ width: "80px", height: "100px", objectFit: "cover" }}
                               />
-                              <span className="sliders round" />
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="d-flex">
-                            <Link to={`/update-resume/${d?._id}`}>
-                              <button className="btn delete-table me-2" type="button">
-                                <i className="fe fe-edit" />
+                            )}
+                            {isPdf && (
+                              <a
+                                href={`${BASE_URL}/${d?.resume}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: "none", fontWeight: "500" }}
+                              >
+                                📄 View Resume (PDF)
+                              </a>
+                            )}
+                          </td>
+                          <td>
+                            <p className="mb-1">Name: {d?.name || "-"}</p>
+                            <p className="mb-1">Email: {d?.email || "-"}</p>
+                            <p className="mb-1">Mobile: {d?.mobile || "-"}</p>
+                            <p className="mb-1">Highest Qualification: {d?.highestQualification || "-"}</p>
+                            <p className="mb-1">Experience: {d?.totalExprienceYear || 0} Year {d?.totalExprienceMonth || 0} Month</p>
+                            <p className="mb-1">Last Company: {d?.lastCompanyName || "-"}</p>
+                          </td>
+                          <td>
+                            <p className="mb-1">Role: {d?.jobId?.title || "-"}</p>
+                            <p className="mb-1">Location: {d?.jobId?.location || "-"}</p>
+                            <p className="mb-1">Job Type: {d?.jobId?.employmentType || "-"}</p>
+                          </td>
+                          <td>
+                            <div className="active-switch">
+                              <label className="switch">
+                                <input
+                                  type="checkbox"
+                                  checked={d?.status}
+                                  onChange={() => toggleStatus(d?._id, d?.status)}
+                                />
+                                <span className="sliders round" />
+                              </label>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="d-flex">
+                              <button
+                                className="btn delete-table"
+                                type="button"
+                                onClick={() => deleteData(d?._id)}
+                              >
+                                <i className="fe fe-trash-2" />
                               </button>
-                            </Link>
-                            <button
-                              className="btn delete-table"
-                              type="button"
-                              onClick={() => deleteData(d?._id)}
-                            >
-                              <i className="fe fe-trash-2" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })
                   ) : !loading ? (
                     <tr>
                       <td colSpan="6" className="text-center">
