@@ -46,6 +46,12 @@ const Sidebar = () => {
             </li>
 
             <li>
+              <Link to="/resume" className={currentPath === "/resume" ? "active" : ""}>
+                <i className="fe fe-file" /> <span>Resume</span>
+              </Link>
+            </li>
+
+            <li>
               <Link to="#"><i className="fe fe-briefcase"></i>
                 <span>Master</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
@@ -555,7 +561,7 @@ const Sidebar = () => {
 
             <li style={{ marginBottom: "5rem" }}>
               <Link to="/meta-tag" className={currentPath === "/meta-tag" ? "active" : ""}>
-                <i className="fe fe-grid" /> <span>Meta Tag</span>
+                <i className="fe fe-tag" /> <span>Meta Tag</span>
               </Link>
             </li>
           </ul>
