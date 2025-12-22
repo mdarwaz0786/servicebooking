@@ -398,47 +398,47 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
 });
 
 // Complete Booking
-export const serviceManBookingComplete = asyncHandler(async (req, res) => {
-  // const { status } = req.body;
-  let status = 'complete';
+// export const serviceManBookingComplete = asyncHandler(async (req, res) => {
+//   // const { status } = req.body;
+//   let status = 'complete';
 
-  const userId = req.user?._id;
-  if (!userId) throw new ApiError(401, "User not found");
+//   const userId = req.user?._id;
+//   if (!userId) throw new ApiError(401, "User not found");
 
-  const serviceman = await ServiceManProfileModel.findOne({ userId });
-  if (!serviceman) throw new ApiError(404, "Service man profile not found");
+//   const serviceman = await ServiceManProfileModel.findOne({ userId });
+//   if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
-  const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
-  if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
+//   const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
+//   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
 
-  const booking = await BookingModel.findById(servicemanBooking?.bookingId);
-  if (!booking) throw new ApiError(404, "Booking not found");
+//   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
+//   if (!booking) throw new ApiError(404, "Booking not found");
 
-  booking.status = status || booking?.status;
-  servicemanBooking.status = status || servicemanBooking?.status;
+//   booking.status = status || booking?.status;
+//   servicemanBooking.status = status || servicemanBooking?.status;
 
-  const nowDate = new Date();
-  const nowTime = getCurrentIndianTime();
+//   const nowDate = new Date();
+//   const nowTime = getCurrentIndianTime();
 
-  servicemanBooking.acceptDate = nowDate;
-  servicemanBooking.acceptTime = nowTime;
+//   servicemanBooking.acceptDate = nowDate;
+//   servicemanBooking.acceptTime = nowTime;
 
-  servicemanBooking.updatedBy = userId;
-  servicemanBooking.actionById = userId;
-  booking.actionById = userId;
+//   servicemanBooking.updatedBy = userId;
+//   servicemanBooking.actionById = userId;
+//   booking.actionById = userId;
 
-  await booking.save();
-  await servicemanBooking.save();
+//   await booking.save();
+//   await servicemanBooking.save();
 
-  return res.status(200).json({
-    success: true,
-    message: "Booking Accepted successfully",
-    data: {
-      booking,
-      servicemanBooking: servicemanBooking,
-    },
-  });
-});
+//   return res.status(200).json({
+//     success: true,
+//     message: "Booking Accepted successfully",
+//     data: {
+//       booking,
+//       servicemanBooking: servicemanBooking,
+//     },
+//   });
+// });
 
 // Generate OTP Booking
 export const serviceManBookingStartOtp = asyncHandler(async (req, res) => {
@@ -538,4 +538,33 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     };
     throw error;
   };
+});
+
+
+// ================= Comlete booking =================
+export const servicemanBookingComplete = asyncHandler(async (req, res) => {
+
+  const {
+    bookingId,
+    servicemanBookingId,
+    paymentMode,
+  } = req.body;
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    { status: "complete" },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    { status: "complete" },
+    { new: true }
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: "Completed successfully",
+    data: {},
+  });
 });
