@@ -51,7 +51,7 @@ export const getTrainingScheduleSubmitById = asyncHandler(async (req, res) => {
 
 
   const submit = await TrainingScheduleSubmitModel
-    .findOne({ providerId: userId })
+    .findOne({ providerId: userId }).sort({createdAt:-1})
     // .populate({
     //   path: "trainingId",
     //   select: ""

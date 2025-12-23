@@ -4,7 +4,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Create address
 export const createAddress = asyncHandler(async (req, res) => {
-  const { houseNumber, landmark, deliveryPersonName, type } = req.body;
+  const { houseNumber, landmark, deliveryPersonName, type, lat, long } = req.body;
 
   if (!houseNumber || !houseNumber.trim()) {
     throw new ApiError(400, "House number is required");
@@ -16,6 +16,8 @@ export const createAddress = asyncHandler(async (req, res) => {
     landmark,
     deliveryPersonName,
     type,
+    lat,
+    long,
     createdBy: req.user?._id,
   });
 
