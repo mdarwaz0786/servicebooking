@@ -8,63 +8,89 @@ import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
-  const {
-    bookingId,
-    servicemanBookingId,
-    parts
-  } = req.body;
+  const { bookingId, servicemanBookingId, parts } = req.body;
 
-  if (!bookingId) {
-    throw new ApiError(400, "Booking ID is required");
-  }
+  if (!bookingId) throw new ApiError(400, "Booking ID is required");
+  if (!servicemanBookingId) throw new ApiError(400, "Serviceman Booking ID is required");
+  if (!Array.isArray(parts) || parts.length === 0) throw new ApiError(400, "Additional Parts must be a non-empty array");
 
-  if (!parts) {
-    throw new ApiError(400, "Parts data is required");
-  }
-  let parsedParts = parts;
-  // try {
-  //   parsedParts = JSON.parse(parts);
-  // } catch (err) {
-  //   throw new ApiError(400, "Invalid parts JSON format");
-  // }
+  const booking = await BookingModel.findById(bookingId);
 
-  if (!Array.isArray(parsedParts) || parsedParts.length === 0) {
-    throw new ApiError(400, "Parts must be a non-empty array");
-  }
+  if (!booking) {
+    throw new ApiError(404, "Booking not found");
+  };
 
-  const documents = parsedParts.map((item) => ({
-    bookingId,
-    rateId: item.rateId,
-    description: item.description,
-    unitPrice: item.unitPrice,
-    quantity: item.quantity,
-    laborCharge: item.labourCharge || 0,
-    groupTitle: item.groupTitle,
-    serviceItemId: item.serviceItemId,
-    createdBy: userId,
-  }));
+  let additionalPartTotalAmount = 0;
+
+  const documents = parts?.map((item) => {
+    const unitPrice = Number(item?.unitPrice) || 0;
+    const quantity = Number(item?.quantity) || 0;
+
+    const partTotal = unitPrice * quantity;
+    additionalPartTotalAmount += partTotal;
+
+    return {
+      bookingId,
+      rateId: item?.rateId,
+      description: item?.description,
+      unitPrice,
+      quantity,
+      laborCharge: labourCharge,
+      groupTitle: item?.groupTitle,
+      serviceItemId: item?.serviceItemId,
+      createdBy: userId,
+    };
+  });
+
+  const oldAmount = Number(booking?.amount) || 0;
+  const oldDiscountAmount = Number(booking?.discountAmount) || 0;
+  const gstPercent = Number(booking?.gstPercent) || 0;
+
+  const updatedAmount = oldAmount + additionalPartTotalAmount;
+
+  let updatedDiscountAmount = 0;
+
+  if (oldAmount > 0 && oldDiscountAmount > 0) {
+    const discountPercent = oldDiscountAmount / oldAmount;
+    updatedDiscountAmount = updatedAmount * discountPercent;
+  };
+
+  const gstAmount = (updatedAmount * gstPercent) / 100;
+  const payableAmount = updatedAmount + gstAmount - updatedDiscountAmount;
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
-    { status: "partstatusnew" },
+    {
+      status: "partstatusnew",
+      additionalPartAmount: additionalPartTotalAmount,
+      amount: updatedAmount,
+      discountAmount: updatedDiscountAmount,
+      gstAmount,
+      payableAmount,
+      updatedBy: userId,
+      updatedAt: new Date(),
+    },
     { new: true }
   );
 
-  await ServiceManBookingModel.findByIdAndUpdate(
-    servicemanBookingId,
-    { status: "partstatusnew" },
-    { new: true }
-  );
+  if (servicemanBookingId) {
+    await ServiceManBookingModel.findByIdAndUpdate(
+      servicemanBookingId,
+      {
+        status: "partstatusnew",
+        updatedBy: userId,
+        updatedAt: new Date(),
+      }
+    );
+  };
 
-  const savedParts = await BookingAdditionalPartModel.insertMany(documents);
+  await BookingAdditionalPartModel.insertMany(documents);
 
   return res.status(201).json({
     success: true,
-    message: "Additional parts added successfully",
-    data: savedParts,
+    message: "Additional parts created successfully",
   });
 });
-
 
 // ================= CREATE ADDITIONAL PARTs CANCEL =================
 export const bookingAdditionalPartsCancel = asyncHandler(async (req, res) => {

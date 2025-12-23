@@ -74,6 +74,10 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
+  additionalPartAmount: {
+    type: Number,
+    default: 0,
+  },
   gstPercent: {
     type: String,
     default: 0,
@@ -83,10 +87,6 @@ const bookingSchema = new mongoose.Schema({
     default: 0,
   },
   discountAmount: {
-    type: Number,
-    default: 0,
-  },
-  additionalPartAmount: {
     type: Number,
     default: 0,
   },

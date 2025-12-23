@@ -87,7 +87,7 @@ trainingSchema.pre("findOneAndUpdate", function (next) {
     const last = update.lastName || this._update.lastName;
 
     update.fullName = `${first} ${last}`;
-  }
+  };
 
   next();
 });

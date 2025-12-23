@@ -107,8 +107,6 @@ import WalletFormPage from "../pages/Wallet/WalletFormPage";
 import SupportFormPage from "../pages/Support/SupportFormPage";
 import CustomerSupportListPage from "../pages/Support/CustomerSupportListPage";
 import ProviderSupportListPage from "../pages/Support/ProviderSupportListPage";
-import CancelledBookingListPage from "../pages/Booking/CancelledBookingListPage";
-import CompletedBookingListPage from "../pages/Booking/CompletedBookingListPage";
 import AddDisclaimerPage from "../pages/Disclaimer/AddDisclaimerPage";
 import MetaTagListPage from "../pages/MetaTag/MetaTagListPage";
 import MetaTagFormPage from "../pages/MetaTag/MetaTagFormPage";
@@ -143,9 +141,9 @@ const routesConfig = {
     { path: "/add-time-slot", element: AddTimeSlotPage },
     { path: "/update-time-slot/:id", element: UpdateTimeSlotPage },
 
-    { path: "/bookings", element: BookingListPage },
-    { path: "/cancelled-bookings", element: CancelledBookingListPage },
-    { path: "/completed-bookings", element: CompletedBookingListPage },
+    { path: "/bookings/:status", element: BookingListPage },
+    { path: "/cancelled-bookings/:status", element: BookingListPage },
+    { path: "/completed-bookings/:status", element: BookingListPage },
     { path: "/booking-detail/:id", element: BookingDetailPage },
 
     { path: "/transactions", element: TransactionListPage },
