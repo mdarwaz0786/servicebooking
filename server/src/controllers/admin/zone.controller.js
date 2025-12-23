@@ -1,4 +1,5 @@
 import Zone from "../../models/zone.model.js";
+import { buildPagination } from "../../utils/pagination.js";
 
 export const createZone = async (req, res) => {
   try {
@@ -57,15 +58,19 @@ export const getZones = async (req, res) => {
       Zone.countDocuments(query)
     ]);
 
+    const totalPages = Math.ceil(total / limit);
+
     res.json({
       success: true,
+      message: "Data fetched successfully",
+      total,
+      page,
+      limit,
+      totalPages,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
       data: zones,
-      pagination: {
-        total,
-        page: Number(page),
-        limit: Number(limit),
-        totalPages: Math.ceil(total / limit)
-      }
+      pagination: buildPagination({ page, limit, total })
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -121,7 +126,6 @@ export const updateZone = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteZone = async (req, res) => {
   try {

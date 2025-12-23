@@ -3,6 +3,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import BookingModel from "../../models/booking.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
 import TransactionModel from "../../models/transaction.model.js";
+import WalletModel from "../../models/wallet.model.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
@@ -12,9 +13,11 @@ const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
-  const { pId, type } = req.body;
+  const { pId, type, amount } = req.body;
 
   let itemData, bookingData, userId, bookingItems;
+  let payableAmount = 0;
+
   if (type == 'booking') {
     // Get cart data
 
@@ -24,21 +27,25 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
     const { cartProducts, amountData } = await getCartData(userId);
     itemData = bookingItems;
+    payableAmount = bookingData.payableAmount;
   }
-  else if (type == "subscription") {
-
+  else if (type == "wallet") {
+    if (!amount || amount <= 0) {
+      throw new ApiError(400, "Invalid wallet amount");
+    }
+    payableAmount = amount;
   }
 
 
   // Create Razorpay order
-  const razorpayOrder = await createRazorpayOrder(bookingData.payableAmount);
+  const razorpayOrder = await createRazorpayOrder(payableAmount);
 
   // Save Transaction
   let transactionDetail = await TransactionModel.create({
     userId,
     PID: pId,
     transactionId: '',
-    productName: "Booking Services",
+    productName: type === "wallet" ? "Wallet Recharge" : "Booking Services",
     productType: type,
     type: 1,
     itemData: itemData,
@@ -117,8 +124,19 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       opt: "1234"
     }, { new: true })
   }
-  else if (transactionData.productType == 'subscription') {
-
+  // 🔹 WALLET FLOW (NEW)
+  else if (transactionData.productType === "wallet") {
+    await WalletModel.create({
+      providerId: transactionData.userId, // OR servicemanId if applicable
+      depositAmount: transactionData.finalAmount,
+      depositStatus: "Paid",
+      dateOfDeposit: new Date(),
+      paymentMode: "Online",
+      transactionType: "Credit",
+      transactionId: transactionData.transactionId,
+      purpose: "Wallet Recharge",
+      createdBy: req.user?._id,
+    });
   }
 
 

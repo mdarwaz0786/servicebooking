@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
+import { useNavigate } from "react-router-dom";
 
 const libraries = ["drawing"];
 
@@ -15,6 +16,7 @@ const containerStyle = {
 const center = { lat: 28.6139, lng: 77.2090 };
 
 const CreateZonePage = () => {
+  const navigate = useNavigate();
   const { validToken } = useAuth();
   const [name, setName] = useState("");
   const [coordinates, setCoordinates] = useState([]);
@@ -26,7 +28,6 @@ const CreateZonePage = () => {
       p.lat()
     ]);
 
-    // GeoJSON polygon must be closed
     path.push(path[0]);
 
     setCoordinates(path);
@@ -67,7 +68,10 @@ const CreateZonePage = () => {
   return (
     <div className="page-wrapper">
       <div className="container mt-4">
-        <h3>Create Zone</h3>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h4>Add Zone</h4>
+          <button className="btn btn-primary" onClick={() => navigate(-1)}>Back</button>
+        </div>
 
         <input
           className="form-control mb-3"
@@ -97,13 +101,15 @@ const CreateZonePage = () => {
           </GoogleMap>
         </LoadScript>
 
-        <button
-          className="btn btn-primary mt-3"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? "Saving..." : "Create Zone"}
-        </button>
+        <div className="text-center">
+          <button
+            className="btn btn-primary mt-3 mb-3"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
+        </div>
       </div>
     </div>
   );
