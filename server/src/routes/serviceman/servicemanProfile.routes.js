@@ -3,6 +3,7 @@ import isLoggedIn from "../../middlewares/serviceman/auth.middleware.js";
 import {
   createServiceManProfile,
   getServiceManProfileById,
+  getServicemanZone,
 } from "../../controllers/serviceman/servicemanProfile.controller.js";
 import upload from "../../middlewares/multer.middleware.js";
 import validateFileSize from "../../middlewares/validateFileSize.middleware.js";
@@ -11,5 +12,6 @@ const router = express.Router();
 
 router.post("/", isLoggedIn, upload.fields([{ name: "profileImage", maxCount: 1 }]), validateFileSize, createServiceManProfile);
 router.get("/detail", isLoggedIn, getServiceManProfileById);
+router.get("/zone", isLoggedIn, getServicemanZone);
 
 export default router;

@@ -113,6 +113,7 @@ import MetaTagFormPage from "../pages/MetaTag/MetaTagFormPage";
 import TrainingScheduleSubmitListPage from "../pages/TrainingScheduleSubmit/TrainingScheduleSbmitListPage";
 import TrainingScheduleSubmitDetailPage from "../pages/TrainingScheduleSubmit/TrainingScheduleSubmitDetailPage";
 import ResumeListPage from "../pages/Resume/ResumeListPage";
+import CreateZonePage from "../pages/Zone/CreateZonePage";
 
 const routesConfig = {
   private: [
@@ -280,6 +281,8 @@ const routesConfig = {
     { path: "/update-meta-tag/:id", element: MetaTagFormPage },
 
     { path: "/resume", element: ResumeListPage },
+
+    { path: "/add-zone", element: CreateZonePage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },

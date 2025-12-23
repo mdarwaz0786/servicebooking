@@ -1,26 +1,61 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { useState } from "react";
+import MultiSelect from "../../components/Form/MultiSelect";
 
 const ServicemanProfileDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { validToken } = useAuth();
-  const { record } = location.state || {};
-  const [currentStatus, setCurrentStatus] = useState(record?.profileStatus || "pending");
-  const [remarks, setRemarks] = useState(record?.remarks || "");
 
-  if (!record)
+  const { record } = location.state || {};
+
+  console.log(record)
+
+  const [currentStatus, setCurrentStatus] = useState("Pending");
+  const [remarks, setRemarks] = useState("");
+  const [zones, setZones] = useState([]);
+  const [selectedZones, setSelectedZones] = useState([]);
+
+  useEffect(() => {
+    if (!record) return;
+
+    setCurrentStatus(record.profileStatus || "Pending");
+    setRemarks(record.remarks || "");
+    setSelectedZones(record?.zones?.map((z) => z?._id) || []);
+  }, [record]);
+
+  useEffect(() => {
+    if (!validToken) return;
+
+    const fetchZones = async () => {
+      try {
+        const res = await axios.get(apis.zone.get, {
+          headers: { Authorization: validToken }
+        });
+
+        setZones(res?.data?.data || []);
+      } catch {
+        toast.error("Failed to load zones");
+      }
+    };
+
+    fetchZones();
+  }, [validToken]);
+
+  if (!record) {
     return (
       <div className="page-wrapper page-settings">
-        <div className="content">
-          <p className="text-center">No data available</p>
+        <div className="content text-center">
+          <p>No data available</p>
         </div>
       </div>
     );
+  }
 
   const {
     profileImage,
@@ -38,33 +73,51 @@ const ServicemanProfileDetailPage = () => {
     referenceMobile2,
     profileStatus,
     user,
-    categories,
+    categories
   } = record;
 
   const handleStatusUpdate = async () => {
     try {
-      const response = await axios.patch(
-        `${apis.servicemanProfile.update}/${record?._id}`,
+      const res = await axios.patch(
+        `${apis.servicemanProfile.update}/${record._id}`,
         { profileStatus: currentStatus, remarks },
         { headers: { Authorization: validToken } }
       );
-      if (response?.data?.success) {
+
+      if (res?.data?.success) {
         toast.success("Status updated successfully");
         navigate(-1);
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update status");
-    };
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update status");
+    }
+  };
+
+  const handleZoneUpdate = async () => {
+    try {
+      const res = await axios.patch(
+        `${apis.servicemanProfile.update}/${record._id}`,
+        { zones: selectedZones },
+        { headers: { Authorization: validToken } }
+      );
+
+      if (res?.data?.success) {
+        toast.success("Zones assigned successfully");
+        navigate(-1);
+      }
+    } catch {
+      toast.error("Failed to assign zones");
+    }
   };
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
-        {/* Header with Back Button */}
-        <div className="d-flex justify-content-between align-items-center mb-1">
-          <h5 className="mb-0">Serviceman Profile Detail</h5>
+
+        {/* HEADER */}
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <h5>Serviceman Profile Detail</h5>
           <button
-            type="button"
             className="btn btn-outline-secondary btn-sm"
             onClick={() => navigate(-1)}
           >
@@ -72,10 +125,10 @@ const ServicemanProfileDetailPage = () => {
           </button>
         </div>
 
-        {/* Profile Card */}
-        <div className="container py-4">
-          <div className="card shadow-lg border-0 rounded-3">
-            {/* Card Header */}
+        <div className="container py-3">
+          <div className="card shadow border-0 rounded-3">
+
+            {/* HEADER CARD */}
             <div className="card-header bg-primary text-white d-flex align-items-center">
               <img
                 src={
@@ -84,116 +137,114 @@ const ServicemanProfileDetailPage = () => {
                     : "https://via.placeholder.com/100"
                 }
                 alt="Profile"
-                className="rounded-circle border border-3 border-light shadow-sm me-3"
-                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                className="rounded-circle me-3"
+                style={{ width: 100, height: 100, objectFit: "cover" }}
               />
               <div>
-                <p className="mb-0 fw-bold fs-5">{name}</p>
-                <p className="mb-0">{email}</p>
-                <span className="badge bg-light text-dark mt-1 p-2">
-                  {user?.role?.toUpperCase()}
-                </span>
+                <h5 className="mb-0">{name}</h5>
+                <small>{email}</small>
+                <div>
+                  <span className="badge bg-light text-dark mt-1">
+                    {user?.role?.toUpperCase()}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Card Body */}
+            {/* BODY */}
             <div className="card-body">
               <div className="row g-4">
-                {/* Profile Info */}
+
+                {/* PROFILE INFO */}
                 <div className="col-md-6">
-                  <h5 className="border-bottom pb-2">Profile Info</h5>
+                  <h6 className="border-bottom pb-2">Profile Info</h6>
                   <ul className="list-unstyled mt-3">
-                    <li>
-                      <strong>DOB:</strong>{" "}
-                      {dob ? new Date(dob).toLocaleDateString() : "-"}
-                    </li>
-                    <li>
-                      <strong>Experience Level:</strong> {experienceLevel}
-                    </li>
-                    <li>
-                      <strong>Company:</strong> {companyName || "N/A"}
-                    </li>
-                    <li>
-                      <strong>Total Experience:</strong> {yearOfExperience || 0} Year
-                    </li>
-                    <li>
-                      <strong>Permanent Address:</strong> {permanentAddress}
-                    </li>
-                    <li>
-                      <strong>Current Address:</strong> {currentAddress}
-                    </li>
-                    <li>
-                      <strong>Profile Status:</strong><span> {profileStatus}</span>
-                    </li>
+                    <li><strong>DOB:</strong> {dob ? new Date(dob).toLocaleDateString() : "-"}</li>
+                    <li><strong>Experience Level:</strong> {experienceLevel}</li>
+                    <li><strong>Company:</strong> {companyName || "N/A"}</li>
+                    <li><strong>Total Experience:</strong> {yearOfExperience || 0} Year</li>
+                    <li><strong>Permanent Address:</strong> {permanentAddress}</li>
+                    <li><strong>Current Address:</strong> {currentAddress}</li>
+                    <li><strong>Status:</strong> {profileStatus}</li>
                   </ul>
                 </div>
 
-                {/* Contact Info */}
+                {/* CONTACT */}
                 <div className="col-md-6">
-                  <h5 className="border-bottom pb-2">Contact</h5>
+                  <h6 className="border-bottom pb-2">Contact</h6>
                   <ul className="list-unstyled mt-3">
-                    <li>
-                      <strong>Mobile:</strong> {user?.mobile}
-                    </li>
-                    <li>
-                      <strong>Reference 1:</strong> {referenceName1} (
-                      {referenceMobile1})
-                    </li>
-                    <li>
-                      <strong>Reference 2:</strong> {referenceName2} (
-                      {referenceMobile2})
-                    </li>
+                    <li><strong>Mobile:</strong> {user?.mobile}</li>
+                    <li><strong>Reference 1:</strong> {referenceName1} ({referenceMobile1})</li>
+                    <li><strong>Reference 2:</strong> {referenceName2} ({referenceMobile2})</li>
                   </ul>
                 </div>
 
-                {/* Categories */}
+                {/* CATEGORIES */}
                 <div className="col-md-6">
-                  <h5 className="border-bottom pb-2">Categories</h5>
-                  <div className="d-flex flex-wrap gap-4 mt-3">
-                    {categories?.map((cat) => (
-                      <div key={cat?._id} className="text-center">
+                  <h6 className="border-bottom pb-2">Categories</h6>
+                  <div className="d-flex flex-wrap gap-3 mt-3">
+                    {categories?.map(cat => (
+                      <div key={cat._id} className="text-center">
                         <img
-                          src={`${BASE_URL}/${cat?.image}`}
-                          alt={cat?.name}
-                          className="img-thumbnail shadow-sm"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                          }}
+                          src={`${BASE_URL}/${cat.image}`}
+                          alt={cat.name}
+                          className="img-thumbnail"
+                          style={{ width: 90, height: 90 }}
                         />
-                        <small className="d-block mt-2 fw-bold">
-                          {cat?.name}
+                        <small className="fw-bold d-block mt-1">
+                          {cat.name}
                         </small>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Status Update */}
+                {/* ASSIGN ZONES */}
                 <div className="col-md-6">
-                  <h5 className="border-bottom pb-2">Update Profile Status</h5>
-                  <div className="mt-3 d-flex flex-column gap-2">
-                    <select
-                      className="form-select"
-                      value={currentStatus}
-                      onChange={(e) => setCurrentStatus(e.target.value)}
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Approved">Approved</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter remark"
-                      value={remarks}
-                      onChange={(e) => setRemarks(e.target.value)}
-                    />
-                    <button className="btn btn-primary" onClick={handleStatusUpdate}>
-                      Update Profile Status
-                    </button>
-                  </div>
+                  <h6 className="border-bottom pb-2">Assign Zones</h6>
+
+                  <MultiSelect
+                    optionsList={zones}
+                    value={selectedZones}
+                    onChange={setSelectedZones}
+                    placeholder="Select Zones"
+                  />
+
+                  <button
+                    className="btn btn-success mt-3"
+                    onClick={handleZoneUpdate}
+                  >
+                    Save Zones
+                  </button>
+                </div>
+
+                {/* STATUS UPDATE */}
+                <div className="col-md-6">
+                  <h6 className="border-bottom pb-2">Update Profile Status</h6>
+
+                  <select
+                    className="form-select mt-2"
+                    value={currentStatus}
+                    onChange={(e) => setCurrentStatus(e.target.value)}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+
+                  <input
+                    type="text"
+                    className="form-control mt-2"
+                    placeholder="Enter remark"
+                    value={remarks}
+                    onChange={(e) => setRemarks(e.target.value)}
+                  />
+                  <button
+                    className="btn btn-primary mt-3"
+                    onClick={handleStatusUpdate}
+                  >
+                    Update Status
+                  </button>
                 </div>
               </div>
             </div>

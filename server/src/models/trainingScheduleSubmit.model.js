@@ -19,11 +19,11 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
   },
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "ServiceManProfile",
+    ref: "User",
   },
   trainingScheduleStatus: {
     type: String,
-    enum: ["New", "Confirm", "Reject","Present","Absent","Fail","Complete"],
+    enum: ["New", "Confirm", "Reject", "Present", "Absent", "Fail", "Complete"],
     default: "New",
   },
   remarks: {
@@ -44,7 +44,28 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+trainingScheduleSubmitSchema.virtual("training", {
+  ref: "Training",
+  localField: "trainingId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+trainingScheduleSubmitSchema.virtual("provider", {
+  ref: "User",
+  localField: "providerId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+trainingScheduleSubmitSchema.virtual("profile", {
+  ref: "ServiceManProfile",
+  localField: "providerId",
+  foreignField: "userId",
+  justOne: true,
+});
 
 const TrainingScheduleSubmitModel = mongoose.model("TrainingScheduleSubmit", trainingScheduleSubmitSchema);
 
