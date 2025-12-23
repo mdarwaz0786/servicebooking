@@ -121,28 +121,37 @@ const Sidebar = () => {
                     <span>Brand</span>
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     to="/city"
                     className={currentPath === "/city" ? "active" : ""}
                   >
                     <span>City</span>
                   </Link>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <Link
                     to="/locality"
                     className={currentPath === "/locality" ? "active" : ""}
                   >
                     <span>Locality</span>
                   </Link>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <Link
                     to="/areazone"
                     className={currentPath === "/areazone" ? "active" : ""}
                   >
                     <span>Area Zone</span>
+                  </Link>
+                </li> */}
+
+                <li>
+                  <Link
+                    to="/zone"
+                    className={currentPath === "/zone" ? "active" : ""}
+                  >
+                    <span>Zone</span>
                   </Link>
                 </li>
               </ul>

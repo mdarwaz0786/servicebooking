@@ -32,7 +32,7 @@ const transactionSchema = new mongoose.Schema({
     required: true,
   },
   productType: {
-    type: String, // e.g. "purchase", "subscription", etc.
+    type: String, // e.g. "purchase", "subscription", wallet etc.
     trim: true,
   },
   type: {

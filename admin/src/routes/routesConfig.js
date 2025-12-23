@@ -114,6 +114,7 @@ import TrainingScheduleSubmitListPage from "../pages/TrainingScheduleSubmit/Trai
 import TrainingScheduleSubmitDetailPage from "../pages/TrainingScheduleSubmit/TrainingScheduleSubmitDetailPage";
 import ResumeListPage from "../pages/Resume/ResumeListPage";
 import CreateZonePage from "../pages/Zone/CreateZonePage";
+import ZoneListPage from "../pages/Zone/ZoneListPage";
 
 const routesConfig = {
   private: [
@@ -283,6 +284,7 @@ const routesConfig = {
     { path: "/resume", element: ResumeListPage },
 
     { path: "/add-zone", element: CreateZonePage },
+    { path: "/zone", element: ZoneListPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },
