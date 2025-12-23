@@ -2,6 +2,7 @@ import WalletModel from "../../models/wallet.model.js";
 import ServiceManProfile from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import { buildPagination } from "../../utils/pagination.js";
 
 export const createWallet = asyncHandler(async (req, res) => {
   const {
@@ -34,25 +35,37 @@ export const createWallet = asyncHandler(async (req, res) => {
   return res.status(201).json({ success: true, message: "Created successfully", data: wallet });
 });
 
+// Get Wallets for serviceman
 export const getWallets = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
   if (!userId) throw new ApiError(401, "User not authenticated");
-  const serviceman = await ServiceManProfile.findOne({ userId });
 
+  const serviceman = await ServiceManProfile.findOne({ userId });
   if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
-  const wallets = await WalletModel.find({
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const filter = {
     providerId: serviceman?._id,
     status: true,
-  })
+  };
+
+  const wallets = await WalletModel
+    .find(filter)
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
     .lean();
+
+  const allWallets = await WalletModel.find(filter).lean();
 
   let balance = 0;
   let totalCreditPoints = 0;
 
-  for (const w of wallets) {
+  for (const w of allWallets) {
     if (w.transactionType === "Credit") {
       balance += w.depositAmount;
     } else if (w.transactionType === "Debit") {
@@ -62,14 +75,25 @@ export const getWallets = asyncHandler(async (req, res) => {
     totalCreditPoints += w.creditPoints || 0;
   };
 
+  const totalTransactions = allWallets.length;
+  const totalPages = Math.ceil(totalTransactions / limit);
+
   return res.status(200).json({
     success: true,
-    message: "data fetched successfully",
+    message: "Data fetched successfully",
     data: wallets,
     summary: {
       balance,
       totalCreditPoints,
-      totalTransactions: wallets.length,
+      totalTransactions,
     },
+    total: totalTransactions,
+    page,
+    limit,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
+    pagination: buildPagination({ page, limit, total: totalTransactions }),
   });
 });
+

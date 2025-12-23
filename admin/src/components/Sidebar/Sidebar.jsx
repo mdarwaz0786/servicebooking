@@ -255,24 +255,24 @@ const Sidebar = () => {
               <ul>
                 <li>
                   <Link
-                    to="/bookings"
-                    className={currentPath === "/bookings" ? "active" : ""}
+                    to="/bookings/active"
+                    className={currentPath === "/bookings/active" ? "active" : ""}
                   >
                     <span>Active</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/completed-bookings"
-                    className={currentPath === "completed-bookings" ? "active" : ""}
+                    to="/completed-bookings/completed"
+                    className={currentPath === "completed-bookings/completed" ? "active" : ""}
                   >
                     <span>Completed</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/cancelled-bookings"
-                    className={currentPath === "/cancelled-bookings" ? "active" : ""}
+                    to="/cancelled-bookings/cancelled"
+                    className={currentPath === "/cancelled-bookings/cancelled" ? "active" : ""}
                   >
                     <span>Cancelled</span>
                   </Link>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -9,6 +9,7 @@ import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
 
 const BookingListPage = () => {
+  const { status } = useParams();
   const [selectedBooking, setSelectedBooking] = useState(null);
   const { validToken } = useAuth();
   const [bookings, setBookings] = useState([]);
@@ -45,7 +46,7 @@ const BookingListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
-          status: "active"
+          status: status || "active"
         },
       });
 
@@ -99,13 +100,9 @@ const BookingListPage = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, status]);
 
   const BOOKING_STATUSES = [
-    "partstatusnew",
-    "partstatusconfirm",
-    "partstatusapprove",
-    "partstatusreject",
     "new",
     "assign",
     "accept",
@@ -113,6 +110,10 @@ const BookingListPage = () => {
     "reject",
     "complete",
     "cancel",
+    "partstatusnew",
+    "partstatusconfirm",
+    "partstatusapprove",
+    "partstatusreject",
   ];
 
   const updateBookingStatus = async (bookingId) => {
@@ -139,7 +140,7 @@ const BookingListPage = () => {
       <div className="page-wrapper page-settings">
         <div className="content">
           <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-            <h5>Active Bookings {bookings?.length}</h5>
+            <h5>Bookings {bookings?.length}</h5>
 
             <div className="d-flex gap-2 align-items-center">
               {/* Search */}
@@ -224,17 +225,17 @@ const BookingListPage = () => {
                             <div className="d-flex align-items-center gap-2">
                               <select
                                 className="form-select form-select-sm"
-                                value={statusMap[d._id] || d.status}
+                                value={statusMap[d?._id] || d?.status}
                                 onChange={(e) =>
                                   setStatusMap({
                                     ...statusMap,
-                                    [d._id]: e.target.value,
+                                    [d?._id]: e.target.value,
                                   })
                                 }
                               >
-                                {BOOKING_STATUSES.map((status) => (
+                                {BOOKING_STATUSES?.map((status) => (
                                   <option key={status} value={status}>
-                                    {status.toUpperCase()}
+                                    {status?.toUpperCase()}
                                   </option>
                                 ))}
                               </select>
