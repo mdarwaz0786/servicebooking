@@ -13,10 +13,12 @@ const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
-  const { pId, type, amount } = req.body;
+  const { pId, type, amount, userId } = req.body;
+  // const userId = req.user?._id;
 
-  let itemData, bookingData, userId, bookingItems;
+  let itemData, bookingData, bookingItems;
   let payableAmount = 0;
+  let gstPercent = 0;
 
   if (type == 'booking') {
     // Get cart data
@@ -27,6 +29,8 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
     const { cartProducts, amountData } = await getCartData(userId);
     itemData = bookingItems;
+    amount = bookingData.amount;
+    gstPercent = bookingData.gstPercent;
     payableAmount = bookingData.payableAmount;
   }
   else if (type == "wallet") {
@@ -35,7 +39,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     }
     payableAmount = amount;
   }
-
+  console.log(payableAmount)
 
   // Create Razorpay order
   const razorpayOrder = await createRazorpayOrder(payableAmount);
@@ -50,9 +54,9 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     type: 1,
     itemData: itemData,
     paymentBy: "razorpay",
-    amount: bookingData.amount,
-    gstPercent: bookingData.gstPercent,
-    finalAmount: bookingData.payableAmount,
+    amount: amount,
+    gstPercent: gstPercent,
+    finalAmount: payableAmount,
     status: "pending",
     paymentDate: '',
     paymentTime: '',
@@ -135,7 +139,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       transactionType: "Credit",
       transactionId: transactionData.transactionId,
       purpose: "Wallet Recharge",
-      createdBy: req.user?._id,
+      createdBy: transactionData.userId,
     });
   }
 
