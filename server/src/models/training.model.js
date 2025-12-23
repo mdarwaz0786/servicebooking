@@ -92,4 +92,17 @@ trainingSchema.pre("findOneAndUpdate", function (next) {
   next();
 });
 
+trainingSchema.virtual("isNextSchedule").get(function () {
+  return this.startDate > new Date();
+});
+
+trainingSchema.virtual("trainigSubmit", {
+  ref: "TrainingScheduleSubmit",
+  localField: "_id",
+  foreignField: "trainingId",
+  justOne: true,
+});
+
+
+
 export default mongoose.model("Training", trainingSchema);

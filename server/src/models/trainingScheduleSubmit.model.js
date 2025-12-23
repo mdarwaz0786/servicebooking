@@ -5,9 +5,9 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  trainingScheduleId: {
+  trainingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "TrainingSchedule",
+    ref: "Training",
   },
   scheduleDate: {
     type: Date,
@@ -21,58 +21,9 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "ServiceManProfile",
   },
-  trainingId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Training",
-  },
-  provider: {
-    providerId: {
-      type: mongoose.Schema.Types.ObjectId,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    categoryIds: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    }],
-    name: String,
-    email: String,
-    mobile: String,
-    dob: String,
-    profileImage: String,
-    experienceLevel: String,
-    companyName: String,
-    permanentAddress: String,
-    currentAddress: String,
-    referenceName1: String,
-    referenceMobile1: String,
-    referenceName2: String,
-    referenceMobile2: String,
-  },
-  training: {
-    trainingId: {
-      type: mongoose.Schema.Types.ObjectId,
-    },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    },
-    subject: String,
-    firstName: String,
-    lastName: String,
-    fullName: String,
-    startDate: Date,
-    startTime: String,
-    endTime: String,
-    location: String,
-    maxParticipant: Number,
-    description: String,
-  },
   trainingScheduleStatus: {
     type: String,
-    enum: ["New", "Confirm", "Reject", "Complete"],
+    enum: ["New", "Confirm", "Reject","Present","Absent","Fail","Complete"],
     default: "New",
   },
   remarks: {

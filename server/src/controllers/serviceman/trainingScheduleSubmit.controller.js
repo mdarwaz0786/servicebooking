@@ -1,4 +1,4 @@
-import TrainingScheduleModel from "../../models/trainingSchedule.model.js";
+import TrainingScheduleSubmitModel from "../../models/trainingScheduleSubmit.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import UserModel from "../../models/user.model.js";
 import Training from "../../models/training.model.js";
@@ -27,8 +27,8 @@ export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
   const training = await Training.findById(trainingId);
   if (!training) throw new ApiError(404, "Training not found");
 
-  const submit = await TrainingScheduleModel.create({
-    providerId: provider?._id,
+  const submit = await TrainingScheduleSubmitModel.create({
+    providerId: userId,
     trainingId,
     scheduleDate,
     scheduleTime,
@@ -49,29 +49,27 @@ export const getTrainingScheduleSubmitById = asyncHandler(async (req, res) => {
   const existingUser = await UserModel.findById(userId);
   if (!existingUser) throw new ApiError(404, "User not found");
 
-  const provider = await ServiceManProfileModel.findOne({ userId: existingUser?._id });
-  if (!provider) throw new ApiError(404, "Provider not found");
 
-  const submit = await TrainingScheduleModel
-    .findOne({ providerId: provider?._id })
-    .populate({
-      path: "trainingId",
-      select: ""
-    })
-    .populate({
-      path: "providerId",
-      select: "",
-      populate: [
-        {
-          path: "categoryIds",
-          select: "name icon image"
-        },
-        {
-          path: "userId",
-          select: "-password -role"
-        }
-      ]
-    })
+  const submit = await TrainingScheduleSubmitModel
+    .findOne({ providerId: userId })
+    // .populate({
+    //   path: "trainingId",
+    //   select: ""
+    // })
+    // .populate({
+    //   path: "providerId",
+    //   select: "",
+    //   populate: [
+    //     {
+    //       path: "categoryIds",
+    //       select: "name icon image"
+    //     },
+    //     {
+    //       path: "userId",
+    //       select: "-password -role"
+    //     }
+    //   ]
+    // })
     .lean();
 
   if (!submit) {

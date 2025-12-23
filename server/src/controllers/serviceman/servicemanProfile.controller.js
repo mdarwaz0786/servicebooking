@@ -100,13 +100,18 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 // Get Single Profile by ID
 export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
+  
 
   const profile = await ServiceManProfileModel
     .findOne({ userId })
     .populate("categories")
     .populate("user")
     .populate("kyc")
-    .populate("trainingScheduleSubmit")
+    // .populate("trainingScheduleSubmit")
+    .populate({
+      path: "trainingScheduleSubmit",
+      match: { providerId: userId },   // 👈 USER ID MATCH
+    })
 
   if (!profile) throw new ApiError(404, "Profile not found");
 
