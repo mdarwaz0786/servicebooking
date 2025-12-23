@@ -283,6 +283,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
     delete: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
   },
+  zone: {
+    create: `${BASE_URL}/api/v1/admin/zone`,
+    get: `${BASE_URL}/api/v1/admin/zone`,
+    update: `${BASE_URL}/api/v1/admin/zone`,
+    delete: `${BASE_URL}/api/v1/admin/zone`,
+  },
   auth: {
     login: `${BASE_URL}/api/v1/admin/auth/login`,
     loggedIn: `${BASE_URL}/api/v1/admin/auth/loggedIn`,

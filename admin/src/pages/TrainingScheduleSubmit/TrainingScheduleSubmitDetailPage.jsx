@@ -10,15 +10,9 @@ const TrainingScheduleSubmitDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { validToken } = useAuth();
-
   const { record } = location.state || {};
 
-  console.log(record)
-
-  const [trainingScheduleStatus, setTrainingScheduleStatus] = useState(
-    record?.trainingScheduleStatus || "New"
-  );
-
+  const [trainingScheduleStatus, setTrainingScheduleStatus] = useState(record?.trainingScheduleStatus || "New");
   const [remarks, setRemarks] = useState(record?.remarks || "");
 
   if (!record) {
@@ -27,9 +21,9 @@ const TrainingScheduleSubmitDetailPage = () => {
         <div className="content text-center">No data available</div>
       </div>
     );
-  }
+  };
 
-  const { provider, training } = record;
+  const { training, profile } = record;
 
   const handleUpdate = async () => {
     try {
@@ -63,8 +57,8 @@ const TrainingScheduleSubmitDetailPage = () => {
           <div className="card-header bg-primary text-white d-flex align-items-center">
             <img
               src={
-                provider?.profileImage
-                  ? `${BASE_URL}/${provider?.profileImage}`
+                profile?.profileImage
+                  ? `${BASE_URL}/${profile?.profileImage}`
                   : "https://via.placeholder.com/100"
               }
               alt="Provider"
@@ -72,9 +66,9 @@ const TrainingScheduleSubmitDetailPage = () => {
               style={{ width: 90, height: 90, objectFit: "cover" }}
             />
             <div>
-              <h6 className="mb-0" style={{ color: "#fff" }}>{provider?.name}</h6>
-              <small>{provider?.email}</small>
-              <div className="mt-1">{provider?.mobile}</div>
+              <h6 className="mb-0" style={{ color: "#fff" }}>{profile?.name}</h6>
+              <small>{profile?.email}</small>
+              <div className="mt-1">{profile?.mobile}</div>
             </div>
           </div>
 
@@ -86,9 +80,9 @@ const TrainingScheduleSubmitDetailPage = () => {
               <div className="col-md-6">
                 <h6 className="border-bottom pb-2">Provider Info</h6>
                 <ul className="list-unstyled mt-3">
-                  <li><strong>Experience:</strong> {provider?.experienceLevel}</li>
-                  <li><strong>Company:</strong> {provider?.companyName}</li>
-                  <li><strong>Address:</strong> {provider?.currentAddress}</li>
+                  <li><strong>Experience:</strong> {profile?.experienceLevel}</li>
+                  <li><strong>Company:</strong> {profile?.companyName}</li>
+                  <li><strong>Address:</strong> {profile?.currentAddress}</li>
                 </ul>
               </div>
 
@@ -139,6 +133,9 @@ const TrainingScheduleSubmitDetailPage = () => {
                     <option value="Confirm">Confirm</option>
                     <option value="Reject">Reject</option>
                     <option value="Complete">Complete</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Fail">Fail</option>
                   </select>
 
                   <textarea

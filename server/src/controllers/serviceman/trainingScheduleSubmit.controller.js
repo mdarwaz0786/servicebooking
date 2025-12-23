@@ -33,6 +33,7 @@ export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
     scheduleDate,
     scheduleTime,
     createdBy: userId,
+    user: userId,
   });
 
   return res.status(201).json({

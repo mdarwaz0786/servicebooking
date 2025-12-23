@@ -100,7 +100,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 // Get Single Profile by ID
 export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
-  
+
 
   const profile = await ServiceManProfileModel
     .findOne({ userId })
@@ -154,5 +154,28 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
       totalEarning: 1999,
       completedJob: completedBookingCount,
     },
+  });
+});
+
+// Get Serviceman zone
+export const getServicemanZone = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  const data = await ServiceManProfileModel
+    .findOne({ userId })
+    .select("zones")
+    .populate("zones")
+
+  if (!data) {
+    return res.status(404).json({
+      success: false,
+      message: "Serviceman zones not found",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Data fetched successfully",
+    data,
   });
 });

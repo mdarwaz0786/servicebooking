@@ -93,6 +93,15 @@ const serviceManProfileSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  canUpdate: {
+    type: Number,
+    enum: [1, 0],
+    default: 1,
+  },
+  zones: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Zone"
+  }],
   status: {
     type: Boolean,
     default: false,

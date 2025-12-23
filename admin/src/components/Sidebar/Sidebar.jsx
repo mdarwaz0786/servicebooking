@@ -353,14 +353,14 @@ const Sidebar = () => {
                     <span>Training</span>
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     to="/training-schedule"
                     className={currentPath === "/training-schedule" ? "active" : ""}
                   >
                     <span>Training Schedule</span>
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     to="/training-schedule-submit"
@@ -369,14 +369,14 @@ const Sidebar = () => {
                     <span>Training Schedule Submit</span>
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     to="/training-attendance"
                     className={currentPath === "/training-attendance" ? "active" : ""}
                   >
                     <span>Training Attendance</span>
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     to="/earning"

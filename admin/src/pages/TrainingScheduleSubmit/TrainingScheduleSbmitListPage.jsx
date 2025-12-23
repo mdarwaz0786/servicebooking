@@ -17,6 +17,7 @@ const TrainingScheduleSubmitListPage = () => {
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [statusMap, setStatusMap] = useState({});
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
@@ -108,6 +109,27 @@ const TrainingScheduleSubmitListPage = () => {
     fetchTrainingScheduleSubmit();
   }, [page, limit, debouncedSearch, sort]);
 
+  const STATUSES = ["New", "Confirm", "Reject", "Present", "Absent", "Fail", "Complete"];
+
+  const updateStatus = async (id) => {
+    try {
+      const response = await axios.patch(
+        `${apis.trainingScheduleSubmit.update}/${id}`,
+        { trainingScheduleStatus: statusMap[id] },
+        {
+          headers: { Authorization: validToken },
+        }
+      );
+
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
+        fetchTrainingScheduleSubmit();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
@@ -164,6 +186,7 @@ const TrainingScheduleSubmitListPage = () => {
                     <th>Provider</th>
                     <th>Date</th>
                     <th>Time</th>
+                    <th>Training Status</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -174,9 +197,38 @@ const TrainingScheduleSubmitListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.training?.fullName}</td>
-                        <td>{d?.provider?.name}</td>
+                        <td>{d?.profile?.name}</td>
                         <td>{formatDate(d?.scheduleDate)}</td>
                         <td>{d?.scheduleTime}</td>
+                        <td>
+                          <div className="d-flex align-items-center gap-2">
+                            <select
+                              className="form-select form-select-sm"
+                              value={statusMap[d?._id] || d?.trainingScheduleStatus}
+                              onChange={(e) =>
+                                setStatusMap({
+                                  ...statusMap,
+                                  [d?._id]: e.target.value,
+                                })
+                              }
+                            >
+                              {STATUSES?.map((status) => (
+                                <option key={status} value={status}>
+                                  {status?.toUpperCase()}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              className="btn btn-sm btn-success"
+                              type="button"
+                              onClick={() => updateStatus(d?._id)}
+                              disabled={statusMap[d?._id] === d?.status}
+                            >
+                              Update
+                            </button>
+                          </div>
+                        </td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

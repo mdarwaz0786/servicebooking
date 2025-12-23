@@ -41,7 +41,7 @@ export const getAddressById = asyncHandler(async (req, res) => {
 
 // Update address
 export const updateAddress = asyncHandler(async (req, res) => {
-  const { houseNumber, landmark, deliveryPersonName, type } = req.body;
+  const { houseNumber, landmark, deliveryPersonName, type, lat, long } = req.body;
 
   const address = await AddressModel.findOne({ _id: req.params.id, userId: req.user?._id });
   if (!address) {
@@ -52,6 +52,8 @@ export const updateAddress = asyncHandler(async (req, res) => {
   address.landmark = landmark || address.landmark;
   address.deliveryPersonName = deliveryPersonName || address.deliveryPersonName;
   address.type = type || address.type;
+  address.lat = lat || address.lat;
+  address.long = long || address.long;
   address.updatedBy = req.user?._id;
 
   await address.save();

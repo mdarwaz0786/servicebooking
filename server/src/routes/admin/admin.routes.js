@@ -54,6 +54,7 @@ import disclaimerRoutes from "./discliamer.routes.js";
 import metaTagRoutes from "./metaTag.route.js";
 import dashboardRoutes from "./dashboard.route.js";
 import servicemanCertificateRoutes from "./servicemanCertificate.routes.js";
+import zoneRoutes from "./zone.route.js";
 
 const router = express.Router();
 
@@ -112,5 +113,6 @@ router.use("/area-zone", areaZoneRoutes);
 router.use("/meta-tag", metaTagRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/serviceman-certificate", servicemanCertificateRoutes);
+router.use("/zone", zoneRoutes);
 
 export default router;

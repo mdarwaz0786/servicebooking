@@ -14,6 +14,7 @@
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
     "@ckeditor/ckeditor5-build-decoupled-document": "^41.4.2",
     "@ckeditor/ckeditor5-react": "^11.0.0",
+    "@react-google-maps/api": "^2.20.8",
     "axios": "^1.11.0",
     "bootstrap": "^5.3.8",
     "draft-js": "^0.11.7",
