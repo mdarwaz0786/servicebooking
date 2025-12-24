@@ -58,8 +58,9 @@ export const getWallets = asyncHandler(async (req, res) => {
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const wallets = await WalletModel.find(filters)
-    .populate("providerId")
+  const wallets = await WalletModel
+    .find(filters)
+    .populate("provider")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -83,7 +84,7 @@ export const getWallets = asyncHandler(async (req, res) => {
 });
 
 export const getWalletById = asyncHandler(async (req, res) => {
-  const wallet = await WalletModel.findById(req.params.id).populate("providerId");
+  const wallet = await WalletModel.findById(req.params.id).populate("provider");
   if (!wallet) throw new ApiError(404, "Wallet not found");
   return res.status(200).json({ success: true, data: wallet });
 });

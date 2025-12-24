@@ -8,6 +8,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import compressImage from '../../helpers/compressImage.js';
+import { adjustWalletCredit, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -362,6 +363,8 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "User not found");
 
+  await ensureSufficientCredit(userId);
+
   const serviceman = await ServiceManProfileModel.findOne({ userId });
   if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
@@ -386,6 +389,8 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
 
   await booking.save();
   await servicemanBooking.save();
+
+  await adjustWalletCredit(userId, status)
 
   return res.status(200).json({
     success: true,
@@ -543,12 +548,18 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
 
 // ================= Comlete booking =================
 export const servicemanBookingComplete = asyncHandler(async (req, res) => {
-
   const {
     bookingId,
     servicemanBookingId,
     paymentMode,
   } = req.body;
+
+  const userId = req.user?._id;
+
+  const serviceman = await ServiceManProfileModel.findOne({ userId });
+  if (!serviceman) throw new ApiError(404, "Service man profile not found");
+
+  const servicemanId = serviceman?._id;
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
@@ -561,6 +572,12 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { status: "complete" },
     { new: true }
   );
+
+  const earning = await createServicemanEarning(servicemanId, servicemanBookingId, userId)
+
+  if (!earning) {
+    throw new ApiError(400, "Failed to create serviceman earning");
+  };
 
   return res.status(201).json({
     success: true,

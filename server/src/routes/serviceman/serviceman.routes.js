@@ -11,6 +11,10 @@ import trainingScheduleSubmitRoutes from "./trainingScheduleSubmit.route.js";
 import walletRoutes from "./wallet.route.js";
 import rateCardRoutes from "./rateCard.route.js";
 import bookingAdditionalPartRoute from "./bookingAdditionalPart.route.js";
+import dashboardRoute from "./dashboard.routes.js";
+import supportRoute from "./support.routes.js";
+import nearByRoute from "./withinLocation.routes.js";
+import servicemanEarningRoute from "./servicemanEarning.route.js";
 
 const router = express.Router();
 
@@ -26,5 +30,9 @@ router.use("/training-schedule-submit", trainingScheduleSubmitRoutes);
 router.use("/wallet", walletRoutes);
 router.use("/rate-card", rateCardRoutes);
 router.use("/booking-additional-item", bookingAdditionalPartRoute);
+router.use("/dashboard", dashboardRoute);
+router.use("/support", supportRoute);
+router.use("/nearby", nearByRoute);
+router.use("/serviceman-earning", servicemanEarningRoute);
 
 export default router;

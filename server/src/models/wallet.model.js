@@ -4,7 +4,7 @@ const walletSchema = new mongoose.Schema(
   {
     providerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "ServiceManProfile",
+      ref: "User",
       required: [true, "Provider ID is required"],
     },
     creditPoints: {
@@ -22,11 +22,11 @@ const walletSchema = new mongoose.Schema(
     },
     dateOfDeposit: {
       type: Date,
-      required: [true, "Date of deposit is required"],
+      default: new Date()
     },
     paymentMode: {
       type: String,
-      enum: ["Online", "Cash"],
+      enum: ["Online", "Cash", "System"],
       required: [true, "Payment mode is required"],
     },
     transactionType: {
@@ -61,7 +61,7 @@ const walletSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 walletSchema.pre("save", function (next) {
@@ -79,6 +79,13 @@ walletSchema.pre("findOneAndUpdate", function (next) {
   }
 
   next();
+});
+
+walletSchema.virtual("provider", {
+  ref: "ServiceManProfile",
+  localField: "providerId",
+  foreignField: "userId",
+  justOne: true,
 });
 
 export default mongoose.model("Wallet", walletSchema);
