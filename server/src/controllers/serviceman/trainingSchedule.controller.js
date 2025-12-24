@@ -17,6 +17,10 @@ export const getNextTrainingSchedule = asyncHandler(async (req, res) => {
     })
     .sort({ startDate: 1 }).lean();
 
+    if (!nextSchedule) {
+      throw new ApiError(404, "No upcoming training schedule found");
+    };
+
     let trainer = {
       subject:nextSchedule.subject,
       fullName:nextSchedule.fullName,
@@ -29,9 +33,6 @@ export const getNextTrainingSchedule = asyncHandler(async (req, res) => {
     }
     let trainigSubmit = nextSchedule.trainigSubmit;
 
-  if (!nextSchedule) {
-    throw new ApiError(404, "No upcoming training schedule found");
-  };
 
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: {_id:nextSchedule._id,trainer:trainer,trainigSubmit:trainigSubmit} });
 });
