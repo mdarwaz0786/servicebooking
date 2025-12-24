@@ -57,7 +57,7 @@ const WalletFormPage = () => {
             const d = res.data.data;
 
             setFormData({
-              providerId: d.providerId?._id || "",
+              providerId: d.provider?.userId || "",
               depositAmount: d.depositAmount || "",
               depositStatus: d.depositStatus || "",
               dateOfDeposit: d.dateOfDeposit
@@ -160,7 +160,7 @@ const WalletFormPage = () => {
                     }
                     placeholder="Select Provider"
                     labelKey="name"
-                    valueKey="_id"
+                    valueKey="userId"
                   />
                 </div>
 
