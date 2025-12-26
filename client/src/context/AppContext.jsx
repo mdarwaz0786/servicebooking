@@ -464,7 +464,7 @@ export const AppProvider = ({ children }) => {
 
 
 
-  const handleCartAddRemove = async (item, type) => {
+  const handleCartAddRemove = async (item, type, remove=null) => {
     let quantity = item?.quantity;
     let serviceId = item._id;
     if (item.serviceId) serviceId = item.serviceId;
@@ -472,7 +472,10 @@ export const AppProvider = ({ children }) => {
       quantity += 1;
     }
     else {
-      quantity = quantity > 0 ? quantity - 1 : 0;
+      if(remove)
+        quantity = 0;
+      else
+        quantity = quantity > 0 ? quantity - 1 : 0;
     }
 
     if(quantity>item.maxBookingQuantity)

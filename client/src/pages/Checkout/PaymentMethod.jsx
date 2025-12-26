@@ -48,12 +48,7 @@ const PaymentMethod = () => {
         if (response.success) {
 
           
-          setbookingData(response.data.booking)
-          setbookingItems(response.data.items)
-          setbookingAmount(response.data.amountData)
-          toggleStep('payment', false);
-          setcartItems([]);
-          setcartAmount([]);
+         
           let success;
           if(paymentMode=='online')
           {
@@ -71,18 +66,26 @@ const PaymentMethod = () => {
           
           
           if (success) {
-            // toggleStep('confirmation', true);   // ✅ move forward
+            
+            setbookingData(response.data.booking)
+            setbookingItems(response.data.items)
+            setbookingAmount(response.data.amountData)
             toggleStep('payment', false);
-            // navigate("/user/booking/"+response.data.booking._id);
+            setcartItems([]);
+            setcartAmount([]);
             navigate("/user");
+
+
+            // toggleStep('confirmation', true);   // ✅ move forward
+            // navigate("/user/booking/"+response.data.booking._id);
           }
           else{
-            navigate("/");
+            // navigate("/");
           }
           
         } 
       } catch (error) { 
-        navigate("/");
+        // navigate("/");
         console.error("Cart API Error:", error);
       }
    }
