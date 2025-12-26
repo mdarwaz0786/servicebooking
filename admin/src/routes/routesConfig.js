@@ -115,6 +115,7 @@ import TrainingScheduleSubmitDetailPage from "../pages/TrainingScheduleSubmit/Tr
 import ResumeListPage from "../pages/Resume/ResumeListPage";
 import CreateZonePage from "../pages/Zone/CreateZonePage";
 import ZoneListPage from "../pages/Zone/ZoneListPage";
+import ServicemanEarningListPage from "../pages/ServicemanEarning/ServicemanEarningListPage";
 
 const routesConfig = {
   private: [
@@ -164,6 +165,8 @@ const routesConfig = {
     { path: "/earning", element: EarningListPage },
     { path: "/add-earning", element: AddEarningPage },
     { path: "/update-earning/:id", element: UpdateEarningPage },
+
+    { path: "/serviceman-earning", element: ServicemanEarningListPage },
 
     { path: "/service-man-profile", element: ServicemanProfileListPage },
     { path: "/service-man-profile-detail", element: ServicemanProfileDetailPage },

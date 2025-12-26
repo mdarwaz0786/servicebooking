@@ -63,7 +63,9 @@ export const createBooking = asyncHandler(async (req, res) => {
   await BookingItemModel.insertMany(bookingItems);
 
   // Clear User Cart
-  await CartModel.deleteMany({ userId });
+  if (paymentMode == 'cod') {
+    await CartModel.deleteMany({ userId });
+  }
 
   return res.status(201).json({
     success: true,

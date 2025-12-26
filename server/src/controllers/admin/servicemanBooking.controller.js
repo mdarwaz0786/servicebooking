@@ -5,7 +5,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
-import { ensureSufficientCredit } from "../../utils/wallet.utils.js";
+import { adjustWalletCredit, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 
 // Create Service Man Booking
 export const createServiceManBooking = asyncHandler(async (req, res) => {
@@ -31,7 +31,7 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Serviceman not found");
   }
 
-  const isSufficient = ensureSufficientCredit(serviceman?.userId);
+  const isSufficient = await ensureSufficientCredit(serviceman?.userId);
 
   if (!isSufficient) {
     throw new ApiError(403, "Insufficient credit points");
@@ -50,11 +50,10 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
       cancelTime: getCurrentIndianTime(),
     });
 
-    const serviceman = ServiceManProfileModel.findById(servicemanId).select("userId");
+    const status = "cancel";
+    const latestServicemanId = latestAssignment?.servicemanId;
 
-    if (!serviceman) {
-      throw new ApiError(400, "Serviceman not found");
-    }
+    await adjustWalletCredit(latestServicemanId, status);
 
     await BookingModel.findByIdAndUpdate(bookingId, {
       $set: {

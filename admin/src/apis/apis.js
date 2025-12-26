@@ -78,6 +78,10 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/earning`,
     delete: `${BASE_URL}/api/v1/admin/earning`,
   },
+  servicemanEarning: {
+    get: `${BASE_URL}/api/v1/admin/serviceman-earning`,
+    update: `${BASE_URL}/api/v1/admin/serviceman-earning`,
+  },
   banner: {
     create: `${BASE_URL}/api/v1/admin/home-page-banner`,
     get: `${BASE_URL}/api/v1/admin/home-page-banner`,

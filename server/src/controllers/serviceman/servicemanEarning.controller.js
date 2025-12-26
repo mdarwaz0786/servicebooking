@@ -33,6 +33,68 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
             },
           },
           { $unwind: { path: "$booking", preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
+              from: "servicemanbookings",
+              localField: "servicemanBooking",
+              foreignField: "_id",
+              as: "servicemanBooking",
+            },
+          },
+          { $unwind: { path: "$servicemanBooking", preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "customer",
+            },
+          },
+          { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
+              from: "servicemanprofiles",
+              localField: "servicemanId",
+              foreignField: "userId",
+              as: "servicemanProfile",
+            },
+          },
+          { $unwind: { path: "$servicemanProfile", preserveNullAndEmptyArrays: true } },
+          {
+            $project: {
+              _id: 1,
+              payableAmount: 1,
+              earningPercent: 1,
+              earningAmount: 1,
+              payoutStatus: 1,
+              service: 1,
+              createdAt: 1,
+              booking: {
+                _id: "$booking._id",
+                bookingId: "$booking.bookingId",
+                status: "$booking.status",
+                payableAmount: "$booking.payableAmount",
+                scheduleDate: "$booking.scheduleDate",
+                scheduleTime: "$booking.scheduleTime",
+              },
+              servicemanBooking: {
+                _id: "$servicemanBooking._id",
+                status: "$servicemanBooking.status",
+                acceptDate: "$servicemanBooking.acceptDate",
+                completeDate: "$servicemanBooking.endDate",
+              },
+              customer: {
+                _id: "$customer._id",
+                name: "$customer.name",
+                mobile: "$customer.mobile",
+              },
+              serviceman: {
+                _id: "$servicemanProfile._id",
+                name: "$servicemanProfile.name",
+                mobile: "$servicemanProfile.mobile",
+              },
+            },
+          },
         ],
         summary: [
           {
@@ -55,31 +117,26 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
   ]);
 
   const result = aggregation[0] || {};
-  const earnings = result.data || [];
-  const summary = result.summary || {
+  const earnings = result?.data || [];
+  const summary = result?.summary || {
     totalEarning: 0,
     totalPayable: 0,
     totalRecords: 0,
   };
 
   const totalPages = Math.ceil(summary.totalRecords / limit);
-  const total = await ServicemanEarningModel.countDocuments(matchStage)
 
   return res.status(200).json({
     success: true,
     message: "Serviceman earnings fetched successfully",
     data: earnings,
-    summary: {
-      totalEarning: summary.totalEarning,
-      totalPayable: summary.totalPayable,
-      totalRecords: summary.totalRecords,
-    },
-    total,
+    summary,
     page,
     limit,
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    pagination: buildPagination({ page, limit, total }),
+    pagination: buildPagination({ page, limit, total: summary.totalRecords }),
   });
 });
+

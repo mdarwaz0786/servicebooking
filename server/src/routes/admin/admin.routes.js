@@ -55,6 +55,7 @@ import metaTagRoutes from "./metaTag.route.js";
 import dashboardRoutes from "./dashboard.route.js";
 import servicemanCertificateRoutes from "./servicemanCertificate.routes.js";
 import zoneRoutes from "./zone.route.js";
+import servicemanEarningRoutes from "./servicemanEarning.routes.js";
 
 const router = express.Router();
 
@@ -114,5 +115,6 @@ router.use("/meta-tag", metaTagRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/serviceman-certificate", servicemanCertificateRoutes);
 router.use("/zone", zoneRoutes);
+router.use("/serviceman-earning", servicemanEarningRoutes);
 
 export default router;

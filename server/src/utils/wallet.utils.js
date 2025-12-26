@@ -40,7 +40,7 @@ export const ensureSufficientCredit = async (providerId, ACCEPT_CREDIT_POINTS = 
   const totalCreditPoints = await getTotalCreditPoints(providerId);
 
   if (totalCreditPoints < ACCEPT_CREDIT_POINTS) {
-    throw new ApiError(403, "Low credit point");
+    throw new ApiError(403, "Low credit points");
   };
 
   return true;
@@ -103,7 +103,7 @@ export const createServicemanEarning = async (
   servicemanBookingId,
   actionBy,
 ) => {
-  if (!servicemanId || !servicemanBookingId) return null;
+  if (!servicemanId || !servicemanBookingId || !actionBy) return null;
 
   // 1️⃣ Prevent duplicate earning entry
   const exists = await ServicemanEarningModel.findOne({
@@ -126,9 +126,7 @@ export const createServicemanEarning = async (
   if (!booking) throw new ApiError(404, "Booking not found");
 
   // 4️⃣ Fetch booking items
-  const bookingItems = await BookingItemModel.find({ bookingId: booking?._id })
-    .populate("serviceId")
-    .lean();
+  const bookingItems = await BookingItemModel.find({ bookingId: booking?._id }).populate("serviceId").lean();
 
   // 5️⃣ Fetch additional parts
   const additionalParts = await BookingAdditionalPartModel.find({
@@ -145,21 +143,10 @@ export const createServicemanEarning = async (
     gstAmount: booking?.gstAmount,
     discountAmount: booking?.discountAmount,
     totalPayableAmount: booking?.payableAmount,
-    items: bookingItems?.map((item) => ({
-      serviceId: item?.serviceId,
-      serviceName: item?.serviceId?.name || null,
-      quantity: item?.quantity,
-      mrpPrice: item?.mrpPrice,
-      salePrice: item?.salePrice,
-      total: item?.salePrice * item?.quantity,
-    })),
-    additionalParts: additionalParts?.map((part) => ({
-      partId: part._id,
-      partName: part.rateId?.name || null,
-      quantity: part.quantity,
-      rate: part.rate,
-      total: part.rate * part.quantity,
-    })),
+    items: bookingItems,
+    additionalParts: additionalParts,
+    booking: booking,
+    servicemanBooking: smBooking,
   };
 
   // 7️⃣ Calculate earning

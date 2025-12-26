@@ -84,7 +84,7 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
       };
     } catch (error) {
       console.log(error.message);
-      toast.error("Error while assigning");
+      toast.error(error?.response?.data?.message || "Error while assigning");
     } finally {
       setLoading(false);
       modalInstance.current?.hide();

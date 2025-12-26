@@ -52,6 +52,7 @@ service man
 
 // Admim ENV: 
 VITE_API_BASE_URL=http://145.223.18.56:3001
+VITE_GOOGLE_MAP_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
 
 // client ENV:
 VITE_API_SERVER_BASE_URL=http://145.223.18.56:3001/

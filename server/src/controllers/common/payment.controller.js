@@ -13,7 +13,7 @@ const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
-  const { pId, type, amount, userId } = req.body;
+  let { pId, type, amount, userId } = req.body;
   // const userId = req.user?._id;
 
   let itemData, bookingData, bookingItems;
@@ -22,12 +22,12 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
   if (type == 'booking') {
     // Get cart data
-
     bookingData = await BookingModel.findById({ _id: pId });
     bookingItems = await BookingItemModel.find({ bookingId: bookingData._id });
     userId = bookingData.userId;
 
-    const { cartProducts, amountData } = await getCartData(userId);
+    // const { cartProducts, amountData } = await getCartData(userId);
+
     itemData = bookingItems;
     amount = bookingData.amount;
     gstPercent = bookingData.gstPercent;
@@ -125,8 +125,11 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       paymentStatus: 1,
       paymentBy: "razorpay",
       createdBy: req.user?._id,
-      opt: "1234"
+      opt: generateOtp,
     }, { new: true })
+
+    await CartModel.deleteMany({ "userId": transactionData.userId });
+
   }
   // 🔹 WALLET FLOW (NEW)
   else if (transactionData.productType === "wallet") {

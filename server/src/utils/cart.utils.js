@@ -24,22 +24,22 @@ export const getCartData = async (userId) => {
 
 
   cartItems.forEach((item) => {
-    amount+=item.salePrice*item.quantity;
-    mrpAmount+=item.mrpPrice*item.quantity;
+    amount += item.salePrice * item.quantity;
+    mrpAmount += item.mrpPrice * item.quantity;
 
     taxablePrice += parseFloat(item.taxablePrice);
     transactionCharge += parseFloat(item.transactionCharge);
     taxPercent += parseFloat(item.taxPercent);
 
   });
-  
+
   payableAmount = amount;
-  gstAmount += (transactionCharge+taxablePrice)*18/100;
-  payableAmount+=gstAmount;
+  gstAmount += (transactionCharge + taxablePrice) * 18 / 100;
+  payableAmount += gstAmount;
 
-  payableAmount-=discountAmount;
+  payableAmount -= discountAmount;
 
-  
+
 
 
 
@@ -50,6 +50,7 @@ export const getCartData = async (userId) => {
       amount: amount,
       mrpAmount: mrpAmount,
       gstAmount: gstAmount,
+      gstPercent: 18,
       discountAmount: discountAmount,
       payableAmount: payableAmount,
     },
