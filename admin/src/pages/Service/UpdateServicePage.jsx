@@ -265,7 +265,7 @@ const UpdateServicePage = () => {
       const data = new FormData();
       Object.keys(formData).forEach((key) => {
         const value = formData[key];
-        if (value !== null && value !== "" && value !== undefined) {
+        if (value !== null && value !== undefined) {
           data.append(key, value);
         }
       });

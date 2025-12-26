@@ -72,14 +72,14 @@ const Navbar = () => {
             <div className={`dropdown-menu menu-drop-user ${open ? "show" : ""}`}>
               <div className="profilemenu">
                 <div className="subscription-menu">
-                  <ul>
+                  {/* <ul>
                     <li>
                       <Link to="/account-settings">Profile</Link>
                     </li>
                     <li>
                       <Link to="/localization">Settings</Link>
                     </li>
-                  </ul>
+                  </ul> */}
                 </div>
                 <div className="subscription-logout">
                   <button

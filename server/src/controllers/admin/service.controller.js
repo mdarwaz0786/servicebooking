@@ -277,8 +277,8 @@ export const updateService = asyncHandler(async (req, res) => {
   service.mrpPrice = mrpPrice !== undefined ? mrpPrice : service.mrpPrice;
   service.salePrice = salePrice !== undefined ? salePrice : service.salePrice;
   service.timeTaking = timeTaking || service.timeTaking;
-  service.shortDescription = shortDescription || service.shortDescription;
-  service.fullDescription = fullDescription || service.fullDescription;
+  if (shortDescription !== undefined) service.shortDescription = shortDescription;
+  if (fullDescription !== undefined) service.fullDescription = fullDescription;
   service.status = typeof status === "boolean" ? status : service.status;
   service.categoryId = categoryId || service.categoryId;
   service.subCategoryId = subCategoryId || service.subCategoryId;

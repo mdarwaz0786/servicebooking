@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
+import logo from "../../assets/logo.png";
 
 const LoginPage = () => {
   const { storeToken } = useAuth();
@@ -28,7 +29,6 @@ const LoginPage = () => {
     try {
       setLoading(true);
       const response = await axios.post(apis.auth.login, { mobile, password });
-
       if (response?.data?.token) {
         toast.success("Login successful");
         await storeToken(response?.data?.token);
@@ -48,9 +48,13 @@ const LoginPage = () => {
       <div className="card shadow-lg border-0 rounded-4" style={{ width: "400px" }}>
         <div className="card-body p-4">
           <h3 className="card-title text-center mb-4 fw-bold text-primary">Login</h3>
-          <p className="text-muted text-center mb-4">
-            Enter your mobile number and password to login.
-          </p>
+          <div className="text-center mb-4">
+            <img
+              src={logo}
+              alt="Logo"
+              style={{ maxWidth: "200px" }}
+            />
+          </div>
           <form onSubmit={handleLogin}>
             <div className="mb-3">
               <label className="form-label">Mobile Number</label>
@@ -62,6 +66,7 @@ const LoginPage = () => {
                 onChange={(e) => setMobile(e.target.value)}
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Password</label>
               <input
@@ -72,6 +77,7 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
             <div className="d-grid">
               <button
                 type="submit"
@@ -82,6 +88,7 @@ const LoginPage = () => {
               </button>
             </div>
           </form>
+
         </div>
       </div>
     </div>

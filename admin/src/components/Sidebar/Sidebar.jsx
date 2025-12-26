@@ -258,7 +258,7 @@ const Sidebar = () => {
 
             <li>
               <Link to="#"><i className="fe fe-shopping-cart" />
-                <span>  Bookings</span>
+                <span>Bookings</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
               <ul>
@@ -325,7 +325,7 @@ const Sidebar = () => {
 
             <li>
               <Link to="#"><i className="fe fe-award" />
-                <span> Providers</span>
+                <span>Providers</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
               <ul>
@@ -335,6 +335,15 @@ const Sidebar = () => {
                     className={currentPath === "/providers" ? "active" : ""}
                   >
                     <span>Provider List</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/serviceman-earning"
+                    className={currentPath === "/serviceman-earning" ? "active" : ""}
+                  >
+                    <span>Provider Earning</span>
                   </Link>
                 </li>
 

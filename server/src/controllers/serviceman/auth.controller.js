@@ -13,6 +13,9 @@ export const loginUser = asyncHandler(async (req, res) => {
   const otp = generateOtp();
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
+  const UserRecord = await UserModel.findOne({ 'mobile': mobile, 'role': 'user' });
+  if (UserRecord) throw new ApiError(400, "Mobile exist in user account..");
+
   await OtpModel.findOneAndUpdate(
     { mobile },
     { otp: 1234, expiresAt },

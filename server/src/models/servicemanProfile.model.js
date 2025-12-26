@@ -66,22 +66,22 @@ const serviceManProfileSchema = new mongoose.Schema({
   },
   referenceName1: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
   },
   referenceMobile1: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
   },
   referenceName2: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
   },
   referenceMobile2: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
   },
   profileStatus: {
@@ -104,7 +104,7 @@ const serviceManProfileSchema = new mongoose.Schema({
   }],
   status: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

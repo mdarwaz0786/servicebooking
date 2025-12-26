@@ -46,10 +46,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    status: {
+      type: Boolean,
+      default: true,
+    },
     dob: {
       type: String,
       required: false,
-    }
+    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
