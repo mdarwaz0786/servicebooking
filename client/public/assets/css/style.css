@@ -36544,6 +36544,14 @@ p span {
 .policy ul, .policy ol {
     margin: 0 0 0 20px !important;
 }
+.cart-item-f {
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 5px 0;
+}
+.cart-item-f:last-child {
+    margin: 0;
+    border: 0;
+}
 
 @media(max-width: 767px)
 {
