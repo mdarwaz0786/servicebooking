@@ -421,6 +421,14 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/certificate"
+                    className={currentPath === "/certificate" ? "active" : ""}
+                  >
+                    <span>Certificate</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/notification"
                     className={currentPath === "/notification" ? "active" : ""}
                   >

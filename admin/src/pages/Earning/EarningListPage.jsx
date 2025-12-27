@@ -168,6 +168,7 @@ const EarningListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Category</th>
+                    <th>Earning Detail</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -178,6 +179,19 @@ const EarningListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.category?.name}</td>
+                        <td>
+                          <p className="mb-0">Earning Hour1: {d?.earningHour1}</p>
+                          <p className="mb-2">Earning Price1: {d?.earningPrice1}</p>
+
+                          <p className="mb-0">Earning Hour2: {d?.earningHour2}</p>
+                          <p className="mb-2">Earning Price2: {d?.earningPrice2}</p>
+
+                          <p className="mb-0">Earning Hour3: {d?.earningHour3}</p>
+                          <p className="mb-2">Earning Price3: {d?.earningPrice3}</p>
+
+                          <p className="mb-0">Earning Hour4: {d?.earningHour4}</p>
+                          <p className="mb-0">Earning Price4: {d?.earningPrice4}</p>
+                        </td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

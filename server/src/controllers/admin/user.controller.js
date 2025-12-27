@@ -62,6 +62,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   const users = await UserModel
     .find(filters)
+    .populate("profile")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -84,3 +85,53 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     pagination: buildPagination({ page, limit, total }),
   });
 });
+
+// Get user details
+export const getUserDetails = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const user = await UserModel
+    .findById(id)
+    .populate("profile")
+    .select("-password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: "User details fetched successfully",
+    data: user,
+  });
+});
+
+// Update user status
+export const updateUserStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (typeof status !== "boolean") {
+    throw new ApiError(400, "Status must be a boolean value");
+  };
+
+  const user = await UserModel.findById(id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  };
+
+  user.status = status;
+  user.updatedAt = new Date();
+
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "User status updated successfully",
+    data: {
+      _id: user?._id,
+      status: user?.status,
+    },
+  });
+});
+

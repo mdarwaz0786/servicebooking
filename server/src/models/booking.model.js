@@ -129,7 +129,7 @@ bookingSchema.pre("validate", async function (next) {
 
   this.financialYear = financialYear;
   this.sequenceNumber = sequenceNumber;
-  this.bookingId = `GIT-${String(sequenceNumber).padStart(4, "0")}-${financialYear}`;
+  this.bookingId = `GIT${String(sequenceNumber).padStart(4, "0")}/${financialYear}`;
 
   next();
 });

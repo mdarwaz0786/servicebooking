@@ -16,6 +16,7 @@ const KycListPage = () => {
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [statusMap, setStatusMap] = useState({});
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
@@ -91,6 +92,31 @@ const KycListPage = () => {
     fetchKyc();
   }, [page, limit, debouncedSearch, sort]);
 
+  const STATUSES = [
+    "pending",
+    "approved",
+    "rejected"
+  ];
+
+  const updateStatus = async (id) => {
+    try {
+      const response = await axios.patch(
+        `${apis.kyc.update}/${id}`,
+        { status: statusMap[id] },
+        {
+          headers: { Authorization: validToken },
+        }
+      );
+
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
+        fetchKyc();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
@@ -146,7 +172,7 @@ const KycListPage = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Mobile</th>
-                    <th>Status</th>
+                    <th>KYC Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -158,7 +184,33 @@ const KycListPage = () => {
                         <td>{d?.profile?.name}</td>
                         <td>{d?.profile?.email}</td>
                         <td>{d?.user?.mobile}</td>
-                        <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1)}</td>
+                        <div className="d-flex align-items-center gap-2">
+                          <select
+                            className="form-select form-select-sm"
+                            value={statusMap[d?._id] || d?.status}
+                            onChange={(e) =>
+                              setStatusMap({
+                                ...statusMap,
+                                [d?._id]: e.target.value,
+                              })
+                            }
+                          >
+                            {STATUSES?.map((status) => (
+                              <option key={status} value={status}>
+                                {status?.toUpperCase()}
+                              </option>
+                            ))}
+                          </select>
+
+                          <button
+                            className="btn btn-sm btn-success"
+                            type="button"
+                            onClick={() => updateStatus(d?._id)}
+                            disabled={statusMap[d?._id] === d?.status}
+                          >
+                            Update
+                          </button>
+                        </div>
                         <td>
                           <div className="d-flex">
                             <Link to={`/kyc-detail`} state={{ record: d }}>

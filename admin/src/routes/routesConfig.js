@@ -116,6 +116,8 @@ import ResumeListPage from "../pages/Resume/ResumeListPage";
 import CreateZonePage from "../pages/Zone/CreateZonePage";
 import ZoneListPage from "../pages/Zone/ZoneListPage";
 import ServicemanEarningListPage from "../pages/ServicemanEarning/ServicemanEarningListPage";
+import CertificateFormPage from "../pages/Certificate/CertificateFormPage";
+import CertificateListPage from "../pages/Certificate/CertificateListPage";
 
 const routesConfig = {
   private: [
@@ -274,6 +276,10 @@ const routesConfig = {
     { path: "/wallet", element: WalletListPage },
     { path: "/add-wallet", element: WalletFormPage },
     { path: "/update-wallet/:id", element: WalletFormPage },
+
+    { path: "/certificate", element: CertificateListPage },
+    { path: "/add-certificate", element: CertificateFormPage },
+    { path: "/update-certificate/:id", element: CertificateFormPage },
 
     { path: "/add-support", element: SupportFormPage },
     { path: "/update-support/:id", element: SupportFormPage },

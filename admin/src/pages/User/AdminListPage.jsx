@@ -75,6 +75,22 @@ const AdminListPage = () => {
     fetchUsers();
   }, [page, limit, debouncedSearch, sort]);
 
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await axios.patch(
+        `${apis.user.update}/${id}`,
+        { status: !currentStatus },
+        { headers: { Authorization: validToken } }
+      );
+      if (response?.data?.success) {
+        toast.success("Updated successfully");
+        fetchUsers();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
@@ -148,11 +164,22 @@ const AdminListPage = () => {
                     users?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>-</td>
-                        <td>{d?.mobile}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>{d?.name || "-"}</td>
+                        <td>{d?.mobile || "-"}</td>
+                        <td>{d?.email || "-"}</td>
+                        <td>{d?.role || "-"}</td>
+                        <td>
+                          <div className="active-switch">
+                            <label className="switch">
+                              <input
+                                type="checkbox"
+                                checked={d?.status}
+                                onChange={() => toggleStatus(d?._id, d?.status)}
+                              />
+                              <span className="sliders round" />
+                            </label>
+                          </div>
+                        </td>
                         <td>
                           <div className="d-flex">
                             <Link to="#">

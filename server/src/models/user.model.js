@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: {
         values: ["admin", "subadmin", "user", "provider", "serviceman"],
-        message: "Role must be either admin or subadmin or user or provider",
+        message: "Role must be either admin or subadmin or user or provider or serviceman",
       },
       default: "user",
     },
@@ -46,13 +46,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    status: {
-      type: Boolean,
-      default: true,
-    },
     dob: {
       type: String,
       required: false,
+    },
+    status: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },

@@ -4,8 +4,9 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
+import { formatDate } from "../../helpers/formatDate";
 
 const ProviderListPage = () => {
   const { validToken } = useAuth();
@@ -75,6 +76,22 @@ const ProviderListPage = () => {
     fetchUsers();
   }, [page, limit, debouncedSearch, sort]);
 
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await axios.patch(
+        `${apis.user.update}/${id}`,
+        { status: !currentStatus },
+        { headers: { Authorization: validToken } }
+      );
+      if (response?.data?.success) {
+        toast.success("Updated successfully");
+        fetchUsers();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
@@ -140,12 +157,30 @@ const ProviderListPage = () => {
                     users?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>
+                          <img
+                            src={d?.profile?.profileImage ? `${BASE_URL}/${d?.profile?.profileImage}` : "https://via.placeholder.com/50"}
+                            className="me-2"
+                            alt="image"
+                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                          />
+                        </td>
+                        <td>{d?.profile?.name}</td>
                         <td>{d?.mobile}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>{d?.profile?.email}</td>
+                        <td>{formatDate(d?.profile?.dob)}</td>
+                        <td>
+                          <div className="active-switch">
+                            <label className="switch">
+                              <input
+                                type="checkbox"
+                                checked={d?.status}
+                                onChange={() => toggleStatus(d?._id, d?.status)}
+                              />
+                              <span className="sliders round" />
+                            </label>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : !loading || users?.filter?.((u) => u?.role === "provider")?.length == 0 ? (

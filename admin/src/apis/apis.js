@@ -278,14 +278,9 @@ const apis = {
     delete: `${BASE_URL}/api/v1/admin/meta-tag`,
   },
   user: {
-    get: `${BASE_URL}/api/v1/admin/user`,
     register: `${BASE_URL}/api/v1/admin/user/register`,
-  },
-  servicemanCertificate: {
-    create: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
-    get: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
-    update: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
-    delete: `${BASE_URL}/api/v1/admin/serviceman-certificate`,
+    get: `${BASE_URL}/api/v1/admin/user`,
+    update: `${BASE_URL}/api/v1/admin/user`,
   },
   zone: {
     create: `${BASE_URL}/api/v1/admin/zone`,

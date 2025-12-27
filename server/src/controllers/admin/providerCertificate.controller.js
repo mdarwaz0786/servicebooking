@@ -4,6 +4,9 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import { buildPagination } from "../../utils/pagination.js";
+import compressImage from "../../helpers/compressImage.js";
+import fs from "fs";
+import path from "path";
 
 export const createProviderCertificate = asyncHandler(async (req, res) => {
   const {
@@ -23,30 +26,42 @@ export const createProviderCertificate = asyncHandler(async (req, res) => {
   if (!issueDate) throw new ApiError(400, "Issue date is required");
   if (!expiryDate) throw new ApiError(400, "Expiry date is required");
 
-  const image = req.files?.image?.[0] ? req.files.image[0].path : null;
+  let imagePath = null;
 
-  let certificate = await ProviderCertificateModel.create({
-    providerId,
-    title,
-    number,
-    issuedFrom,
-    issueDate,
-    expiryDate,
-    description,
-    image
-  });
+  try {
+    if (req.files?.image?.[0]) {
+      imagePath = await compressImage(req.files.image[0].buffer, "certificate");
+    };
 
-  const slug = await generateUniqueSlug(
-    title,
-    "ProviderCertificate",
-    certificate._id,
-    "provider-certificates"
-  );
+    let certificate = await ProviderCertificateModel.create({
+      providerId,
+      title,
+      number,
+      issuedFrom,
+      issueDate,
+      expiryDate,
+      description,
+      image: imagePath,
+      createdBy: req.user?._id,
+    });
 
-  certificate.slug = slug;
-  await certificate.save();
+    const slug = await generateUniqueSlug(
+      title,
+      "ProviderCertificate",
+      certificate?._id,
+      "provider-certificates"
+    );
 
-  return res.status(201).json({ success: true, data: certificate });
+    certificate.slug = slug;
+    await certificate.save();
+
+    return res.status(201).json({ success: true, message: "Created successfully", data: certificate });
+  } catch (error) {
+    if (imagePath && fs.existsSync(path.join(process.cwd(), imagePath))) {
+      fs.unlinkSync(path.join(process.cwd(), imagePath));
+    };
+    throw new ApiError(500, error.message || "Something went wrong");
+  }
 });
 
 export const getProviderCertificates = asyncHandler(async (req, res) => {
@@ -97,7 +112,7 @@ export const getProviderCertificateById = asyncHandler(async (req, res) => {
 
   if (!certificate) throw new ApiError(404, "Certificate not found");
 
-  return res.status(200).json({ success: true, data: certificate });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: certificate });
 });
 
 export const updateProviderCertificate = asyncHandler(async (req, res) => {
@@ -108,8 +123,11 @@ export const updateProviderCertificate = asyncHandler(async (req, res) => {
     issuedFrom,
     issueDate,
     expiryDate,
-    description
+    description,
+    status
   } = req.body;
+
+  console.log(status)
 
   const certificate = await ProviderCertificateModel.findById(req.params.id);
   if (!certificate) throw new ApiError(404, "Certificate not found");
@@ -117,20 +135,25 @@ export const updateProviderCertificate = asyncHandler(async (req, res) => {
   if (title && title !== certificate.title) {
     await SlugModel.deleteOne({
       collectionName: "ProviderCertificate",
-      documentId: certificate._id
+      documentId: certificate?._id
     });
 
     const newSlug = await generateUniqueSlug(
       title,
       "ProviderCertificate",
-      certificate._id,
+      certificate?._id,
       "provider-certificates"
     );
 
     certificate.slug = newSlug;
   }
 
-  const image = req.files?.image?.[0] ? req.files.image[0].path : certificate.image;
+  if (req.files?.image?.[0]) {
+    if (certificate.image && fs.existsSync(path.join(process.cwd(), certificate.image))) {
+      fs.unlinkSync(path.join(process.cwd(), certificate.image));
+    };
+    certificate.image = await compressImage(req.files.image[0].buffer, "certificate");
+  };
 
   certificate.providerId = providerId || certificate.providerId;
   certificate.title = title || certificate.title;
@@ -139,11 +162,13 @@ export const updateProviderCertificate = asyncHandler(async (req, res) => {
   certificate.issueDate = issueDate || certificate.issueDate;
   certificate.expiryDate = expiryDate || certificate.expiryDate;
   certificate.description = description || certificate.description;
-  certificate.image = image;
+  certificate.status = typeof status === "boolean" ? status : certificate.status;
+  certificate.updatedBy = req.user?._id;
+  certificate.updatedAt = new Date();
 
   await certificate.save();
 
-  return res.status(200).json({ success: true, data: certificate });
+  return res.status(200).json({ success: true, message: "Updated successfully", data: certificate });
 });
 
 export const deleteProviderCertificate = asyncHandler(async (req, res) => {
@@ -152,8 +177,12 @@ export const deleteProviderCertificate = asyncHandler(async (req, res) => {
 
   await SlugModel.deleteOne({
     collectionName: "ProviderCertificate",
-    documentId: certificate._id
+    documentId: certificate?._id
   });
+
+  if (certificate.image && fs.existsSync(path.join(process.cwd(), certificate.image))) {
+    fs.unlinkSync(path.join(process.cwd(), certificate.image));
+  };
 
   await certificate.deleteOne();
 

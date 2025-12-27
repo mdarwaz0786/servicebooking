@@ -243,8 +243,8 @@ const BookingListPage = () => {
                               <button
                                 className="btn btn-sm btn-success"
                                 type="button"
-                                onClick={() => updateBookingStatus(d._id)}
-                                disabled={statusMap[d._id] === d.status}
+                                onClick={() => updateBookingStatus(d?._id)}
+                                disabled={statusMap[d?._id] === d?.status}
                               >
                                 Update
                               </button>
