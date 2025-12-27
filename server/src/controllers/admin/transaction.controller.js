@@ -11,6 +11,7 @@ export const getTransactions = asyncHandler(async (req, res) => {
     sort = "desc",
     page,
     limit,
+    from,
   } = req.query;
 
   page = parseInt(page, 10);
@@ -27,6 +28,10 @@ export const getTransactions = asyncHandler(async (req, res) => {
 
   if (status !== undefined) {
     filters.status = status;
+  };
+
+  if (from) {
+    filters.from = from;
   };
 
   let sortOption = {};

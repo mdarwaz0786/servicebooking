@@ -118,6 +118,7 @@ import ZoneListPage from "../pages/Zone/ZoneListPage";
 import ServicemanEarningListPage from "../pages/ServicemanEarning/ServicemanEarningListPage";
 import CertificateFormPage from "../pages/Certificate/CertificateFormPage";
 import CertificateListPage from "../pages/Certificate/CertificateListPage";
+import SupportContentFormPage from "../pages/SupportContent/SupportContentFormPage";
 
 const routesConfig = {
   private: [
@@ -151,7 +152,8 @@ const routesConfig = {
     { path: "/completed-bookings/:status", element: BookingListPage },
     { path: "/booking-detail/:id", element: BookingDetailPage },
 
-    { path: "/transactions", element: TransactionListPage },
+    { path: "/transactions-user/:from", element: TransactionListPage },
+    { path: "/transactions-serviceman/:from", element: TransactionListPage },
     { path: "/transaction-detail", element: TransactionDetailPage },
 
     { path: "/kyc", element: KycListPage },
@@ -294,6 +296,8 @@ const routesConfig = {
 
     { path: "/add-zone", element: CreateZonePage },
     { path: "/zone", element: ZoneListPage },
+
+    { path: "/support-content", element: SupportContentFormPage },
 
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },

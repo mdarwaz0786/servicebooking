@@ -56,6 +56,7 @@ import dashboardRoutes from "./dashboard.route.js";
 import servicemanCertificateRoutes from "./servicemanCertificate.routes.js";
 import zoneRoutes from "./zone.route.js";
 import servicemanEarningRoutes from "./servicemanEarning.routes.js";
+import supportContentRoutes from "./support.routes.js";
 
 const router = express.Router();
 
@@ -116,5 +117,6 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/serviceman-certificate", servicemanCertificateRoutes);
 router.use("/zone", zoneRoutes);
 router.use("/serviceman-earning", servicemanEarningRoutes);
+router.use("/support-content", supportContentRoutes);
 
 export default router;

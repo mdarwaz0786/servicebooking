@@ -3,8 +3,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
 import OtpModel from "../../models/otp.model.js";
-
-const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
+import generateOtp from "../../utils/generateOpt.js";
 
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {
@@ -18,7 +17,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   await OtpModel.findOneAndUpdate(
     { mobile },
-    { otp: 1234, expiresAt },
+    { otp: otp, expiresAt },
     { upsert: true, new: true }
   );
 
@@ -50,7 +49,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     success: true,
     message: "Login successful",
     user,
-    token: generateToken(user._id),
+    token: generateToken(user?._id),
   });
 });
 

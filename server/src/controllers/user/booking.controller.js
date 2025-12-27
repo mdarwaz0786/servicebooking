@@ -8,8 +8,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
-
-const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
+import generateOtp from "../../utils/generateOpt.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -30,6 +29,8 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
 
+  const otp = generateOtp();
+
   // Create Booking
   const booking = await BookingModel.create({
     userId,
@@ -45,7 +46,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     discountAmount: amountData.discountAmount,
     payableAmount: amountData.payableAmount,
     isCouponUsed,
-    otp: "1234",
+    otp: otp,
     createdBy: userId,
   });
 

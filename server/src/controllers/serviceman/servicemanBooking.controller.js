@@ -9,6 +9,7 @@ import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import compressImage from '../../helpers/compressImage.js';
 import { adjustWalletCredit, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
+import generateOtp from "../../utils/generateOpt.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -252,8 +253,6 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
   });
 });
 
-const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
-
 // Generate OTP Booking
 export const serviceManBookingOtp = asyncHandler(async (req, res) => {
   const { status } = req.body;
@@ -271,7 +270,7 @@ export const serviceManBookingOtp = asyncHandler(async (req, res) => {
   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  booking.otp = "1234";
+  booking.otp = otp;
 
   await booking.save();
 
@@ -462,7 +461,7 @@ export const serviceManBookingStartOtp = asyncHandler(async (req, res) => {
   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
 
-  booking.otp = "1234";
+  booking.otp = otp;
 
   await booking.save();
 

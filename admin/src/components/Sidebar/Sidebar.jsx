@@ -154,6 +154,15 @@ const Sidebar = () => {
                     <span>Zone</span>
                   </Link>
                 </li>
+
+                <li>
+                  <Link
+                    to="/support-content"
+                    className={currentPath === "/support-content" ? "active" : ""}
+                  >
+                    <span>App Support</span>
+                  </Link>
+                </li>
               </ul>
             </li>
 
@@ -232,22 +241,22 @@ const Sidebar = () => {
 
             <li>
               <Link to="#"> <i className="fe fe-credit-card" />
-                <span> Payments</span>
+                <span>Payments</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
               </Link>
               <ul>
                 <li>
                   <Link
-                    to="/transactions"
-                    className={currentPath === "/transactions" ? "active" : ""}
+                    to="/transactions-user/user"
+                    className={currentPath === "/transactions/user" ? "active" : ""}
                   >
                     <span>Customer</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/transactions"
-                    className={currentPath === "/transactions" ? "active" : ""}
+                    to="/transactions-serviceman/serviceman"
+                    className={currentPath === "/transactions/serviceman" ? "active" : ""}
                   >
                     <span>Provider</span>
                   </Link>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -10,6 +10,7 @@ import Pagination from "../../components/Pagination/Pagination";
 
 const TransactionListPage = () => {
   const navigate = useNavigate();
+  const { from } = useParams();
   const { validToken } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ const TransactionListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          from: from,
         },
       });
 
@@ -74,7 +76,7 @@ const TransactionListPage = () => {
 
   useEffect(() => {
     fetchTransactions();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, from]);
 
   return (
     <div className="page-wrapper page-settings">

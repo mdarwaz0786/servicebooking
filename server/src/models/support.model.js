@@ -33,6 +33,84 @@ const supportContentSchema = new mongoose.Schema(
   {
     faqs: [faqSchema],
     supportInfo: supportInfoSchema,
+    call: {
+      id: {
+        type: String,
+        default: "call"
+      },
+      label: {
+        type: String,
+        default: "Call Support"
+      },
+      icon: {
+        type: String,
+        default: "phone"
+      },
+      value: {
+        type: String,
+        default: "+919876543210"
+      },
+      type: {
+        type: String,
+        default: "phone"
+      },
+    },
+    email: {
+      id: {
+        type: String,
+        default: "email"
+      },
+      label: {
+        type: String,
+        default: "Email Us"
+      },
+      icon: {
+        type: String,
+        default: "email"
+      },
+      value: {
+        type: String,
+        default: "support@serviceprovider.com"
+      },
+      type: {
+        type: String,
+        default: "email"
+      },
+    },
+    whatsapp: {
+      id: {
+        type: String,
+        default: "whatsapp"
+      },
+      label: {
+        type: String,
+        default: "WhatsApp"
+      },
+      icon: {
+        type: String,
+        default: "whatsapp"
+      },
+      value: {
+        type: String,
+        default: "+919876543210"
+      },
+      type: {
+        type: String,
+        default: "whatsapp"
+      },
+    },
+    acceptCreditPoints: {
+      type: Number,
+      default: 10,
+    },
+    cancelCreditPoints: {
+      type: Number,
+      default: 10,
+    },
+    earningPercent: {
+      type: Number,
+      default: 15,
+    },
     status: {
       type: Boolean,
       default: true,

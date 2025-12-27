@@ -4,16 +4,26 @@ import ServiceManBookingModel from "../models/servicemanBooking.model.js";
 import BookingModel from "../models/booking.model.js";
 import BookingItemModel from "../models/bookingItem.model.js";
 import BookingAdditionalPartModel from "../models/BookingAdditionalPart.model.js";
+import SupportContent from "../models/support.model.js";
 import ApiError from "../helpers/apiError.js";
 
-// CREDIT CONFIG
-const ACCEPT_CREDIT_POINTS = 10;   // deduct
-const CANCEL_CREDIT_POINTS = 10;   // add
-const DEFAULT_EARNING_PERCENT = 15;
+// support config
+export const getSupportConfig = async () => {
+  const doc = await SupportContent.findOne({ status: true })
+    .select("acceptCreditPoints cancelCreditPoints earningPercent")
+    .lean();
 
-// DEPOSIT CONFIG (10% rule)
-const ACCEPT_DEPOSIT_AMOUNT = ACCEPT_CREDIT_POINTS / 0.10; // 100
-const CANCEL_DEPOSIT_AMOUNT = CANCEL_CREDIT_POINTS / 0.10; // 100
+  return {
+    acceptCreditPoints: doc?.acceptCreditPoints ?? 10,
+    cancelCreditPoints: doc?.cancelCreditPoints ?? 10,
+    earningPercent: doc?.earningPercent ?? 15,
+  };
+};
+
+// CREDIT CONFIG
+// const ACCEPT_CREDIT_POINTS = 10;   // deduct
+// const CANCEL_CREDIT_POINTS = 10;   // add
+// const DEFAULT_EARNING_PERCENT = 15;
 
 // Get total credit points
 export const getTotalCreditPoints = async (providerId) => {
@@ -36,58 +46,58 @@ export const getTotalCreditPoints = async (providerId) => {
 };
 
 // Ensure sufficient credit
-export const ensureSufficientCredit = async (providerId, ACCEPT_CREDIT_POINTS = 10) => {
+export const ensureSufficientCredit = async (providerId) => {
+  const { acceptCreditPoints } = await getSupportConfig();
   const totalCreditPoints = await getTotalCreditPoints(providerId);
 
-  if (totalCreditPoints < ACCEPT_CREDIT_POINTS) {
+  if (totalCreditPoints < acceptCreditPoints) {
     throw new ApiError(403, "Low credit points");
   };
 
   return true;
 };
 
+// Adjust credit point
 export const adjustWalletCredit = async (
   providerId,
-  status, // accept | cancel
+  status,
 ) => {
-  // console.log(providerId);
-  // console.log(status);
   if (!providerId || !status) return;
+
+  const {
+    acceptCreditPoints,
+    cancelCreditPoints,
+  } = await getSupportConfig();
 
   let creditPoints = 0;
   let depositAmount = 0;
   let transactionType = "";
   let purpose = ""
 
-  // ACCEPT → DEDUCT
   if (status === "accept") {
-    creditPoints = ACCEPT_CREDIT_POINTS;
+    creditPoints = acceptCreditPoints;
     transactionType = "Debit";
     purpose = "Deduct for accept booking";
-    depositAmount = ACCEPT_DEPOSIT_AMOUNT;
+    depositAmount = acceptCreditPoints / 0.10;
 
     const totalCredit = await getTotalCreditPoints(providerId);
-    if (totalCredit < ACCEPT_CREDIT_POINTS) {
+    if (totalCredit < acceptCreditPoints) {
       throw new ApiError(403, "Low credit point");
     };
   };
 
-  // CANCEL → CREDIT
   if (status === "cancel") {
-    creditPoints = CANCEL_CREDIT_POINTS;
+    creditPoints = cancelCreditPoints;
     transactionType = "Credit";
     purpose = "Add for cancel booking";
-    depositAmount = CANCEL_DEPOSIT_AMOUNT;
+    depositAmount = cancelCreditPoints / 0.10;
   };
 
-  // if (!creditPoints || !depositAmount) return;
-
-  // CREATE WALLET ENTRY
   return await Wallet.create({
     providerId,
-    creditPoints,        // -10 or +10
-    depositAmount,       // -100 or +100
-    transactionType,     // Debit | Credit
+    creditPoints,
+    depositAmount,
+    transactionType,
     depositStatus: "Paid",
     paymentMode: "System",
     purpose,
@@ -151,7 +161,7 @@ export const createServicemanEarning = async (
 
   // 7️⃣ Calculate earning
   const payableAmount = booking?.payableAmount || 0;
-  const earningPercent = DEFAULT_EARNING_PERCENT;
+  const earningPercent = earningPercent;
   const earningAmount = Number(((payableAmount * earningPercent) / 100).toFixed(2));
 
   // 8️⃣ Create earning entry

@@ -77,6 +77,10 @@ const transactionSchema = new mongoose.Schema({
   paymentTime: {
     type: String,
   },
+  from: {
+    type: String,
+    enum: ["user", "serviceman"],
+  },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 transactionSchema.virtual("user", {

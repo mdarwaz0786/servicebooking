@@ -10,7 +10,7 @@ const App = () => {
     <Routes>
       <Route
         element={
-          <PrivateRoute roles={["admin"]}>
+          <PrivateRoute roles={["admin", "subadmin"]}>
             <Layout />
           </PrivateRoute>
         }

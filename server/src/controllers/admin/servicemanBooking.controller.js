@@ -19,13 +19,13 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Required fields are missing.");
   };
 
-  const booking = BookingModel.findById(bookingId);
+  const booking = await BookingModel.findById(bookingId);
 
   if (!booking) {
     throw new ApiError(400, "Booking not found");
   }
 
-  const serviceman = ServiceManProfileModel.findById(servicemanId).select("userId");
+  const serviceman = await ServiceManProfileModel.findOne({ _id: servicemanId }).select("userId").lean();
 
   if (!serviceman) {
     throw new ApiError(400, "Serviceman not found");

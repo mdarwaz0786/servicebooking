@@ -1,44 +1,5 @@
 import SupportContent from "../../models/support.model.js";
-import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
-
-export const upsertSupportContent = asyncHandler(async (req, res) => {
-  const userId = req.user?._id;
-  const { faqs, supportInfo } = req.body;
-
-  if (!faqs && !supportInfo) {
-    throw new ApiError(400, "Nothing to update");
-  }
-
-  let content = await SupportContent.findOne();
-
-  if (!content) {
-    content = await SupportContent.create({
-      faqs,
-      supportInfo,
-      createdBy: userId,
-      updatedBy: userId,
-    });
-
-    return res.status(201).json({
-      success: true,
-      message: "Support content created successfully",
-      data: content,
-    });
-  }
-
-  if (faqs) content.faqs = faqs;
-  if (supportInfo) content.supportInfo = supportInfo;
-
-  content.updatedBy = userId;
-  await content.save();
-
-  return res.status(200).json({
-    success: true,
-    message: "Support content updated successfully",
-    data: content,
-  });
-});
 
 // Dummy Support Content
 const dummyData = {
@@ -111,7 +72,7 @@ export const getSupportContent = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     data: content || dummyData,
-    source: content ? "database" : "default",
   });
 });

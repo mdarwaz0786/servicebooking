@@ -156,13 +156,14 @@ const MetaTagFormPage = () => {
 
                 {/* META TITLE */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Meta Title</label>
+                  <label className="form-label">Meta Title (max character 100)</label>
                   <input
                     type="text"
                     name="metaTitle"
                     value={formData.metaTitle}
                     onChange={handleChange}
                     className="form-control"
+                    maxLength={100}
                   />
                 </div>
 
@@ -192,13 +193,14 @@ const MetaTagFormPage = () => {
 
                 {/* META DESCRIPTION */}
                 <div className="col-md-12 mb-3">
-                  <label className="form-label">Meta Description</label>
+                  <label className="form-label">Meta Description (max character 300)</label>
                   <textarea
                     name="metaDescription"
                     value={formData.metaDescription}
                     onChange={handleChange}
                     className="form-control"
                     rows="3"
+                    maxLength={300}
                   ></textarea>
                 </div>
 

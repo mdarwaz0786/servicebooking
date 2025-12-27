@@ -264,11 +264,12 @@ const DashboardPage = () => {
                             <thead>
                               <tr>
                                 <th>#</th>
+                                <th>Booking Id</th>
                                 <th>Date</th>
                                 {/* <th>Provider</th> */}
                                 <th>User</th>
                                 {/* <th>Service</th> */}
-                                <th>Amount</th>
+                                <th>Payable Amount</th>
                                 <th>Status</th>
                               </tr>
                             </thead>
@@ -277,9 +278,10 @@ const DashboardPage = () => {
                                 data?.recentBookings?.map((d, i) => (
                                   <tr>
                                     <td>{i + 1}</td>
+                                    <td>{d?.bookingId}</td>
                                     <td>{formatDate(d?.createdAt)}</td>
                                     <td>
-                                      <span>{d?.user?.name}</span>
+                                      <span>{d?.user?.name || d?.user?.mobile}</span>
                                       {/* <Link to="#" className="table-profileimage">
                                         <img src={`${BASE_URL}/${d?.user?.profileImage}`} className="me-2" alt="img" />
                                         <span>{d?.user?.name}</span>

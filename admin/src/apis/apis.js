@@ -288,6 +288,10 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/zone`,
     delete: `${BASE_URL}/api/v1/admin/zone`,
   },
+  supportContent: {
+    upsert: `${BASE_URL}/api/v1/admin/support-content`,
+    get: `${BASE_URL}/api/v1/admin/support-content`,
+  },
   auth: {
     login: `${BASE_URL}/api/v1/admin/auth/login`,
     loggedIn: `${BASE_URL}/api/v1/admin/auth/loggedIn`,

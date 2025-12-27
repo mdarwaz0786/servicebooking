@@ -234,7 +234,7 @@ const AddCategoryPage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Title
+                    Meta Title (max character 100)
                   </label>
                   <input
                     type="text"
@@ -242,6 +242,7 @@ const AddCategoryPage = () => {
                     value={formData.metaTitle}
                     onChange={handleChange}
                     className="form-control"
+                    maxLength={100}
                   />
                 </div>
               </div>
@@ -277,7 +278,7 @@ const AddCategoryPage = () => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Description
+                    Meta Description (max character 300)
                   </label>
                   <input
                     type="text"
@@ -285,6 +286,7 @@ const AddCategoryPage = () => {
                     value={formData.metaDescription}
                     onChange={handleChange}
                     className="form-control"
+                    maxLength={300}
                   />
                 </div>
 
