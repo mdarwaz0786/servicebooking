@@ -38,17 +38,17 @@ export const createWallet = asyncHandler(async (req, res) => {
 });
 
 export const getWallets = asyncHandler(async (req, res) => {
-  let { search, sort = "desc", page, limit, provider, depositStatus, paymentMode, transactionType } = req.query;
+  let { search, sort = "desc", page, limit, serviceman, depositStatus, paymentMode, transactionType } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
 
   const filters = {};
-  if (provider) filters.providerId = provider;
-  if (depositStatus) filters.depositStatus = depositStatus;
+  if (serviceman) filters.providerId = serviceman;
   if (paymentMode) filters.paymentMode = paymentMode;
   if (transactionType) filters.transactionType = transactionType;
+  if (depositStatus) filters.depositStatus = depositStatus;
 
   if (search) {
     filters.$or = [

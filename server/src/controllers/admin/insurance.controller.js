@@ -61,7 +61,7 @@ export const createInsurance = asyncHandler(async (req, res) => {
 });
 
 export const getInsurances = asyncHandler(async (req, res) => {
-  let { search, sort = "desc", page, limit, provider, renew } = req.query;
+  let { search, sort = "desc", page, limit, serviceman, renew } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -69,8 +69,8 @@ export const getInsurances = asyncHandler(async (req, res) => {
 
   const filters = {};
 
-  if (provider) {
-    filters.providerId = provider;
+  if (serviceman) {
+    filters.providerId = serviceman;
   };
 
   if (renew) {

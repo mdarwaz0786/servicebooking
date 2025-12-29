@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
@@ -16,11 +17,13 @@ const EarningListPage = () => {
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [categories, setCategories] = useState([]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const category = searchParams.get("category") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -32,6 +35,24 @@ const EarningListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(apis.category.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        setCategories(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const fetchEarnings = async () => {
     try {
       setLoading(true);
@@ -42,6 +63,7 @@ const EarningListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          category,
         },
       });
 
@@ -65,6 +87,7 @@ const EarningListPage = () => {
       limit,
       search: debouncedSearch,
       sort,
+      category,
       ...newParams,
     };
     setSearchParams(params);
@@ -105,7 +128,14 @@ const EarningListPage = () => {
 
   useEffect(() => {
     fetchEarnings();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, category]);
+
+  const categoryOptions = categories?.map((c) => ({
+    value: c?._id,
+    label: c?.name,
+  }));
+
+  const selectedCategory = categoryOptions?.find((o) => o?.value === category);
 
   return (
     <div className="page-wrapper page-settings">
@@ -157,6 +187,24 @@ const EarningListPage = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        <div className="d-flex gap-3 mt-4 mb-0 flex-wrap">
+          {/* Category */}
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={categoryOptions}
+            value={selectedCategory || null}
+            onChange={(option) =>
+              updateParams({
+                category: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Product"
+          />
         </div>
 
         {/* Table */}

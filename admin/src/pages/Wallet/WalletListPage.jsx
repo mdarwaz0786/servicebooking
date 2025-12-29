@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
@@ -16,11 +17,15 @@ const WalletListPage = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [servicemen, setServicemen] = useState([]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const serviceman = searchParams.get("serviceman") || "";
+  const transactionType = searchParams.get("transactionType") || "";
+  const paymentMode = searchParams.get("paymentMode") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -34,12 +39,29 @@ const WalletListPage = () => {
     updateParams({ page: 1, search: debouncedSearch });
   }, [debouncedSearch]);
 
+  const fetchServicemen = async () => {
+    try {
+      const res = await axios.get(apis.servicemanProfile.get, {
+        headers: { Authorization: validToken },
+      });
+      if (res?.data?.success) {
+        setServicemen(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
+  useEffect(() => {
+    fetchServicemen();
+  }, []);
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(apis.wallet.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: { page, limit, search: debouncedSearch, sort, serviceman, paymentMode, transactionType },
       });
 
       if (response?.data?.success) {
@@ -63,6 +85,9 @@ const WalletListPage = () => {
       limit,
       sort,
       search: debouncedSearch,
+      serviceman,
+      paymentMode,
+      transactionType,
       ...newParams,
     });
   };
@@ -101,7 +126,31 @@ const WalletListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, sort, search]);
+  }, [page, limit, sort, search, serviceman, paymentMode, transactionType]);
+
+  // Serviceman options
+  const servicemanOptions = [
+    { value: "", label: "All Provider" },
+    ...servicemen.map((s) => ({
+      value: s?.userId,
+      label: s?.name,
+    })),
+  ];
+
+  // Paymentmode options
+  const paymentModeOptions = [
+    { value: "", label: "All Payment Mode" },
+    { value: "Online", label: "Online" },
+    { value: "Cash", label: "Cash" },
+    { value: "System", label: "System" },
+  ];
+
+  // transactionType options
+  const transactionTypeOptions = [
+    { value: "", label: "All Transaction Type" },
+    { value: "Credit", label: "Credit" },
+    { value: "Debit", label: "Debit" },
+  ];
 
   return (
     <div className="page-wrapper page-settings">
@@ -145,6 +194,56 @@ const WalletListPage = () => {
               </button>
             </Link>
           </div>
+        </div>
+
+        <div className="d-flex gap-3 mt-4 mb-0 flex-wrap">
+          {/* Serviceman Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Provider"
+            isClearable
+            value={servicemanOptions?.find((o) => o?.value === serviceman) || null}
+            options={servicemanOptions}
+            onChange={(selected) =>
+              updateParams({
+                serviceman: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
+
+          {/* Payment Mode Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Payment Mode"
+            isClearable
+            value={paymentModeOptions.find((o) => o?.value === paymentMode) || null}
+            options={paymentModeOptions}
+            onChange={(selected) =>
+              updateParams({
+                paymentMode: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
+
+          {/* Transaction Type Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Transaction Type"
+            isClearable
+            value={transactionTypeOptions.find((o) => o?.value === transactionType) || null}
+            options={transactionTypeOptions}
+            onChange={(selected) =>
+              updateParams({
+                transactionType: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
         </div>
 
         {/* Table */}

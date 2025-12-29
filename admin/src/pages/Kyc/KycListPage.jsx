@@ -260,33 +260,35 @@ const KycListPage = () => {
                         <td>{d?.profile?.name}</td>
                         <td>{d?.profile?.email}</td>
                         <td>{d?.user?.mobile}</td>
-                        <div className="d-flex align-items-center gap-2">
-                          <select
-                            className="form-select form-select-sm"
-                            value={statusMap[d?._id] || d?.status}
-                            onChange={(e) =>
-                              setStatusMap({
-                                ...statusMap,
-                                [d?._id]: e.target.value,
-                              })
-                            }
-                          >
-                            {STATUSES?.map((status) => (
-                              <option key={status} value={status}>
-                                {status?.toUpperCase()}
-                              </option>
-                            ))}
-                          </select>
+                        <td>
+                          <div className="d-flex align-items-center gap-2">
+                            <select
+                              className="form-select form-select-sm"
+                              value={statusMap[d?._id] || d?.status}
+                              onChange={(e) =>
+                                setStatusMap({
+                                  ...statusMap,
+                                  [d?._id]: e.target.value,
+                                })
+                              }
+                            >
+                              {STATUSES?.map((status) => (
+                                <option key={status} value={status}>
+                                  {status?.toUpperCase()}
+                                </option>
+                              ))}
+                            </select>
 
-                          <button
-                            className="btn btn-sm btn-success"
-                            type="button"
-                            onClick={() => updateStatus(d?._id)}
-                            disabled={statusMap[d?._id] === d?.status}
-                          >
-                            Update
-                          </button>
-                        </div>
+                            <button
+                              className="btn btn-sm btn-success"
+                              type="button"
+                              onClick={() => updateStatus(d?._id)}
+                              disabled={statusMap[d?._id] === d?.status}
+                            >
+                              Update
+                            </button>
+                          </div>
+                        </td>
                         <td>
                           <div className="d-flex">
                             <Link to={`/kyc-detail`} state={{ record: d }}>

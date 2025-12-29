@@ -57,6 +57,7 @@ import servicemanCertificateRoutes from "./servicemanCertificate.routes.js";
 import zoneRoutes from "./zone.route.js";
 import servicemanEarningRoutes from "./servicemanEarning.routes.js";
 import supportContentRoutes from "./support.routes.js";
+import appRoutes from "./app.route.js";
 
 const router = express.Router();
 
@@ -118,5 +119,6 @@ router.use("/serviceman-certificate", servicemanCertificateRoutes);
 router.use("/zone", zoneRoutes);
 router.use("/serviceman-earning", servicemanEarningRoutes);
 router.use("/support-content", supportContentRoutes);
+router.use("/app", appRoutes);
 
 export default router;

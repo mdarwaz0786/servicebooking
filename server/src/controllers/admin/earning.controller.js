@@ -42,7 +42,7 @@ export const createEarning = asyncHandler(async (req, res) => {
 
 // Get All Earnings
 export const getEarnings = asyncHandler(async (req, res) => {
-  let { status, page = 1, limit = 10, sort = "desc", search, categoryId } = req.query;
+  let { status, page = 1, limit = 10, sort = "desc", search, category } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -50,8 +50,8 @@ export const getEarnings = asyncHandler(async (req, res) => {
 
   const filters = {};
 
-  if (categoryId) {
-    filters.categoryId = categoryId;
+  if (category) {
+    filters.categoryId = category;
   };
 
   if (search) {

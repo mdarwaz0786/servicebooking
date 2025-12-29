@@ -85,14 +85,14 @@ const KycDetailsPage = () => {
                     <ul className="list-unstyled mt-3">
                       <li><strong>DOB:</strong> {new Date(profile?.dob).toLocaleDateString()}</li>
                       <li><strong>Experience:</strong> {profile?.experienceLevel}</li>
-                      <li><strong>Company:</strong> {profile?.companyName}</li>
+                      <li><strong>Company:</strong> {profile?.companyName || "-"}</li>
                       <li><strong>Permanent Address:</strong> {profile?.permanentAddress}</li>
                       <li><strong>Current Address:</strong> {profile?.currentAddress}</li>
                       <li>
                         <strong>Status:</strong>{" "}
                         <span
                           className={`badge ${profile?.status === "pending p-2" ? "bg-warning p-2" : "bg-success p-2"}`}>
-                          {profile?.status}
+                          {profile?.profileStatus}
                         </span>
                       </li>
                     </ul>

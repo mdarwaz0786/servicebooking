@@ -18,6 +18,7 @@ const ServicemanProfileListPage = () => {
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
+  const [statusMap, setStatusMap] = useState({});
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
@@ -141,6 +142,31 @@ const ServicemanProfileListPage = () => {
     label: c?.name,
   }));
 
+  const STATUSES = [
+    "Pending",
+    "Approved",
+    "Rejected"
+  ];
+
+  const updateStatus = async (id) => {
+    try {
+      const response = await axios.patch(
+        `${apis.servicemanProfile.update}/${id}`,
+        { profileStatus: statusMap[id] },
+        {
+          headers: { Authorization: validToken },
+        }
+      );
+
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
+        fetchServicemanProfile();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   const experienceOptions = [
     { value: "Fresher", label: "Fresher" },
     { value: "Experience", label: "Experience" },
@@ -258,8 +284,8 @@ const ServicemanProfileListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Product</th>
                     <th>Name</th>
-                    <th>Email</th>
                     <th>Mobile</th>
                     <th>Experience</th>
                     <th>Profile Status</th>
@@ -272,11 +298,40 @@ const ServicemanProfileListPage = () => {
                     servicemanProfile?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.name}</td>
-                        <td>{d?.email}</td>
-                        <td>{d?.user?.mobile}</td>
-                        <td>{d?.experienceLevel}</td>
-                        <td>{d?.profileStatus}</td>
+                        <td>{d?.categories?.map((value) => <p className="mb-1" key={value?._id}>{value?.name}</p>)}</td>
+                        <td>{d?.name || "-"}</td>
+                        <td>{d?.user?.mobile || "-"}</td>
+                        <td>{d?.experienceLevel || "-"}</td>
+                        <td>
+                          <div className="d-flex align-items-center gap-2">
+                            <select
+                              className="form-select form-select-sm"
+                              style={{ width: "120px" }}
+                              value={statusMap[d?._id] || d?.profileStatus}
+                              onChange={(e) =>
+                                setStatusMap({
+                                  ...statusMap,
+                                  [d?._id]: e.target.value,
+                                })
+                              }
+                            >
+                              {STATUSES?.map((status) => (
+                                <option key={status} value={status}>
+                                  {status?.toUpperCase()}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              className="btn btn-sm btn-success"
+                              type="button"
+                              onClick={() => updateStatus(d?._id)}
+                              disabled={statusMap[d?._id] === d?.profileStatus}
+                            >
+                              Update
+                            </button>
+                          </div>
+                        </td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

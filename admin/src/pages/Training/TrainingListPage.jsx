@@ -202,7 +202,7 @@ const TrainingListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Category</th>
+                    <th>Product</th>
                     <th>Subject</th>
                     <th>Trainer Name</th>
                     <th>Date</th>

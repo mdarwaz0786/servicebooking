@@ -191,8 +191,20 @@ const TrainingScheduleSubmitListPage = () => {
     })),
   ];
 
+  const statusOptions = [
+    { value: "", label: "All Status" },
+    { value: "New", label: "New" },
+    { value: "Confirm", label: "Confirm" },
+    { value: "Reject", label: "Reject" },
+    { value: "Present", label: "Present" },
+    { value: "Absent", label: "Absent" },
+    { value: "Fail", label: "Fail" },
+    { value: "Complete", label: "Complete" },
+  ];
+
   const selectedServiceman = servicemanOptions.find((o) => o?.value === serviceman);
   const selectedTrainer = trainerOptions.find((o) => o?.value === trainer);
+  const selectedStatus = statusOptions.find((o) => o?.value === status);
 
   return (
     <div className="page-wrapper page-settings">
@@ -267,6 +279,22 @@ const TrainingScheduleSubmitListPage = () => {
             }
             isClearable
             placeholder="Select Provider"
+          />
+
+          {/* Status Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Status"
+            isClearable
+            value={selectedStatus}
+            options={statusOptions}
+            onChange={(selected) =>
+              updateParams({
+                status: selected?.value || "",
+                page: 1,
+              })
+            }
           />
         </div>
 
