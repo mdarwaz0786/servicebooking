@@ -3,6 +3,8 @@ import "./App.css";
 import Layout from "./components/Layout/Layout";
 import HomePage from "./pages/HomePage/HomePage";
 import AboutUsPage from "./pages/AboutUsPage/AboutUsPage";
+import ServiceManApp from "./pages/AppPage/ServiceManApp";
+import UserApp from "./pages/AppPage/UserApp";
 import ContactUsPage from "./pages/ContactUsPage/ContactUsPage";
 import AddressesPage from "./pages/ContactUsPage/AddressesPage";
 import ServicesPage from "./pages/ServicesPage/ServicesPage";
@@ -56,6 +58,8 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path="/service-man-app" element={<ServiceManApp />} />
+          <Route path="/user-app" element={<UserApp />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
           <Route path="/addresses" element={<AddressesPage />} />
           <Route path="/term-condition" element={<TermsConditionsPage />} />

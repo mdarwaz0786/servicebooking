@@ -6,6 +6,7 @@ import { scrollToService, scrollToTop } from "../../helper/scrollToTop";
 const Navbar = () => {
   const { toggleModal, handleLogout, user, setUserSidebaOpen, userSidebaOpen } = useContext(AppContext);
 
+
   const handleLinkClick = () => {
     // Scroll to top instantly
     window.scrollTo({
@@ -102,22 +103,15 @@ const Navbar = () => {
                 onClick={() => {
                   toggleModal("serviceManJoinModal", true);
                    // Remove class from HTML element
-                    document.documentElement.classList.remove("menu-opened");
-                    
-                    
+                    document.documentElement.classList.remove("menu-opened");                      
                     // .sidebar-overlay element से class हटाना
                     const overlay = document.querySelector(".sidebar-overlay");
                     overlay?.classList.remove("opened");
-
-
                 }}
                 >
                   Join As Team
                 </Link>
               </li>
-
-
-
               
             </ul>
           </div>
@@ -130,14 +124,13 @@ const Navbar = () => {
                >
                 <i className="ti ti-shopping-bag me-0" />
               </Link> */}
-                {(localStorage.getItem("user")) ? (
+                {(user?.role=='user' || user?.role=='serviceman' || user?.role=='provider') ? (
                   <>
                     {(user?.role == 'user') ? (
                       <Link to={'/user'} className="btn btn-linear-primary" onClick={()=> {
                         if(width<=767)
                         {
                           setUserSidebaOpen(true);
-                        console.log(userSidebaOpen)
                         }
                       }
                       } >

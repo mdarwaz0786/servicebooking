@@ -1,8 +1,10 @@
 import React, { useState, useContext, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 
 const ServiceManJoinForm = () => {
+  const navigate = useNavigate();
   const { Urls, postData, toggleModal, toast } = useContext(AppContext);
 
   const [mobile, setmobile] = useState("");
@@ -55,6 +57,7 @@ const ServiceManJoinForm = () => {
         setmobile("");
         setOtp("");
         toggleModal("serviceManJoinModal", false);
+        navigate("/service-man-app")
         
       }
     } catch (error) {
