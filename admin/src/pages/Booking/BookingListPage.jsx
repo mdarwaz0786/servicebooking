@@ -25,6 +25,7 @@ const BookingListPage = () => {
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const bookingStatus = searchParams.get("bookingStatus") || "all";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -46,7 +47,8 @@ const BookingListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
-          status: status || "active"
+          status: status || "active",
+          bookingStatus: bookingStatus === "all" ? undefined : bookingStatus,
         },
       });
 
@@ -76,6 +78,7 @@ const BookingListPage = () => {
       limit,
       search: debouncedSearch,
       sort,
+      bookingStatus,
       ...newParams,
     };
     setSearchParams(params);
@@ -100,7 +103,7 @@ const BookingListPage = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [page, limit, debouncedSearch, sort, status]);
+  }, [page, limit, debouncedSearch, sort, status, bookingStatus]);
 
   const BOOKING_STATUSES = [
     "new",
@@ -134,6 +137,21 @@ const BookingListPage = () => {
       toast.error(error?.response?.data?.message || "Failed to update status");
     }
   };
+
+  const BOOKING_STATUS_FILTERS = [
+    { label: "All", value: "all" },
+    { label: "New", value: "new" },
+    { label: "Assign", value: "assign" },
+    { label: "Accept", value: "accept" },
+    { label: "Ongoing", value: "ongoing" },
+    { label: "Reject", value: "reject" },
+    { label: "Complete", value: "complete" },
+    { label: "Cancel", value: "cancel" },
+    { label: "Part New", value: "partstatusnew" },
+    { label: "Part Confirm", value: "partstatusconfirm" },
+    { label: "Part Approve", value: "partstatusapprove" },
+    { label: "Part Reject", value: "partstatusreject" },
+  ];
 
   return (
     <>
@@ -186,6 +204,28 @@ const BookingListPage = () => {
                 </Link>
               </div>
             </div>
+
+            {/* Booking Status Filters */}
+            <div className="d-flex flex-wrap gap-2 mb-0 mt-4">
+              {BOOKING_STATUS_FILTERS?.map((s) => (
+                <button
+                  key={s?.value}
+                  type="button"
+                  className={`btn btn-sm ${bookingStatus === s?.value
+                    ? "btn-secondary"
+                    : "btn-outline-secondary"
+                    }`}
+                  onClick={() =>
+                    updateParams({
+                      bookingStatus: s?.value,
+                      page: 1,
+                    })
+                  }
+                >
+                  {s?.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Table */}
@@ -198,6 +238,7 @@ const BookingListPage = () => {
                       <th>#</th>
                       <th>Booking ID</th>
                       <th>Mode</th>
+                      <th>Amount</th>
                       <th>Assign</th>
                       <th>Status</th>
                       <th>Action</th>
@@ -210,6 +251,7 @@ const BookingListPage = () => {
                           <td>{(page - 1) * limit + index + 1}</td>
                           <td>{d?.bookingId}</td>
                           <td>{d?.paymentMode}</td>
+                          <td>₹{d?.payableAmount}</td>
                           <td>
                             <button
                               className="btn btn-primary"

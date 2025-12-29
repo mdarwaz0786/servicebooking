@@ -158,6 +158,7 @@ const WalletListPage = () => {
                     <th>Transaction Id</th>
                     <th>Provider</th>
                     <th>Credit Points</th>
+                    <th>Transaction Type</th>
                     <th>Mode</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -171,6 +172,7 @@ const WalletListPage = () => {
                         <td>{d?.transactionId || "-"}</td>
                         <td>{d?.provider?.name}</td>
                         <td>{d?.creditPoints}</td>
+                        <td>{d?.transactionType}</td>
                         <td>{d?.paymentMode}</td>
                         <td>
                           <div className="active-switch">

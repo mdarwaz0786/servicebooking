@@ -1,22 +1,34 @@
 import { buildPagination } from "../../utils/pagination.js";
 import TrainingScheduleSubmitModel from "../../models/trainingScheduleSubmit.model.js";
-import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
-import Training from "../../models/training.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
 /* --------------------- GET ALL --------------------- */
 export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, sort = "desc" } = req.query;
+  let { page = 1, limit = 10, sort = "desc", status, serviceman, trainer } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
 
+  const filters = {};
+
+  if (status) {
+    filters.trainingScheduleStatus = status;
+  };
+
+  if (serviceman) {
+    filters.providerId = serviceman;
+  };
+
+  if (trainer) {
+    filters.trainingId = trainer;
+  };
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const data = await TrainingScheduleSubmitModel
-    .find()
+    .find(filters)
     .populate("provider")
     .populate("training")
     .populate("profile")

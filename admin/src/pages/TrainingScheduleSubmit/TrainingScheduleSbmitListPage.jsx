@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import { formatDate } from "../../helpers/formatDate";
@@ -18,7 +19,11 @@ const TrainingScheduleSubmitListPage = () => {
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [statusMap, setStatusMap] = useState({});
+  const [servicemen, setServicemen] = useState([]);
+  const [training, setTraining] = useState([]);
 
+  const trainer = searchParams.get("trainer") || "";
+  const serviceman = searchParams.get("serviceman") || "";
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
@@ -34,6 +39,39 @@ const TrainingScheduleSubmitListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
+  const fetchTrainer = async () => {
+    try {
+      const res = await axios.get(apis.training.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        setTraining(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.log(err)
+    };
+  };
+
+  const fetchServicemen = async () => {
+    try {
+      const res = await axios.get(apis.servicemanProfile.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        setServicemen(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.log(err)
+    };
+  };
+
+  useEffect(() => {
+    fetchServicemen();
+    fetchTrainer()
+  }, []);
+
   const fetchTrainingScheduleSubmit = async () => {
     try {
       setLoading(true);
@@ -43,6 +81,8 @@ const TrainingScheduleSubmitListPage = () => {
           page,
           limit,
           search: debouncedSearch,
+          serviceman,
+          trainer,
           sort,
         },
       });
@@ -67,6 +107,8 @@ const TrainingScheduleSubmitListPage = () => {
       limit,
       search: debouncedSearch,
       sort,
+      serviceman,
+      trainer,
       ...newParams,
     };
     setSearchParams(params);
@@ -107,7 +149,7 @@ const TrainingScheduleSubmitListPage = () => {
 
   useEffect(() => {
     fetchTrainingScheduleSubmit();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, serviceman, trainer]);
 
   const STATUSES = ["New", "Confirm", "Reject", "Present", "Absent", "Fail", "Complete"];
 
@@ -129,6 +171,25 @@ const TrainingScheduleSubmitListPage = () => {
       toast.error(error?.response?.data?.message || "Failed to update status");
     }
   };
+
+  const servicemanOptions = [
+    { value: "", label: "All Provider" },
+    ...servicemen.map((s) => ({
+      value: s?.userId,
+      label: s?.name,
+    })),
+  ];
+
+  const trainerOptions = [
+    { value: "", label: "All Trainer" },
+    ...training.map((s) => ({
+      value: s?._id,
+      label: s?.fullName,
+    })),
+  ];
+
+  const selectedServiceman = servicemanOptions.find((o) => o?.value === serviceman);
+  const selectedTrainer = trainerOptions.find((o) => o?.value === trainer);
 
   return (
     <div className="page-wrapper page-settings">
@@ -172,6 +233,38 @@ const TrainingScheduleSubmitListPage = () => {
               <option value={total}>All</option>
             </select>
           </div>
+        </div>
+
+        <div className="d-flex mt-4 mb-0">
+          <Select
+            className="w-auto me-3"
+            classNamePrefix="react-select"
+            options={trainerOptions}
+            value={selectedTrainer}
+            onChange={(option) =>
+              updateParams({
+                trainer: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Select Trainer"
+          />
+
+          <Select
+            className="w-auto me-3"
+            classNamePrefix="react-select"
+            options={servicemanOptions}
+            value={selectedServiceman}
+            onChange={(option) =>
+              updateParams({
+                serviceman: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Select Provider"
+          />
         </div>
 
         {/* Table */}

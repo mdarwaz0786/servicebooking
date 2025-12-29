@@ -3,6 +3,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 
+// create wallet
 export const createWallet = asyncHandler(async (req, res) => {
   const {
     depositAmount,
@@ -30,6 +31,7 @@ export const createWallet = asyncHandler(async (req, res) => {
   return res.status(201).json({ success: true, message: "Created successfully", data: wallet });
 });
 
+// Get all wallets
 export const getWallets = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
@@ -39,7 +41,63 @@ export const getWallets = asyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
 
+  const { transactionType = "all", time = "all" } = req.query;
   const filter = { providerId: userId, status: true };
+
+  if (transactionType !== "all") {
+    filter.transactionType = transactionType;
+  };
+
+  // ================= TIME FILTER =================
+  const now = new Date();
+
+  if (time !== "all") {
+    filter.createdAt = {};
+
+    if (time === "today") {
+      const now = new Date();
+
+      const start = new Date(now);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(now);
+      end.setHours(23, 59, 59, 999);
+
+      filter.createdAt = { $gte: start, $lte: end };
+    };
+
+    if (time === "this week") {
+      const now = new Date();
+      const day = now.getDay();
+
+      const diff = day === 0 ? -6 : 1 - day;
+      const start = new Date(now);
+      start.setDate(now.getDate() + diff);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+
+      filter.createdAt = {
+        $gte: start,
+        $lte: end,
+      };
+    };
+
+    if (time === "this month") {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
+
+      filter.createdAt = {
+        $gte: start,
+        $lte: end,
+      };
+    };
+  };
 
   // Get paginated wallets
   const wallets = await WalletModel.find(filter)

@@ -97,6 +97,8 @@ export const getServicemanCertificates = asyncHandler(async (req, res) => {
     filters.$or = [
       { title: { $regex: search, $options: "i" } },
       { certificateNumber: { $regex: search, $options: "i" } },
+      { issuedFrom: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
     ];
   }
 

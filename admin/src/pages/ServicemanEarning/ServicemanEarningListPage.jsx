@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
+import Select from "react-select";
 
 const ServicemanEarningListPage = () => {
   const { validToken } = useAuth();
@@ -16,7 +17,10 @@ const ServicemanEarningListPage = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [servicemen, setServicemen] = useState([]);
 
+  const serviceman = searchParams.get("serviceman") || "";
+  const payoutStatus = searchParams.get("payoutStatus") || "";
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
@@ -34,12 +38,37 @@ const ServicemanEarningListPage = () => {
     updateParams({ page: 1, search: debouncedSearch });
   }, [debouncedSearch]);
 
+  const fetchServicemen = async () => {
+    try {
+      const res = await axios.get(apis.servicemanProfile.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        setServicemen(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.log(err)
+    };
+  };
+
+  useEffect(() => {
+    fetchServicemen();
+  }, []);
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(apis.servicemanEarning.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: {
+          page,
+          limit,
+          search: debouncedSearch,
+          sort,
+          serviceman: serviceman || undefined,
+          payoutStatus: payoutStatus || undefined,
+        },
       });
 
       if (response?.data?.success) {
@@ -63,6 +92,8 @@ const ServicemanEarningListPage = () => {
       limit,
       sort,
       search: debouncedSearch,
+      serviceman,
+      payoutStatus,
       ...newParams,
     });
   };
@@ -85,7 +116,24 @@ const ServicemanEarningListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, sort, search]);
+  }, [page, limit, sort, search, serviceman, payoutStatus]);
+
+  const servicemanOptions = [
+    { value: "", label: "All Provider" },
+    ...servicemen.map((s) => ({
+      value: s?.userId,
+      label: s?.name,
+    })),
+  ];
+
+  const payoutOptions = [
+    { value: "", label: "All Payoutn Staus" },
+    { value: "true", label: "Paid" },
+    { value: "false", label: "Unpaid" },
+  ];
+
+  const selectedServiceman = servicemanOptions.find((o) => o?.value === serviceman);
+  const selectedPayout = payoutOptions.find((o) => o?.value === payoutStatus);
 
   return (
     <div className="page-wrapper page-settings">
@@ -123,6 +171,38 @@ const ServicemanEarningListPage = () => {
               <option value={total}>All</option>
             </select>
           </div>
+        </div>
+
+        <div className="d-flex mt-4 mb-0">
+          <Select
+            className="w-auto me-3"
+            classNamePrefix="react-select"
+            options={servicemanOptions}
+            value={selectedServiceman}
+            onChange={(option) =>
+              updateParams({
+                serviceman: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Select Provider"
+          />
+
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={payoutOptions}
+            value={selectedPayout}
+            onChange={(option) =>
+              updateParams({
+                payoutStatus: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Payout Status"
+          />
         </div>
 
         {/* Table */}

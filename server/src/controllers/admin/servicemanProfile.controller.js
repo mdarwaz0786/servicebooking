@@ -70,7 +70,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 
 // Get All Service Man Profiles
 export const getServiceManProfiles = asyncHandler(async (req, res) => {
-  let { search, status, page = 1, limit = 10, sort = "desc" } = req.query;
+  let { search, status, page = 1, limit = 10, sort = "desc", user, category, experienceLevel, profileStatus } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -78,11 +78,17 @@ export const getServiceManProfiles = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (status) filters.status = status;
+  if (user) filters.userId = user;
+  if (category) filters.categoryIds = category;
+  if (experienceLevel) filters.experienceLevel = experienceLevel;
+  if (profileStatus) filters.profileStatus = profileStatus;
 
   if (search) {
     filters.$or = [
       { name: { $regex: search, $options: "i" } },
       { email: { $regex: search, $options: "i" } },
+      { mobile: { $regex: search, $options: "i" } },
+      { companyName: { $regex: search, $options: "i" } },
     ];
   };
 

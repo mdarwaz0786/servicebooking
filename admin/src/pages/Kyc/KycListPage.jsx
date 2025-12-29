@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
@@ -17,11 +18,14 @@ const KycListPage = () => {
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [statusMap, setStatusMap] = useState({});
+  const [servicemen, setServicemen] = useState([]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const serviceman = searchParams.get("serviceman") || "";
+  const status = searchParams.get("status") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -33,6 +37,23 @@ const KycListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
+  const fetchServicemen = async () => {
+    try {
+      const res = await axios.get(apis.servicemanProfile.get, {
+        headers: { Authorization: validToken },
+      });
+      if (res?.data?.success) {
+        setServicemen(res.data.data || []);
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
+  useEffect(() => {
+    fetchServicemen();
+  }, []);
+
   const fetchKyc = async () => {
     try {
       setLoading(true);
@@ -42,6 +63,8 @@ const KycListPage = () => {
           page,
           limit,
           search: debouncedSearch,
+          status,
+          serviceman,
           sort,
         },
       });
@@ -66,6 +89,8 @@ const KycListPage = () => {
       limit,
       search: debouncedSearch,
       sort,
+      status,
+      serviceman,
       ...newParams,
     };
     setSearchParams(params);
@@ -90,7 +115,7 @@ const KycListPage = () => {
 
   useEffect(() => {
     fetchKyc();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, status, serviceman]);
 
   const STATUSES = [
     "pending",
@@ -116,6 +141,23 @@ const KycListPage = () => {
       toast.error(error?.response?.data?.message || "Failed to update status");
     }
   };
+
+  // Serviceman options
+  const servicemanOptions = [
+    { value: "", label: "All Servicemen" },
+    ...servicemen.map((s) => ({
+      value: s?.userId,
+      label: s?.name,
+    })),
+  ];
+
+  // Status options
+  const statusOptions = [
+    { value: "", label: "All Status" },
+    { value: "pending", label: "Pending" },
+    { value: "approved", label: "Approved" },
+    { value: "rejected", label: "Rejected" },
+  ];
 
   return (
     <div className="page-wrapper page-settings">
@@ -159,6 +201,40 @@ const KycListPage = () => {
               <option value={total}>All</option>
             </select>
           </div>
+        </div>
+
+        <div className="d-flex gap-3 mt-4 mb-0 flex-wrap">
+          {/* Serviceman Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Servicemen"
+            isClearable
+            value={servicemanOptions?.find((o) => o?.value === serviceman) || null}
+            options={servicemanOptions}
+            onChange={(selected) =>
+              updateParams({
+                serviceman: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
+
+          {/* Status Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Status"
+            isClearable
+            value={statusOptions.find((o) => o?.value === status) || null}
+            options={statusOptions}
+            onChange={(selected) =>
+              updateParams({
+                status: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
         </div>
 
         {/* Table */}

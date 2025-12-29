@@ -1,6 +1,7 @@
 import WalletModel from "../../models/wallet.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
@@ -146,6 +147,46 @@ export const dashboard = asyncHandler(async (req, res) => {
     { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } }
   ]);
 
+  // TOTAL EARNING (ALL TIME)
+  const totalEarningAgg = await ServicemanEarningModel.aggregate([
+    {
+      $match: {
+        servicemanId: userId,
+        status: true,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalEarning: { $sum: "$earningAmount" },
+      },
+    },
+  ]);
+
+  const totalEarning = totalEarningAgg[0]?.totalEarning || 0;
+
+  // TODAY EARNING
+  const todayEarningAgg = await ServicemanEarningModel.aggregate([
+    {
+      $match: {
+        servicemanId: userId,
+        status: true,
+        createdAt: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        todayEarning: { $sum: "$earningAmount" },
+      },
+    },
+  ]);
+
+  const todayEarning = todayEarningAgg[0]?.todayEarning || 0;
+
   return res.status(200).json({
     success: true,
     message: "Dashboard data fetched successfully",
@@ -165,8 +206,8 @@ export const dashboard = asyncHandler(async (req, res) => {
         partstatusreject: 0
       },
       todayBookings: todayBookings,
-      totalEarnning: 1999,
-      todayEarnning: 100,
+      totalEarnning: totalEarning,
+      todayEarnning: todayEarning,
     }
   });
 });

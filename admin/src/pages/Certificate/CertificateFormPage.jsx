@@ -124,6 +124,13 @@ const CertificateFormPage = () => {
             <h5 className="mb-0">
               {isEdit ? "Update Provider Certificate" : "Create Provider Certificate"}
             </h5>
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => navigate(-1)}
+            >
+              ← Back
+            </button>
           </div>
 
           <div className="card-body">

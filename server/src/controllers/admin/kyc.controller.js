@@ -91,7 +91,7 @@ export const createKyc = asyncHandler(async (req, res) => {
 
 // Get All KYC
 export const getKycs = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, status, sort = "desc", search } = req.query;
+  let { page = 1, limit = 10, status, sort = "desc", search, serviceman } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -99,6 +99,10 @@ export const getKycs = asyncHandler(async (req, res) => {
 
   const filters = {};
   if (status) filters.status = status;
+
+  if (serviceman) {
+    filters.userId = serviceman;
+  }
 
   if (search) {
     filters.$or = [

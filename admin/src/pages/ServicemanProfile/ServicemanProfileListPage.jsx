@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
@@ -16,11 +17,15 @@ const ServicemanProfileListPage = () => {
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [categories, setCategories] = useState([]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const category = searchParams.get("category") || "";
+  const experienceLevel = searchParams.get("experienceLevel") || "";
+  const profileStatus = searchParams.get("profileStatus") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -32,6 +37,24 @@ const ServicemanProfileListPage = () => {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(apis.category.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        setCategories(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const fetchServicemanProfile = async () => {
     try {
       setLoading(true);
@@ -42,6 +65,9 @@ const ServicemanProfileListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          category: category || undefined,
+          experienceLevel: experienceLevel || undefined,
+          profileStatus: profileStatus || undefined,
         },
       });
 
@@ -65,6 +91,9 @@ const ServicemanProfileListPage = () => {
       limit,
       search: debouncedSearch,
       sort,
+      category,
+      experienceLevel,
+      profileStatus,
       ...newParams,
     };
     setSearchParams(params);
@@ -105,7 +134,27 @@ const ServicemanProfileListPage = () => {
 
   useEffect(() => {
     fetchServicemanProfile();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, category, experienceLevel, profileStatus]);
+
+  const categoryOptions = categories?.map((c) => ({
+    value: c?._id,
+    label: c?.name,
+  }));
+
+  const experienceOptions = [
+    { value: "Fresher", label: "Fresher" },
+    { value: "Experience", label: "Experience" },
+  ];
+
+  const profileStatusOptions = [
+    { value: "Pending", label: "Pending" },
+    { value: "Approved", label: "Approved" },
+    { value: "Rejected", label: "Rejected" },
+  ];
+
+  const selectedCategory = categoryOptions?.find((o) => o?.value === category);
+  const selectedExperience = experienceOptions?.find((o) => o?.value === experienceLevel);
+  const selectedProfileStatus = profileStatusOptions?.find((o) => o?.value === profileStatus);
 
   return (
     <div className="page-wrapper page-settings">
@@ -151,6 +200,56 @@ const ServicemanProfileListPage = () => {
           </div>
         </div>
 
+        <div className="d-flex gap-3 mt-4 mb-0 flex-wrap">
+          {/* Category */}
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={categoryOptions}
+            value={selectedCategory || null}
+            onChange={(option) =>
+              updateParams({
+                category: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Product"
+          />
+
+          {/* Experience */}
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={experienceOptions}
+            value={selectedExperience || null}
+            onChange={(option) =>
+              updateParams({
+                experienceLevel: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Experience Level"
+          />
+
+          {/* Profile Status */}
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={profileStatusOptions}
+            value={selectedProfileStatus || null}
+            onChange={(option) =>
+              updateParams({
+                profileStatus: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Profile Status"
+          />
+        </div>
+
         {/* Table */}
         <div className="row">
           <div className="col-12">
@@ -162,6 +261,8 @@ const ServicemanProfileListPage = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Mobile</th>
+                    <th>Experience</th>
+                    <th>Profile Status</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -174,6 +275,8 @@ const ServicemanProfileListPage = () => {
                         <td>{d?.name}</td>
                         <td>{d?.email}</td>
                         <td>{d?.user?.mobile}</td>
+                        <td>{d?.experienceLevel}</td>
+                        <td>{d?.profileStatus}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

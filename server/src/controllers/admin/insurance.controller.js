@@ -61,7 +61,7 @@ export const createInsurance = asyncHandler(async (req, res) => {
 });
 
 export const getInsurances = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page, limit } = req.query;
+  let { search, sort = "desc", page, limit, provider, renew } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -69,16 +69,22 @@ export const getInsurances = asyncHandler(async (req, res) => {
 
   const filters = {};
 
+  if (provider) {
+    filters.providerId = provider;
+  };
+
+  if (renew) {
+    filters.isRenewed = renew;
+  };
+
   if (search) {
     filters.$or = [
       { companyName: { $regex: search, $options: "i" } },
       { policyNumber: { $regex: search, $options: "i" } },
+      { insuranceType: { $regex: search, $options: "i" } },
+      { emergencyNumber: { $regex: search, $options: "i" } },
     ];
-  }
-
-  if (status !== undefined) {
-    filters.isRenewed = status === "true";
-  }
+  };
 
   let sortOption = {};
   sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };

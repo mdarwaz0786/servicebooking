@@ -7,6 +7,7 @@ import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import { formatDate } from "../../helpers/formatDate";
 import Pagination from "../../components/Pagination/Pagination";
+import Select from "react-select";
 
 const TrainingListPage = () => {
   const { validToken } = useAuth();
@@ -17,11 +18,13 @@ const TrainingListPage = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [categories, setCategories] = useState([]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const category = searchParams.get("category") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -35,12 +38,30 @@ const TrainingListPage = () => {
     updateParams({ page: 1, search: debouncedSearch });
   }, [debouncedSearch]);
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(apis.category.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        setCategories(res?.data?.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(apis.training.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: { page, limit, search: debouncedSearch, sort, category },
       });
 
       if (response?.data?.success) {
@@ -102,7 +123,14 @@ const TrainingListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, sort, search]);
+  }, [page, limit, sort, search, category]);
+
+  const categoryOptions = categories?.map((c) => ({
+    value: c?._id,
+    label: c?.name,
+  }));
+
+  const selectedCategory = categoryOptions?.find((o) => o?.value === category);
 
   return (
     <div className="page-wrapper page-settings">
@@ -146,6 +174,24 @@ const TrainingListPage = () => {
               </button>
             </Link>
           </div>
+        </div>
+
+        <div className="d-flex gap-3 mt-4 mb-0 flex-wrap">
+          {/* Category */}
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={categoryOptions}
+            value={selectedCategory || null}
+            onChange={(option) =>
+              updateParams({
+                category: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Product"
+          />
         </div>
 
         {/* Table */}

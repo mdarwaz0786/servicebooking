@@ -45,3 +45,16 @@
 .home-usercontent {
   justify-content: center !important;
 }
+
+.react-select__control {
+  min-height: 32px;
+  font-size: 13px;
+}
+
+.react-select__value-container {
+  padding: 0 6px;
+}
+
+.react-select__indicator {
+  padding: 4px;
+}

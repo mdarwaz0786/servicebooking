@@ -13,7 +13,23 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
   const sortBy = req.query.sortBy || "createdAt";
   const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
 
+  const { serviceman, payoutStatus } = req.query;
+  const matchStage = {};
+
+  if (serviceman) {
+    if (!mongoose.Types.ObjectId.isValid(serviceman)) {
+      throw new ApiError(400, "Invalid serviceman");
+    };
+
+    matchStage.servicemanId = new mongoose.Types.ObjectId(serviceman);
+  };
+
+  if (payoutStatus) {
+    matchStage.payoutStatus = payoutStatus;
+  };
+
   const aggregation = await ServicemanEarningModel.aggregate([
+    { $match: matchStage },
     {
       $facet: {
         data: [
