@@ -144,7 +144,7 @@ const KycListPage = () => {
 
   // Serviceman options
   const servicemanOptions = [
-    { value: "", label: "All Servicemen" },
+    { value: "", label: "All Provider" },
     ...servicemen.map((s) => ({
       value: s?.userId,
       label: s?.name,
@@ -208,7 +208,7 @@ const KycListPage = () => {
           <Select
             className="react-select-container"
             classNamePrefix="react-select"
-            placeholder="All Servicemen"
+            placeholder="All Provider"
             isClearable
             value={servicemanOptions?.find((o) => o?.value === serviceman) || null}
             options={servicemanOptions}

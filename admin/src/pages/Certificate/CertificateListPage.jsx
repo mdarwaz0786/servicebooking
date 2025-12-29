@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis, { BASE_URL } from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
@@ -17,11 +18,13 @@ const CertificateListPage = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [servicemen, setServicemen] = useState([]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const serviceman = searchParams.get("serviceman") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -35,12 +38,29 @@ const CertificateListPage = () => {
     updateParams({ page: 1, search: debouncedSearch });
   }, [debouncedSearch]);
 
+  const fetchServicemen = async () => {
+    try {
+      const res = await axios.get(apis.servicemanProfile.get, {
+        headers: { Authorization: validToken },
+      });
+      if (res?.data?.success) {
+        setServicemen(res.data.data || []);
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
+  useEffect(() => {
+    fetchServicemen();
+  }, []);
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(apis.providerCertificate.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: { page, limit, search: debouncedSearch, sort, serviceman },
       });
 
       if (response?.data?.success) {
@@ -64,6 +84,7 @@ const CertificateListPage = () => {
       limit,
       sort,
       search: debouncedSearch,
+      serviceman,
       ...newParams,
     });
   };
@@ -102,7 +123,16 @@ const CertificateListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, sort, search]);
+  }, [page, limit, sort, search, serviceman]);
+
+  // Serviceman options
+  const servicemanOptions = [
+    { value: "", label: "All Provider" },
+    ...servicemen.map((s) => ({
+      value: s?._id,
+      label: s?.name,
+    })),
+  ];
 
   return (
     <div className="page-wrapper page-settings">
@@ -146,6 +176,24 @@ const CertificateListPage = () => {
               </button>
             </Link>
           </div>
+        </div>
+
+        <div className="d-flex gap-3 mt-4 mb-0 flex-wrap">
+          {/* Serviceman Filter */}
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="All Provider"
+            isClearable
+            value={servicemanOptions?.find((o) => o?.value === serviceman) || null}
+            options={servicemanOptions}
+            onChange={(selected) =>
+              updateParams({
+                serviceman: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
         </div>
 
         {/* Table */}
