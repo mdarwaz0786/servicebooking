@@ -119,6 +119,7 @@ export const AppProvider = ({ children }) => {
       refundPolicy: `${commurl}refund-policy/68f9c555819007e42b718e67`,
       GreenIndiaTeamImpact: `${commurl}impact/68f9c71c3cb87f459f74c3d7`,
       Disclaimer: `${commurl}disclaimer/68f9c71c3cb87f459f74c3d7`,
+      AppUrl: `${commurl}app`,
 
       contactEnquiry: `${commurl}contact-enquiry`,
 
@@ -291,10 +292,13 @@ export const AppProvider = ({ children }) => {
 
 
         if (result?.token) {
-          storage.set('token', result.token);
-          storage.set('user', JSON.stringify(result?.user));
-          setuser(result?.user);
-          toggleModal("loginModal", false);
+          if(result?.user?.role!="serviceman" && result?.user?.role!="provider")
+          {
+            storage.set('token', result.token);
+            storage.set('user', JSON.stringify(result?.user));
+            setuser(result?.user);
+            toggleModal("loginModal", false);
+          }
         }
       } else {
         if (!messageAlert && result.message)

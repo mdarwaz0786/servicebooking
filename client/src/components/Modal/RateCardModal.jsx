@@ -63,10 +63,16 @@ const RateCardModal = () => {
                           </thead>
                           <tbody>
                             {group?.rates?.map((rate, idx) => (
-                              <tr key={idx}>
+                              <tr key={idx}> 
                                 <td>{rate.description}</td>
                                 <td>
-                                  <strong>{PriceFormat(rate.serviceCharge.price)}</strong>
+                                  <p class="m-0">
+                                    <span class="fs-12">
+                                      <span class="old-price text-muted text-decoration-line-through">{PriceFormat(rate.serviceCharge.price)}</span>
+                                    </span>&nbsp;
+                                    <strong>{PriceFormat((parseFloat(rate.serviceCharge.price)-parseFloat(rate.serviceCharge.discountPrice))-parseFloat(rate.serviceCharge.labourCharge))}</strong>
+                                  </p>
+                                  {/* <strong>{PriceFormat(rate.serviceCharge.price)}</strong> */}
                                   {rate.serviceCharge.labourCharge && (
                                     <div className="text-muted small">
                                       + {PriceFormat(rate.serviceCharge.labourCharge)} (Labour)
