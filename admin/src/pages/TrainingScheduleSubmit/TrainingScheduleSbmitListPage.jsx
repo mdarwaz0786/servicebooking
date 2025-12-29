@@ -24,6 +24,7 @@ const TrainingScheduleSubmitListPage = () => {
 
   const trainer = searchParams.get("trainer") || "";
   const serviceman = searchParams.get("serviceman") || "";
+  const status = searchParams.get("status") || "";
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
@@ -84,6 +85,7 @@ const TrainingScheduleSubmitListPage = () => {
           serviceman,
           trainer,
           sort,
+          status,
         },
       });
 
@@ -109,6 +111,7 @@ const TrainingScheduleSubmitListPage = () => {
       sort,
       serviceman,
       trainer,
+      status,
       ...newParams,
     };
     setSearchParams(params);
@@ -149,7 +152,7 @@ const TrainingScheduleSubmitListPage = () => {
 
   useEffect(() => {
     fetchTrainingScheduleSubmit();
-  }, [page, limit, debouncedSearch, sort, serviceman, trainer]);
+  }, [page, limit, debouncedSearch, sort, serviceman, trainer, status]);
 
   const STATUSES = ["New", "Confirm", "Reject", "Present", "Absent", "Fail", "Complete"];
 

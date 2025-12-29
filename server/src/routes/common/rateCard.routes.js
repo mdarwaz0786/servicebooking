@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  getRateCardById,
   getRateCards,
   getRateCardByServiceId,
 } from "../../controllers/common/rateCard.controller.js";

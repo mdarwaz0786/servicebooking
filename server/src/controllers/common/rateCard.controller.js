@@ -40,7 +40,8 @@ export const getRateCards = asyncHandler(async (req, res) => {
   const total = await RateCardModel.countDocuments(filters);
 
   const rateCards = await RateCardModel.find(filters)
-    .populate("services")
+    .populate("category", "name image icon")
+    .populate("subCategory", "name, image icon")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -64,7 +65,10 @@ export const getRateCards = asyncHandler(async (req, res) => {
 
 // ======================== GET SINGLE RATE CARD ========================
 export const getRateCardById = asyncHandler(async (req, res) => {
-  const rateCard = await RateCardModel.findById(req.params.id).populate("services");
+  const rateCard = await RateCardModel
+    .findById(req.params.id)
+    .populate("category", "name image icon")
+    .populate("subCategory", "name, image icon");
 
   if (!rateCard) {
     throw new ApiError(404, "Rate card not found");
