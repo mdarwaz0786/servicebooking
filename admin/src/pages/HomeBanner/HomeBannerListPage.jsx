@@ -99,7 +99,7 @@ const HomeBannerListPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Banners {banners?.length}</h5>
+          <h5>Wide Banners {banners?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}

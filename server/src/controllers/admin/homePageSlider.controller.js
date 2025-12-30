@@ -4,6 +4,7 @@ import HomePageSliderModel from "../../models/homePageSlider.model.js";
 import compressImage from "../../helpers/compressImage.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import { buildPagination } from "../../utils/pagination.js";
 
 // Helper to remove file if any error occurs
 const removeFile = (filePath) => {
@@ -99,15 +100,19 @@ export const getHomePageSliders = asyncHandler(async (req, res) => {
     .lean();
 
   const total = await HomePageSliderModel.countDocuments(filters);
+  const totalPages = Math.ceil(total / limit);
 
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
     total,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    totalPages: Math.ceil(total / limit),
+    page,
+    limit,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
     data: sliders,
+    pagination: buildPagination({ page, limit, total }),
   });
 });
 

@@ -4,6 +4,10 @@ const apis = {
   dashboard: {
     get: `${BASE_URL}/api/v1/admin/dashboard`,
   },
+  app: {
+    create: `${BASE_URL}/api/v1/admin/app`,
+    get: `${BASE_URL}/api/v1/admin/app`,
+  },
   category: {
     create: `${BASE_URL}/api/v1/admin/category/create-category`,
     get: `${BASE_URL}/api/v1/admin/category`,

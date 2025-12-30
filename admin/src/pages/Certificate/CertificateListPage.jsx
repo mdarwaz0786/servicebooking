@@ -216,7 +216,7 @@ const CertificateListPage = () => {
                 <tbody>
                   {data?.length > 0 ? (
                     data?.map((d, index) => (
-                      <tr key={d._id}>
+                      <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>
                           <img

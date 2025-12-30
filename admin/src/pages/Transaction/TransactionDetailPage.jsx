@@ -1,111 +1,127 @@
-// import { FaCreditCard, FaUser, FaCalendarAlt } from "react-icons/fa";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../context/auth.context";
+import apis from "../../apis/apis";
 
-import { useLocation } from "react-router-dom";
+const TransactionDetailPage = () => {
+  const { validToken } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-function TransactionDetailPage() {
-  const location = useLocation();
-  const data = location.state; // This is the transaction object
+  const [loading, setLoading] = useState(false);
+  const [transaction, setTransaction] = useState(null);
 
-  console.log(data);
+  useEffect(() => {
+    const fetchTransaction = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${apis.transaction.getSingle}/${id}`, {
+          headers: { Authorization: validToken },
+        });
 
-  if (!data) return <p>No transaction data found.</p>;
+        if (res?.data?.success) {
+          setTransaction(res.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchTransaction();
+  }, [id]);
+
+  if (loading) {
+    return <div className="text-center mt-5">Loading...</div>;
+  }
+
+  if (!transaction) {
+    return <div className="text-center mt-5">Transaction not found</div>;
+  }
 
   return (
-    <div className="page-wrapper page-settings">
-      <div className="content">
-        <div className="container my-4">
-
-          {/* Header */}
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Transaction Details</h2>
-            <span className={`badge ${data.status === "success" ? "bg-success" : "bg-danger"} fs-6`}>
-              {data.status.toUpperCase()}
-            </span>
+    <div className="page-wrapper">
+      <div className="container mt-4 mb-5">
+        <div className="card shadow-sm">
+          <div className="card-header d-flex justify-content-between align-items-center">
+            <h5 className="mb-0">Transaction Details</h5>
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => navigate(-1)}
+            >
+              ← Back
+            </button>
           </div>
 
-          {/* Payment Summary */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header fw-bold">Payment Summary</div>
-            <div className="card-body">
-              <div className="row mb-2">
-                <div className="col-5">Transaction ID</div>
-                <div className="col-7">{data.transactionId}</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">Payment Method</div>
-                <div className="col-7"> {data.paymentBy.toUpperCase()}</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">Amount</div>
-                <div className="col-7">₹{data.amount}</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">GST</div>
-                <div className="col-7">{data.gstPercent}%</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">Final Amount</div>
-                <div className="col-7 fw-bold text-primary">₹{data.finalAmount}</div>
-              </div>
+          <div className="card-body">
+            <h6 className="mb-3">Basic Information</h6>
+            <div className="row mb-4">
+              <Detail label="Transaction ID" value={transaction.transactionId || "-"} />
+              <Detail label="Product Name" value={transaction.productName} />
+              <Detail label="Product Type" value={transaction.productType || "-"} />
+              <Detail label="Payment By" value={transaction.paymentBy} />
+              <Detail label="Status" value={transaction.status?.toUpperCase()} />
+              <Detail label="From" value={transaction.from} />
             </div>
-          </div>
 
-          {/* Booking Info */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header fw-bold">Booking Information</div>
-            <div className="card-body">
-              <div className="row mb-2">
-                <div className="col-5">Booking ID</div>
-                <div className="col-7">{data.PID?.bookingId}</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">Schedule</div>
-                <div className="col-7"> {data.PID?.scheduleDate?.slice(0, 10)} at {data.PID?.scheduleTime}</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">Status</div>
-                <div className="col-7">
-                  <span className={`badge ${data.PID?.status === "new" ? "bg-warning" : "bg-info"}`}>
-                    {data.PID?.status.toUpperCase()}
-                  </span>
-                </div>
-              </div>
+            <h6 className="mb-3">User Information</h6>
+            <div className="row mb-4">
+              <Detail label="Name" value={transaction.name || transaction.user?.name || "-"} />
+              <Detail label="Email" value={transaction.email || transaction.user?.email || "-"} />
+              <Detail label="Phone" value={transaction.phone || transaction.user?.mobile || "-"} />
             </div>
-          </div>
 
-          {/* Customer Info */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header fw-bold">Customer Details</div>
-            <div className="card-body">
-              <div className="row mb-2">
-                <div className="col-5">Mobile</div>
-                <div className="col-7">{data.user?.mobile}</div>
-              </div>
-              <div className="row mb-2">
-                <div className="col-5">User ID</div>
-                <div className="col-7">{data.user?._id}</div>
-              </div>
+            <h6 className="mb-3">Payment Information</h6>
+            <div className="row mb-4">
+              <Detail label="Amount" value={`₹ ${transaction.amount}`} />
+              <Detail label="GST %" value={transaction.gstPercent} />
+              <Detail label="Final Amount" value={`₹ ${transaction.finalAmount}`} />
+              <Detail
+                label="Payment Date"
+                value={
+                  transaction.paymentDate
+                    ? new Date(transaction.paymentDate).toLocaleDateString()
+                    : "-"
+                }
+              />
+              <Detail label="Payment Time" value={transaction.paymentTime || "-"} />
             </div>
-          </div>
 
-          {/* Service Info */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header fw-bold">Service Details</div>
-            <div className="card-body d-flex align-items-start">
-              <img src={service?.image} alt={service?.name} className="img-thumbnail me-3" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
-              <div>
-                <h5>{service?.name}</h5>
-                <p className="mb-1"><strong>Price:</strong> ₹{item?.salePrice}</p>
-                <p className="mb-1"><strong>Quantity:</strong> {item?.quantity}</p>
-                <p className="mb-0"><strong>Total:</strong> ₹{item?.salePrice * item?.quantity}</p>
-              </div>
+            {/* ================= TYPE ================= */}
+            <h6 className="mb-3">Transaction Type</h6>
+            <div className="row mb-4">
+              <Detail
+                label="Type"
+                value={transaction.type === 1 ? "Add" : transaction.type === 2 ? "Deduct" : "-"}
+              />
+              <Detail label="PID" value={transaction.PID || "-"} />
             </div>
-          </div>
 
+            {/* ================= ITEM DATA ================= */}
+            {transaction.itemData && (
+              <>
+                <h6 className="mb-3">Item Data</h6>
+                <pre className="bg-light p-3 rounded">
+                  {JSON.stringify(transaction.itemData, null, 2)}
+                </pre>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+/* ================= REUSABLE FIELD ================= */
+const Detail = ({ label, value }) => (
+  <div className="col-md-4 mb-3">
+    <div className="text-muted small">{label}</div>
+    <div className="fw-semibold">{value}</div>
+  </div>
+);
 
 export default TransactionDetailPage;

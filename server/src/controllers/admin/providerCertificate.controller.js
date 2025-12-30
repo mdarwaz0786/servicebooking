@@ -65,7 +65,7 @@ export const createProviderCertificate = asyncHandler(async (req, res) => {
 });
 
 export const getProviderCertificates = asyncHandler(async (req, res) => {
-  let { search, sort = "desc", page, limit } = req.query;
+  let { search, sort = "desc", page, limit, serviceman } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -78,7 +78,11 @@ export const getProviderCertificates = asyncHandler(async (req, res) => {
       { title: { $regex: search, $options: "i" } },
       { number: { $regex: search, $options: "i" } }
     ];
-  }
+  };
+
+  if (serviceman) {
+    filters.providerId = serviceman;
+  };
 
   let sortOption = {};
   sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
