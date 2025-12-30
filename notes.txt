@@ -1,6 +1,5 @@
 https://truelysell.dreamstechnologies.com/html/template/index.html
 
-
 // after otp (Earning  Screen => hour - amount)
 // service category choose karega (multiple), name, email, DOB, working history(Fresher, or Experience(compnay, number of year)), permanenet address, current address, reference name 1, reference name 2,
 // reference 1 mobile , reference 2 mobile, profile image.
@@ -87,3 +86,36 @@ RAZORPAY_KEY_SECRET=H83uZwcFKA08ij3l9CdP1FA8
 // Service man profile->category id (multiple), name, email, DOB, working history(Fresher, or Experience(compnay name, number of year)), permanenet address, current address, reference person name 1, reference person name 2,
    reference person 1 mobile , reference person 2 mobile, profile image,
 
+server {
+    server_name oyekabadwale.com www.codediffusion.info;
+
+    location / {
+        proxy_pass http://145.223.18.56:4000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/codediffusion.info/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/codediffusion.info/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+server {
+    if ($host = www.codediffusion.info) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = codediffusion.info) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name codediffusion.info www.codediffusion.info;
+    return 404; # managed by Certbot
+}

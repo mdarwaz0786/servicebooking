@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const serviceManProfileSchema = new mongoose.Schema({
+  servicemanId: {
+    type: String,
+    trim: true,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -157,6 +161,32 @@ serviceManProfileSchema.virtual("trainingScheduleSubmit", {
       // OR updatedAt: -1 // Agar aapko updatedAt ke basis par sort karna hai
     }
   },
+});
+
+serviceManProfileSchema.pre("save", async function (next) {
+  if (this.servicemanId) return next();
+
+  try {
+    const lastRecord = await this.constructor
+      .findOne({ servicemanId: { $regex: /GI$/ } })
+      .sort({ createdAt: -1 })
+      .select("servicemanId")
+      .lean();
+
+    let nextNumber = 101;
+
+    if (lastRecord?.servicemanId) {
+      const numericPart = parseInt(lastRecord.servicemanId.replace("GI", ""), 10);
+      if (!isNaN(numericPart)) {
+        nextNumber = numericPart + 1;
+      };
+    };
+
+    this.servicemanId = `${nextNumber}GI`;
+    next();
+  } catch (error) {
+    next(error);
+  };
 });
 
 const ServiceManProfileModel = mongoose.model("ServiceManProfile", serviceManProfileSchema);
