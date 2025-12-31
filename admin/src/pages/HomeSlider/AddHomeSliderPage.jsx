@@ -128,7 +128,7 @@ const AddHomeSliderPage = () => {
       <div className="container mt-4 mb-5">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Create Slider</h5>
+            <h5 className="mb-0">Create Front Banner</h5>
             <button
               className="btn btn-outline-secondary btn-sm"
               onClick={() => navigate(-1)}

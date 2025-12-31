@@ -119,10 +119,13 @@ import ServicemanEarningListPage from "../pages/ServicemanEarning/ServicemanEarn
 import CertificateFormPage from "../pages/Certificate/CertificateFormPage";
 import CertificateListPage from "../pages/Certificate/CertificateListPage";
 import SupportContentFormPage from "../pages/SupportContent/SupportContentFormPage";
+import AppInfoFormPage from "../pages/AppInfo/AppInfoFormPage";
 
 const routesConfig = {
   private: [
     { path: "/", element: DashboardPage },
+    { path: "/app-info", element: AppInfoFormPage },
+
     { path: "/categories", element: CategoryListPage },
     { path: "/add-category", element: AddCategoryPage },
     { path: "/update-category/:id", element: UpdateCategoryPage },

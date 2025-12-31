@@ -4,6 +4,6 @@ import { getAdminDashboard } from "../../controllers/admin/dashboard.controller.
 
 const router = express.Router();
 
-router.get("/", getAdminDashboard);
+router.get("/", isLoggedIn, getAdminDashboard);
 
 export default router;

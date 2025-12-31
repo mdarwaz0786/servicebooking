@@ -160,7 +160,15 @@ const Sidebar = () => {
                     to="/support-content"
                     className={currentPath === "/support-content" ? "active" : ""}
                   >
-                    <span>App Support</span>
+                    <span>Mobile App Support</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/app-info"
+                    className={currentPath === "/app-info" ? "active" : ""}
+                  >
+                    <span>Mobile App Info</span>
                   </Link>
                 </li>
               </ul>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
@@ -25,6 +26,15 @@ const HomeServiceListPage = () => {
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subSubCategories, setSubSubCategories] = useState([]);
+  const [service, setService] = useState([]);
+  const categoryId = searchParams.get("categoryId") || "";
+  const subCategoryId = searchParams.get("subCategoryId") || "";
+  const subSubCategoryId = searchParams.get("subSubCategoryId") || "";
+  const services = searchParams.get("services") || "";
+
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchInput), 500);
     return () => clearTimeout(handler);
@@ -34,12 +44,95 @@ const HomeServiceListPage = () => {
     setSearchParams({ page, limit, search: debouncedSearch, sort, ...newParams });
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(apis.category.get, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch categories");
+      };
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subCategory.get}?categoryId=${categoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub categories");
+      };
+    };
+    fetchSubCategories();
+  }, [categoryId, validToken]);
+
+  useEffect(() => {
+    const fetchSubSubCategories = async () => {
+      try {
+        const response = await axios.get(`${apis.subSubCategory.get}?subCategoryId=${subCategoryId}`, {
+          headers: { Authorization: validToken },
+        });
+        if (response?.data?.success) {
+          setSubSubCategories(response?.data?.data || []);
+        };
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to fetch sub sub categories");
+      };
+    };
+    fetchSubSubCategories();
+  }, [subCategoryId, validToken]);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(apis.service.get, {
+          headers: { Authorization: validToken },
+          params: {
+            categoryId,
+            subCategoryId,
+            subSubCategoryId,
+          },
+        });
+
+        if (response?.data?.success) {
+          setService(response?.data?.data || []);
+        };
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Failed to fetch services");
+      };
+    };
+    fetchService();
+  }, [categoryId, subCategoryId, subSubCategoryId, validToken]);
+
   const fetchServices = async () => {
     try {
       setLoading(true);
       const response = await axios.get(apis.homeService.get, {
         headers: { Authorization: validToken },
-        params: { page, limit, search: debouncedSearch, sort },
+        params: {
+          page,
+          limit,
+          search: debouncedSearch,
+          sort,
+          category: categoryId,
+          subCategory: subCategoryId,
+          subSubCategory: subSubCategoryId,
+          services,
+        },
       });
 
       if (response?.data?.success) {
@@ -58,9 +151,7 @@ const HomeServiceListPage = () => {
 
   const toggleStatus = async (id, currentStatus) => {
     try {
-      setServiceBlocks(prev =>
-        prev.map(s => s?._id === id ? { ...s, status: !currentStatus } : s)
-      );
+      setServiceBlocks(prev => prev.map(s => s?._id === id ? { ...s, status: !currentStatus } : s));
       const response = await axios.patch(
         `${apis.homeService.update}/${id}`,
         { status: !currentStatus },
@@ -95,13 +186,13 @@ const HomeServiceListPage = () => {
 
   useEffect(() => {
     fetchServices();
-  }, [page, limit, debouncedSearch, sort]);
+  }, [page, limit, debouncedSearch, sort, services, categoryId, subCategoryId, subSubCategoryId]);
 
   return (
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Services {serviceBlocks?.length}</h5>
+          <h5>Product Services {serviceBlocks?.length}</h5>
 
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
@@ -144,6 +235,109 @@ const HomeServiceListPage = () => {
           </div>
         </div>
 
+        <div className="d-flex justify-content-start align-items-center gap-2 mt-4">
+          {/* Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Products"
+              value={
+                categoryId
+                  ? { value: categoryId, label: categories.find((c) => c?._id === categoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  categoryId: selected ? selected.value : "",
+                  page: 1,
+                  subCategoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={categories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Variants"
+              value={
+                subCategoryId
+                  ? { value: subCategoryId, label: subCategories.find((c) => c?._id === subCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={subCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Sub Sub Category */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Service Process"
+              value={
+                subSubCategoryId
+                  ? { value: subSubCategoryId, label: subSubCategories.find((c) => c?._id === subSubCategoryId)?.name }
+                  : null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  subSubCategoryId: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subCategoryId,
+                })
+              }
+              options={subSubCategories.map((cat) => ({
+                value: cat?._id,
+                label: cat?.name,
+              }))}
+            />
+          </div>
+
+          {/* Services */}
+          <div style={{ minWidth: "200px" }}>
+            <Select
+              isClearable
+              placeholder="All Services"
+              value={
+                service
+                  .map((s) => ({ value: s?._id, label: s?.name }))
+                  .find((s) => s?.value === services) || null
+              }
+              onChange={(selected) =>
+                updateParams({
+                  services: selected ? selected.value : "",
+                  page: 1,
+                  categoryId,
+                  subCategoryId,
+                  subSubCategoryId,
+                })
+              }
+              options={service.map((s) => ({
+                value: s?._id,
+                label: s?.name,
+              }))}
+            />
+          </div>
+        </div>
+
         {/* Table */}
         <div className="row">
           <div className="col-12">
@@ -153,6 +347,9 @@ const HomeServiceListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Title</th>
+                    <th>Product</th>
+                    <th>Variant</th>
+                    <th>Service Process</th>
                     <th>Services</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -168,6 +365,9 @@ const HomeServiceListPage = () => {
                       <tr key={s?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{s?.title}</td>
+                        <td>{s?.category?.name}</td>
+                        <td>{s?.subCategory?.name}</td>
+                        <td>{s?.subSubCategory?.name}</td>
                         <td>
                           {s?.services?.map((item) => (
                             <p>{item?.name}</p>

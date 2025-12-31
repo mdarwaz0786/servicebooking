@@ -127,7 +127,7 @@ const ServicemanEarningListPage = () => {
   ];
 
   const payoutOptions = [
-    { value: "", label: "All Payoutn Staus" },
+    { value: "", label: "All Payout Status" },
     { value: "true", label: "Paid" },
     { value: "false", label: "Unpaid" },
   ];
