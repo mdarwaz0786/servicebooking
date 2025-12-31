@@ -10,6 +10,14 @@ const appSchemaSchema = new mongoose.Schema({
       type: String,
       default: null,
     },
+    androidVersion: {
+      type: String,
+      default: null,
+    },
+    iosVersion: {
+      type: String,
+      default: null,
+    },
   },
   user: {
     android: {
@@ -17,6 +25,14 @@ const appSchemaSchema = new mongoose.Schema({
       default: null,
     },
     ios: {
+      type: String,
+      default: null,
+    },
+    androidVersion: {
+      type: String,
+      default: null,
+    },
+    iosVersion: {
       type: String,
       default: null,
     },

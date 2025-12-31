@@ -15,10 +15,14 @@ const AppInfoFormPage = () => {
     serviceman: {
       android: "",
       ios: "",
+      androidVersion: "",
+      iosVersion: "",
     },
     user: {
       android: "",
       ios: "",
+      androidVersion: "",
+      iosVersion: "",
     },
   });
 
@@ -34,10 +38,14 @@ const AppInfoFormPage = () => {
             serviceman: {
               android: res?.data?.data?.serviceman?.android || "",
               ios: res?.data?.data?.serviceman?.ios || "",
+              androidVersion: res?.data?.data?.serviceman?.androidVersion || "",
+              iosVersion: res?.data?.data?.serviceman?.iosversion || "",
             },
             user: {
               android: res?.data?.data?.user?.android || "",
               ios: res?.data?.data?.user?.ios || "",
+              androidVersion: res?.data?.data?.user?.androidVersion || "",
+              iosVersion: res?.data?.data?.user?.iosVersion || "",
             },
           });
         }
@@ -94,10 +102,10 @@ const AppInfoFormPage = () => {
 
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              <h6 className="mb-3">Serviceman App Version</h6>
+              <h6 className="mb-3">Provider App</h6>
               <div className="row mb-4">
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Android Version</label>
+                  <label className="form-label">Android Link</label>
                   <input
                     className="form-control"
                     placeholder="e.g. 1.0.5"
@@ -109,7 +117,7 @@ const AppInfoFormPage = () => {
                 </div>
 
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">iOS Version</label>
+                  <label className="form-label">IOS Link</label>
                   <input
                     className="form-control"
                     placeholder="e.g. 1.0.5"
@@ -119,12 +127,36 @@ const AppInfoFormPage = () => {
                     }
                   />
                 </div>
-              </div>
 
-              <h6 className="mb-3">User App Version</h6>
-              <div className="row mb-4">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Android Version</label>
+                  <input
+                    className="form-control"
+                    placeholder="e.g. 1.0.5"
+                    value={formData.serviceman.androidVersion}
+                    onChange={(e) =>
+                      handleNestedChange("serviceman", "androidVersion", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">IOS Version</label>
+                  <input
+                    className="form-control"
+                    placeholder="e.g. 1.0.5"
+                    value={formData.serviceman.iosVersion}
+                    onChange={(e) =>
+                      handleNestedChange("serviceman", "iosVersion", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <h6 className="mb-3">User App</h6>
+              <div className="row mb-4">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Android Link</label>
                   <input
                     className="form-control"
                     placeholder="e.g. 1.0.5"
@@ -136,13 +168,37 @@ const AppInfoFormPage = () => {
                 </div>
 
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">iOS Version</label>
+                  <label className="form-label">IOS Link</label>
                   <input
                     className="form-control"
                     placeholder="e.g. 1.0.5"
                     value={formData.user.ios}
                     onChange={(e) =>
                       handleNestedChange("user", "ios", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Android Version</label>
+                  <input
+                    className="form-control"
+                    placeholder="e.g. 1.0.5"
+                    value={formData.user.androidVersion}
+                    onChange={(e) =>
+                      handleNestedChange("user", "androidVersion", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">IOS Version</label>
+                  <input
+                    className="form-control"
+                    placeholder="e.g. 1.0.5"
+                    value={formData.user.iosVersion}
+                    onChange={(e) =>
+                      handleNestedChange("user", "iosVersion", e.target.value)
                     }
                   />
                 </div>

@@ -58,6 +58,13 @@ const serviceManProfileSchema = new mongoose.Schema({
     },
     min: 0,
   },
+  monthOfExperience: {
+    type: Number,
+    required: function () {
+      return this.workingType === "Experience";
+    },
+    min: 0,
+  },
   permanentAddress: {
     type: String,
     required: true,

@@ -11,35 +11,38 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
 
   const allSlots = await TimeSlotModel.find({ status: true }).sort({ time: 1 });
 
-  const currentIST = moment().tz("Asia/Kolkata"); // current IST datetime
-  const selectedDate = moment.tz(date, "YYYY-MM-DD", "Asia/Kolkata"); // selected date in IST
+  const currentIST = moment().tz("Asia/Kolkata");
+  const selectedDate = moment.tz(date, "YYYY-MM-DD", "Asia/Kolkata");
+
+  // 🔥 add 2 hours buffer
+  const minAllowedTime = currentIST.clone().add(2, "hours");
 
   let availableSlots;
 
   if (selectedDate.isSame(currentIST, "day")) {
-    // Today → filter only slots after current time
-    availableSlots = allSlots.filter(slot => {
+    // Today → allow slots only after current time + 2 hours
+    availableSlots = allSlots.filter((slot) => {
       const slotDateTime = moment.tz(
         `${date} ${slot.time}`,
         "YYYY-MM-DD hh:mm A",
         "Asia/Kolkata"
       );
-      return slotDateTime.isAfter(currentIST);
+
+      return slotDateTime.isAfter(minAllowedTime);
     });
   } else {
-    // Future date → all slots are available
+    // Future date → all slots available
     availableSlots = allSlots;
   }
 
-  // ✅ Sort slots so AM comes first, then PM
+  // Ensure proper ordering (AM → PM)
   availableSlots.sort((a, b) => {
     const timeA = moment(a.time, "hh:mm A");
     const timeB = moment(b.time, "hh:mm A");
-    return timeA - timeB; // this ensures AM slots come before PM
+    return timeA - timeB;
   });
 
-  // Format time in 12-hour AM/PM
-  const slotsWithFormattedTime = availableSlots.map(slot => ({
+  const slotsWithFormattedTime = availableSlots.map((slot) => ({
     ...slot.toObject(),
     time: moment(slot.time, "hh:mm A").format("hh:mm A"),
   }));
@@ -49,11 +52,11 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     message: "Data fetched successfully",
     timezone: "Asia/Kolkata",
     date,
+    minTimeAllowed: minAllowedTime.format("hh:mm A"),
     total: slotsWithFormattedTime.length,
     data: slotsWithFormattedTime,
   });
 });
-
 
 // Single time slot
 export const getSingleTimeSlot = asyncHandler(async (req, res) => {

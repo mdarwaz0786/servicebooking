@@ -57,6 +57,7 @@ import zoneRoutes from "./zone.route.js";
 import servicemanEarningRoutes from "./servicemanEarning.routes.js";
 import supportContentRoutes from "./support.routes.js";
 import appRoutes from "./app.route.js";
+import servicemanByZone from "./servicemanByZone.routes.js";
 
 const router = express.Router();
 
@@ -75,6 +76,7 @@ router.use("/booking", bookingRoutes);
 router.use("/review", reviewRoutes);
 router.use("/kyc", kycRoutes);
 router.use("/serviceman-profile", profileRoutes);
+router.use("/serviceman-byzone", servicemanByZone);
 router.use("/training-schedule", trainingScheduleRoutes);
 router.use("/training-schedule-submit", trainingScheduleSubmitRoutes);
 router.use("/earning", earningRoutes);

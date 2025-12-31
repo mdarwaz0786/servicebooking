@@ -57,6 +57,9 @@ const apis = {
     get: `${BASE_URL}/api/v1/admin/serviceman-profile`,
     update: `${BASE_URL}/api/v1/admin/serviceman-profile`,
   },
+  servicemanByZone: {
+    get: `${BASE_URL}/api/v1/admin/serviceman-byzone`,
+  },
   servicemanBooking: {
     create: `${BASE_URL}/api/v1/admin/serviceman-booking`,
   },

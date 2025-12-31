@@ -1,6 +1,8 @@
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ReviewModel from "../../models/review.model.js";
+import AppModel from "../../models/app.model.js";
+import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
 import mongoose from "mongoose";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -15,10 +17,12 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
     categoryIds,
     name,
     email,
+    mobile,
     dob,
     experienceLevel,
     companyName,
     yearOfExperience,
+    monthOfExperience,
     permanentAddress,
     currentAddress,
     referenceName1,
@@ -70,10 +74,12 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
       categoryIds,
       name,
       email,
+      mobile,
       dob,
       experienceLevel,
       companyName,
       yearOfExperience,
+      monthOfExperience,
       permanentAddress,
       currentAddress,
       referenceName1,
@@ -101,26 +107,48 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
+  const appInfo = await AppModel.findOne().select("-_id -createdAt -updatedAt -createdBy -updatedBy -user -status");
+
+  const earning = await ServicemanEarningModel.aggregate([
+    {
+      $match: {
+        servicemanId: userId,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalEarning: { $sum: "$earningAmount" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        totalEarning: 1,
+      },
+    },
+  ]);
 
   const profile = await ServiceManProfileModel
     .findOne({ userId })
     .populate("categories")
     .populate("user")
     .populate("kyc")
-    // .populate("trainingScheduleSubmit")
+    .populate("zones")
     .populate({
       path: "trainingScheduleSubmit",
-      match: { providerId: userId },   // 👈 USER ID MATCH
-    })
+      match: { providerId: userId },
+    });
 
   if (!profile) throw new ApiError(404, "Profile not found");
 
   const servicemanId = profile?._id;
 
-  const completedBookingCount = await ServiceManBookingModel.countDocuments({
-    servicemanId,
-    status: "complete",
-  });
+  const completedBookingCount = await ServiceManBookingModel
+    .countDocuments({
+      servicemanId,
+      status: "complete",
+    });
 
   const ratingAgg = await ReviewModel.aggregate([
     {
@@ -151,8 +179,9 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
       ...profileObj,
       averageRating: avgRating,
       totalReviews,
-      totalEarning: 1999,
-      completedJob: completedBookingCount,
+      totalEarning: earning[0]?.totalEarning || 0,
+      completedJob: completedBookingCount || 0,
+      appInfo: appInfo,
     },
   });
 });

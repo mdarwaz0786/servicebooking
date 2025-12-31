@@ -118,6 +118,7 @@ const KycDetailsPage = () => {
                     <ul className="list-unstyled mt-3">
                       <li><strong>Bank:</strong> {record?.bankName}, {record?.branchName}</li>
                       <li><strong>Account No:</strong> {record?.accountNumber}</li>
+                      <li><strong>Account Holder Name:</strong> {record?.accountHolderName}</li>
                       <li><strong>IFSC:</strong> {record?.ifscCode}</li>
                       <li><strong>PAN:</strong> {record?.panCardNumber}</li>
                       <li><strong>Aadhar:</strong> {record?.aadharCardNumber}</li>

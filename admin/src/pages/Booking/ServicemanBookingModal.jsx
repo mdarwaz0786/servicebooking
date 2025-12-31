@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 const ServicemanBookingModal = ({ booking, fetchBookings }) => {
   const { validToken } = useAuth();
+  const [getAll, setGetAll] = useState("false");
   const [formData, setFormData] = useState({
     bookingId: "",
     userId: "",
@@ -52,18 +53,31 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
   useEffect(() => {
     const fetchServiceMen = async () => {
       try {
-        const res = await axios.get(apis.servicemanProfile.get, {
+        const res = await axios.get(apis.servicemanByZone.get, {
           headers: { Authorization: validToken },
+          params: {
+            all: getAll,
+            lat: getAll === "false" ? booking?.address?.lat : undefined,
+            long: getAll === "false" ? booking?.address?.long : undefined,
+          },
         });
+
         if (res?.data?.success) {
           setServiceMen(res?.data?.data || []);
-        };
+        }
       } catch (err) {
         console.log("Error while fetching servicemen:", err.message);
-      };
+      }
     };
+
     if (booking?._id) fetchServiceMen();
-  }, [booking?._id, validToken]);
+  }, [
+    booking?._id,
+    booking?.address?.lat,
+    booking?.address?.long,
+    getAll,
+    validToken,
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,11 +114,11 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
       aria-hidden="true"
       ref={modalRef}
     >
-      <div className="modal-dialog modal-lg">
+      <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="serviceManBookingModalLabel">
-              Assign To Service Man
+              Assign To Provider
             </h5>
             <button
               type="button"
@@ -115,10 +129,23 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
           </div>
 
           <div className="modal-body">
-            <form onSubmit={handleSubmit} className="row g-3">
+            <form onSubmit={handleSubmit} className="row">
+              {/* All or zone wise */}
+              <div className="col-md-6">
+                <label className="form-label">Get All Provider</label>
+                <select
+                  className="form-select"
+                  value={getAll}
+                  onChange={(e) => setGetAll(e.target.value)}
+                >
+                  <option value="false">No (Zone Based)</option>
+                  <option value="true">Yes (All Provider)</option>
+                </select>
+              </div>
+
               {/* Service Man */}
               <div className="col-md-6">
-                <label className="form-label">Service Man</label>
+                <label className="form-label">Provider</label>
                 <select
                   name="servicemanId"
                   value={formData.servicemanId}
@@ -126,7 +153,7 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
                   className="form-select"
                   required
                 >
-                  <option value="">-- Select Service Man --</option>
+                  <option value="">-- Select Provider --</option>
                   {serviceMen?.map((sm) => (
                     <option key={sm?._id} value={sm?._id}>
                       {sm?.name}
@@ -134,7 +161,7 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
                   ))}
                 </select>
               </div>
-              <div className="col-12">
+              <div className="text-end mt-4">
                 <button
                   type="submit"
                   className="btn btn-success"
