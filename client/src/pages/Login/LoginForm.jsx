@@ -130,14 +130,20 @@ const LoginForm = () => {
       <div className={`mb-3 ${mobileField ? "" : "d-none"}`}>
         <label className="form-label fw-semibold">Mobile Number</label>
         <input
-          type="text"
+          type="tel"
           className="form-control form-control-lg rounded-3"
-          placeholder="Enter mobile number"
+          placeholder="Enter 10 digit mobile number"
           value={mobile}
           ref={mobileInputRef}
-          onChange={(e) => setmobile(e.target.value)}
+          maxLength={10}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, ""); // only numbers
+            if (value.length <= 10) {
+              setmobile(value);
+            }
+          }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && mobile.length === 10) {
               handleSendOtp();
             }
           }}

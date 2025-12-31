@@ -10,7 +10,7 @@ const AboutUsPage = () => {
   const providers = [
     {
       name: "SARVESH KUMAR MISHRA",
-      role: "(CEO & FOUNDER)",
+      role: "(Director)",
       img: "assets/img/home/sarvesh-mishra.svg",
       description: "Sarvesh Mishra founded Green India Team with a vision to make home appliance repair simple, reliable, and accessible. His strong leadership and commitment to quality have guided the company toward excellence and customer trust.",
     }
@@ -187,7 +187,7 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
 
           <div className="col-md-12">
             <div className="choose-content m-0">
-                <h2 style={{lineHeight: '1',marginBottom: '13px'}}>Why Choose Us - The Smart Choice for Home Services</h2>
+                <h2 style={{lineHeight: '1',marginBottom: '13px'}}>Why Choose Us - <br/>The Smart Choice for Home Services</h2>
               </div>
           </div>
 
@@ -418,7 +418,7 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
                 alt="img"
               />
               <div className="choose-info">
-                <h3>6</h3>
+                <h3>2</h3>
                 <p>Cities</p>
               </div>
             </div>
@@ -448,7 +448,7 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
         <div className="section-heading">
           <div className="row">
             <div className="col-md-6">
-              <h2 className="fs-32">Our Leadership Team</h2>
+              {/* <h2 className="fs-32">Our Leadership Team</h2> */}
             </div>
           </div>
         </div>

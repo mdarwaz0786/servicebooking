@@ -67,15 +67,19 @@ const RateCardModal = () => {
                                 <td>{rate.description}</td>
                                 <td>
                                   <p class="m-0">
-                                    <span class="fs-12">
-                                      <span class="old-price text-muted text-decoration-line-through">{PriceFormat(rate.serviceCharge.price)}</span>
-                                    </span>&nbsp;
-                                    <strong>{PriceFormat((parseFloat(rate.serviceCharge.price)-parseFloat(rate.serviceCharge.discountPrice))-parseFloat(rate.serviceCharge.labourCharge))}</strong>
+                                    {rate.serviceCharge.price > 0 && (
+                                      <>
+                                        <span class="fs-12">
+                                          <span class="old-price text-muted text-decoration-line-through">{PriceFormat(rate.serviceCharge.price || 0)}</span>
+                                        </span>&nbsp;
+                                      </>
+                                    )}
+                                    <strong>{PriceFormat((parseFloat(rate.serviceCharge.price || 0)-parseFloat(rate.serviceCharge.discountPrice || 0))-parseFloat(rate.serviceCharge.labourCharge || 0))}</strong>
                                   </p>
-                                  {/* <strong>{PriceFormat(rate.serviceCharge.price)}</strong> */}
-                                  {rate.serviceCharge.labourCharge && (
+                                  {/* <strong>{PriceFormat(rate.serviceCharge.price || 0)}</strong> */}
+                                  {rate.serviceCharge.labourCharge > 0 && (
                                     <div className="text-muted small">
-                                      + {PriceFormat(rate.serviceCharge.labourCharge)} (Labour)
+                                      + {PriceFormat(rate.serviceCharge.labourCharge || 0)} (Labour)
                                     </div>
                                   )}
                                 </td>

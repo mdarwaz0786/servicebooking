@@ -108,18 +108,24 @@ const ServiceManJoinForm = () => {
         <div className={`mb-3 ${mobileField ? "" : "d-none"}`}>
           <label className="form-label fw-semibold">Mobile Number</label>
           <input
-            type="text"
-            className="form-control form-control-lg rounded-3"
-            placeholder="Enter mobile number"
-            value={mobile}
-            ref={mobileInputRef} 
-            onChange={(e) => setmobile(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSendOtp(); // 🔹 Run function on Enter
-              }
-            }}
-          />
+          type="tel"
+          className="form-control form-control-lg rounded-3"
+          placeholder="Enter 10 digit mobile number"
+          value={mobile}
+          ref={mobileInputRef}
+          maxLength={10}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, ""); // only numbers
+            if (value.length <= 10) {
+              setmobile(value);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && mobile.length === 10) {
+              handleSendOtp();
+            }
+          }}
+        />
         </div>
 
         {/* OTP Input */}
