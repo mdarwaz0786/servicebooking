@@ -183,7 +183,7 @@ const TransactionListPage = () => {
 
         {summary && (
           <div className="row mb-0 mt-4">
-            <div className="col-md-3">
+            <div className="col-md-2">
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">This Week</h6>
@@ -193,7 +193,7 @@ const TransactionListPage = () => {
               </div>
             </div>
 
-            <div className="col-md-3">
+            <div className="col-md-2">
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">This Month</h6>
@@ -206,6 +206,16 @@ const TransactionListPage = () => {
             <div className="col-md-3">
               <div className="card shadow-sm">
                 <div className="card-body">
+                  <h6 className="text-muted">Last Three Month</h6>
+                  <h5 className="mb-1">₹{summary?.lastThreeMonths?.amount}</h5>
+                  <small>{summary?.lastThreeMonths?.count} Transactions</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-2">
+              <div className="card shadow-sm">
+                <div className="card-body">
                   <h6 className="text-muted">This Year</h6>
                   <h5 className="mb-1">₹{summary?.thisYear?.amount}</h5>
                   <small>{summary?.thisYear?.count} Transactions</small>
@@ -213,7 +223,7 @@ const TransactionListPage = () => {
               </div>
             </div>
 
-            <div className="col-md-3">
+            <div className="col-md-2">
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">Total</h6>

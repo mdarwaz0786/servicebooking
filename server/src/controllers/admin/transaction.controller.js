@@ -85,8 +85,19 @@ export const getTransactions = asyncHandler(async (req, res) => {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const startOfYear = new Date(now.getFullYear(), 0, 1);
 
+  const startOfLastThreeMonths = new Date(
+    now.getFullYear(),
+    now.getMonth() - 2,
+    1
+  );
+
   const summaryAgg = await TransactionModel.aggregate([
-    { $match: { status: "success", from: from } },
+    {
+      $match: {
+        status: "success",
+        ...(from && { from }),
+      },
+    },
     {
       $facet: {
         overall: [
@@ -128,6 +139,16 @@ export const getTransactions = asyncHandler(async (req, res) => {
             },
           },
         ],
+        lastThreeMonths: [
+          { $match: { createdAt: { $gte: startOfLastThreeMonths } } },
+          {
+            $group: {
+              _id: null,
+              count: { $sum: 1 },
+              amount: { $sum: "$finalAmount" },
+            },
+          },
+        ],
       },
     },
   ]);
@@ -149,6 +170,7 @@ export const getTransactions = asyncHandler(async (req, res) => {
       thisWeek: safe(summaryAgg[0].thisWeek),
       thisMonth: safe(summaryAgg[0].thisMonth),
       thisYear: safe(summaryAgg[0].thisYear),
+      lastThreeMonths: safe(summaryAgg[0].lastThreeMonths),
     },
     pagination: buildPagination({ page, limit, total }),
   });
