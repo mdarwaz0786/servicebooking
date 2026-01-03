@@ -365,12 +365,12 @@ const HomeServiceListPage = () => {
                       <tr key={s?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{s?.title}</td>
-                        <td>{s?.category?.name}</td>
-                        <td>{s?.subCategory?.name}</td>
-                        <td>{s?.subSubCategory?.name}</td>
+                        <td>{s?.category?.map((c) => <p className="mb-0">{c?.name}</p>)}</td>
+                        <td>{s?.subCategory?.map((s) => <p className="mb-0">{s?.name}</p>)}</td>
+                        <td>{s?.subSubCategory?.map((ss) => <p className="mb-0">{ss?.name}</p>)}</td>
                         <td>
                           {s?.services?.map((item) => (
-                            <p>{item?.name}</p>
+                            <p className="mb-0">{item?.name}</p>
                           ))}
                         </td>
                         <td>

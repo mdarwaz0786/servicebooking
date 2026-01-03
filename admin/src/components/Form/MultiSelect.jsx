@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 
-const MultiSelect = ({ optionsList, value = [], onChange, placeholder = "Select", labelKey = "name", valueKey = "_id" }) => {
+const MultiSelect = ({ optionsList, value = [], onChange, placeholder = "Select", labelKey = "name", valueKey = "_id", disabled = false, isClearable = true }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const options = useMemo(() =>
@@ -24,11 +24,13 @@ const MultiSelect = ({ optionsList, value = [], onChange, placeholder = "Select"
   return (
     <Select
       isMulti
+      isDisabled={disabled}
       options={options}
       value={selectedOptions}
       onChange={handleChange}
       placeholder={placeholder}
       classNamePrefix="react-select"
+      isClearable={isClearable}
       styles={{
         control: (base) => ({
           ...base,

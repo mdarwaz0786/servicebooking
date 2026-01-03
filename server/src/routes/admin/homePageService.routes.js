@@ -4,11 +4,20 @@ import {
   getHomePageServices,
   getHomePageServiceById,
   updateHomePageService,
-  deleteHomePageService
+  deleteHomePageService,
+  getSubCategories,
+  getSubSubCategories,
+  getSubSubSubCategories,
+  getServices
 } from "../../controllers/admin/homePageService.controller.js";
 import isLoggedIn from "../../middlewares/admin/auth.middleware.js";
 
 const router = express.Router();
+
+router.get("/sub-category", isLoggedIn, getSubCategories);
+router.get("/sub-sub-category", isLoggedIn, getSubSubCategories);
+router.get("/sub-sub-sub-category", isLoggedIn, getSubSubSubCategories);
+router.get("/service", isLoggedIn, getServices);
 
 router.post("/", isLoggedIn, createHomePageService);
 router.patch("/:id", isLoggedIn, updateHomePageService);
