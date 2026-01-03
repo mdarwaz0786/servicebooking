@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -9,7 +9,6 @@ import { formatDate } from "../../helpers/formatDate";
 import Pagination from "../../components/Pagination/Pagination";
 
 const TransactionListPage = () => {
-  const navigate = useNavigate();
   const { from } = useParams();
   const { validToken } = useAuth();
   const [transactions, setTransactions] = useState([]);
@@ -157,7 +156,7 @@ const TransactionListPage = () => {
                         <td>
                           <div className="d-flex">
                             {/* View Button */}
-                            <Link to="/transaction-detail" onClick={() => navigate("/transaction-detail", { state: d })}>
+                            <Link to={`/transaction-detail/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />
                               </button>

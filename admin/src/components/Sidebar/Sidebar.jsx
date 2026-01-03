@@ -256,7 +256,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/transactions-user/user"
-                    className={currentPath === "/transactions/user" ? "active" : ""}
+                    className={currentPath === "/transactions-user/user" ? "active" : ""}
                   >
                     <span>Customer</span>
                   </Link>
@@ -264,7 +264,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/transactions-serviceman/serviceman"
-                    className={currentPath === "/transactions/serviceman" ? "active" : ""}
+                    className={currentPath === "/transactions-serviceman/serviceman" ? "active" : ""}
                   >
                     <span>Provider</span>
                   </Link>
