@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -9,7 +9,6 @@ import { formatDate } from "../../helpers/formatDate";
 import Pagination from "../../components/Pagination/Pagination";
 
 const TransactionListPage = () => {
-  const navigate = useNavigate();
   const { from } = useParams();
   const { validToken } = useAuth();
   const [transactions, setTransactions] = useState([]);
@@ -18,12 +17,15 @@ const TransactionListPage = () => {
   const [hasPrevPage, setHasPrevPage] = useState();
   const [hasNextPage, setHasNexrPage] = useState();
   const [total, setTotal] = useState();
+  const [summary, setSummary] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const month = searchParams.get("month") || "";
+  const year = searchParams.get("year") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -45,6 +47,8 @@ const TransactionListPage = () => {
           limit,
           search: debouncedSearch,
           sort,
+          month,
+          year,
           from: from,
         },
       });
@@ -55,6 +59,7 @@ const TransactionListPage = () => {
         setTotal(response?.data?.total || 1);
         setHasNexrPage(response?.data?.hasNextPage);
         setHasPrevPage(response?.data?.hasPrevPage);
+        setSummary(response?.data?.summary || null);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch transactions");
@@ -63,12 +68,32 @@ const TransactionListPage = () => {
     };
   };
 
+  const months = [
+    { value: "1", label: "Jan" },
+    { value: "2", label: "Feb" },
+    { value: "3", label: "Mar" },
+    { value: "4", label: "Apr" },
+    { value: "5", label: "May" },
+    { value: "6", label: "Jun" },
+    { value: "7", label: "Jul" },
+    { value: "8", label: "Aug" },
+    { value: "9", label: "Sep" },
+    { value: "10", label: "Oct" },
+    { value: "11", label: "Nov" },
+    { value: "12", label: "Dec" },
+  ];
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 15 }, (_, i) => currentYear - i);
+
   const updateParams = (newParams) => {
     const params = {
       page,
       limit,
       search: debouncedSearch,
       sort,
+      year,
+      month,
       ...newParams,
     };
     setSearchParams(params);
@@ -76,7 +101,7 @@ const TransactionListPage = () => {
 
   useEffect(() => {
     fetchTransactions();
-  }, [page, limit, debouncedSearch, sort, from]);
+  }, [page, limit, debouncedSearch, sort, from, year, month]);
 
   return (
     <div className="page-wrapper page-settings">
@@ -97,6 +122,39 @@ const TransactionListPage = () => {
                 updateParams({ page: 1, search: e.target.value });
               }}
             />
+
+            {/* Month Filter */}
+            <select
+              className="form-select form-select-sm w-auto"
+              value={month}
+              onChange={(e) =>
+                updateParams({ month: e.target.value, page: 1 })
+              }
+            >
+              <option value="">All Months</option>
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+
+            {/* Year Filter */}
+            <select
+              className="form-select form-select-sm w-auto"
+              value={year}
+              onChange={(e) =>
+                updateParams({ year: e.target.value, page: 1 })
+              }
+            >
+              <option value="">All Years</option>
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+
 
             {/* Sort */}
             <select
@@ -119,13 +177,68 @@ const TransactionListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+
           </div>
         </div>
+
+        {summary && (
+          <div className="row mb-0 mt-4">
+            <div className="col-md-2">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  <h6 className="text-muted">This Week</h6>
+                  <h5 className="mb-1">₹{summary?.thisWeek?.amount}</h5>
+                  <small>{summary?.thisWeek?.count} Transactions</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-2">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  <h6 className="text-muted">This Month</h6>
+                  <h5 className="mb-1">₹{summary?.thisMonth?.amount}</h5>
+                  <small>{summary?.thisMonth?.count} Transactions</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  <h6 className="text-muted">Last Three Month</h6>
+                  <h5 className="mb-1">₹{summary?.lastThreeMonths?.amount}</h5>
+                  <small>{summary?.lastThreeMonths?.count} Transactions</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-2">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  <h6 className="text-muted">This Year</h6>
+                  <h5 className="mb-1">₹{summary?.thisYear?.amount}</h5>
+                  <small>{summary?.thisYear?.count} Transactions</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-2">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  <h6 className="text-muted">Total</h6>
+                  <h5 className="mb-1">₹{summary?.overall?.amount}</h5>
+                  <small>{summary?.overall?.count} Transactions</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Table */}
         <div className="row">
           <div className="col-12">
-            <div className="table-responsive table-div">
+            <div className="table-responsive table-div" style={{ paddingTop: 0 }}>
               <table className="table datatable">
                 <thead>
                   <tr>
@@ -157,7 +270,7 @@ const TransactionListPage = () => {
                         <td>
                           <div className="d-flex">
                             {/* View Button */}
-                            <Link to="/transaction-detail" onClick={() => navigate("/transaction-detail", { state: d })}>
+                            <Link to={`/transaction-detail/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />
                               </button>

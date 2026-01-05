@@ -57,6 +57,9 @@ const apis = {
     get: `${BASE_URL}/api/v1/admin/serviceman-profile`,
     update: `${BASE_URL}/api/v1/admin/serviceman-profile`,
   },
+  servicemanByZone: {
+    get: `${BASE_URL}/api/v1/admin/serviceman-byzone`,
+  },
   servicemanBooking: {
     create: `${BASE_URL}/api/v1/admin/serviceman-booking`,
   },
@@ -103,6 +106,10 @@ const apis = {
     get: `${BASE_URL}/api/v1/admin/home-page-service`,
     update: `${BASE_URL}/api/v1/admin/home-page-service`,
     delete: `${BASE_URL}/api/v1/admin/home-page-service`,
+    subCategory: `${BASE_URL}/api/v1/admin/home-page-service/sub-category`,
+    subSubCategory: `${BASE_URL}/api/v1/admin/home-page-service/sub-sub-category`,
+    subSubSubCategory: `${BASE_URL}/api/v1/admin/home-page-service/sub-sub-sub-category`,
+    service: `${BASE_URL}/api/v1/admin/home-page-service/service`,
   },
   rateCard: {
     create: `${BASE_URL}/api/v1/admin/rate-card`,

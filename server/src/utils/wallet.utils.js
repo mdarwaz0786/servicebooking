@@ -14,9 +14,9 @@ export const getSupportConfig = async () => {
     .lean();
 
   return {
-    acceptCreditPoints: doc?.acceptCreditPoints ?? 10,
-    cancelCreditPoints: doc?.cancelCreditPoints ?? 10,
-    earningPercent: doc?.earningPercent ?? 15,
+    acceptCreditPoints: doc?.acceptCreditPoints || 10,
+    cancelCreditPoints: doc?.cancelCreditPoints || 10,
+    earningPercent: doc?.earningPercent || 15,
   };
 };
 
@@ -161,7 +161,7 @@ export const createServicemanEarning = async (
 
   // 7️⃣ Calculate earning
   const payableAmount = booking?.payableAmount || 0;
-  const earningPercent = earningPercent;
+  const { earningPercent } = await getSupportConfig();
   const earningAmount = Number(((payableAmount * earningPercent) / 100).toFixed(2));
 
   // 8️⃣ Create earning entry

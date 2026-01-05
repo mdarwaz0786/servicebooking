@@ -1,27 +1,27 @@
 import mongoose from "mongoose";
 
 const homePageServiceSchema = new mongoose.Schema({
-  category: {
+  category: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: [true, "Product is required"]
-  },
-  subCategory: {
+  }],
+  subCategory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubCategory",
-  },
-  subSubCategory: {
+  }],
+  subSubCategory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubSubCategory",
-  },
-  subSubSubCategory: {
+  }],
+  subSubSubCategory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubSubSubCategory",
-  },
+  }],
   services: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Service",
-    required: true,
+    required: [true, "Service is required"]
   }],
   title: {
     type: String,

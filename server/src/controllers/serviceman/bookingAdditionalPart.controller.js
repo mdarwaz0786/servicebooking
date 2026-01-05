@@ -35,7 +35,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
       description: item?.description,
       unitPrice,
       quantity,
-      laborCharge: labourCharge,
+      laborCharge: item?.labourCharge || 0,
       groupTitle: item?.groupTitle,
       serviceItemId: item?.serviceItemId,
       createdBy: userId,

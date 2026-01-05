@@ -151,20 +151,18 @@ const HomeServiceListPage = () => {
 
   const toggleStatus = async (id, currentStatus) => {
     try {
-      setServiceBlocks(prev => prev.map(s => s?._id === id ? { ...s, status: !currentStatus } : s));
+      setServiceBlocks((prev) => prev.map((s) => s?._id === id ? { ...s, status: !currentStatus } : s));
       const response = await axios.patch(
         `${apis.homeService.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
 
-      if (!response?.data?.success) {
-        toast.error("Failed to update status");
-        fetchServices();
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to update status");
-      fetchServices();
     };
   };
 
@@ -365,12 +363,12 @@ const HomeServiceListPage = () => {
                       <tr key={s?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{s?.title}</td>
-                        <td>{s?.category?.name}</td>
-                        <td>{s?.subCategory?.name}</td>
-                        <td>{s?.subSubCategory?.name}</td>
+                        <td>{s?.category?.map((c) => <p className="mb-0">{c?.name}</p>)}</td>
+                        <td>{s?.subCategory?.map((s) => <p className="mb-0">{s?.name}</p>)}</td>
+                        <td>{s?.subSubCategory?.map((ss) => <p className="mb-0">{ss?.name}</p>)}</td>
                         <td>
                           {s?.services?.map((item) => (
-                            <p>{item?.name}</p>
+                            <p className="mb-0">{item?.name}</p>
                           ))}
                         </td>
                         <td>

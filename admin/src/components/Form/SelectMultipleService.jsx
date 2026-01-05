@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 
-const SelectMultipleService = ({ optionsList, value = [], onChange }) => {
+const SelectMultipleService = ({ optionsList, value = [], onChange, isClearable = true }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const options = useMemo(() =>
@@ -23,6 +23,7 @@ const SelectMultipleService = ({ optionsList, value = [], onChange }) => {
   return (
     <Select
       isMulti
+      isClearable={isClearable}
       options={options}
       value={selectedOptions}
       onChange={handleChange}

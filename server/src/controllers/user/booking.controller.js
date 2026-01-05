@@ -1,3 +1,5 @@
+import AddressModel from "../../models/address.model.js";
+import ZoneModel from "../../models/zone.model.js";
 import BookingModel from "../../models/booking.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
@@ -26,8 +28,33 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   // Get cart data from utility
   const { cartProducts, amountData } = await getCartData(userId);
-
   if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
+
+  const address = await AddressModel.findById(addressId);
+
+  const lat = address?.lat;
+  const long = address?.long;
+
+  // Find Zone
+  const zone = await ZoneModel.findOne({
+    status: true,
+    geometry: {
+      $geoIntersects: {
+        $geometry: {
+          type: "Point",
+          coordinates: [long, lat],
+        },
+      },
+    },
+  }).select("_id");
+
+  let serviceman = null;
+
+  if (zone) {
+    serviceman = await ServiceManProfileModel.findOne({
+      zones: zone?._id,
+    }).select("_id");
+  };
 
   const otp = generateOtp();
 
@@ -49,6 +76,16 @@ export const createBooking = asyncHandler(async (req, res) => {
     otp: otp,
     createdBy: userId,
   });
+
+  if (serviceman) {
+    await ServiceManBookingModel.create({
+      bookingId: booking?._id,
+      servicemanId: serviceman?._id,
+      userId,
+      status: "new",
+      createdBy: userId,
+    });
+  };
 
   // Prepare Booking Items from cartProducts
   const bookingItems = cartProducts.map(item => ({

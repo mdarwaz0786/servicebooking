@@ -157,7 +157,7 @@ const routesConfig = {
 
     { path: "/transactions-user/:from", element: TransactionListPage },
     { path: "/transactions-serviceman/:from", element: TransactionListPage },
-    { path: "/transaction-detail", element: TransactionDetailPage },
+    { path: "/transaction-detail/:id", element: TransactionDetailPage },
 
     { path: "/kyc", element: KycListPage },
     { path: "/kyc-detail", element: KycDetailsPage },

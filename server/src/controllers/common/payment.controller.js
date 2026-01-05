@@ -66,6 +66,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 // STEP 2: Verify Payment & Create Booking
 export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
   const { transactionTableId } = req.body;
+
   const {
     razorpay_order_id,
     razorpay_payment_id,
@@ -85,24 +86,27 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     razorpay_payment_id,
     razorpay_signature,
   });
+
   if (!isValid) {
     await TransactionModel.findByIdAndUpdate({ _id: transactionTableId }, {
       transactionId: razorpay_payment_id,
       status: "failed",
-      paymentDate: new Date().toISOString().split("T")[0],
+      paymentDate: new Date(),
       paymentTime: paymentTime,
     }, { new: true });
+
     throw new ApiError(400, "Payment verification failed");
   };
 
   await TransactionModel.findByIdAndUpdate({ _id: transactionTableId }, {
     transactionId: razorpay_payment_id,
     status: "success",
-    paymentDate: new Date().toISOString().split("T")[0],
+    paymentDate: new Date(),
     paymentTime: paymentTime,
   }, { new: true });
 
   const transactionData = await TransactionModel.findById({ _id: transactionTableId });
+
   if (transactionData.productType == 'booking') {
     await BookingModel.findByIdAndUpdate({ _id: transactionData.PID }, {
       paymentStatus: 1,

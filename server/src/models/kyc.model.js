@@ -22,6 +22,11 @@ const kycSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  accountHolderName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   ifscCode: {
     type: String,
     required: true,

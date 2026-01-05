@@ -65,6 +65,7 @@ const ServicemanProfileDetailPage = () => {
     experienceLevel,
     companyName,
     yearOfExperience,
+    monthOfExperience,
     permanentAddress,
     currentAddress,
     referenceName1,
@@ -162,7 +163,7 @@ const ServicemanProfileDetailPage = () => {
                     <li><strong>DOB:</strong> {dob ? new Date(dob).toLocaleDateString() : "-"}</li>
                     <li><strong>Experience Level:</strong> {experienceLevel}</li>
                     <li><strong>Company:</strong> {companyName || "N/A"}</li>
-                    <li><strong>Total Experience:</strong> {yearOfExperience || 0} Year</li>
+                    <li><strong>Total Experience:</strong> {yearOfExperience || 0} Year {monthOfExperience || 0} </li>
                     <li><strong>Permanent Address:</strong> {permanentAddress}</li>
                     <li><strong>Current Address:</strong> {currentAddress}</li>
                     <li><strong>Status:</strong> {profileStatus}</li>
