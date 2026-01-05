@@ -183,7 +183,7 @@ const UpdateHomeServicePage = () => {
         <form onSubmit={handleSubmit} className="mt-3">
           <div className="row">
             <div className="col-md-6">
-              <label>Title *</label>
+              <label>Title <span className="text-danger">*</span></label>
               <input
                 className="form-control"
                 value={title}
@@ -191,7 +191,7 @@ const UpdateHomeServicePage = () => {
               />
             </div>
             <div className="col-md-6">
-              <label>Product *</label>
+              <label>Product <span className="text-danger">*</span></label>
               <MultiSelect
                 optionsList={categories}
                 value={categoryIds}
@@ -236,7 +236,7 @@ const UpdateHomeServicePage = () => {
               />
             </div>
             <div className="col-md-6">
-              <label>Services *</label>
+              <label>Services <span className="text-danger">*</span></label>
               <SelectMultipleService
                 optionsList={services}
                 value={selectedServices}
