@@ -151,20 +151,18 @@ const HomeServiceListPage = () => {
 
   const toggleStatus = async (id, currentStatus) => {
     try {
-      setServiceBlocks(prev => prev.map(s => s?._id === id ? { ...s, status: !currentStatus } : s));
+      setServiceBlocks((prev) => prev.map((s) => s?._id === id ? { ...s, status: !currentStatus } : s));
       const response = await axios.patch(
         `${apis.homeService.update}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );
 
-      if (!response?.data?.success) {
-        toast.error("Failed to update status");
-        fetchServices();
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to update status");
-      fetchServices();
     };
   };
 
