@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { scrollToService, scrollToTop } from "../../helper/scrollToTop";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 const Footer = () => {
+
+  const { toggleModal } = useContext(AppContext);
+
   const handleLinkClick = () => {
     scrollToTop("instant");
   };
@@ -46,7 +51,24 @@ const Footer = () => {
               <div className="footer-widget">
                 <h5 className="mb-1 fs-17">Partners</h5>
                 <ul className="footer-menu">
-                  <li><Link to="/" onClick={handleLinkClick}>Sign up as a professional</Link></li>
+                  <li>
+                    <Link
+                      to="#"
+                      onClick={(e) => {
+                        e.preventDefault(); // ⛔ page reload roke
+                        toggleModal("serviceManJoinModal", true);
+
+                        // HTML se class remove
+                        document.documentElement.classList.remove("menu-opened");
+
+                        // sidebar overlay se class remove
+                        const overlay = document.querySelector(".sidebar-overlay");
+                        overlay?.classList.remove("opened");
+                      }}
+                    >
+                      Sign up as a professional
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>

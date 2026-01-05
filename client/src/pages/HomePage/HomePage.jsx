@@ -63,7 +63,7 @@ useEffect(() => {
                   <Link to={homePageData.banners[bannerIndex].link} target="_blank">
                     <img
                       src={imageCheck(width>767?homePageData.banners[bannerIndex].image:homePageData.banners[bannerIndex].mobileBanner)}
-                      className="img-fluid"
+                      className="img-fluid w-100"
                       alt={`Banner ${bannerIndex}`}
                     />
                   </Link>

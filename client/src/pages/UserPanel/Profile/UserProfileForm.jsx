@@ -6,7 +6,7 @@ import Select2Multiple from "../../../components/Select2/Select2Multiple";
 
 const UserProfileForm = () => {
 
-    const { Urls, postData, generateUniqueId, imageCheck, formatDate, categoryListData, bodyLoaderShow } = useContext(AppContext);
+    const { Urls, postData, generateUniqueId, imageCheck, formatDate, categoryListData, bodyLoaderShow, storage, setuser } = useContext(AppContext);
     const fetchData = async () => {
         try {
             let userId = generateUniqueId();
@@ -22,6 +22,9 @@ const UserProfileForm = () => {
                     dob: response.data.dob,
                     mobile: response.data.mobile,
                 }));
+
+                storage.set('user', JSON.stringify(response.data));
+                setuser(response?.data);
             }
 
         } catch (error) {
@@ -54,7 +57,8 @@ const UserProfileForm = () => {
             const response = await postData(formData, Urls.myProfileUpdate, "POST", 0, 0,1); 
             if(response.success)
             {
-                
+                storage.set('user', JSON.stringify(response.data));
+                setuser(response?.data);
             }
 
         } catch (error) {
