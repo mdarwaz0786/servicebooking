@@ -55,7 +55,7 @@ const PopularServices = () => {
           >
               {homePageData.mostBookedServices.map((item, index) => (
                 <SwiperSlide key={index}>
-                  <div className="col-md-12" key={index} onClick={() => handleServiceDetail(item._id, item)}>
+                  <div className="col-md-12" key={index} onClick={() => handleServiceDetail(item._id, item, 1)}>
                     <div className="service-item">
                       <div className="service-img">
                         <div className=" nav-center">

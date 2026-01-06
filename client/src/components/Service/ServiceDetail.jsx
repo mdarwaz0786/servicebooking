@@ -6,7 +6,10 @@ const ServiceDetail = () => {
   const { handleRateCardDetail, serviceDetailData, PriceFormat, imageCheck, handleCartAddRemove, serviceDetailDataItem, toggleModal, SERVER_BASE_URL } = useContext(AppContext);
   const data = serviceDetailData;
   const rating = data.ratings;
-  const ratingCount = rating?.ratingCount;
+  // const ratingCount = rating?.ratingCount;
+  const ratingCount = data?.rating || 0;
+ 
+
   let ratingArray = [1, 2, 3, 4, 5];
 
   const count1 = 0;
@@ -55,7 +58,7 @@ const ServiceDetail = () => {
               >
                 <img
                   src={imageCheck(data.popupImage)}
-                  className="w-100 h-100"
+                  className="w-100"
                   alt="Service"
                 />
               </div>
@@ -71,7 +74,7 @@ const ServiceDetail = () => {
               </div>
               <div className="d-flex align-items-center justify-content-between flex-wrap mb-2">
                 <div className=" align-items-center flex-wrap">
-                  <p className="mb-2"><i className="ti ti-star-filled text-warning me-2" /><span className="text-gray-9">{data?.ratings?.averageRating} </span>({data?.ratings?.totalRatings} reviews)</p>
+                  <p className="mb-2"><i className="ti ti-star-filled text-warning me-2" /><span className="text-gray-9">{data?.rating} </span>({data?.review} reviews)</p>
                   <p className="m-0">
                     {PriceFormat(data?.salePrice)}&nbsp;
                     <span className="fs-12">
@@ -88,13 +91,13 @@ const ServiceDetail = () => {
             <div style={{    marginTop: '-30px'}}> 
               <div className="mb-5 mt-5">
                 <h4 className="fw-bold mb-2">Service Overview</h4>
-                <div>
+                <div className="service-cont-info">
                   <div
                   className="mt-1"
                   dangerouslySetInnerHTML={{ __html: data?.shortDescription }}
                   ></div>
                   
-                  <div className="col-md-2">
+                  <div className="col-md-3">
                     <div className=" mt-1 justify-content-around align-items-center service-item-add-btn-section mb-0 mt-0">
                         {(serviceDetailDataItem?.quantity) ? (
                             <>

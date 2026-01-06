@@ -3,6 +3,7 @@ import ServiceListCard from "../../components/Service/ServiceListCard";
 import CartSidebar from "../../components/Cart/CartSidebar";
 import CategoryMiniCard2 from "../../components/Category/CategoryMiniCard2";
 import CategoryMiniCard2Mobile from "../../components/Category/CategoryMiniCard2Mobile";
+import { useSearchParams } from "react-router-dom";
 
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -17,10 +18,35 @@ import "swiper/css/effect-fade";
 
 const Services = ({search, slug}) => {
 
+  const [searchParams] = useSearchParams();
+  const detail = searchParams?.get("detail");
+
   const prevRef = useRef(null);
   const nextRef = useRef(null); 
   const [width, setWidth] = useState(window.innerWidth);
+
+  const { postData, generateUniqueId, Urls, setserviceDetailData,setserviceDetailDataItem, serviceDetailDataItem, toggleModal, servicePageCategoryData, serviceListData, pageLoading, servicePageName, cartAmount, cartItems, servicePageCartShow, PriceFormat, setCartOpen } = useContext(AppContext);
+  
+   const handleServiceDetail2 = async (id) => {
+    try {
+      const response = await postData({userId:generateUniqueId()}, Urls.serviceDetail + '/' + id, "GET", 0, 1);
+      if (response.success) {        
+        setserviceDetailData(response.data);
+        if(!serviceDetailDataItem) setserviceDetailDataItem(response.data);
+        toggleModal("ServiceDetailModal", true);        
+      }
+    } catch (error) {
+      console.error("Cart API Error:", error);
+    }
+  }
+
   useEffect(() => {
+
+    if(detail)
+    {
+      handleServiceDetail2(detail)
+    }
+
     const handleResize = () => {
       setWidth(window.innerWidth);
     };
@@ -28,7 +54,6 @@ const Services = ({search, slug}) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const { servicePageCategoryData, serviceListData, pageLoading, servicePageName, cartAmount, cartItems, servicePageCartShow, PriceFormat, setCartOpen } = useContext(AppContext);
   
 
   

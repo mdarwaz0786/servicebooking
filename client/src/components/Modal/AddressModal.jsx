@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
-import "./GoogleMapPicker.css"; // Create this CSS file if needed
+import "./GoogleMapPicker.css";
 
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -22,9 +22,13 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   const [searchInput, setSearchInput] = useState("");
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [isAutocompleteReady, setIsAutocompleteReady] = useState(false);
+  const [currentAddressDetails, setCurrentAddressDetails] = useState(null);
+  const [isAutoFilled, setIsAutoFilled] = useState(false);
   const mapRef = useRef(null);
   const inputRef = useRef(null);
   const searchContainerRef = useRef(null);
+  const autocompleteServiceRef = useRef(null);
+  const placesServiceRef = useRef(null);
 
   const containerStyle = {
     width: "100%",
@@ -47,31 +51,129 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         lat: selectedAddress.lat || null, 
         lng: selectedAddress.long || null 
       });
+      setSearchInput(selectedAddress.formattedAddress || "");
+      setIsAutoFilled(false); // Edit mode में auto-fill disable
     }
   }, [selectedAddress]);
 
+  // When location changes, fetch address details and auto-fill form
+  useEffect(() => {
+    if (latLng.lat && latLng.lng && !selectedAddress) {
+      fetchAddressDetails(latLng);
+    }
+  }, [latLng]);
+
+  // Fetch address details from coordinates
+  const fetchAddressDetails = (coordinates) => {
+    if (!window.google?.maps?.Geocoder) return;
+    
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: coordinates }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        const address = results[0];
+        setCurrentAddressDetails(address);
+        autoFillFormFields(address);
+      }
+    });
+  };
+
+  // Auto-fill form fields based on address details
+  const autoFillFormFields = (address) => {
+    let houseNumberTemp = "";
+    let landmarkTemp = "";
+    
+    // Extract address components
+    const addressComponents = address.address_components || [];
+    
+    // Find house number (street_number)
+    const streetNumber = addressComponents.find(comp => 
+      comp.types.includes('street_number')
+    );
+    
+    // Find route (street name)
+    const route = addressComponents.find(comp => 
+      comp.types.includes('route')
+    );
+    
+    // Find locality
+    const locality = addressComponents.find(comp => 
+      comp.types.includes('locality') || comp.types.includes('sublocality')
+    );
+    
+    // Find landmark (premise, point_of_interest, establishment)
+    const landmarkComp = addressComponents.find(comp => 
+      comp.types.includes('premise') || 
+      comp.types.includes('point_of_interest') || 
+      comp.types.includes('establishment')
+    );
+    
+    // Find sublocality (for landmark)
+    const sublocality = addressComponents.find(comp => 
+      comp.types.includes('sublocality')
+    );
+    
+    // Build house number field - यहाँ हम complete formatted address लेते हैं
+    if (address.formatted_address) {
+      // Complete formatted address को house number field में डालें
+      houseNumberTemp = address.formatted_address;
+    } else if (streetNumber && route) {
+      houseNumberTemp = `${streetNumber.long_name}, ${route.long_name}`;
+    } else if (route) {
+      houseNumberTemp = route.long_name;
+    } else if (streetNumber) {
+      houseNumberTemp = streetNumber.long_name;
+    }
+    
+    // Build landmark field
+    if (landmarkComp) {
+      landmarkTemp = landmarkComp.long_name;
+    } else if (sublocality) {
+      landmarkTemp = sublocality.long_name;
+    } else if (locality) {
+      landmarkTemp = locality.long_name;
+    }
+    
+    // Always update house number with the formatted address from search
+    if (houseNumberTemp) {
+      sethouseNumber(houseNumberTemp);
+    }
+    
+    // Update landmark if available
+    if (landmarkTemp) {
+      setlandmark(landmarkTemp);
+    }
+    
+    // Mark as auto-filled
+    if (!selectedAddress) {
+      setIsAutoFilled(true);
+    }
+  };
+
   // Load Google Maps script
   useEffect(() => {
-    // Check if already loaded
     if (window.google && window.google.maps && window.google.maps.places) {
+      console.log("Google Maps already loaded");
       setIsScriptLoaded(true);
-      setTimeout(() => initMap(), 100);
+      initGoogleServices();
       return;
     }
 
-    // Remove any existing callback
     if (window.initGoogleMapCallback) {
       delete window.initGoogleMapCallback;
     }
 
-    // Create callback function
     window.initGoogleMapCallback = () => {
       console.log("Google Maps script loaded successfully");
       setIsScriptLoaded(true);
-      setTimeout(() => initMap(), 100);
+      initGoogleServices();
     };
 
-    // Load the script
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+      console.log("Google Maps script already loading");
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places&callback=initGoogleMapCallback`;
     script.async = true;
@@ -84,28 +186,58 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       }));
     };
 
-    // Add to document
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup
       if (script.parentNode) {
         script.parentNode.removeChild(script);
       }
       if (window.initGoogleMapCallback) {
         delete window.initGoogleMapCallback;
       }
-      // Cleanup map event listeners
-      if (map) {
-        window.google.maps.event.clearInstanceListeners(map);
-      }
     };
   }, []);
 
+  // Initialize Google services
+  const initGoogleServices = () => {
+    if (!window.google || !window.google.maps || !window.google.maps.places) {
+      console.error("Google Maps API not available");
+      return;
+    }
+
+    try {
+      autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+      placesServiceRef.current = new window.google.maps.places.PlacesService(document.createElement('div'));
+      
+      initMap();
+      setIsAutocompleteReady(true);
+      
+      setTimeout(fixAutocompleteDropdown, 500);
+      
+    } catch (error) {
+      console.error("Error initializing Google services:", error);
+    }
+  };
+
+  // Fix autocomplete dropdown styling
+  const fixAutocompleteDropdown = () => {
+    const interval = setInterval(() => {
+      const pacContainer = document.querySelector('.pac-container');
+      if (pacContainer) {
+        pacContainer.style.zIndex = '999999';
+        pacContainer.style.position = 'absolute';
+        pacContainer.style.borderRadius = '8px';
+        pacContainer.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        pacContainer.style.border = '1px solid #e0e0e0';
+        clearInterval(interval);
+      }
+    }, 100);
+  };
+
   // Initialize Autocomplete
   useEffect(() => {
-    if (isScriptLoaded && inputRef.current && !autocomplete) {
-      setTimeout(() => initAutocomplete(), 500);
+    if (isScriptLoaded && inputRef.current && window.google?.maps?.places) {
+      setTimeout(() => initAutocomplete(), 300);
     }
   }, [isScriptLoaded, inputRef.current]);
 
@@ -117,7 +249,6 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     }
 
     try {
-      // Create autocomplete instance
       const autocompleteInstance = new window.google.maps.places.Autocomplete(
         inputRef.current,
         {
@@ -127,63 +258,127 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         }
       );
 
-      // Bind the autocomplete to the input
-      autocompleteInstance.bindTo('bounds', new window.google.maps.LatLngBounds(
+      const bounds = new window.google.maps.LatLngBounds(
         new window.google.maps.LatLng(8.0, 68.0),
         new window.google.maps.LatLng(37.0, 97.0)
-      ));
+      );
+      autocompleteInstance.setBounds(bounds);
 
-      // Add place changed listener
       autocompleteInstance.addListener('place_changed', () => {
         const place = autocompleteInstance.getPlace();
         
         if (!place.geometry) {
           console.log("No geometry found for place:", place);
+          if (place.place_id) {
+            getPlaceDetails(place.place_id);
+          }
           return;
         }
 
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-        const newPosition = { lat, lng };
-        
-        // Update UI
-        if (marker) {
-          marker.setPosition(newPosition);
-        }
-        if (map) {
-          map.setCenter(newPosition);
-          map.setZoom(17);
-        } else {
-          initMapWithPosition(newPosition);
-        }
-        
-        // Update states
-        setLatLng(newPosition);
-        if (place.formatted_address) {
-          setSearchInput(place.formatted_address);
-        }
-        
-        // Clear location error if any
-        if (errors.location || errors.map) {
-          setErrors(prev => ({ ...prev, location: null, map: null }));
-        }
-        
-        setIsAutocompleteReady(true);
+        handlePlaceSelection(place);
       });
-
-      // Fix for z-index issue with dropdown
-      const pacContainer = document.querySelector('.pac-container');
-      if (pacContainer) {
-        pacContainer.style.zIndex = '9999';
-        pacContainer.style.position = 'fixed';
-      }
 
       setAutocomplete(autocompleteInstance);
       setIsAutocompleteReady(true);
       
+      fixAutocompleteDropdown();
+      
     } catch (error) {
       console.error("Error in initAutocomplete:", error);
       setIsAutocompleteReady(false);
+    }
+  };
+
+  // Get place details using place_id
+  const getPlaceDetails = (placeId) => {
+    if (!placesServiceRef.current) return;
+    
+    placesServiceRef.current.getDetails(
+      {
+        placeId: placeId,
+        fields: ['geometry', 'formatted_address', 'name', 'address_components']
+      },
+      (place, status) => {
+        if (status === 'OK' && place.geometry) {
+          handlePlaceSelection(place);
+        } else {
+          console.error("Failed to get place details:", status);
+        }
+      }
+    );
+  };
+
+  // Handle place selection
+  const handlePlaceSelection = (place) => {
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+    const newPosition = { lat, lng };
+    
+    // Update UI
+    if (marker) {
+      marker.setPosition(newPosition);
+    }
+    if (map) {
+      map.setCenter(newPosition);
+      map.setZoom(17);
+    } else {
+      initMapWithPosition(newPosition);
+    }
+    
+    // Update states
+    setLatLng(newPosition);
+    if (place.formatted_address) {
+      setSearchInput(place.formatted_address);
+      // DIRECT: जो search में typed address है, उसे सीधे house number में fill करें
+      sethouseNumber(place.formatted_address);
+    }
+    
+    // Auto-fill form fields from place details
+    autoFillFormFields(place);
+    
+    // Clear location error if any
+    if (errors.location || errors.map) {
+      setErrors(prev => ({ ...prev, location: null, map: null }));
+    }
+    
+    // Mark as auto-filled
+    setIsAutoFilled(true);
+  };
+
+  // Handle map click for location selection
+  const handleMapClick = (event, markerInstance) => {
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+    const newPosition = { lat, lng };
+    
+    markerInstance.setPosition(newPosition);
+    setLatLng(newPosition);
+    setSearchInput("");
+    
+    // Fetch address details for clicked location
+    fetchAddressDetails(newPosition);
+    
+    // Clear location error if any
+    if (errors.location || errors.map) {
+      setErrors(prev => ({ ...prev, location: null, map: null }));
+    }
+  };
+
+  // Handle marker drag
+  const handleMarkerDrag = (event) => {
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+    const newPosition = { lat, lng };
+    
+    setLatLng(newPosition);
+    setSearchInput("");
+    
+    // Fetch address details for dragged location
+    fetchAddressDetails(newPosition);
+    
+    // Clear location error if any
+    if (errors.location || errors.map) {
+      setErrors(prev => ({ ...prev, location: null, map: null }));
     }
   };
 
@@ -207,7 +402,14 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         fullscreenControl: true,
         zoomControl: true,
         gestureHandling: 'greedy',
-        clickableIcons: false
+        clickableIcons: false,
+        styles: [
+          {
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }]
+          }
+        ]
       });
 
       const markerInstance = new window.google.maps.Marker({
@@ -215,46 +417,19 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         draggable: true,
         animation: window.google.maps.Animation.DROP,
         position: defaultCenter,
+        title: "Drag me or click map to set location"
       });
 
       // Map click listener
       mapInstance.addListener('click', (event) => {
-        const lat = event.latLng.lat();
-        const lng = event.latLng.lng();
-        const newPosition = { lat, lng };
-        
-        markerInstance.setPosition(newPosition);
-        setLatLng(newPosition);
-        setSearchInput("");
-        
-        // Clear location error if any
-        if (errors.location || errors.map) {
-          setErrors(prev => ({ ...prev, location: null, map: null }));
-        }
+        handleMapClick(event, markerInstance);
       });
 
       // Marker drag listener
-      markerInstance.addListener('dragend', (event) => {
-        const lat = event.latLng.lat();
-        const lng = event.latLng.lng();
-        const newPosition = { lat, lng };
-        
-        setLatLng(newPosition);
-        setSearchInput("");
-        
-        // Clear location error if any
-        if (errors.location || errors.map) {
-          setErrors(prev => ({ ...prev, location: null, map: null }));
-        }
-      });
+      markerInstance.addListener('dragend', handleMarkerDrag);
 
       setMap(mapInstance);
       setMarker(markerInstance);
-
-      // Initialize autocomplete if not done
-      if (!autocomplete && inputRef.current) {
-        setTimeout(() => initAutocomplete(), 100);
-      }
 
     } catch (error) {
       console.error("Error in initMap:", error);
@@ -280,6 +455,13 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       position: position,
     });
 
+    // Add event listeners to new map instance
+    mapInstance.addListener('click', (event) => {
+      handleMapClick(event, markerInstance);
+    });
+
+    markerInstance.addListener('dragend', handleMarkerDrag);
+
     setMap(mapInstance);
     setMarker(markerInstance);
   };
@@ -293,10 +475,13 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   const handleSearchClick = () => {
     if (!searchInput.trim()) return;
     
-    // Use geocoding as fallback
+    // First, directly fill the house number with the search input
+    sethouseNumber(searchInput);
+    setIsAutoFilled(true);
+    
+    // Then perform geocoding
     performGeocoding(searchInput);
   };
-  
 
   // Perform geocoding
   const performGeocoding = (address) => {
@@ -311,7 +496,11 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ 
       address: address,
-      region: 'in'
+      region: 'in',
+      bounds: new window.google.maps.LatLngBounds(
+        new window.google.maps.LatLng(8.0, 68.0),
+        new window.google.maps.LatLng(37.0, 97.0)
+      )
     }, (results, status) => {
       if (status === 'OK' && results[0]) {
         const lat = results[0].geometry.location.lat();
@@ -328,6 +517,12 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         
         setLatLng(newPosition);
         setSearchInput(results[0].formatted_address);
+        
+        // DIRECT: जो search में typed address है, उसे सीधे house number में fill करें
+        sethouseNumber(results[0].formatted_address);
+        
+        // Auto-fill form fields from geocoding results
+        autoFillFormFields(results[0]);
         
         // Clear location error if any
         if (errors.location || errors.map) {
@@ -347,6 +542,17 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleSearchClick();
+    }
+  };
+
+  // Handle input focus to show suggestions
+  const handleInputFocus = () => {
+    if (autocomplete && searchInput.length > 0) {
+      const input = inputRef.current;
+      if (input) {
+        const event = new Event('input', { bubbles: true });
+        input.dispatchEvent(event);
+      }
     }
   };
 
@@ -373,6 +579,9 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           
           // Clear location error if any
           setErrors(prev => ({ ...prev, location: null, map: null }));
+          
+          // Reverse geocode to get address and auto-fill
+          reverseGeocode(newLatLng);
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -412,6 +621,22 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     }
   };
 
+  // Reverse geocode to get address from coordinates
+  const reverseGeocode = (latLng) => {
+    if (!window.google?.maps?.Geocoder) return;
+    
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: latLng }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        setSearchInput(results[0].formatted_address);
+        // DIRECT: जो formatted address मिला है, उसे सीधे house number में fill करें
+        sethouseNumber(results[0].formatted_address);
+        // Auto-fill form fields from reverse geocoding results
+        autoFillFormFields(results[0]);
+      }
+    });
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -435,7 +660,6 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     if (e) e.preventDefault();
     if (isSubmitting) return;
 
-    // Validate form before submission
     if (!validateForm()) {
       return;
     }
@@ -461,6 +685,8 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         setLatLng({ lat: null, lng: null });
         setSearchInput("");
         setErrors({});
+        setCurrentAddressDetails(null);
+        setIsAutoFilled(false);
         toggleModal("addressModal", false);
       }
     } catch (error) {
@@ -482,11 +708,25 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     }
   };
 
-  const handleLatLngChange = (newLatLng) => {
-    setLatLng(newLatLng);
-    // Clear location error when user selects a location
-    if (errors.location || errors.map) {
-      setErrors(prev => ({ ...prev, location: null, map: null }));
+  // Handle house number change
+  const handleHouseNumberChange = (e) => {
+    sethouseNumber(e.target.value);
+    setIsAutoFilled(false); // User manually edited, so remove auto-filled status
+    if (errors.houseNumber) {
+      setErrors(prev => ({ ...prev, houseNumber: null }));
+    }
+  };
+
+  // Handle landmark change
+  const handleLandmarkChange = (e) => {
+    setlandmark(e.target.value);
+    setIsAutoFilled(false); // User manually edited, so remove auto-filled status
+  };
+
+  // Force auto-fill button
+  const handleForceAutoFill = () => {
+    if (latLng.lat && latLng.lng) {
+      fetchAddressDetails(latLng);
     }
   };
 
@@ -495,7 +735,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     return (
       <div className="google-map-picker" ref={searchContainerRef}>
         {/* Search Box */}
-        <div className="mb-3">
+        <div className="mb-3 position-relative">
           <div className="input-group google-map-search-container">
             <input
               ref={inputRef}
@@ -505,15 +745,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
               value={searchInput}
               onChange={handleSearchInputChange}
               onKeyPress={handleSearchKeyPress}
-              onFocus={() => {
-                setTimeout(() => {
-                  const pacContainer = document.querySelector('.pac-container');
-                  if (pacContainer) {
-                    pacContainer.style.display = 'block';
-                    pacContainer.style.zIndex = '9999';
-                  }
-                }, 100);
-              }}
+              onFocus={handleInputFocus}
               autoComplete="off"
               style={{
                 padding: "12px 16px",
@@ -522,7 +754,8 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                 borderRadius: "8px 0 0 8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                 position: "relative",
-                zIndex: "100"
+                zIndex: "1000",
+                backgroundColor: "white"
               }}
             />
             <button 
@@ -541,7 +774,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           </div>
                     
           {/* Status indicators */}
-          <div className="mt-2">
+          <div className="mt-2 d-flex gap-3 align-items-center">
             {!isScriptLoaded && (
               <small className="text-warning">
                 <i className="fa fa-spinner fa-spin me-1"></i>
@@ -554,7 +787,18 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                 Setting up address search...
               </small>
             )}
-            
+            {isAutocompleteReady && (
+              <small className="text-success">
+                <i className="fa fa-check-circle me-1"></i>
+                Type address to auto-fill House/Flat Number
+              </small>
+            )}
+          </div>
+          
+          {/* Helper text */}
+          <div className="text-muted small mt-1">
+            <i className="fa fa-lightbulb me-1"></i>
+            Search address will be automatically filled in House/Flat Number field
           </div>
         </div>
 
@@ -562,13 +806,22 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         <div 
           ref={mapRef} 
           style={containerStyle}
-          className="google-map-container"
+          className="google-map-container border"
         />
 
         {/* Coordinates display */}
         <div className="mt-3">
           {latLng?.lat && latLng?.lng ? (
-            <></>
+            <div className="alert alert-info py-2">
+              <i className="fa fa-map-marker-alt me-2"></i>
+              Location selected: {latLng.lat.toFixed(6)}, {latLng.lng.toFixed(6)}
+              {isAutoFilled && (
+                <div className="mt-1 small">
+                  <i className="fa fa-check-circle me-1 text-success"></i>
+                  Address auto-filled in House/Flat Number
+                </div>
+              )}
+            </div>
           ) : (
             <div className="alert alert-warning py-2">
               <i className="fa fa-exclamation-triangle me-2"></i>
@@ -581,7 +834,14 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   };
 
   return (
-    <div className={`modal fade ${modals.addressModal ? "show" : ""}`} id="provider" style={{ display: modals.addressModal ? 'block' : 'none' }}>
+    <div 
+      className={`modal fade ${modals.addressModal ? "show" : ""}`} 
+      id="provider" 
+      style={{ 
+        display: modals.addressModal ? 'block' : 'none',
+        zIndex: 1050 
+      }}
+    >
       <div className="modal-dialog modal-xl modal-dialog-centered" style={{maxWidth: '75%'}}>
         <div className="modal-content" style={{ background: 'transparent', border: 0 }}>
           <div className="card shadow-lg border-0 m-0 p-4 rounded-4" style={{ width: "100%" }}>
@@ -601,12 +861,21 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
               </div>
             )}
 
+            {/* Modal Header */}
+            <div className="modal-header border-bottom pb-3 mb-4">
+              <h5 className="modal-title fw-bold">
+                <i className="fa fa-map-marker-alt me-2 text-primary"></i>
+                {selectedAddress ? "Edit Address" : "Add New Address"}
+              </h5>
+            </div>
+
             {/* Use Current Location */}
             <div className="mb-3">
               <button 
                 className="btn btn-outline-primary d-flex align-items-center" 
                 onClick={handleUseCurrentLocation}
                 type="button"
+                disabled={!isScriptLoaded}
               >
                 <i className="fa fa-location-arrow me-2"></i> 
                 <span>Use Current Location</span>
@@ -652,18 +921,18 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                   <div className="mb-3">
                     <label className="form-label fw-semibold">
                       House/Flat Number <span className="text-danger">*</span>
+                      {isAutoFilled && houseNumber && (
+                        <span className="badge bg-success ms-2">
+                          <i className="fa fa-magic me-1"></i>Auto-filled from search
+                        </span>
+                      )}
                     </label>
                     <input
                       type="text"
                       placeholder="e.g., H-123, Floor 2, Block A"
                       className={`form-control ${errors.houseNumber ? 'is-invalid' : ''}`}
                       value={houseNumber}
-                      onChange={(e) => {
-                        sethouseNumber(e.target.value);
-                        if (errors.houseNumber) {
-                          setErrors(prev => ({ ...prev, houseNumber: null }));
-                        }
-                      }}
+                      onChange={handleHouseNumberChange}
                       autoFocus
                     />
                     {errors.houseNumber && (
@@ -673,23 +942,28 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                       </div>
                     )}
                     <small className="text-muted">
-                      Include flat number, floor, building name, etc.
+                      This field is automatically filled from your search address
                     </small>
                   </div>
 
                   <div className="mb-3">
                     <label className="form-label fw-semibold">
                       Landmark (Optional)
+                      {isAutoFilled && landmark && (
+                        <span className="badge bg-success ms-2">
+                          <i className="fa fa-magic me-1"></i>Auto-detected
+                        </span>
+                      )}
                     </label>
                     <input
                       type="text"
                       placeholder="e.g., Near Metro Station, Opposite Mall"
                       className="form-control"
                       value={landmark}
-                      onChange={(e) => setlandmark(e.target.value)}
+                      onChange={handleLandmarkChange}
                     />
                     <small className="text-muted">
-                      Nearby recognizable location
+                      Nearby recognizable location (auto-detected from address)
                     </small>
                   </div>
 
@@ -773,8 +1047,6 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                       </div>
                     )}
                   </div>
-
-                 
                 </div>
               </div>
             </form>

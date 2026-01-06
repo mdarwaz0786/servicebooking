@@ -586,14 +586,35 @@ export const AppProvider = ({ children }) => {
     }
   }
 
-  const handleServiceDetail = async (id, item) => {
+  const handleServiceDetail = async (id, item, openServicePage=0) => {
+
+    if(openServicePage==1)
+    {
+      setserviceDetailDataItem(item);
+      if(item.subSubSubCategoryCount)
+      {
+        navigate("/services/" + item.subSubCategorySlug+'?detail='+item._id);
+      }
+      else if(item.subSubCategoryCount)
+      {
+        navigate("/services/" + item.subCategorySlug+'?detail='+item._id);
+      }
+      else
+      {
+        navigate("/services/" + item.categorySlug+'?detail='+item._id);
+      }
+      
+
+      return false;
+    }
+
     try {
       const response = await postData({userId:generateUniqueId()}, Urls.serviceDetail + '/' + id, "GET", 0, 1);
       if (response.success) {
         if (response?.success) {
           setserviceDetailData(response.data);
           toggleModal("ServiceDetailModal", true)
-          setserviceDetailDataItem(item);
+
         }
       }
     } catch (error) {

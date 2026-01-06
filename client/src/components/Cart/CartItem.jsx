@@ -17,10 +17,9 @@ const CartItem = () => {
 
                     {/* Cart Items */}
                     {cartItems.map((value, index) => (
-                        <>
-                            <div className="cart-item-f">
+                     
+                            <div className="cart-item-f" key={index}>
                                 <div
-                                    key={index}
                                     className="cart-item d-flex align-items-start"
                                 >
                                     {/* Item name */}
@@ -54,7 +53,7 @@ const CartItem = () => {
                                     </div>                    
                                 </div>                        
                             </div>
-                        </>
+                      
 
 
 
