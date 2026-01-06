@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      unique: true,
       trim: true,
       index: true,
       required: [true, "Mobile number is required"],

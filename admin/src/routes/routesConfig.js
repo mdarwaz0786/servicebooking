@@ -120,6 +120,7 @@ import CertificateFormPage from "../pages/Certificate/CertificateFormPage";
 import CertificateListPage from "../pages/Certificate/CertificateListPage";
 import SupportContentFormPage from "../pages/SupportContent/SupportContentFormPage";
 import AppInfoFormPage from "../pages/AppInfo/AppInfoFormPage";
+import UpdateZonePage from "../pages/Zone/UpdateZonePage";
 
 const routesConfig = {
   private: [
@@ -298,6 +299,7 @@ const routesConfig = {
     { path: "/resume", element: ResumeListPage },
 
     { path: "/add-zone", element: CreateZonePage },
+    { path: "/update-zone/:id", element: UpdateZonePage },
     { path: "/zone", element: ZoneListPage },
 
     { path: "/support-content", element: SupportContentFormPage },

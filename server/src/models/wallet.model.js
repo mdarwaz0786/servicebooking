@@ -11,6 +11,10 @@ const walletSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    currentCreditPoints: {
+      type: Number,
+      default: 0,
+    },
     depositAmount: {
       type: Number,
       default: 0,

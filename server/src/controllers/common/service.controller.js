@@ -31,7 +31,6 @@ const removeServices = (doc) => {
 // ==================== GET ALL SERVICES ====================
 export const getServices = asyncHandler(async (req, res) => {
   let { search, sort = "-createdAt", page, limit, slug, userId = "", categoryId, subCategoryId, subSubCategoryId, subSubSubCategoryId } = req.query;
-  console.log("runs")
   page = parseInt(page, 10) || 1;
   limit = parseInt(limit, 10) || 10;
 

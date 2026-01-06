@@ -38,7 +38,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   await OtpModel.deleteOne({ mobile });
 
-  let user = await UserModel.findOne({ mobile });
+  let user = await UserModel.findOne({ mobile: mobile, role: "user" });
 
   if (!user) {
     user = await UserModel.create({ mobile: mobile, role: "user" });

@@ -85,9 +85,9 @@ export const getZoneById = async (req, res) => {
       return res.status(404).json({ message: "Zone not found" });
     }
 
-    res.json({ success: true, data: zone });
+    res.json({ success: true, message: "Data fetched successfully", data: zone });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -114,7 +114,7 @@ export const updateZone = async (req, res) => {
     );
 
     if (!zone) {
-      return res.status(404).json({ message: "Zone not found" });
+      return res.status(404).json({ success: false, message: "Zone not found" });
     }
 
     res.json({
@@ -123,7 +123,7 @@ export const updateZone = async (req, res) => {
       data: zone
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -132,7 +132,7 @@ export const deleteZone = async (req, res) => {
     const zone = await Zone.findByIdAndDelete(req.params.id);
 
     if (!zone) {
-      return res.status(404).json({ message: "Zone not found" });
+      return res.status(404).json({ success: false, message: "Zone not found" });
     }
 
     res.json({
@@ -140,7 +140,7 @@ export const deleteZone = async (req, res) => {
       message: "Deleted successfully"
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

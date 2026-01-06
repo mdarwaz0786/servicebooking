@@ -162,7 +162,7 @@ const ZoneListPage = () => {
                 </thead>
                 <tbody>
                   {data?.length > 0 ? (
-                    data.map((d, index) => (
+                    data?.map((d, index) => (
                       <tr key={d._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.name || "-"}</td>
@@ -180,6 +180,11 @@ const ZoneListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
+                            <Link to={`/update-zone/${d?._id}`}>
+                              <button className="btn delete-table me-2">
+                                <i className="fe fe-edit" />
+                              </button>
+                            </Link>
                             <button className="btn delete-table" onClick={() => deleteData(d?._id)}>
                               <i className="fe fe-trash-2" />
                             </button>

@@ -1,4 +1,5 @@
 import TrainingModel from "../../models/training.model.js";
+import TrainingScheduleSubmitModel from "../../models/trainingScheduleSubmit.model.js";
 import SlugModel from "../../models/slug.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -16,7 +17,9 @@ export const createTraining = asyncHandler(async (req, res) => {
     endTime,
     location,
     maxParticipant,
-    description
+    description,
+    type,
+    providerIds,
   } = req.body;
 
   if (!category) throw new ApiError(400, "Category is required");
@@ -29,6 +32,16 @@ export const createTraining = asyncHandler(async (req, res) => {
   if (!location?.trim()) throw new ApiError(400, "Location is required");
   if (!maxParticipant) throw new ApiError(400, "Maximum participants is required");
 
+  if (Number(type) === 2) {
+    if (!providerIds.length) {
+      throw new ApiError(400, "At least one provider is required");
+    }
+
+    if (providerIds.length > Number(maxParticipant)) {
+      throw new ApiError(400, "Providers exceed max participants");
+    }
+  }
+
   let training = await TrainingModel.create({
     category,
     subject,
@@ -40,6 +53,8 @@ export const createTraining = asyncHandler(async (req, res) => {
     location,
     maxParticipant,
     description,
+    type,
+    providerIds,
     createdBy: req.user?._id,
   });
 
@@ -53,7 +68,19 @@ export const createTraining = asyncHandler(async (req, res) => {
   training.slug = slug;
   await training.save();
 
-  return res.status(201).json({ success: true, data: training });
+  if (Number(type) === 2 && providerIds.length) {
+    const scheduleDocs = providerIds?.map((providerId) => ({
+      trainingId: training?._id,
+      providerId,
+      scheduleDate: startDate,
+      scheduleTime: startTime,
+      createdBy: req.user?._id,
+    }));
+
+    await TrainingScheduleSubmitModel.insertMany(scheduleDocs);
+  };
+
+  return res.status(201).json({ success: true, message: "Created successfully", data: training });
 });
 
 export const getTrainings = asyncHandler(async (req, res) => {
@@ -129,6 +156,7 @@ export const updateTraining = asyncHandler(async (req, res) => {
     maxParticipant,
     description,
     status,
+    providerIds,
   } = req.body;
 
   const training = await TrainingModel.findById(req.params.id);

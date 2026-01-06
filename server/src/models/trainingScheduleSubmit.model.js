@@ -17,6 +17,11 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  type: {         // 1 = First Time, 2 = Any Time
+    type: Number,
+    enum: [1, 2],
+    default: 1,
+  },
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

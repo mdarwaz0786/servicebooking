@@ -20,11 +20,6 @@ export const getSupportConfig = async () => {
   };
 };
 
-// CREDIT CONFIG
-// const ACCEPT_CREDIT_POINTS = 10;   // deduct
-// const CANCEL_CREDIT_POINTS = 10;   // add
-// const DEFAULT_EARNING_PERCENT = 15;
-
 // Get total credit points
 export const getTotalCreditPoints = async (providerId) => {
   const wallets = await Wallet.find(
@@ -64,6 +59,9 @@ export const adjustWalletCredit = async (
 ) => {
   if (!providerId || !status) return;
 
+  const previousBalance = await getTotalCreditPoints(providerId);
+  let currentCreditPoints;
+
   const {
     acceptCreditPoints,
     cancelCreditPoints,
@@ -80,6 +78,8 @@ export const adjustWalletCredit = async (
     purpose = "Deduct for accept booking";
     depositAmount = acceptCreditPoints / 0.10;
 
+    currentCreditPoints = previousBalance - acceptCreditPoints;
+
     const totalCredit = await getTotalCreditPoints(providerId);
     if (totalCredit < acceptCreditPoints) {
       throw new ApiError(403, "Low credit point");
@@ -91,6 +91,8 @@ export const adjustWalletCredit = async (
     transactionType = "Credit";
     purpose = "Add for cancel booking";
     depositAmount = cancelCreditPoints / 0.10;
+
+    currentCreditPoints = previousBalance + cancelCreditPoints;
   };
 
   return await Wallet.create({
@@ -100,6 +102,7 @@ export const adjustWalletCredit = async (
     transactionType,
     depositStatus: "Paid",
     paymentMode: "System",
+    currentCreditPoints: currentCreditPoints,
     purpose,
     status: true,
     createdBy: providerId,

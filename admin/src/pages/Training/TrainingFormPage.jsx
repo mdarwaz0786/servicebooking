@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Select from "react-select";
 import { useAuth } from "../../context/auth.context";
 import SingleSelect from "../../components/Form/SingleSelect";
 import apis from "../../apis/apis";
@@ -14,6 +15,7 @@ const TrainingFormPage = () => {
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [providers, setProviders] = useState([]);
 
   const [formData, setFormData] = useState({
     category: "",
@@ -26,7 +28,33 @@ const TrainingFormPage = () => {
     location: "",
     maxParticipant: "",
     description: "",
+    type: 1,
+    providerIds: [],
   });
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const res = await axios.get(apis.servicemanProfile.get, {
+          headers: { Authorization: validToken },
+        });
+
+        if (res.data.success) {
+          const opts = res.data.data.map((p) => ({
+            value: p.userId,
+            label: p.name,
+          }));
+          setProviders(opts);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to load providers");
+      }
+    };
+
+    fetchProviders();
+  }, []);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +83,7 @@ const TrainingFormPage = () => {
           });
 
           if (res.data.success) {
-            const t = res.data.data;
+            const t = res?.data?.data;
 
             setFormData({
               category: t.category?._id || "",
@@ -68,6 +96,8 @@ const TrainingFormPage = () => {
               location: t.location || "",
               maxParticipant: t.maxParticipant || "",
               description: t.description || "",
+              type: t.type || "",
+              providerId: t?.providerId || null,
             });
           }
         } catch (err) {
@@ -81,11 +111,38 @@ const TrainingFormPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    if (name === "type" && Number(value) === 1) {
+      setFormData({
+        ...formData,
+        type: Number(value),
+        providerIds: [],
+      });
+      return;
+    };
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleCategoryChange = (value) => {
     setFormData({ ...formData, category: value });
+  };
+
+  const handleProviderChange = (selectedOptions) => {
+    const max = Number(formData.maxParticipant || 0);
+
+    if (max && selectedOptions.length > max) {
+      toast.error(`You can select maximum ${max} providers`);
+      return;
+    };
+
+    setFormData({
+      ...formData,
+      providerIds: selectedOptions.map((opt) => opt.value),
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -100,6 +157,16 @@ const TrainingFormPage = () => {
     if (!formData.endTime) return toast.error("End time is required");
     if (!formData.location.trim()) return toast.error("Location is required");
     if (!formData.maxParticipant) return toast.error("Maximum participants required");
+
+    if (formData.type === 2) {
+      if (!formData.providerIds.length) {
+        return toast.error("Please select at least one provider");
+      }
+
+      if (formData.providerIds.length > Number(formData.maxParticipant)) {
+        return toast.error("Providers exceed max participants");
+      }
+    }
 
     try {
       setLoading(true);
@@ -138,6 +205,8 @@ const TrainingFormPage = () => {
       maxParticipant: "",
       description: "",
       status: true,
+      type: 1,
+      providerIds: [],
     });
   };
 
@@ -315,6 +384,50 @@ const TrainingFormPage = () => {
                       required
                     />
                   </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Type <span style={{ color: "red" }}>*</span></label>
+                    <select
+                      className="form-select"
+                      name="type"
+                      value={formData.type}
+                      onChange={handleChange}
+                    >
+                      <option value={1}>For New Person</option>
+                      <option value={2}>For Old Person</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {formData.type == 2 && (
+                    <div className="mb-3">
+                      <label className="form-label">
+                        Providers <span style={{ color: "red" }}>*</span>
+                      </label>
+
+                      <Select
+                        isMulti
+                        options={providers}
+                        value={providers.filter((p) =>
+                          formData.providerIds.includes(p.value)
+                        )}
+                        onChange={handleProviderChange}
+                        placeholder="Select Providers"
+                        closeMenuOnSelect={false}
+                        isDisabled={!formData.maxParticipant}
+                      />
+
+                      {!formData.maxParticipant && (
+                        <small className="text-danger">
+                          Please enter max participants first
+                        </small>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 

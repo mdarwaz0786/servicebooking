@@ -9,11 +9,11 @@ import generateOtp from "../../utils/generateOpt.js";
 export const loginUser = asyncHandler(async (req, res) => {
   const { mobile } = req.body;
 
-  const otp = generateOtp();
+  const otp = generateOtp(mobile);
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-  const UserRecord = await UserModel.findOne({ 'mobile': mobile, 'role': 'user' });
-  if (UserRecord) throw new ApiError(400, "Mobile exist in user account..");
+  // const UserRecord = await UserModel.findOne({ 'mobile': mobile, 'role': 'user' });
+  // if (UserRecord) throw new ApiError(400, "Mobile exist in user account..");
 
   await OtpModel.findOneAndUpdate(
     { mobile },

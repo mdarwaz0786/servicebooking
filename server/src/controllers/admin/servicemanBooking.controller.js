@@ -31,6 +31,10 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Serviceman not found");
   }
 
+  if (!serviceman?.zones) {
+    throw new ApiError(400, "Assign zone to this provider");
+  }
+
   const isSufficient = await ensureSufficientCredit(serviceman?.userId);
 
   if (!isSufficient) {

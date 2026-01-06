@@ -16,6 +16,15 @@ const trainingSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    type: {          // 1 = First Time, 2 = Any Time
+      type: Number,
+      enum: [1, 2],
+      default: 1,
+    },
+    providerIds: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     firstName: {
       type: String,
       required: [true, "First name is required"],

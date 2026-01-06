@@ -11,17 +11,14 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: [true, "House number is required"],
     trim: true,
-    maxlength: [50, "House number must not exceed 50 characters"],
   },
   landmark: {
     type: String,
     trim: true,
-    maxlength: [150, "Landmark must not exceed 150 characters"],
   },
   deliveryPersonName: {
     type: String,
     trim: true,
-    maxlength: [100, "Delivery person name must not exceed 100 characters"],
   },
   type: {
     type: String,

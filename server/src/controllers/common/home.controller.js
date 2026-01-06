@@ -8,6 +8,59 @@ import { getCartData } from "../../utils/cart.utils.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
 import ServiceModel from "../../models/service.model.js";
 
+const buildCountMap = ({ list = [], services = [], key }) => {
+  const countMap = {};
+  const slugMap = {};
+
+  // 1️⃣ Build slugMap from populated list
+  list.forEach((item) => {
+    slugMap[item._id.toString()] = item.slug;
+  });
+
+  // 2️⃣ Count services + fallback slug from populated ref
+  services.forEach((service) => {
+    const id = service?.[key]?.toString();
+    if (!id) return;
+
+    countMap[id] = (countMap[id] || 0) + 1;
+
+    // 🛡 fallback if slug missing
+    if (!slugMap[id] && service[key]?.slug) {
+      slugMap[id] = service[key].slug;
+    }
+  });
+
+  return { countMap, slugMap };
+};
+
+// Most booked count map
+export const buildCountMapMostBooked = ({ services = [], key }) => {
+  const countMap = {};
+  const slugMap = {};
+
+  services.forEach((service) => {
+    const ref = service?.[key];
+    if (!ref) return;
+
+    // ✅ works for populated + unpopulated refs
+    const id =
+      typeof ref === "object"
+        ? ref?._id?.toString()
+        : ref?.toString();
+
+    if (!id) return;
+
+    countMap[id] = (countMap[id] ?? 0) + 1;
+
+    // ✅ slug from populated object
+    if (typeof ref === "object" && ref.slug) {
+      slugMap[id] = ref.slug;
+    }
+  });
+
+  return { countMap, slugMap };
+};
+
 // Get home page data
 export const getHomePageData = asyncHandler(async (req, res) => {
   const userId = req.query.userId;
@@ -62,7 +115,16 @@ export const getHomePageData = asyncHandler(async (req, res) => {
 
   // Fetch active home page services
   const services = await HomePageServiceModel.find({ status: true })
-    .populate("services", "name image slug mrpPrice salePrice")
+    .populate({
+      path: "services",
+      select: "name image slug mrpPrice salePrice categoryId subCategoryId subSubCategoryId subSubSubCategoryId",
+      populate: [
+        { path: "categoryId", strictPopulate: false, select: "slug" },
+        { path: "subCategoryId", strictPopulate: false, select: "slug" },
+        { path: "subSubCategoryId", strictPopulate: false, select: "slug" },
+        { path: "subSubSubCategoryId", strictPopulate: false, select: "slug" },
+      ],
+    })
     .sort({ createdAt: 1 })
     .lean();
 
@@ -72,7 +134,9 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   }
 
   const servicesWithQuantity = services.map((serviceBlock) => {
-    const updatedServices = serviceBlock.services.map((s) => {
+
+    // 1️⃣ Add quantity first
+    const baseServices = serviceBlock.services.map((s) => {
       const cartItem = cartItems.find(
         (item) => item?.serviceId?.toString() === s?._id?.toString()
       );
@@ -83,6 +147,56 @@ export const getHomePageData = asyncHandler(async (req, res) => {
       };
     });
 
+    // 2️⃣ Build maps
+    const categoryMap = buildCountMap({
+      list: serviceBlock.category,
+      services: baseServices,
+      key: "categoryId",
+    });
+
+    const subCategoryMap = buildCountMap({
+      list: serviceBlock.subCategory,
+      services: baseServices,
+      key: "subCategoryId",
+    });
+
+    const subSubCategoryMap = buildCountMap({
+      list: serviceBlock.subSubCategory,
+      services: baseServices,
+      key: "subSubCategoryId",
+    });
+
+    const subSubSubCategoryMap = buildCountMap({
+      list: serviceBlock.subSubSubCategory,
+      services: baseServices,
+      key: "subSubSubCategoryId",
+    });
+
+    // 3️⃣ Inject count & slug INTO each service
+    const updatedServices = baseServices.map((service) => {
+      const categoryId = service?.categoryId?.toString();
+      const subCategoryId = service?.subCategoryId?.toString();
+      const subSubCategoryId = service?.subSubCategoryId?.toString();
+      const subSubSubCategoryId = service?.subSubSubCategoryId?.toString();
+
+      return {
+        ...service,
+
+        categorySlug: categoryMap.slugMap[categoryId] || null,
+        categoryCount: categoryMap.countMap[categoryId] || 0,
+
+        subCategorySlug: subCategoryMap.slugMap[subCategoryId] || null,
+        subCategoryCount: subCategoryMap.countMap[subCategoryId] || 0,
+
+        subSubCategorySlug: subSubCategoryMap.slugMap[subSubCategoryId] || null,
+        subSubCategoryCount: subSubCategoryMap.countMap[subSubCategoryId] || 0,
+
+        subSubSubCategorySlug: subSubSubCategoryMap.slugMap[subSubSubCategoryId] || null,
+        subSubSubCategoryCount: subSubSubCategoryMap.countMap[subSubSubCategoryId] || 0,
+      };
+    });
+
+    // 4️⃣ Final response
     return {
       ...serviceBlock,
       services: updatedServices,
@@ -109,8 +223,36 @@ export const getHomePageData = asyncHandler(async (req, res) => {
   // Populate service details for the aggregated services
   const mostBookedServiceIds = mostBookedServicesAgg.map((item) => item?._id);
   const mostBookedServices = await ServiceModel.find({ _id: { $in: mostBookedServiceIds } })
-    .select("name slug image mrpPrice salePrice")
+    .select(
+      "name slug image mrpPrice salePrice categoryId subCategoryId subSubCategoryId subSubSubCategoryId"
+    )
+    .populate([
+      { path: "categoryId", select: "slug", strictPopulate: false },
+      { path: "subCategoryId", select: "slug", strictPopulate: false },
+      { path: "subSubCategoryId", select: "slug", strictPopulate: false },
+      { path: "subSubSubCategoryId", select: "slug", strictPopulate: false },
+    ])
     .lean();
+
+  const categoryMap = buildCountMapMostBooked({
+    services: mostBookedServices,
+    key: "categoryId",
+  });
+
+  const subCategoryMap = buildCountMapMostBooked({
+    services: mostBookedServices,
+    key: "subCategoryId",
+  });
+
+  const subSubCategoryMap = buildCountMapMostBooked({
+    services: mostBookedServices,
+    key: "subSubCategoryId",
+  });
+
+  const subSubSubCategoryMap = buildCountMapMostBooked({
+    services: mostBookedServices,
+    key: "subSubSubCategoryId",
+  });
 
   // Map totalBooked count to service
   const mostBooked = mostBookedServicesAgg.map((item) => {
@@ -120,7 +262,48 @@ export const getHomePageData = asyncHandler(async (req, res) => {
       (c) => c.serviceId?.toString() === item._id.toString()
     );
 
-    return service ? { ...service, totalBooked: item?.totalBooked, quantity: cartItem ? cartItem.quantity : 0 } : null;
+    const categoryId = service?.categoryId?._id?.toString();
+    const subCategoryId = service?.subCategoryId?._id?.toString();
+    const subSubCategoryId = service?.subSubCategoryId?._id?.toString();
+    const subSubSubCategoryId = service?.subSubSubCategoryId?._id?.toString();
+
+    return service ? {
+      ...service,
+      totalBooked: item?.totalBooked,
+      quantity: cartItem ? cartItem.quantity : 0,
+
+      // CATEGORY
+      categoryId: categoryId || null,
+      categorySlug: categoryId ? categoryMap.slugMap[categoryId] || null : null,
+      categoryCount: categoryId ? categoryMap.countMap[categoryId] || 0 : 0,
+
+      // SUB CATEGORY
+      subCategoryId: subCategoryId || null,
+      subCategorySlug: subCategoryId
+        ? subCategoryMap.slugMap[subCategoryId] || null
+        : null,
+      subCategoryCount: subCategoryId
+        ? subCategoryMap.countMap[subCategoryId] || 0
+        : 0,
+
+      // SUB SUB CATEGORY
+      subSubCategoryId: subSubCategoryId || null,
+      subSubCategorySlug: subSubCategoryId
+        ? subSubCategoryMap.slugMap[subSubCategoryId] || null
+        : null,
+      subSubCategoryCount: subSubCategoryId
+        ? subSubCategoryMap.countMap[subSubCategoryId] || 0
+        : 0,
+
+      // SUB SUB SUB CATEGORY
+      subSubSubCategoryId: subSubSubCategoryId || null,
+      subSubSubCategorySlug: subSubSubCategoryId
+        ? subSubSubCategoryMap.slugMap[subSubSubCategoryId] || null
+        : null,
+      subSubSubCategoryCount: subSubSubCategoryId
+        ? subSubSubCategoryMap.countMap[subSubSubCategoryId] || 0
+        : 0,
+    } : null;
   }).filter(Boolean);
 
   return res.status(200).json({

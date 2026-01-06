@@ -257,6 +257,7 @@ const WalletListPage = () => {
                     <th>Transaction Id</th>
                     <th>Provider</th>
                     <th>Credit Points</th>
+                    <th>Current Credit Points</th>
                     <th>Transaction Type</th>
                     <th>Mode</th>
                     <th>Status</th>
@@ -269,8 +270,9 @@ const WalletListPage = () => {
                       <tr key={d._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.transactionId || "-"}</td>
-                        <td>{d?.provider?.name}</td>
+                        <td>{d?.provider?.name || "-"}</td>
                         <td>{d?.creditPoints}</td>
+                        <td>{d?.currentCreditPoints || "-"}</td>
                         <td>{d?.transactionType}</td>
                         <td>{d?.paymentMode}</td>
                         <td>
@@ -279,7 +281,7 @@ const WalletListPage = () => {
                               <input
                                 type="checkbox"
                                 checked={d.status}
-                                onChange={() => toggleStatus(d._id, d.status)}
+                                onChange={() => toggleStatus(d?._id, d?.status)}
                               />
                               <span className="sliders round" />
                             </label>
