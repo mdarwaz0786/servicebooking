@@ -130,9 +130,6 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   filters.userId = userId;
 
-
-  // if (userId) filters.userId = userId;
-
   if (search) {
     filters.$or = [
       { bookingId: { $regex: search, $options: "i" } },
@@ -147,6 +144,13 @@ export const getBookings = asyncHandler(async (req, res) => {
   } else {
     sortOption = sort;
   };
+
+  filters.$nor = [
+    {
+      paymentMode: "online",
+      paymentStatus: 0,
+    },
+  ];
 
   const bookings = await BookingModel
     .find(filters)

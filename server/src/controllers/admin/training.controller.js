@@ -1,5 +1,6 @@
 import TrainingModel from "../../models/training.model.js";
 import TrainingScheduleSubmitModel from "../../models/trainingScheduleSubmit.model.js";
+import TrainingScheduleSubmitLoggerModel from "../../models/trainingScheduleSubmitLogger.model.js";
 import SlugModel from "../../models/slug.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -19,7 +20,7 @@ export const createTraining = asyncHandler(async (req, res) => {
     maxParticipant,
     description,
     type,
-    providerIds,
+    providerIds = [],
   } = req.body;
 
   if (!category) throw new ApiError(400, "Category is required");
@@ -32,12 +33,19 @@ export const createTraining = asyncHandler(async (req, res) => {
   if (!location?.trim()) throw new ApiError(400, "Location is required");
   if (!maxParticipant) throw new ApiError(400, "Maximum participants is required");
 
-  if (Number(type) === 2) {
-    if (!providerIds.length) {
+  const maxUsers = Number(maxParticipant);
+  const trainingType = Number(type);
+
+  if (!maxUsers || maxUsers <= 0) {
+    throw new ApiError(400, "Maximum participants must be greater than 0");
+  }
+
+  if (trainingType === 2) {
+    if (!Array.isArray(providerIds) || providerIds.length === 0) {
       throw new ApiError(400, "At least one provider is required");
     }
 
-    if (providerIds.length > Number(maxParticipant)) {
+    if (providerIds.length > maxUsers) {
       throw new ApiError(400, "Providers exceed max participants");
     }
   }
@@ -54,7 +62,7 @@ export const createTraining = asyncHandler(async (req, res) => {
     maxParticipant,
     description,
     type,
-    providerIds,
+    providerIds: trainingType === 2 ? providerIds : [],
     createdBy: req.user?._id,
   });
 
@@ -68,16 +76,22 @@ export const createTraining = asyncHandler(async (req, res) => {
   training.slug = slug;
   await training.save();
 
-  if (Number(type) === 2 && providerIds.length) {
+
+  if (trainingType === 2 && providerIds?.length > 0) {
     const scheduleDocs = providerIds?.map((providerId) => ({
-      trainingId: training?._id,
+      trainingId: training._id,
       providerId,
+      type: 2,
       scheduleDate: startDate,
       scheduleTime: startTime,
       createdBy: req.user?._id,
+      user: req.user?._id,
     }));
 
-    await TrainingScheduleSubmitModel.insertMany(scheduleDocs);
+    await Promise.all([
+      TrainingScheduleSubmitModel.insertMany(scheduleDocs),
+      TrainingScheduleSubmitLoggerModel.insertMany(scheduleDocs),
+    ]);
   };
 
   return res.status(201).json({ success: true, message: "Created successfully", data: training });
@@ -112,7 +126,8 @@ export const getTrainings = asyncHandler(async (req, res) => {
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
   const trainings = await TrainingModel.find(filters)
-    .populate("category")
+    .populate("category", "name")
+    .populate("provider", "name")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -136,11 +151,15 @@ export const getTrainings = asyncHandler(async (req, res) => {
 });
 
 export const getTrainingById = asyncHandler(async (req, res) => {
-  const training = await TrainingModel.findById(req.params.id).populate("category").lean({ virtuals: true });
+  const training = await TrainingModel
+    .findById(req.params.id)
+    .populate("category", "name")
+    .populate("provider", "name")
+    .lean({ virtuals: true });
 
   if (!training) throw new ApiError(404, "Training not found");
 
-  return res.status(200).json({ success: true, data: training });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: training });
 });
 
 export const updateTraining = asyncHandler(async (req, res) => {
@@ -156,8 +175,26 @@ export const updateTraining = asyncHandler(async (req, res) => {
     maxParticipant,
     description,
     status,
-    providerIds,
+    type,
+    providerIds = [],
   } = req.body;
+
+  const maxUsers = Number(maxParticipant);
+  const trainingType = Number(type);
+
+  if (!maxUsers || maxUsers <= 0) {
+    throw new ApiError(400, "Maximum participants must be greater than 0");
+  }
+
+  if (trainingType === 2) {
+    if (!Array.isArray(providerIds) || providerIds.length === 0) {
+      throw new ApiError(400, "At least one provider is required");
+    }
+
+    if (providerIds.length > maxUsers) {
+      throw new ApiError(400, "Providers exceed max participants");
+    }
+  }
 
   const training = await TrainingModel.findById(req.params.id);
   if (!training) throw new ApiError(404, "Training not found");
@@ -176,7 +213,7 @@ export const updateTraining = asyncHandler(async (req, res) => {
     );
 
     training.slug = newSlug;
-  }
+  };
 
   training.category = category !== undefined ? category : training.category;
   training.subject = subject !== undefined ? subject : training.subject;
@@ -188,13 +225,68 @@ export const updateTraining = asyncHandler(async (req, res) => {
   training.location = location !== undefined ? location : training.location;
   training.maxParticipant = maxParticipant !== undefined ? maxParticipant : training.maxParticipant;
   training.description = description !== undefined ? description : training.description;
+  training.providerIds = providerIds || training.providerIds;
   training.status = typeof status === "boolean" ? status : training.status;
   training.updatedBy = req.user?._id;
   training.updatedAt = new Date();
 
   await training.save();
 
-  return res.status(200).json({ success: true, data: training });
+
+  if (trainingType === 2 && Array.isArray(providerIds)) {
+
+    // 🔹 Normalize ObjectIds
+    const newProviderIds = providerIds.map(id =>
+      new mongoose.Types.ObjectId(id)
+    );
+
+    // 🔹 Get existing schedules
+    const existingSchedules = await TrainingScheduleSubmitModel.find({
+      trainingId: training._id,
+      type: 2,
+    }).lean();
+
+    const existingProviderIds = existingSchedules.map(s =>
+      s.providerId.toString()
+    );
+
+    // 🔹 Providers to ADD
+    const providersToAdd = newProviderIds.filter(
+      id => !existingProviderIds.includes(id.toString())
+    );
+
+    // 🔹 Providers to REMOVE
+    const providersToRemove = existingProviderIds.filter(
+      id => !newProviderIds.map(p => p.toString()).includes(id)
+    );
+
+    // 🔹 DELETE removed providers ONLY
+    if (providersToRemove.length) {
+      await TrainingScheduleSubmitModel.deleteMany({
+        trainingId: training._id,
+        type: 2,
+        providerId: { $in: providersToRemove },
+      });
+    }
+
+    // 🔹 INSERT new providers ONLY
+    if (providersToAdd.length) {
+      const scheduleDocs = providersToAdd.map(providerId => ({
+        trainingId: training._id,
+        providerId,
+        type: 2,
+        scheduleDate: startDate || training.startDate,
+        scheduleTime: startTime || training.startTime,
+        createdBy: req.user?._id,
+        user: req.user?._id,
+      }));
+
+      await TrainingScheduleSubmitModel.insertMany(scheduleDocs);
+      await TrainingScheduleSubmitLoggerModel.insertMany(scheduleDocs);
+    }
+  }
+
+  return res.status(200).json({ success: true, message: "Updated successfully", data: training });
 });
 
 export const deleteTraining = asyncHandler(async (req, res) => {

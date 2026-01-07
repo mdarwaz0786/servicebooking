@@ -119,6 +119,13 @@ export const getBookings = asyncHandler(async (req, res) => {
     sortOption = sort;
   };
 
+  filters.$nor = [
+    {
+      paymentMode: "online",
+      paymentStatus: 0,
+    },
+  ];
+
   const bookings = await BookingModel
     .find(filters)
     .populate({ path: "user", select: "-password" })
