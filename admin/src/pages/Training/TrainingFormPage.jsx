@@ -97,7 +97,7 @@ const TrainingFormPage = () => {
               maxParticipant: t.maxParticipant || "",
               description: t.description || "",
               type: t.type || "",
-              providerId: t?.providerId || null,
+              providerIds: t?.provider?.map((p) => p?.userId) || [],
             });
           }
         } catch (err) {
@@ -396,6 +396,8 @@ const TrainingFormPage = () => {
                       name="type"
                       value={formData.type}
                       onChange={handleChange}
+                      disabled={id}
+                      aria-readonly={id}
                     >
                       <option value={1}>For New Person</option>
                       <option value={2}>For Old Person</option>

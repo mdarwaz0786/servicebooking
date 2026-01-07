@@ -15,14 +15,10 @@ const UpdateHomeServicePage = () => {
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [subSubCategories, setSubSubCategories] = useState([]);
-  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
   const [services, setServices] = useState([]);
 
   const [categoryIds, setCategoryIds] = useState([]);
   const [subCategoryIds, setSubCategoryIds] = useState([]);
-  const [subSubCategoryIds, setSubSubCategoryIds] = useState([]);
-  const [subSubSubCategoryIds, setSubSubSubCategoryIds] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [title, setTitle] = useState("");
 
@@ -33,9 +29,6 @@ const UpdateHomeServicePage = () => {
       });
       if (res?.data?.success) {
         setCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
       };
     };
     fetchCategories();
@@ -53,8 +46,6 @@ const UpdateHomeServicePage = () => {
           setTitle(d?.title);
           setCategoryIds(d?.category?.map((c) => c?._id) || []);
           setSubCategoryIds(d?.subCategory?.map((c) => c?._id) || []);
-          setSubSubCategoryIds(d?.subSubCategory?.map((c) => c?._id) || []);
-          setSubSubSubCategoryIds(d?.subSubSubCategory?.map((c) => c?._id) || []);
           setSelectedServices(d?.services?.map((s) => s?._id) || []);
         }
       } catch {
@@ -75,62 +66,17 @@ const UpdateHomeServicePage = () => {
 
       if (res?.data?.success) {
         setSubCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
       };
     };
 
     fetchSubCategories();
   }, [categoryIds, validToken]);
 
-  useEffect(() => {
-    if (!subCategoryIds.length) return;
-
-    const fetchSubSubCategories = async () => {
-      const res = await axios.get(apis.homeService.subSubCategory, {
-        params: { subCategoryId: subCategoryIds.join(",") },
-        headers: { Authorization: validToken },
-      });
-
-      if (res?.data?.success) {
-        setSubSubCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
-      };
-    };
-
-    fetchSubSubCategories();
-  }, [subCategoryIds, validToken]);
-
-  useEffect(() => {
-    if (!subSubCategoryIds.length) return;
-
-    const fetchSubSubSubCategories = async () => {
-      const res = await axios.get(apis.homeService.subSubSubCategory, {
-        params: { subSubCategoryId: subSubCategoryIds.join(",") },
-        headers: { Authorization: validToken },
-      });
-
-      if (res?.data?.success) {
-        setSubSubSubCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
-      };
-    };
-
-    fetchSubSubSubCategories();
-  }, [subSubCategoryIds, validToken]);
-
   const fetchServices = async () => {
     const res = await axios.get(apis.homeService.service, {
       params: {
         categoryId: categoryIds.join(","),
         subCategoryId: subCategoryIds.join(","),
-        subSubCategoryId: subSubCategoryIds.join(","),
-        subSubSubCategoryId: subSubSubCategoryIds.join(","),
       },
       headers: { Authorization: validToken },
     });
@@ -138,19 +84,19 @@ const UpdateHomeServicePage = () => {
     if (res?.data?.success) setServices(res?.data?.data || []);
   };
 
+  useEffect(() => {
+    fetchServices();
+  }, [categoryIds, subCategoryIds])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title) return toast.error("Title is required");
-    if (!selectedServices.length) return toast.error("Select services");
-    if (!categoryIds.length) return toast.error("Please select at least one category");
 
     const payload = {
       title,
       category: categoryIds,
       subCategory: subCategoryIds,
-      subSubCategory: subSubCategoryIds,
-      subSubSubCategory: subSubSubCategoryIds,
       services: selectedServices,
     };
 
@@ -191,7 +137,7 @@ const UpdateHomeServicePage = () => {
               />
             </div>
             <div className="col-md-6">
-              <label>Product <span className="text-danger">*</span></label>
+              <label>Product</label>
               <MultiSelect
                 optionsList={categories}
                 value={categoryIds}
@@ -213,30 +159,7 @@ const UpdateHomeServicePage = () => {
               />
             </div>
             <div className="col-md-6">
-              <label>Service Process</label>
-              <MultiSelect
-                optionsList={subSubCategories}
-                value={subSubCategoryIds}
-                onChange={setSubSubCategoryIds}
-                disabled={subCategoryIds.length === 0}
-                isClearable={false}
-              />
-            </div>
-          </div>
-
-          <div className="row mt-3">
-            <div className="col-md-6">
-              <label>Nested Service Process</label>
-              <MultiSelect
-                optionsList={subSubSubCategories}
-                value={subSubSubCategoryIds}
-                onChange={setSubSubSubCategoryIds}
-                disabled={subSubCategoryIds.length === 0}
-                isClearable={false}
-              />
-            </div>
-            <div className="col-md-6">
-              <label>Services <span className="text-danger">*</span></label>
+              <label>Services</label>
               <SelectMultipleService
                 optionsList={services}
                 value={selectedServices}

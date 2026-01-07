@@ -21,10 +21,10 @@ const trainingSchema = new mongoose.Schema(
       enum: [1, 2],
       default: 1,
     },
-    providerIds: {
+    providerIds: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-    },
+    }],
     firstName: {
       type: String,
       required: [true, "First name is required"],
@@ -112,6 +112,11 @@ trainingSchema.virtual("trainigSubmit", {
   justOne: true,
 });
 
-
+trainingSchema.virtual("provider", {
+  ref: "ServiceManProfile",
+  localField: "providerIds",
+  foreignField: "userId",
+  justOne: false,
+});
 
 export default mongoose.model("Training", trainingSchema);

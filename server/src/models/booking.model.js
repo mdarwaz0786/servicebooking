@@ -42,7 +42,7 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   paymentMode: {
-    type: String, // e.g. "cash", "card", "upi"
+    type: String, // e.g. "cod", "online"
     required: true,
   },
   paymentBy: {

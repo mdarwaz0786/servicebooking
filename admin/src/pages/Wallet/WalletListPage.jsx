@@ -289,12 +289,12 @@ const WalletListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-wallet/${d._id}`}>
+                            <Link to="#">
                               <button className="btn delete-table me-2">
                                 <i className="fe fe-edit" />
                               </button>
                             </Link>
-                            <button className="btn delete-table" onClick={() => deleteData(d._id)}>
+                            <button className="btn delete-table" onClick={() => deleteData(d._id)} disabled>
                               <i className="fe fe-trash-2" />
                             </button>
                           </div>
