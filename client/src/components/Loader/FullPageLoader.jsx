@@ -7,7 +7,7 @@ const FullPageLoader = ({ text = "Loading..." }) => {
   return (
       <>
    
-        <div className="full-page-loader">
+        {/* <div className="full-page-loader">
             <div className="loader-content">
                 <div className="spinner">
                 <div className="double-bounce1"></div>
@@ -15,7 +15,7 @@ const FullPageLoader = ({ text = "Loading..." }) => {
                 </div>
                 <p className="loader-text">{text}</p>
             </div>
-        </div>
+        </div> */}
    
         </>
   );

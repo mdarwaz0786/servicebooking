@@ -15,8 +15,10 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
+import CategoryMiniCard3 from "../../components/Category/CategoryMiniCard3";
+import CategoryModal from "../../components/Modal/CategoryModal";
 
-const Services = ({search, slug}) => {
+const Services = ({search, slug, handleSubCategory}) => {
 
   const [searchParams] = useSearchParams();
   const detail = searchParams?.get("detail");
@@ -25,7 +27,7 @@ const Services = ({search, slug}) => {
   const nextRef = useRef(null); 
   const [width, setWidth] = useState(window.innerWidth);
 
-  const { postData, generateUniqueId, Urls, setserviceDetailData,setserviceDetailDataItem, serviceDetailDataItem, toggleModal, servicePageCategoryData, serviceListData, pageLoading, servicePageName, cartAmount, cartItems, servicePageCartShow, PriceFormat, setCartOpen } = useContext(AppContext);
+  const { postData, categoryListData, generateUniqueId, Urls, setserviceDetailData,setserviceDetailDataItem, serviceDetailDataItem, toggleModal, servicePageCategoryData, serviceListData, pageLoading, servicePageName, cartAmount, cartItems, servicePageCartShow, PriceFormat, setCartOpen } = useContext(AppContext);
   
    const handleServiceDetail2 = async (id) => {
     try {
@@ -58,6 +60,9 @@ const Services = ({search, slug}) => {
 
   
   return ( 
+
+    <>
+
     <div className="page-wrapper m-0">
       <div className="content">
         <div className="container-fluid">
@@ -161,15 +166,29 @@ const Services = ({search, slug}) => {
 
             </>
       :
-        <div className="col-md-6 m-auto">          
-          <img className="img-fluid" alt="Logo" src="/assets/img/service404.jpg" />
-        </div>    
+          <>
+            <div className="col-md-4 m-auto">          
+              <img className="img-fluid" alt="Logo" src="/assets/img/service404.jpg" />
+            </div>    
+            <div className="col-md-8 m-auto">          
+              <div className="card card-body mt-3 shadow-none bg-transparent" style={{paddingBottom: '7px'}}>
+                  <h3 className="text-start hero-category-title">Explore our services</h3>
+                  <div className="row hero-category">
+                      <>
+                        <CategoryMiniCard3 data={categoryListData} handleSubCategory={handleSubCategory} className={'col-md-2 hero-category hero-category-item'} />
+                      </>                    
+                  </div>
+                </div>
+            </div>
+          </>    
       }
 
           </div>
         </div>
       </div>
     </div>
+    <CategoryModal />
+    </>
   );
 };
 
