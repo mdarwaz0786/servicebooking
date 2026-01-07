@@ -187,6 +187,60 @@ export const dashboard = asyncHandler(async (req, res) => {
 
   const todayEarning = todayEarningAgg[0]?.todayEarning || 0;
 
+  // DATE RANGE: LAST 7 DAYS
+  const startOfWeek = new Date();
+  startOfWeek.setDate(startOfWeek.getDate() - 7);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date();
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  // WINNER OF THE WEEK (TOP 3 SERVICEMEN)
+  const winnerOfTheWeek = await ServiceManBookingModel.aggregate([
+    {
+      $match: {
+        status: "complete",
+        createdAt: { $gte: startOfWeek, $lte: endOfWeek }
+      }
+    },
+
+    // COUNT COMPLETED BOOKINGS PER SERVICEMAN
+    {
+      $group: {
+        _id: "$servicemanId",
+        completedBookings: { $sum: 1 }
+      }
+    },
+
+    // SORT BY MOST COMPLETED BOOKINGS
+    { $sort: { completedBookings: -1 } },
+
+    // ONLY TOP 3
+    { $limit: 3 },
+
+    // JOIN SERVICEMAN PROFILE
+    {
+      $lookup: {
+        from: "servicemanprofiles",
+        localField: "_id",
+        foreignField: "_id",
+        as: "serviceman"
+      }
+    },
+    { $unwind: "$serviceman" },
+
+    // PICK REQUIRED FIELDS
+    {
+      $project: {
+        _id: 0,
+        providerId: "$serviceman.servicemanId",
+        name: "$serviceman.name",
+        profileImage: "$serviceman.profileImage",
+        completedBookings: 1
+      }
+    }
+  ]);
+
   return res.status(200).json({
     success: true,
     message: "Dashboard data fetched successfully",
@@ -208,6 +262,7 @@ export const dashboard = asyncHandler(async (req, res) => {
       todayBookings: todayBookings,
       totalEarnning: totalEarning,
       todayEarnning: todayEarning,
+      winnerOfTheWeek: winnerOfTheWeek,
     }
   });
 });
