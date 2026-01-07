@@ -9,18 +9,15 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // Create
 export const createHomePageService = asyncHandler(async (req, res) => {
-  const { services, title, category, subCategory, subSubCategory, subSubSubCategory } = req.body;
+  const { services, title, category, subCategory } = req.body;
   const userId = req.user?._id;
 
-  if (!services || !services.length) throw new ApiError(400, "At least one Service ID is required");
   if (!title) throw new ApiError(400, "Title is required");
 
   const newService = await HomePageServiceModel.create({
     title,
     category,
     subCategory,
-    subSubCategory,
-    subSubSubCategory,
     services,
     createdBy: userId,
   });
@@ -30,15 +27,13 @@ export const createHomePageService = asyncHandler(async (req, res) => {
 
 // Get all
 export const getHomePageServices = asyncHandler(async (req, res) => {
-  const { status, search, page = 1, limit = 10, category, services, subCategory, subSubCategory, subSubSubCategory } = req.query;
+  const { status, search, page = 1, limit = 10, category, services, subCategory } = req.query;
 
   const filters = {};
   if (status !== undefined) filters.status = status === "true";
   if (search) filters.title = { $regex: search, $options: "i" };
   if (category) filters.category = category;
   if (subCategory) filters.subCategory = subCategory;
-  if (subSubCategory) filters.subSubCategory = subSubCategory;
-  if (subSubSubCategory) filters.subSubSubCategory = subSubSubCategory;
   if (services) filters.services = services;
 
   const skip = (page - 1) * limit;
@@ -47,8 +42,6 @@ export const getHomePageServices = asyncHandler(async (req, res) => {
     .populate("services", "name image icon")
     .populate("category", "name image icon")
     .populate("subCategory", "name image icon")
-    .populate("subSubCategory", "name image icon")
-    .populate("subSubSubCategory", "name image icon")
     .sort({ createdAt: -1 })
     .skip(parseInt(skip))
     .limit(parseInt(limit))
@@ -78,8 +71,6 @@ export const getHomePageServiceById = asyncHandler(async (req, res) => {
     .populate("services", "name image icon")
     .populate("category", "name image icon")
     .populate("subCategory", "name image icon")
-    .populate("subSubCategory", "name image icon")
-    .populate("subSubSubCategory", "name image icon")
     .lean();
 
   if (!service) throw new ApiError(404, "Home Page Service not found");
@@ -89,7 +80,7 @@ export const getHomePageServiceById = asyncHandler(async (req, res) => {
 
 // Update
 export const updateHomePageService = asyncHandler(async (req, res) => {
-  const { services, category, subCategory, subSubCategory, subSubSubCategory, title, status } = req.body;
+  const { services, category, subCategory, title, status } = req.body;
   const userId = req.user?._id;
 
   const service = await HomePageServiceModel.findById(req.params.id);
@@ -98,8 +89,6 @@ export const updateHomePageService = asyncHandler(async (req, res) => {
   if (services) service.services = services;
   service.category = category || service?.category;
   service.subCategory = subCategory || service?.subCategory;
-  service.subSubCategory = subSubCategory || service?.subSubCategory;
-  service.subSubSubCategory = subSubSubCategory || service?.subSubSubCategory;
 
   if (title) service.title = title;
   if (status !== undefined) service.status = status;

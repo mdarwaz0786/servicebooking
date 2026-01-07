@@ -46,12 +46,6 @@ const Sidebar = () => {
             </li>
 
             <li>
-              <Link to="/resume" className={currentPath === "/resume" ? "active" : ""}>
-                <i className="fe fe-file" /> <span>Resume</span>
-              </Link>
-            </li>
-
-            <li>
               <Link to="#"><i className="fe fe-briefcase"></i>
                 <span>Master</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
@@ -572,6 +566,11 @@ const Sidebar = () => {
                     className={currentPath === "/job-list" ? "active" : ""}
                   >
                     <span>Jobs</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/resume" className={currentPath === "/resume" ? "active" : ""}>
+                    <span>Resume</span>
                   </Link>
                 </li>
               </ul>

@@ -4,28 +4,18 @@ const homePageServiceSchema = new mongoose.Schema({
   category: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: [true, "Product is required"]
   }],
   subCategory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubCategory",
   }],
-  subSubCategory: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "SubSubCategory",
-  }],
-  subSubSubCategory: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "SubSubSubCategory",
-  }],
   services: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Service",
-    required: [true, "Service is required"]
   }],
   title: {
     type: String,
-    required: true,
+    required: [true, "Title is required"],
     trim: true,
   },
   status: {

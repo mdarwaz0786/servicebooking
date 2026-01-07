@@ -14,14 +14,10 @@ const AddHomeServicePage = () => {
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [subSubCategories, setSubSubCategories] = useState([]);
-  const [subSubSubCategories, setSubSubSubCategories] = useState([]);
   const [services, setServices] = useState([]);
 
   const [categoryIds, setCategoryIds] = useState([]);
   const [subCategoryIds, setSubCategoryIds] = useState([]);
-  const [subSubCategoryIds, setSubSubCategoryIds] = useState([]);
-  const [subSubSubCategoryIds, setSubSubSubCategoryIds] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [title, setTitle] = useState("");
 
@@ -32,9 +28,6 @@ const AddHomeServicePage = () => {
       });
       if (res?.data?.success) {
         setCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
       };
     };
     fetchCategories();
@@ -51,68 +44,16 @@ const AddHomeServicePage = () => {
 
       if (res?.data?.success) {
         setSubCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
-        setSubCategoryIds([]);
-        setSubSubCategoryIds([]);
-        setSubSubSubCategoryIds([]);
-        setSelectedServices([]);
       };
     };
     fetchSubCategories();
   }, [categoryIds, validToken]);
-
-  useEffect(() => {
-    if (!subCategoryIds.length) return;
-
-    const fetchSubSubCategories = async () => {
-      const res = await axios.get(apis.homeService.subSubCategory, {
-        params: { subCategoryId: subCategoryIds.join(",") },
-        headers: { Authorization: validToken },
-      });
-
-      if (res?.data?.success) {
-        setSubSubCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
-        setSubSubCategoryIds([]);
-        setSubSubSubCategoryIds([]);
-        setSelectedServices([]);
-      };
-    };
-    fetchSubSubCategories();
-  }, [subCategoryIds, validToken]);
-
-  useEffect(() => {
-    if (!subSubCategoryIds.length) return;
-
-    const fetchSubSubSubCategories = async () => {
-      const res = await axios.get(apis.homeService.subSubSubCategory, {
-        params: { subSubCategoryId: subSubCategoryIds.join(",") },
-        headers: { Authorization: validToken },
-      });
-
-      if (res?.data?.success) {
-        setSubSubSubCategories(res?.data?.data || []);
-        if (res?.data?.data?.length < 1) {
-          fetchServices();
-        };
-        setSubSubSubCategoryIds([]);
-        setSelectedServices([]);
-      };
-    };
-    fetchSubSubSubCategories();
-  }, [subSubCategoryIds, validToken]);
 
   const fetchServices = async () => {
     const res = await axios.get(apis.homeService.service, {
       params: {
         categoryId: categoryIds.join(","),
         subCategoryId: subCategoryIds.join(","),
-        subSubCategoryId: subSubCategoryIds.join(","),
-        subSubSubCategoryId: subSubSubCategoryIds.join(","),
       },
       headers: { Authorization: validToken },
     });
@@ -120,19 +61,19 @@ const AddHomeServicePage = () => {
     if (res?.data?.success) setServices(res?.data?.data || []);
   };
 
+  useEffect(() => {
+    fetchServices();
+  }, [categoryIds, subCategoryIds])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title) return toast.error("Title is required");
-    if (!selectedServices.length) return toast.error("Please select at least one service");
-    if (!categoryIds.length) return toast.error("Please select at least one category");
 
     const payload = {
       title,
       category: categoryIds,
       subCategory: subCategoryIds,
-      subSubCategory: subSubCategoryIds,
-      subSubSubCategory: subSubSubCategoryIds,
       services: selectedServices,
     };
 
@@ -180,7 +121,7 @@ const AddHomeServicePage = () => {
             <div className="col-md-6">
               {/* Category */}
               <div className="mb-3">
-                <label>Product <span className="text-danger">*</span></label>
+                <label>Product</label>
                 <MultiSelect
                   optionsList={categories}
                   value={categoryIds}
@@ -202,38 +143,6 @@ const AddHomeServicePage = () => {
                   value={subCategoryIds}
                   onChange={setSubCategoryIds}
                   placeholder="Select Variant"
-                  disabled={categoryIds.length === 0}
-                  isClearable={false}
-                />
-              </div>
-            </div>
-            <div className="col-md-6">
-              {/* Sub Sub Category */}
-              <div className="mb-3">
-                <label>Service Process</label>
-                <MultiSelect
-                  optionsList={subSubCategories}
-                  value={subSubCategoryIds}
-                  onChange={setSubSubCategoryIds}
-                  placeholder="Select Service Process"
-                  disabled={subCategoryIds.length === 0}
-                  isClearable={false}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="col-md-6">
-              {/* Sub Sub Sub Category */}
-              <div className="mb-3">
-                <label>Nested Service Process</label>
-                <MultiSelect
-                  optionsList={subSubSubCategories}
-                  value={subSubSubCategoryIds}
-                  onChange={setSubSubSubCategoryIds}
-                  placeholder="Select Nested Process"
-                  disabled={subSubCategoryIds.length === 0}
                   isClearable={false}
                 />
               </div>
@@ -241,7 +150,7 @@ const AddHomeServicePage = () => {
             <div className="col-md-6">
               {/* Services */}
               <div className="mb-3">
-                <label>Services <span className="text-danger">*</span></label>
+                <label>Services</label>
                 <SelectMultipleService
                   optionsList={services}
                   value={selectedServices}
