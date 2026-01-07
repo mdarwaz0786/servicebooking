@@ -68,6 +68,12 @@ JWT_SECRET_KEY=servicebooking@app
 EXPIRES_IN=999d
 RAZORPAY_KEY_ID=rzp_test_RHmDyqCFCKQ5XV
 RAZORPAY_KEY_SECRET=H83uZwcFKA08ij3l9CdP1FA8
+SMS_USERNAME=OYEKABADWALE
+SMS_APIKEY=F0961-5D9E1
+SMS_SENDER=GREIND
+SMS_ROUTE=DND
+SMS_TEMPLATE_ID=1707175189826818672
+SMS_API_URL=https://123.108.46.13/sms-panel/api/http/index.php 
 
 // Push Notification-> provider id[multiple], title, description, toAll (all provider)
 // Brand list-> name, code, image, description
