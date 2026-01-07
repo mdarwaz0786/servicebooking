@@ -326,15 +326,19 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+const PriceFormat = (value = 0, afterDigit = 2) => {
+  const num = isNaN(value) ? 0 : Number(value);
 
-  const PriceFormat = (value) => {
-    const formatted = new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 2, // optional: 2 decimal places
-    }).format(value);
-    return formatted;
-  };
+  const digits = afterDigit === 0 ? 0 : afterDigit;
+  
+
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(num);
+};
 
 
   const generateUniqueId = () => {

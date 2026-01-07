@@ -4,6 +4,7 @@ import { AppContext } from "../../context/AppContext";
 
 const RateCardModal = () => {
   const { modals, toggleModal, rateCardDetailData, PriceFormat } = useContext(AppContext);
+  
 
   return (
     <div
@@ -37,7 +38,7 @@ const RateCardModal = () => {
                   <div className="accordion-item border mb-3 rounded" key={index}>
                     <h2 className="accordion-header">
                       <button
-                        className="accordion-button collapsed fw-semibold"
+                        className={`accordion-button ${index > 0 ? 'collapsed' : ''} fw-semibold`}
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target={`#collapseGroup${index}`}
@@ -50,7 +51,7 @@ const RateCardModal = () => {
 
                     <div
                       id={`collapseGroup${index}`}
-                      className="accordion-collapse collapse"
+                      className={`accordion-collapse collapse ${index==0 ? 'show' : ''}`}
                       data-bs-parent="#rateCard_accordion"
                     >
                       <div className="accordion-body p-0">
@@ -66,22 +67,71 @@ const RateCardModal = () => {
                               <tr key={idx}> 
                                 <td>{rate.description}</td>
                                 <td>
-                                  <p class="m-0">
-                                    {rate.serviceCharge.price > 0 && (
-                                      <>
-                                        <span class="fs-12">
-                                          <span class="old-price text-muted text-decoration-line-through">{PriceFormat(rate.serviceCharge.price || 0)}</span>
-                                        </span>&nbsp;
-                                      </>
-                                    )}
-                                    <strong>{PriceFormat((parseFloat(rate.serviceCharge.price || 0)-parseFloat(rate.serviceCharge.discountPrice || 0))-parseFloat(rate.serviceCharge.labourCharge || 0))}</strong>
-                                  </p>
-                                  {/* <strong>{PriceFormat(rate.serviceCharge.price || 0)}</strong> */}
-                                  {rate.serviceCharge.labourCharge > 0 && (
-                                    <div className="text-muted small">
-                                      + {PriceFormat(rate.serviceCharge.labourCharge || 0)} (Labour)
-                                    </div>
-                                  )}
+                                  
+                            
+
+                    <p className="m-0">
+                      {(() => {
+                        const price = rate.serviceCharge.price;
+                        const discount = rate.serviceCharge.discountPrice;
+                        const labour = rate.serviceCharge.labourCharge;
+
+                        let finalPrice = 0;
+                        let finalDscount = 0;
+                        let finalLabour = 0;
+
+                        if(price > 0)
+                        {                          
+                          finalPrice = price;
+                          if(discount < 1)
+                          {
+                            finalDscount = price;
+                          }
+                        }
+                        else
+                        {
+                          finalDscount = discount;
+                        } 
+                        if(discount > 0 && price > 0)
+                        {
+                          finalDscount = (price-discount)-labour;
+                        }
+                        if(labour > 0) 
+                        { 
+                          finalLabour = labour; 
+                        } 
+                        // if(rate.description=='ABC') 
+                        // {
+                        //   console.log(finalDscount)
+                        // } 
+                        
+                        return(
+                            <>
+                            {finalPrice && discount?
+                              <span className="fs-12">
+                                <span className="old-price text-muted text-decoration-line-through">
+                                  {PriceFormat(finalPrice, 0)}
+                                </span>
+                              </span>
+                            :null}
+                              &nbsp;
+                              <strong>{PriceFormat(finalDscount > 0 ? finalDscount : 0, 0)}</strong>
+                            </>
+                          )
+                        
+                      })()}
+                    </p>
+
+                    {rate.serviceCharge.labourCharge > 0 && (
+                      <div className="text-muted small">
+                        + {PriceFormat(rate.serviceCharge.labourCharge || 0, 0)} (Labour)
+                      </div>
+                    )}
+
+
+
+
+
                                 </td>
                               </tr>
                             ))}

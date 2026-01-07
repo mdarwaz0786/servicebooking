@@ -49,7 +49,7 @@ const Footer = () => {
 
             <div className="col-md-6 col-xl-3 col-sm-8">
               <div className="footer-widget">
-                <h5 className="mb-1 fs-17">Partners</h5>
+                <h5 className="mb-1 fs-17">Join As Team</h5>
                 <ul className="footer-menu">
                   <li>
                     <Link
@@ -66,7 +66,7 @@ const Footer = () => {
                         overlay?.classList.remove("opened");
                       }}
                     >
-                      Sign up as a professional
+                      Sign up as a export team
                     </Link>
                   </li>
                 </ul>

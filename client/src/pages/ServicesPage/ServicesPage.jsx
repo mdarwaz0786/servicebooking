@@ -8,8 +8,13 @@ import { useParams } from "react-router-dom";
 import RateCardModal from "../../components/Modal/RateCardModal";
 import FullPageLoader from "../../components/Loader/FullPageLoader";
 
+import { useLocation } from "react-router-dom";
+
 const ServicesPage = () => {    
  const { slug, search } = useParams();
+
+ const location = useLocation();
+
   const { Urls, postData, setserviceListData, pageLoading, setpageLoading, setservicePageCategoryData, setservicePageName, generateUniqueId } = useContext(AppContext);
   const fetchData = async () => {
     try { 
@@ -25,7 +30,7 @@ const ServicesPage = () => {
         {
           payload = {slug:slug,userId:userId,limit:5000};
         }
-        const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
+        const response = await postData(payload, Urls.serviceList, "GET", 0, 0);
 
           
         
@@ -43,7 +48,7 @@ const ServicesPage = () => {
  
 useEffect(() => {  
   fetchData(); 
-}, []);  
+}, [location]);  
 
 
 if(pageLoading) return(<FullPageLoader />)
