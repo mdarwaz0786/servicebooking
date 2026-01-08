@@ -9547,17 +9547,19 @@ header.header-five.fixed .header-button.header-button-five {
 
 .bar-icon {
   display: inline-block;
-  width: 31px;
+  width: 15px;
 }
-
+.nav-item .btn {
+    padding: 4px 8px;
+}
 .bar-icon span {
   background-color: #00522c;
-  display: block;
-  float: left;
-  height: 2px;
-  margin-bottom: 6px;
-  width: 30px;
-  border-radius: 2px;
+    display: block;
+    float: left;
+    height: 1px;
+    margin-bottom: 4px;
+    width: 100%;
+    border-radius: 2px;
 }
 
 .bar-icon span:nth-child(3) {
@@ -12109,10 +12111,14 @@ html.menu-opened body {
 
   #mobile_btn {
     left: 0;
+    top: 18px;
     margin-right: 0;
     padding: 0 0px;
     position: absolute;
     z-index: 99;
+    border: 2px solid;
+    padding: 6px 5px 6px 5px;
+    border-radius: 4px;
   }
 
   .navbar-brand.logo {
@@ -12125,7 +12131,7 @@ html.menu-opened body {
     text-align: center;
     margin-right: 0;
     padding: 0;
-    margin-left: 20px;
+    margin-left: 0;
   }
 
   .header-navbar-rht {
@@ -15170,12 +15176,15 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
     row-gap: 0;
     margin-bottom: 0px !important;
   }
+
+  
+
 }
 
 .hero-section .banner-form {
   position: relative;
   border-radius: 8px;
-  padding: 10px 10px 2px;
+  padding: 0 8px 0 10px;
 }
 
 .hero-section .banner-form .input-group .input-group-text {
@@ -15189,10 +15198,7 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu>ul li a i {
   padding-left: 6px;
 }
 
-.hero-section .banner-form .btn {
-  white-space: nowrap;
-  padding: 9px 15px;
-}
+
 
 .hero-section .banner-form .shape-06 {
   bottom: -30%;
@@ -36223,7 +36229,7 @@ span.select2-container.select2-container--default.select2-container--open {
 }
 
 .letter-holder {
-  padding: 16px;
+  padding: 0;
 }
 
 .letter {
@@ -36233,7 +36239,7 @@ span.select2-container.select2-container--default.select2-container--open {
     width: 10px;
     height: 10px;
     background: #00522c;
-    margin-left: 15px;
+    margin-left: 14px;
     transform: rotate(45deg);
 }
 
@@ -36640,9 +36646,11 @@ p span {
   }
   .hero-search-bar-div-1 {
       width: 70%;
+      margin: 0 0 0 0 !important;
   }
   .hero-search-bar-div-2 {
       width: 30%;
+      margin: 0 !important;
   }
   .user-login-navbtn, .nav-item:last-child {
       margin: 0 !important;
@@ -36819,7 +36827,16 @@ p span {
       font-size: 20px !important;
       margin-top: 10px;
   }
- 
+  
+  .hero-search-bar .input-group-text {
+      padding: 0 !important;
+      margin: 0 !important;
+  }
+  .hero-section .banner-form .btn {
+    white-space: nowrap;
+    padding: 4px 15px;
+  }
+  
 
 }
 
