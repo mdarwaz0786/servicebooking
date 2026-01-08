@@ -30,7 +30,7 @@ const ServicesPage = () => {
         {
           payload = {slug:slug,userId:userId,limit:5000};
         }
-        const response = await postData(payload, Urls.serviceList, "GET", 0, 0);
+        const response = await postData(payload, Urls.serviceList, "GET", 0, 1);
 
           
         
