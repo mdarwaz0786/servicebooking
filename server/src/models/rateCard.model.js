@@ -9,7 +9,7 @@ const rateCardSchema = new mongoose.Schema({
   subCategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubCategory",
-    required: [true, "Variant is required"],
+    required: [true, "Varinat is required"],
   },
   rateGroups: [{
     title: {

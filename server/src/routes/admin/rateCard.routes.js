@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/", isLoggedIn, createRateCard);
 router.get("/", isLoggedIn, getRateCards);
-router.get("/:id", isLoggedIn, getRateCardById);
+router.get("/:id", getRateCardById);
 router.patch("/:id", isLoggedIn, updateRateCard);
 router.delete("/:id", isLoggedIn, deleteRateCard);
 

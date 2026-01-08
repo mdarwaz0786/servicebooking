@@ -116,6 +116,16 @@ const AddRateCardPage = () => {
       return;
     }
 
+    if (!category) {
+      toast.error("Product is required");
+      return;
+    }
+
+    if (!subCategory) {
+      toast.error("Variant is required");
+      return;
+    }
+
     const payload = {
       category,
       subCategory,
@@ -189,7 +199,7 @@ const AddRateCardPage = () => {
                 <div className="col-md-6">
                   {/* Sub Category */}
                   <div className="mb-3">
-                    <label className="form-label">Variant</label>
+                    <label className="form-label">Variant <span style={{ color: "red" }}>*</span></label>
                     <select
                       name="subCategory"
                       value={subCategory}

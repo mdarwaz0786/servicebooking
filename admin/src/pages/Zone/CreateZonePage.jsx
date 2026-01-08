@@ -56,6 +56,7 @@ const CreateZonePage = () => {
       );
 
       toast.success("Zone created successfully");
+      navigate(-1);
       setName("");
       setCoordinates([]);
     } catch (err) {

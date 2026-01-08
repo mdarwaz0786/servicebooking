@@ -130,6 +130,7 @@ export const getBookings = asyncHandler(async (req, res) => {
     .find(filters)
     .populate({ path: "user", select: "-password" })
     .populate("address")
+    .populate("additionalParts")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -230,6 +231,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .findById(id)
     .populate({ path: "user", select: "-password -role" })
     .populate({ path: "address" })
+    .populate("additionalParts")
     .lean();
 
   if (!booking) throw new ApiError(404, "Booking not found");

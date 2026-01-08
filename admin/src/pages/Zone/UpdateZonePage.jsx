@@ -116,7 +116,6 @@ const UpdateZonePage = () => {
     }
   };
 
-
   return (
     <div className="page-wrapper">
       <div className="container mt-4">
