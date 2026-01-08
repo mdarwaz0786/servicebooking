@@ -182,16 +182,16 @@ export const getHomePageData = asyncHandler(async (req, res) => {
       return {
         ...service,
 
-        categorySlug: categoryMap.slugMap[categoryId] || null,
+        categorySlug: service?.categoryId?.slug || null,
         categoryCount: categoryMap.countMap[categoryId] || 0,
 
-        subCategorySlug: subCategoryMap.slugMap[subCategoryId] || null,
+        subCategorySlug: service?.subCategoryId?.slug || null,
         subCategoryCount: subCategoryMap.countMap[subCategoryId] || 0,
 
-        subSubCategorySlug: subSubCategoryMap.slugMap[subSubCategoryId] || null,
+        subSubCategorySlug: service?.subSubCategoryId?.slug || null,
         subSubCategoryCount: subSubCategoryMap.countMap[subSubCategoryId] || 0,
 
-        subSubSubCategorySlug: subSubSubCategoryMap.slugMap[subSubSubCategoryId] || null,
+        subSubSubCategorySlug: service?.subSubSubCategoryId?.slug || null,
         subSubSubCategoryCount: subSubSubCategoryMap.countMap[subSubSubCategoryId] || 0,
       };
     });

@@ -25,7 +25,7 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Booking not found");
   }
 
-  const serviceman = await ServiceManProfileModel.findOne({ _id: servicemanId }).select("userId").lean();
+  const serviceman = await ServiceManProfileModel.findOne({ _id: servicemanId }).select("userId zones").lean();
 
   if (!serviceman) {
     throw new ApiError(400, "Serviceman not found");

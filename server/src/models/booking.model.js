@@ -110,7 +110,7 @@ const bookingSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 bookingSchema.index({ addressId: 1, userId: 1, status: 1 });
 
@@ -164,6 +164,13 @@ bookingSchema.virtual("serviceman", {
 
 bookingSchema.virtual("bookingItems", {
   ref: "BookingItem",
+  localField: "_id",
+  foreignField: "bookingId",
+  justOne: false,
+});
+
+bookingSchema.virtual("additionalParts", {
+  ref: "BookingAdditionalPart",
   localField: "_id",
   foreignField: "bookingId",
   justOne: false,
