@@ -5,6 +5,7 @@ import BookingItemModel from "../../models/bookingItem.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ReviewModel from "../../models/review.model.js";
+import PincodeModel from "../../models/pincode.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
@@ -24,6 +25,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     scheduleTime,
     paymentMode,
     paymentBy,
+    pincode,
     isCouponUsed } = req.body;
 
   // Get cart data from utility
@@ -34,6 +36,13 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   const lat = address?.lat;
   const long = address?.long;
+  const pin = address?.pincode || pincode;
+
+  const verifyPincode = await PincodeModel.findOne({ pincoode: pin });
+
+  if (!verifyPincode) {
+    throw new ApiError(400, "Sorry, our service is currently not available in your area or pincode");
+  };
 
   // Find Zone
   const zone = await ZoneModel.findOne({

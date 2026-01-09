@@ -58,6 +58,7 @@ import servicemanEarningRoutes from "./servicemanEarning.routes.js";
 import supportContentRoutes from "./support.routes.js";
 import appRoutes from "./app.route.js";
 import servicemanByZone from "./servicemanByZone.routes.js";
+import pincodeRoutes from "./pincode.routes.js";
 
 const router = express.Router();
 
@@ -120,5 +121,6 @@ router.use("/zone", zoneRoutes);
 router.use("/serviceman-earning", servicemanEarningRoutes);
 router.use("/support-content", supportContentRoutes);
 router.use("/app", appRoutes);
+router.use("/pincode", pincodeRoutes);
 
 export default router;
