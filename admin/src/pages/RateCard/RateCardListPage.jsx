@@ -268,7 +268,7 @@ const RateCardListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.category?.name}</td>
-                        <td>{d?.subCategory?.name}</td>
+                        <td>{d?.subCategory?.map((ss) => <p className="mb-1">{ss?.name}</p>)}</td>
                         <td>
                           {d?.rateGroups?.length > 0 ? (
                             d.rateGroups.map((group, index) => (

@@ -4,6 +4,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
+import MultiSelect from "../../components/Form/MultiSelect";
+import SingleSelect from "../../components/Form/SingleSelect";
 
 const AddRateCardPage = () => {
   const { validToken } = useAuth();
@@ -13,7 +15,7 @@ const AddRateCardPage = () => {
   const [subCategories, setSubCategories] = useState([]);
 
   const [category, setCategory] = useState();
-  const [subCategory, setSubCategory] = useState();
+  const [subCategory, setSubCategory] = useState([]);
 
   const [rateGroups, setRateGroups] = useState([
     { title: "", rates: [{ description: "", price: "", discountPrice: "", labourCharge: "" }] },
@@ -106,37 +108,34 @@ const AddRateCardPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate rateGroups
-    const validGroups = rateGroups.filter(
-      (g) => g.title.trim() !== "" && g.rates.some((r) => r.description.trim() !== "")
-    );
+    const validGroups = rateGroups.filter((g) => g.title.trim() !== "" && g.rates.some((r) => r.description.trim() !== ""));
 
     if (validGroups.length === 0) {
       toast.error("Please add at least one valid rate group and rate");
       return;
-    }
+    };
 
     if (!category) {
       toast.error("Product is required");
       return;
-    }
+    };
 
     if (!subCategory) {
       toast.error("Variant is required");
       return;
-    }
+    };
 
     const payload = {
       category,
       subCategory,
-      rateGroups: rateGroups.map((group) => ({
-        title: group.title,
-        rates: group.rates.map((rate) => ({
-          description: rate.description,
+      rateGroups: rateGroups?.map((group) => ({
+        title: group?.title,
+        rates: group?.rates?.map((rate) => ({
+          description: rate?.description,
           serviceCharge: {
-            price: rate.price,
-            discountPrice: rate.discountPrice,
-            labourCharge: rate.labourCharge,
+            price: rate?.price,
+            discountPrice: rate?.discountPrice,
+            labourCharge: rate?.labourCharge,
           },
         })),
       })),
@@ -176,47 +175,26 @@ const AddRateCardPage = () => {
                 <div className="col-md-6">
                   {/* Category */}
                   <div className="mb-3">
-                    <label className="form-label">Product <span style={{ color: "red" }}>*</span></label>
-                    <select
-                      name="category"
+                    <label>Product <span style={{ color: "red" }}>*</span></label>
+                    <SingleSelect
+                      optionsList={categories}
                       value={category}
-                      onChange={(e) => {
-                        setCategory(e.target.value);
-                        setSubCategory();
-                      }}
-                      className="form-control"
-                      required
-                    >
-                      <option value="">-- Select Product --</option>
-                      {categories?.map((cat) => (
-                        <option key={cat?._id} value={cat?._id}>
-                          {cat?.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setCategory}
+                      placeholder="Select Product"
+                    />
                   </div>
                 </div>
                 <div className="col-md-6">
                   {/* Sub Category */}
                   <div className="mb-3">
-                    <label className="form-label">Variant <span style={{ color: "red" }}>*</span></label>
-                    <select
-                      name="subCategory"
+                    <label>Variant <span style={{ color: "red" }}>*</span></label>
+                    <MultiSelect
+                      optionsList={subCategories}
                       value={subCategory}
-                      onChange={(e) => {
-                        setSubCategory(e.target.value);
-                      }}
-                      className="form-control"
-                      disabled={!category}
-                      required
-                    >
-                      <option value="">-- Select Variant --</option>
-                      {subCategories?.map((sub) => (
-                        <option key={sub?._id} value={sub?._id}>
-                          {sub?.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setSubCategory}
+                      placeholder="Select Variant"
+                      isClearable={false}
+                    />
                   </div>
                 </div>
               </div>
@@ -224,7 +202,7 @@ const AddRateCardPage = () => {
               {/* Rate Groups */}
               <div className="mb-3">
                 <label className="form-label">Rate Groups <span style={{ color: "red" }}>*</span></label>
-                {rateGroups.map((group, gIndex) => (
+                {rateGroups?.map((group, gIndex) => (
                   <div key={gIndex} className="border rounded p-3 mb-3 bg-light">
                     <div className="d-flex align-items-center mb-2">
                       <input
@@ -239,11 +217,11 @@ const AddRateCardPage = () => {
                         type="button"
                         className="btn btn-danger"
                         onClick={() => removeGroupField(gIndex)}
-                        disabled={rateGroups.length === 1}
+                        disabled={rateGroups?.length === 1}
                       >
                         -
                       </button>
-                      {gIndex === rateGroups.length - 1 && (
+                      {gIndex === rateGroups?.length - 1 && (
                         <button
                           type="button"
                           className="btn btn-success ms-2"
@@ -256,7 +234,7 @@ const AddRateCardPage = () => {
                     </div>
 
                     {/* Rates */}
-                    {group.rates.map((rate, rIndex) => (
+                    {group?.rates?.map((rate, rIndex) => (
                       <div key={rIndex} className="row g-2 align-items-end mb-2">
                         <div className="col-md-4">
                           <input

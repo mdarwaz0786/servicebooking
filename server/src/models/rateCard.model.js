@@ -6,11 +6,11 @@ const rateCardSchema = new mongoose.Schema({
     ref: "Category",
     required: [true, "Product is required"],
   },
-  subCategory: {
+  subCategory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubCategory",
     required: [true, "Varinat is required"],
-  },
+  }],
   rateGroups: [{
     title: {
       type: String,
@@ -41,17 +41,27 @@ const rateCardSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
 }, { timestamps: true });
 
 rateCardSchema.pre("save", async function (next) {
   const doc = this;
 
-  const titles = doc.rateGroups.map(g => g.title?.trim().toLowerCase());
+  const titles = doc.rateGroups.map((g) => g.title?.trim().toLowerCase());
   const uniqueTitles = new Set(titles);
 
   if (uniqueTitles.size !== titles.length) {
     return next(new Error("Duplicate rate group titles in this rate card"));
-  }
+  };
 
   const existing = await mongoose.model("RateCard").findOne({
     category: doc.category,
@@ -64,7 +74,7 @@ rateCardSchema.pre("save", async function (next) {
     return next(
       new Error("Rate group title already exists for this product and variant")
     );
-  }
+  };
 
   next();
 });

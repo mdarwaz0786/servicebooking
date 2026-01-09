@@ -9,7 +9,15 @@ export const createRateCard = asyncHandler(async (req, res) => {
 
   if (!rateGroups || !Array.isArray(rateGroups) || rateGroups.length === 0) {
     throw new ApiError(400, "Rate groups are required");
-  }
+  };
+
+  if (!category) {
+    throw new ApiError(400, "Product is required");
+  };
+
+  if (!subCategory) {
+    throw new ApiError(400, "Variant is required");
+  };
 
   const rateCard = await RateCardModel.create({
     category,
@@ -112,7 +120,20 @@ export const getRateCardById = asyncHandler(async (req, res) => {
 export const updateRateCard = asyncHandler(async (req, res) => {
   const { rateGroups, status, category, subCategory } = req.body;
 
+  if (!rateGroups || !Array.isArray(rateGroups) || rateGroups.length === 0) {
+    throw new ApiError(400, "Rate groups are required");
+  };
+
+  if (!category) {
+    throw new ApiError(400, "Product is required");
+  };
+
+  if (!subCategory) {
+    throw new ApiError(400, "Variant is required");
+  };
+
   const rateCard = await RateCardModel.findById(req.params.id);
+
   if (!rateCard) {
     throw new ApiError(404, "Rate card not found");
   }
