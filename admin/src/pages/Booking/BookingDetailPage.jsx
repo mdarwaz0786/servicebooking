@@ -15,6 +15,7 @@ const BookingDetailPage = () => {
 
   const [booking, setBooking] = useState(null);
   const [items, setItems] = useState([]);
+  const [additionalParts, setAdditionalParts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchBookingDetail = async () => {
@@ -27,6 +28,7 @@ const BookingDetailPage = () => {
       if (response?.data?.success) {
         setBooking(response?.data?.data?.booking);
         setItems(response?.data?.data?.items);
+        setAdditionalParts(response?.data?.data?.booking?.additionalParts);
       };
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch booking detail");
@@ -198,14 +200,14 @@ const BookingDetailPage = () => {
                   <table className="table table-bordered align-middle">
                     <thead className="table-light">
                       <tr>
-                        <th>Service</th>
+                        <th>Service Name</th>
                         <th className="text-center">Quantity</th>
-                        <th className="text-end">MRP</th>
+                        <th className="text-end">MRP Price</th>
                         <th className="text-end">Sale Price</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {items.map((item, i) => (
+                      {items?.map((item, i) => (
                         <tr key={i}>
                           <td>{item?.service?.name}</td>
                           <td className="text-center">{item?.quantity}</td>
@@ -217,15 +219,40 @@ const BookingDetailPage = () => {
                   </table>
                 </div>
 
+                {/* Addional Parts Table */}
+                <h6 className="fw-bold text-uppercase text-muted mb-3 mt-4">Additional Part</h6>
+                <div className="table-responsive">
+                  <table className="table table-bordered align-middle">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Part Name</th>
+                        <th className="text-center">Quantity</th>
+                        <th className="text-end">Unit Price</th>
+                        <th className="text-end">Labour Charge</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {additionalParts?.map((item) => (
+                        <tr key={item?._id}>
+                          <td>{item?.description}</td>
+                          <td className="text-center">{item?.quantity}</td>
+                          <td className="text-end">₹{item?.unitPrice}</td>
+                          <td className="text-end">₹{item?.laborCharge}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
                 {/* Totals */}
                 <div className="d-flex justify-content-end mt-3">
                   <div style={{ minWidth: "300px" }}>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>Amount:</span>
+                      <span>Total Amount:</span>
                       <strong>₹{booking?.amount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>GST ({booking?.gstPercent}):</span>
+                      <span>GST ({booking?.gstPercent}%):</span>
                       <strong>₹{booking?.gstAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">

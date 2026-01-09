@@ -8,6 +8,12 @@ const apis = {
     create: `${BASE_URL}/api/v1/admin/app`,
     get: `${BASE_URL}/api/v1/admin/app`,
   },
+  pincode: {
+    create: `${BASE_URL}/api/v1/admin/pincode`,
+    get: `${BASE_URL}/api/v1/admin/pincode`,
+    update: `${BASE_URL}/api/v1/admin/pincode`,
+    delete: `${BASE_URL}/api/v1/admin/pincode`,
+  },
   category: {
     create: `${BASE_URL}/api/v1/admin/category/create-category`,
     get: `${BASE_URL}/api/v1/admin/category`,

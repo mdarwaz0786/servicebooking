@@ -151,6 +151,15 @@ const Sidebar = () => {
 
                 <li>
                   <Link
+                    to="/pincode"
+                    className={currentPath === "/pincode" ? "active" : ""}
+                  >
+                    <span>Pincode</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
                     to="/support-content"
                     className={currentPath === "/support-content" ? "active" : ""}
                   >

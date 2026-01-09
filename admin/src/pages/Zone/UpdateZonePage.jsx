@@ -5,6 +5,7 @@ import {
   DrawingManager,
   LoadScript,
   Polygon,
+  Autocomplete,
 } from "@react-google-maps/api";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -12,11 +13,11 @@ import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate, useParams } from "react-router-dom";
 
-const libraries = ["drawing"];
+const libraries = ["drawing", "places"];
 
 const containerStyle = {
   width: "100%",
-  height: "500px",
+  height: "300px",
 };
 
 const fallbackCenter = { lat: 28.6139, lng: 77.2090 };
@@ -25,16 +26,18 @@ const UpdateZonePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { validToken } = useAuth();
+  const [oldZones, setOldZones] = useState([]);
 
   const [name, setName] = useState("");
-  const [coordinates, setCoordinates] = useState([]);        // active zone
-  const [oldCoordinates, setOldCoordinates] = useState([]); // reference zone
+  const [coordinates, setCoordinates] = useState([]);
+  const [oldCoordinates, setOldCoordinates] = useState([]);
   const [isRedrawing, setIsRedrawing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [center, setCenter] = useState(fallbackCenter);
 
   const mapRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
-  /* ---------------- FETCH ZONE ---------------- */
   const fetchZone = async () => {
     try {
       const res = await axios.get(
@@ -43,7 +46,6 @@ const UpdateZonePage = () => {
       );
 
       const zone = res.data.data;
-
       setName(zone.name);
 
       const cleanedCoords = zone.geometry.coordinates[0]
@@ -62,7 +64,6 @@ const UpdateZonePage = () => {
     fetchZone();
   }, [id]);
 
-  /* ---------------- FIT MAP ---------------- */
   useEffect(() => {
     if (!mapRef.current || !oldCoordinates.length) return;
 
@@ -71,21 +72,36 @@ const UpdateZonePage = () => {
     mapRef.current.fitBounds(bounds);
   }, [oldCoordinates]);
 
-  /* ---------------- DRAW NEW POLYGON ---------------- */
+  const onPlaceChanged = () => {
+    if (!autocompleteRef.current || !mapRef.current) return;
+
+    const place = autocompleteRef.current.getPlace();
+    if (!place.geometry) return;
+
+    const location = place.geometry.location;
+    const newCenter = {
+      lat: location.lat(),
+      lng: location.lng(),
+    };
+
+    setCenter(newCenter);
+    mapRef.current.panTo(newCenter);
+    mapRef.current.setZoom(14);
+  };
+
   const onPolygonComplete = useCallback((polygon) => {
     const path = polygon.getPath().getArray().map((p) => ({
       lat: p.lat(),
       lng: p.lng(),
     }));
 
-    setCoordinates(path);   // replace with new polygon
+    setCoordinates(path);
     setIsRedrawing(false);
     polygon.setMap(null);
 
     toast.success("New zone drawn");
   }, []);
 
-  /* ---------------- UPDATE ZONE ---------------- */
   const handleUpdate = async () => {
     if (!name) return toast.error("Zone name is required");
     if (!coordinates.length)
@@ -95,14 +111,11 @@ const UpdateZonePage = () => {
       setLoading(true);
 
       const geoCoords = coordinates.map((p) => [p.lng, p.lat]);
-      geoCoords.push(geoCoords[0]); // close polygon
+      geoCoords.push(geoCoords[0]);
 
       await axios.patch(
         `${apis.zone.update}/${id}`,
-        {
-          name,
-          coordinates: geoCoords, // ✅ IMPORTANT
-        },
+        { name, coordinates: geoCoords },
         { headers: { Authorization: validToken } }
       );
 
@@ -115,6 +128,35 @@ const UpdateZonePage = () => {
       setLoading(false);
     }
   };
+
+  const fetchOldZone = async () => {
+    try {
+      const res = await axios.get(apis.zone.get, {
+        headers: { Authorization: validToken },
+      });
+
+      if (res?.data?.success) {
+        const zones = res?.data?.data?.map((zone) => {
+          const coords = zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({ lat, lng }));
+
+          return {
+            id: zone?._id,
+            name: zone?.name,
+            paths: coords,
+          };
+        });
+
+        setOldZones(zones);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load zones");
+    }
+  };
+
+  useEffect(() => {
+    fetchOldZone();
+  }, []);
 
   return (
     <div className="page-wrapper">
@@ -144,13 +186,29 @@ const UpdateZonePage = () => {
           googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
           libraries={libraries}
         >
+          <Autocomplete
+            onLoad={(ref) => (autocompleteRef.current = ref)}
+            onPlaceChanged={onPlaceChanged}
+          >
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="Search place"
+            />
+          </Autocomplete>
+
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={fallbackCenter}
+            center={center}
             zoom={12}
             onLoad={(map) => (mapRef.current = map)}
+            options={{
+              gestureHandling: "greedy",
+              scrollwheel: true,
+              draggable: true,
+              keyboardShortcuts: true,
+            }}
           >
-            {/* OLD ZONE (REFERENCE) */}
             {oldCoordinates.length > 0 && (
               <Polygon
                 paths={oldCoordinates}
@@ -163,7 +221,6 @@ const UpdateZonePage = () => {
               />
             )}
 
-            {/* NEW ZONE (ACTIVE) */}
             {coordinates.length > 0 && !isRedrawing && (
               <Polygon
                 paths={coordinates}
@@ -175,8 +232,20 @@ const UpdateZonePage = () => {
                 }}
               />
             )}
-
-            {/* DRAWING TOOL */}
+            {oldZones?.map((zone) => (
+              <Polygon
+                key={zone?.id}
+                paths={zone?.paths}
+                options={{
+                  fillColor: "#9e9e9e",
+                  fillOpacity: 0.25,
+                  strokeColor: "#616161",
+                  strokeOpacity: 0.9,
+                  strokeWeight: 2,
+                  clickable: false,
+                }}
+              />
+            ))}
             {isRedrawing && (
               <DrawingManager
                 onPolygonComplete={onPolygonComplete}

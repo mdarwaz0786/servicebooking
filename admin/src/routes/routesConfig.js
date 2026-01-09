@@ -121,6 +121,8 @@ import CertificateListPage from "../pages/Certificate/CertificateListPage";
 import SupportContentFormPage from "../pages/SupportContent/SupportContentFormPage";
 import AppInfoFormPage from "../pages/AppInfo/AppInfoFormPage";
 import UpdateZonePage from "../pages/Zone/UpdateZonePage";
+import PincodeListPage from "../pages/Pincode/PincodeListPage";
+import PincodeFormPage from "../pages/Pincode/PincodeFormPage";
 
 const routesConfig = {
   private: [
@@ -254,6 +256,10 @@ const routesConfig = {
     { path: "/city", element: CityListPage },
     { path: "/add-city", element: CityFormPage },
     { path: "/update-city/:id", element: CityFormPage },
+
+    { path: "/pincode", element: PincodeListPage },
+    { path: "/add-pincode", element: PincodeFormPage },
+    { path: "/update-pincode/:id", element: PincodeFormPage },
 
     { path: "/locality", element: LocalityListPage },
     { path: "/add-locality", element: LocalityFormPage },

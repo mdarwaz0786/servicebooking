@@ -31,6 +31,9 @@ const addressSchema = new mongoose.Schema({
   long: {
     type: String,
   },
+  pincode: {
+    type: Number,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
