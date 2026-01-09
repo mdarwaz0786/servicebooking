@@ -21,6 +21,7 @@ return (
                         <div className="l-5 letter"></div>
                         <div className="l-6 letter"></div>
                         <div className="l-7 letter"></div>
+                        <div className="l-7 letter"></div>
                         </div>
                     </div>
                 </div>

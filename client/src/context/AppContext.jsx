@@ -261,7 +261,7 @@ export const AppProvider = ({ children }) => {
       return await responseCheck(response, messageAlert);
     } catch (error) {
       setbodyLoaderShow(false);
-      console.error('Failed to make API request:', error);
+      console.error('Failed to make API request:', error); 
       return error;
     }
   };
@@ -591,7 +591,6 @@ const PriceFormat = (value = 0, afterDigit = 2) => {
   }
 
   const handleServiceDetail = async (id, item, openServicePage=0) => {
-
     if(openServicePage==1)
     {
       setserviceDetailDataItem(item);
@@ -600,11 +599,11 @@ const PriceFormat = (value = 0, afterDigit = 2) => {
         navigate("/services/" + item.subSubCategorySlug+'?detail='+item._id);
       }
       else if(item.subSubCategoryCount)
-      {
-        navigate("/services/" + item.subCategorySlug+'?detail='+item._id);
+        {
+          navigate("/services/" + item.subCategorySlug+'?detail='+item._id);
       }
       else
-      {
+        {
         navigate("/services/" + item.categorySlug+'?detail='+item._id);
       }
       
