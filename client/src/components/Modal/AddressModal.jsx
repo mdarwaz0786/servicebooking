@@ -10,6 +10,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   const [latLng, setLatLng] = useState({ lat: null, lng: null });
   const [houseNumber, sethouseNumber] = useState("");
   const [landmark, setlandmark] = useState("");
+  const [pincode, setpincode] = useState("");
   const [addresstype, setaddresstype] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
@@ -46,6 +47,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     if (selectedAddress) {
       sethouseNumber(selectedAddress.houseNumber || "");
       setlandmark(selectedAddress.landmark || "");
+      setpincode(selectedAddress.pincode || "");
       setaddresstype(selectedAddress.type || "");
       setLatLng({ 
         lat: selectedAddress.lat || null, 
@@ -648,6 +650,10 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       newErrors.houseNumber = "House/Flat number is required";
     }
 
+    if (!pincode.trim()) {
+      newErrors.pincode = "Pincode number is required";
+    }
+
     if (!addresstype) {
       newErrors.addresstype = "Please select an address type";
     }
@@ -673,6 +679,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           houseNumber: houseNumber.trim(),
           landmark: landmark.trim(),
           type: addresstype,
+          pincode:pincode,
         },
         Urls.addAddress,
         "POST"
@@ -681,6 +688,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         fetchAddresses();
         sethouseNumber("");
         setlandmark("");
+        setpincode("");
         setaddresstype("");
         setLatLng({ lat: null, lng: null });
         setSearchInput("");
@@ -720,6 +728,12 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   // Handle landmark change
   const handleLandmarkChange = (e) => {
     setlandmark(e.target.value);
+    setIsAutoFilled(false); // User manually edited, so remove auto-filled status
+  };
+ 
+  // Handle pincode change
+  const handlePincodeChange = (e) => {
+    setpincode(e.target.value);
     setIsAutoFilled(false); // User manually edited, so remove auto-filled status
   };
 
@@ -966,6 +980,28 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                       Nearby recognizable location (auto-detected from address)
                     </small>
                   </div>
+
+                  
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      Pincode
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., 110058"
+                      className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
+                      value={pincode}
+                      onChange={handlePincodeChange}
+                    />
+                    {errors.pincode && (
+                      <div className="invalid-feedback">
+                        <i className="fa fa-exclamation-circle me-1"></i>
+                        {errors.pincode}
+                      </div>
+                    )}
+                  </div>
+
+
 
                   <div className="mb-4">
                     <label className="form-label fw-semibold">

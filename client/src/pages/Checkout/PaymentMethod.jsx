@@ -44,7 +44,7 @@ const PaymentMethod = () => {
           paymentMode:paymentMode,
           paymentBy:'',
           isCouponUsed:0,
-        }, Urls.createBooking, "POST",0,1);
+        }, Urls.createBooking, "POST",0,0);
         if (response.success) {
 
           
