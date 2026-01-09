@@ -17,7 +17,7 @@ const libraries = ["drawing", "places"];
 
 const containerStyle = {
   width: "100%",
-  height: "300px",
+  height: "500px",
 };
 
 const defaultCenter = { lat: 28.6139, lng: 77.2090 };
