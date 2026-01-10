@@ -229,6 +229,16 @@ export const dashboard = asyncHandler(async (req, res) => {
     },
     { $unwind: "$serviceman" },
 
+    // JOIN CATEGORY COLLECTION
+    {
+      $lookup: {
+        from: "categories",                 // ✅ Category collection
+        localField: "serviceman.categoryIds",
+        foreignField: "_id",
+        as: "categories"
+      }
+    },
+
     // PICK REQUIRED FIELDS
     {
       $project: {
@@ -236,7 +246,18 @@ export const dashboard = asyncHandler(async (req, res) => {
         providerId: "$serviceman.servicemanId",
         name: "$serviceman.name",
         profileImage: "$serviceman.profileImage",
-        completedBookings: 1
+        completedBookings: 1,
+
+        // return only category name + id
+        categories: {
+          $map: {
+            input: "$categories",
+            as: "cat",
+            in: {
+              name: "$$cat.name"
+            }
+          }
+        }
       }
     }
   ]);

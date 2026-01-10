@@ -17,7 +17,7 @@ const libraries = ["drawing", "places"];
 
 const containerStyle = {
   width: "100%",
-  height: "500px",
+  height: "300px",
 };
 
 const fallbackCenter = { lat: 28.6139, lng: 77.2090 };

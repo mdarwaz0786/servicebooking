@@ -57,6 +57,13 @@ bookingItemSchema.virtual("service", {
   justOne: true
 });
 
+bookingItemSchema.virtual("additionalParts", {
+  ref: "BookingAdditionalPart",
+  localField: "_id",
+  foreignField: "serviceItemId",
+  justOne: false,
+});
+
 const BookingItemModel = mongoose.model("BookingItem", bookingItemSchema);
 
 export default BookingItemModel;

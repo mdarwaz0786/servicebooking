@@ -20,6 +20,15 @@ const bookingAdditionalPartSchema = new mongoose.Schema({
   quantity: {
     type: String,
   },
+  price: {
+    type: String,
+  },
+  discount: {
+    type: String,
+  },
+  oldAmount: {
+    type: mongoose.Schema.Types.Mixed,
+  },
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",

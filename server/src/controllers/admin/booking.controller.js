@@ -322,6 +322,9 @@ export const getBookingById = asyncHandler(async (req, res) => {
   const items = await BookingItemModel
     .find({ bookingId: booking._id })
     .populate({ path: "service", select: "-shortDescription -fullDescription" })
+    .populate({
+      path: "additionalParts",
+    })
     .lean();
 
   return res.status(200).json({
