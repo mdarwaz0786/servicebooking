@@ -1,4 +1,5 @@
 import KycModel from "../../models/kyc.model.js";
+import UserModel from "../../models/user.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import compressImage from "../../helpers/compressImage.js";
@@ -75,6 +76,12 @@ export const createKyc = asyncHandler(async (req, res) => {
       aadharBackImage: aadharBackPath,
       shopImage: shopImagePath,
     });
+
+    await UserModel.findByIdAndUpdate(
+      userId,
+      { isKycUpdate: 0 },
+      { new: true },
+    );
 
     return res.status(201).json({
       success: true,

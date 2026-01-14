@@ -2,7 +2,7 @@ import WalletModel from "../../models/wallet.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
-import { getTotalCreditPoints } from "../../utils/wallet.utils.js";
+// import { getTotalCreditPoints } from "../../utils/wallet.utils.js";
 
 export const createWallet = asyncHandler(async (req, res) => {
   const {
@@ -22,16 +22,16 @@ export const createWallet = asyncHandler(async (req, res) => {
   if (!paymentMode) throw new ApiError(400, "Payment mode is required");
   if (!transactionType) throw new ApiError(400, "Transaction type is required");
 
-  const previousCreditPoints = await getTotalCreditPoints();
-  let currentCreditPoints;
+  // const previousCreditPoints = await getTotalCreditPoints();
+  // let currentCreditPoints;
 
-  if (transactionType == "Credit") {
-    currentCreditPoints = previousCreditPoints + (Number(depositAmount) * 0.1);
-  };
+  // if (transactionType == "Credit") {
+  //   currentCreditPoints = previousCreditPoints + (Number(depositAmount) * 0.1);
+  // };
 
-  if (transactionType == "Debit") {
-    currentCreditPoints = previousCreditPoints - (Number(depositAmount) * 0.1);
-  };
+  // if (transactionType == "Debit") {
+  //   currentCreditPoints = previousCreditPoints - (Number(depositAmount) * 0.1);
+  // };
 
   const wallet = await WalletModel.create({
     providerId,
@@ -43,7 +43,7 @@ export const createWallet = asyncHandler(async (req, res) => {
     transactionId,
     transactionNumber,
     purpose,
-    currentCreditPoints: currentCreditPoints,
+    // currentCreditPoints: currentCreditPoints,
     createdBy: req.user?._id,
   });
 

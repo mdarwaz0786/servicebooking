@@ -24,7 +24,10 @@ const supportInfoSchema = new mongoose.Schema(
     address: String,
     email: String,
     phone: String,
-    channels: String,
+    channels: {
+      type: String,
+      default: "Email, Phone, WhatsApp, Live Chat",
+    },
   },
   { _id: false }
 );
@@ -44,7 +47,7 @@ const supportContentSchema = new mongoose.Schema(
       },
       icon: {
         type: String,
-        default: "phone"
+        default: "phone-alt"
       },
       value: {
         type: String,

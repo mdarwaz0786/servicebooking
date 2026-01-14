@@ -75,14 +75,33 @@ walletSchema.pre("save", function (next) {
   next();
 });
 
-walletSchema.pre("findOneAndUpdate", function (next) {
-  const update = this.getUpdate();
+walletSchema.pre("save", async function (next) {
+  if (!this.isNew) return next();
 
-  if (update.depositAmount !== undefined) {
-    update.creditPoints = update.depositAmount * 0.10;
+  try {
+    const Wallet = mongoose.model("Wallet");
+
+    const lastWallet = await Wallet.findOne(
+      { providerId: this.providerId, status: true },
+      { currentCreditPoints: 1 }
+    )
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const previousBalance = lastWallet?.currentCreditPoints || 0;
+
+    if (this.transactionType === "Credit") {
+      this.currentCreditPoints = previousBalance + this.creditPoints;
+    } else if (this.transactionType === "Debit") {
+      this.currentCreditPoints = previousBalance - this.creditPoints;
+    } else {
+      this.currentCreditPoints = previousBalance;
+    }
+
+    next();
+  } catch (error) {
+    next(error);
   }
-
-  next();
 });
 
 walletSchema.virtual("provider", {

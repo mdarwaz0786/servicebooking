@@ -47,7 +47,7 @@ const dummyData = {
   call: {
     id: 'call',
     label: 'Call Support',
-    icon: 'phone',
+    icon: 'phone-alt',
     value: '+919876543210',
     type: 'phone',
   },
@@ -68,7 +68,7 @@ const dummyData = {
 };
 
 export const getSupportContent = asyncHandler(async (req, res) => {
-  const content = await SupportContent.findOne().lean();
+  const content = await SupportContent.findOne().select("-email").lean();
 
   return res.status(200).json({
     success: true,
