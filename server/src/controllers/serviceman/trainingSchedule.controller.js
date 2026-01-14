@@ -1,38 +1,49 @@
 import TrainingModel from "../../models/training.model.js";
+import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Get Next Upcoming Training Schedule
 export const getNextTrainingSchedule = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user?._id;
+
+  const serviceman = await ServiceManProfileModel
+    .findOne({ userId: userId })
+    .lean();
+
+  if (!serviceman) {
+    throw new ApiError(404, "Serviceman profile not found");
+  };
+
   const nextSchedule = await TrainingModel
     .findOne({
       status: true,
+      category: { $in: serviceman.categoryIds },
       startDate: { $gte: new Date() },
     })
-    .populate("category","name")
+    .populate("category", "name")
     .populate({
       path: "trainigSubmit",
       match: { providerId: userId },   // 👈 USER ID MATCH
     })
     .sort({ startDate: 1 }).lean();
 
-    if (!nextSchedule) {
-      throw new ApiError(404, "No upcoming training schedule found");
-    };
+  if (!nextSchedule) {
+    throw new ApiError(404, "No upcoming training schedule found");
+  };
 
-    let trainer = {
-      subject:nextSchedule.subject,
-      fullName:nextSchedule.fullName,
-      startDate:nextSchedule.startDate,
-      startTime:nextSchedule.startTime,
-      endTime:nextSchedule.endTime,
-      location:nextSchedule.location,
-      maxParticipant:nextSchedule.maxParticipant,
-      description:nextSchedule.description,
-    }
-    let trainigSubmit = nextSchedule.trainigSubmit;
+  let trainer = {
+    subject: nextSchedule?.subject,
+    fullName: nextSchedule?.fullName,
+    startDate: nextSchedule?.startDate,
+    startTime: nextSchedule?.startTime,
+    endTime: nextSchedule?.endTime,
+    location: nextSchedule?.location,
+    maxParticipant: nextSchedule?.maxParticipant,
+    description: nextSchedule?.description,
+  }
+  let trainigSubmit = nextSchedule?.trainigSubmit;
 
 
-  return res.status(200).json({ success: true, message: "Data fetched successfully", data: {_id:nextSchedule._id,trainer:trainer,trainigSubmit:trainigSubmit} });
+  return res.status(200).json({ success: true, message: "Data fetched successfully", data: { _id: nextSchedule._id, trainer: trainer, trainigSubmit: trainigSubmit } });
 });

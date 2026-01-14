@@ -1,6 +1,7 @@
 import RateCardModel from "../../models/rateCard.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import { calculateServicePrice } from "../../utils/rateCard.utils.js";
 
 // ======================== GET ALL RATE CARDS ========================
 export const getRateCards = asyncHandler(async (req, res) => {
@@ -15,16 +16,28 @@ export const getRateCards = asyncHandler(async (req, res) => {
   if (category) filters.category = category;
   if (subCategory) filters.subCategory = subCategory;
 
-  const rateCards = await RateCardModel
+  const rateCard = await RateCardModel
     .find(filters)
     .populate("category")
     .populate("subCategory")
     .lean();
 
+  if (!rateCard) {
+    throw new ApiError(404, "Rate card not found");
+  };
+
+  rateCard.rateGroups = rateCard?.rateGroups?.map((group) => ({
+    ...group,
+    rates: group?.rates?.map((rate) => ({
+      ...rate,
+      priceSummary: calculateServicePrice(rate?.serviceCharge),
+    })),
+  }));
+
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
-    data: rateCards,
+    data: rateCard,
   });
 });
 
@@ -37,7 +50,15 @@ export const getRateCardById = asyncHandler(async (req, res) => {
 
   if (!rateCard) {
     throw new ApiError(404, "Rate card not found");
-  }
+  };
+
+  rateCard.rateGroups = rateCard?.rateGroups?.map((group) => ({
+    ...group,
+    rates: group?.rates?.map((rate) => ({
+      ...rate,
+      priceSummary: calculateServicePrice(rate?.serviceCharge),
+    })),
+  }));
 
   return res.status(200).json({
     success: true,

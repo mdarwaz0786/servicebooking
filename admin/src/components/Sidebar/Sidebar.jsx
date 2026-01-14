@@ -115,14 +115,14 @@ const Sidebar = () => {
                     <span>Brand</span>
                   </Link>
                 </li>
-                {/* <li>
+                <li>
                   <Link
                     to="/city"
                     className={currentPath === "/city" ? "active" : ""}
                   >
                     <span>City</span>
                   </Link>
-                </li> */}
+                </li>
                 {/* <li>
                   <Link
                     to="/locality"

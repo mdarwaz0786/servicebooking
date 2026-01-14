@@ -15,6 +15,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   const {
     categoryIds,
+    city,
     name,
     email,
     mobile,
@@ -72,6 +73,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
     profile = await ServiceManProfileModel.create({
       userId,
       categoryIds,
+      city,
       name,
       email,
       mobile,
@@ -135,6 +137,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     .populate("user")
     .populate("kyc")
     .populate("zones")
+    .populate("city")
     .populate({
       path: "trainingScheduleSubmit",
       match: { providerId: userId },

@@ -194,8 +194,9 @@ export const dashboard = asyncHandler(async (req, res) => {
 
   const endOfWeek = new Date();
   endOfWeek.setHours(23, 59, 59, 999);
+  const categoryIds = serviceman?.categoryIds;
 
-  // WINNER OF THE WEEK (TOP 3 SERVICEMEN)
+  // WINNER OF THE WEEK (TOP 3 SERVICEMEN – CATEGORY FILTERED)
   const winnerOfTheWeek = await ServiceManBookingModel.aggregate([
     {
       $match: {
@@ -204,7 +205,7 @@ export const dashboard = asyncHandler(async (req, res) => {
       }
     },
 
-    // COUNT COMPLETED BOOKINGS PER SERVICEMAN
+    // COUNT COMPLETED BOOKINGS
     {
       $group: {
         _id: "$servicemanId",
@@ -212,10 +213,7 @@ export const dashboard = asyncHandler(async (req, res) => {
       }
     },
 
-    // SORT BY MOST COMPLETED BOOKINGS
     { $sort: { completedBookings: -1 } },
-
-    // ONLY TOP 3
     { $limit: 3 },
 
     // JOIN SERVICEMAN PROFILE
@@ -229,17 +227,41 @@ export const dashboard = asyncHandler(async (req, res) => {
     },
     { $unwind: "$serviceman" },
 
-    // JOIN CATEGORY COLLECTION
+    // FILTER SERVICEMAN BY CATEGORY
+    {
+      $match: {
+        "serviceman.categoryIds": { $in: categoryIds }
+      }
+    },
+
+    // JOIN CATEGORY COLLECTION (ONLY MATCHING CATEGORIES)
     {
       $lookup: {
-        from: "categories",                 // ✅ Category collection
-        localField: "serviceman.categoryIds",
-        foreignField: "_id",
+        from: "categories",
+        let: { catIds: "$serviceman.categoryIds" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $in: ["$_id", "$$catIds"] },
+                  { $in: ["$_id", categoryIds] } // FILTER AGAINST LOGGED-IN SERVICEMAN
+                ]
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1
+            }
+          }
+        ],
         as: "categories"
       }
     },
 
-    // PICK REQUIRED FIELDS
+    // FINAL SHAPE
     {
       $project: {
         _id: 0,
@@ -247,20 +269,11 @@ export const dashboard = asyncHandler(async (req, res) => {
         name: "$serviceman.name",
         profileImage: "$serviceman.profileImage",
         completedBookings: 1,
-
-        // return only category name + id
-        categories: {
-          $map: {
-            input: "$categories",
-            as: "cat",
-            in: {
-              name: "$$cat.name"
-            }
-          }
-        }
+        categories: 1
       }
     }
   ]);
+
 
   return res.status(200).json({
     success: true,

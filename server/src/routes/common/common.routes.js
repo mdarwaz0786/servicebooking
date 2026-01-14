@@ -23,6 +23,7 @@ import reviewRoutes from "./review.routes.js";
 import disclaimerRoutes from "./disclaimer.routes.js";
 import metaTagRoutes from "./metaTag.route.js";
 import appRoutes from "./app.route.js";
+import cityRoutes from "./city.route.js";
 
 const router = express.Router();
 
@@ -50,5 +51,6 @@ router.use("/review", reviewRoutes);
 router.use("/disclaimer", disclaimerRoutes);
 router.use("/meta-tag", metaTagRoutes);
 router.use("/app", appRoutes);
+router.use("/city", cityRoutes);
 
 export default router;

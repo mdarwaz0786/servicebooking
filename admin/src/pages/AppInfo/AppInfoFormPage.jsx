@@ -39,7 +39,7 @@ const AppInfoFormPage = () => {
               android: res?.data?.data?.serviceman?.android || "",
               ios: res?.data?.data?.serviceman?.ios || "",
               androidVersion: res?.data?.data?.serviceman?.androidVersion || "",
-              iosVersion: res?.data?.data?.serviceman?.iosversion || "",
+              iosVersion: res?.data?.data?.serviceman?.iosVersion || "",
             },
             user: {
               android: res?.data?.data?.user?.android || "",

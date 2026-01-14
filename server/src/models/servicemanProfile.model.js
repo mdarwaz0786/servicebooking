@@ -16,6 +16,10 @@ const serviceManProfileSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
+  city: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "City",
+  },
   name: {
     type: String,
     required: true,
@@ -98,7 +102,7 @@ const serviceManProfileSchema = new mongoose.Schema({
   profileStatus: {
     type: String,
     enum: ["Pending", "Approved", "Rejected"],
-    default: "Pending",
+    default: "Approved",
   },
   remarks: {
     type: String,
