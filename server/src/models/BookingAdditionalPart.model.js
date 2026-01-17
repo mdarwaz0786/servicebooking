@@ -27,7 +27,7 @@ const bookingAdditionalPartSchema = new mongoose.Schema({
     type: String,
   },
   oldAmount: {
-    type: mongoose.Schema.Types.Mixed,
+    type: mongoose.Schema.Types.Mixed, // price, labour, discount
   },
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
