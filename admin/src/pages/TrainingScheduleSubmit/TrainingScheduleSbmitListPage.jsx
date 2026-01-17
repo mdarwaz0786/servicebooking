@@ -373,24 +373,22 @@ const TrainingScheduleSubmitListPage = () => {
                               Update
                             </button>
                           </div>
-                          {
-                            statusMap[d?._id] !== "New" && (
-                              <input
-                                className="form-control mt-2"
-                                placeholder="Enter Remarks"
-                                type="text"
-                                name={d?._id}
-                                id={d?._id}
-                                onChange={(e) =>
-                                  setRemarksMap({
-                                    ...remarksMap,
-                                    [d?._id]: e.target.value,
-                                  })
-                                }
-                                value={remarksMap[d?._id] ?? d?.remarks ?? ""}
-                              />
-                            )
-                          }
+                          {(statusMap[d?._id] ?? d?.trainingScheduleStatus) !== "New" && (
+                            <input
+                              className="form-control mt-2"
+                              placeholder="Enter Remarks"
+                              type="text"
+                              name={d?._id}
+                              id={d?._id}
+                              onChange={(e) =>
+                                setRemarksMap({
+                                  ...remarksMap,
+                                  [d?._id]: e.target.value,
+                                })
+                              }
+                              value={remarksMap[d?._id] ?? d?.remarks ?? ""}
+                            />
+                          )}
                         </td>
                         <td>
                           <div className="d-flex align-items-center gap-2">
