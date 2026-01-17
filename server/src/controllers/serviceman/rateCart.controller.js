@@ -26,18 +26,21 @@ export const getRateCards = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Rate card not found");
   };
 
-  rateCard.rateGroups = rateCard?.rateGroups?.map((group) => ({
-    ...group,
-    rates: group?.rates?.map((rate) => ({
-      ...rate,
-      priceSummary: calculateServicePrice(rate?.serviceCharge),
+  const updatedRateCards = rateCard.map((card) => ({
+    ...card,
+    rateGroups: card.rateGroups?.map((group) => ({
+      ...group,
+      rates: group.rates?.map((rate) => ({
+        ...rate,
+        unitPrice: calculateServicePrice(rate.serviceCharge),
+      })),
     })),
   }));
 
   return res.status(200).json({
     success: true,
     message: "Data fetched successfully",
-    data: rateCard,
+    data: updatedRateCards,
   });
 });
 
@@ -52,11 +55,11 @@ export const getRateCardById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Rate card not found");
   };
 
-  rateCard.rateGroups = rateCard?.rateGroups?.map((group) => ({
+  rateCard.rateGroups = rateCard.rateGroups?.map((group) => ({
     ...group,
-    rates: group?.rates?.map((rate) => ({
+    rates: group.rates?.map((rate) => ({
       ...rate,
-      priceSummary: calculateServicePrice(rate?.serviceCharge),
+      unitPrice: calculateServicePrice(rate.serviceCharge),
     })),
   }));
 

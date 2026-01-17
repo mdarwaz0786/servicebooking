@@ -82,6 +82,7 @@ const apis = {
   },
   trainingScheduleSubmit: {
     get: `${BASE_URL}/api/v1/admin/training-schedule-submit`,
+    reshedule: `${BASE_URL}/api/v1/admin/training-schedule-submit/reschedule`,
     update: `${BASE_URL}/api/v1/admin/training-schedule-submit`,
     delete: `${BASE_URL}/api/v1/admin/training-schedule-submit`,
   },

@@ -4,7 +4,7 @@ import { AppContext } from "../../context/AppContext";
 
 const RateCardModal = () => {
   const { modals, toggleModal, rateCardDetailData, PriceFormat } = useContext(AppContext);
-  
+
 
   return (
     <div
@@ -14,7 +14,7 @@ const RateCardModal = () => {
     >
       <div className="modal-dialog modal-lg modal-dialog-centered">
         <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-          
+
           {/* Header */}
           <div
             className="d-flex justify-content-between align-items-center px-4 py-3"
@@ -23,7 +23,7 @@ const RateCardModal = () => {
             <h5 className="m-0 fw-bold text-white">Rate Card</h5>
             <Link
               className="text-white fs-4"
-              onClick={() => {toggleModal("RateCardModal", false);toggleModal("ServiceDetailModal", true);}}
+              onClick={() => { toggleModal("RateCardModal", false); toggleModal("ServiceDetailModal", true); }}
               style={{ cursor: "pointer" }}
             >
               <i className="fa fa-times"></i>
@@ -51,7 +51,7 @@ const RateCardModal = () => {
 
                     <div
                       id={`collapseGroup${index}`}
-                      className={`accordion-collapse collapse ${index==0 ? 'show' : ''}`}
+                      className={`accordion-collapse collapse ${index == 0 ? 'show' : ''}`}
                       data-bs-parent="#rateCard_accordion"
                     >
                       <div className="accordion-body p-0">
@@ -64,69 +64,64 @@ const RateCardModal = () => {
                           </thead>
                           <tbody>
                             {group?.rates?.map((rate, idx) => (
-                              <tr key={idx}> 
+                              <tr key={idx}>
                                 <td>{rate.description}</td>
                                 <td>
-                                  
-                            
 
-                    <p className="m-0">
-                      {(() => {
-                        const price = rate.serviceCharge.price;
-                        const discount = rate.serviceCharge.discountPrice;
-                        const labour = rate.serviceCharge.labourCharge;
 
-                        let finalPrice = 0;
-                        let finalDscount = 0;
-                        let finalLabour = 0;
 
-                        if(price > 0)
-                        {                          
-                          finalPrice = price;
-                          if(discount < 1)
-                          {
-                            finalDscount = price;
-                          }
-                        }
-                        else
-                        {
-                          finalDscount = discount;
-                        } 
-                        if(discount > 0 && price > 0)
-                        {
-                          finalDscount = (price-discount)-labour;
-                        }
-                        if(labour > 0) 
-                        { 
-                          finalLabour = labour; 
-                        } 
-                        // if(rate.description=='ABC') 
-                        // {
-                        //   console.log(finalDscount)
-                        // } 
-                        
-                        return(
-                            <>
-                            {finalPrice && discount?
-                              <span className="fs-12">
-                                <span className="old-price text-muted text-decoration-line-through">
-                                  {PriceFormat(finalPrice, 0)}
-                                </span>
-                              </span>
-                            :null}
-                              &nbsp;
-                              <strong>{PriceFormat(finalDscount > 0 ? finalDscount : 0, 0)}</strong>
-                            </>
-                          )
-                        
-                      })()}
-                    </p>
+                                  <p className="m-0">
+                                    {(() => {
+                                      const price = rate.serviceCharge.price;
+                                      const discount = rate.serviceCharge.discountPrice;
+                                      const labour = rate.serviceCharge.labourCharge;
 
-                    {rate.serviceCharge.labourCharge > 0 && (
-                      <div className="text-muted small">
-                        + {PriceFormat(rate.serviceCharge.labourCharge || 0, 0)} (Labour)
-                      </div>
-                    )}
+                                      let finalPrice = 0;
+                                      let finalDscount = 0;
+                                      let finalLabour = 0;
+
+                                      if (price > 0) {
+                                        finalPrice = price;
+                                        if (discount < 1) {
+                                          finalDscount = price;
+                                        }
+                                      }
+                                      else {
+                                        finalDscount = discount;
+                                      }
+                                      if (discount > 0 && price > 0) {
+                                        finalDscount = (price - discount) - labour;
+                                      }
+                                      if (labour > 0) {
+                                        finalLabour = labour;
+                                      }
+                                      // if(rate.description=='ABC') 
+                                      // {
+                                      //   console.log(finalDscount)
+                                      // } 
+
+                                      return (
+                                        <>
+                                          {finalPrice && discount ?
+                                            <span className="fs-12">
+                                              <span className="old-price text-muted text-decoration-line-through">
+                                                {PriceFormat(finalPrice, 0)}
+                                              </span>
+                                            </span>
+                                            : null}
+                                          &nbsp;
+                                          <strong>{PriceFormat(finalDscount > 0 ? finalDscount : 0, 0)}</strong>
+                                        </>
+                                      )
+
+                                    })()}
+                                  </p>
+
+                                  {rate.serviceCharge.labourCharge > 0 && (
+                                    <div className="text-muted small">
+                                      + {PriceFormat(rate.serviceCharge.labourCharge || 0, 0)} (Labour)
+                                    </div>
+                                  )}
 
 
 

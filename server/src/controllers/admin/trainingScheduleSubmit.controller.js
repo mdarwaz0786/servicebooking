@@ -2,6 +2,31 @@ import { buildPagination } from "../../utils/pagination.js";
 import TrainingScheduleSubmitModel from "../../models/trainingScheduleSubmit.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
+import TrainingModel from "../../models/training.model.js";
+
+// reschedule training
+export const rescheduleTraining = asyncHandler(async (req, res) => {
+  const { trainingId, providerId } = req.body;
+
+  const training = await TrainingModel.findById(trainingId);
+  const date = training?.startDate;
+  const time = training?.startTime;
+
+  const submit = await TrainingScheduleSubmitModel.create({
+    providerId,
+    trainingId,
+    scheduleDate: date,
+    scheduleTime: time,
+    createdBy: req.user?._id,
+    user: providerId,
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: "Training schedule submitted successfully",
+    data: submit,
+  });
+});
 
 /* --------------------- GET ALL --------------------- */
 export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {

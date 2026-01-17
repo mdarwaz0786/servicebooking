@@ -4,7 +4,7 @@ import { getRateCardById, getRateCards } from "../../controllers/serviceman/rate
 
 const router = express.Router();
 
-router.get("/", isLoggedIn, getRateCards);
-router.get("/:id", isLoggedIn, getRateCardById);
+router.get("/", getRateCards);
+router.get("/:id", getRateCardById);
 
 export default router;
