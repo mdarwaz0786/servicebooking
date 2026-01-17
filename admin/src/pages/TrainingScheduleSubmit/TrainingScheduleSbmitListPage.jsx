@@ -156,7 +156,7 @@ const TrainingScheduleSubmitListPage = () => {
     fetchTrainingScheduleSubmit();
   }, [page, limit, debouncedSearch, sort, serviceman, trainer, status]);
 
-  const STATUSES = ["New", "Reject", "Fail", "Complete"];
+  const STATUSES = ["New", "Reject", "Fail", "Complete", "Reschedule"];
   const ATTENDANCESTATUS = ["Pending", "Present", "Absent"];
 
   const updateStatus = async (id, remarks) => {
