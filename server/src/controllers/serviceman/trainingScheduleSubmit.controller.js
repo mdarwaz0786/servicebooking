@@ -43,10 +43,11 @@ export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
       _id: { $ne: submit?._id },
     },
     {
-      trainingScheduleStatus: "Reschedule",
+      $set: { trainingScheduleStatus: "Reschedule" },
     },
     {
       sort: { createdAt: -1 },
+      new: true,
     }
   );
 
