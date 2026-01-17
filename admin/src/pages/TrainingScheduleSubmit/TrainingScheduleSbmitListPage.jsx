@@ -360,14 +360,14 @@ const TrainingScheduleSubmitListPage = () => {
           />
         </div>
 
-        <div className="d-flex mt-3 mb-0">
+        <div className="d-flex mt-2">
           <button className="btn btn-primary">Reschedule</button>
         </div>
 
         {/* Table */}
         <div className="row">
           <div className="col-12">
-            <div className="table-responsive table-div">
+            <div className="table-responsive table-div mt-0">
               <table className="table datatable">
                 <thead>
                   <tr>
