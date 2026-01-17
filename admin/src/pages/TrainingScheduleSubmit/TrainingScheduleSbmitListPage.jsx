@@ -24,9 +24,11 @@ const TrainingScheduleSubmitListPage = () => {
   const [training, setTraining] = useState([]);
   const [remarksMap, setRemarksMap] = useState({});
 
+  const [selectedDate, setSelectedDate] = useState(searchParams.get("date") || "");
   const trainer = searchParams.get("trainer") || "";
   const serviceman = searchParams.get("serviceman") || "";
   const status = searchParams.get("status") || "";
+  const attendanceStatus = searchParams.get("attendanceStatus") || "";
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
@@ -88,6 +90,8 @@ const TrainingScheduleSubmitListPage = () => {
           trainer,
           sort,
           status,
+          attendanceStatus,
+          date: selectedDate,
         },
       });
 
@@ -114,6 +118,8 @@ const TrainingScheduleSubmitListPage = () => {
       serviceman,
       trainer,
       status,
+      attendanceStatus,
+      date: selectedDate,
       ...newParams,
     };
     setSearchParams(params);
@@ -154,7 +160,7 @@ const TrainingScheduleSubmitListPage = () => {
 
   useEffect(() => {
     fetchTrainingScheduleSubmit();
-  }, [page, limit, debouncedSearch, sort, serviceman, trainer, status]);
+  }, [page, limit, debouncedSearch, sort, serviceman, trainer, status, attendanceStatus, selectedDate]);
 
   const STATUSES = ["New", "Reject", "Fail", "Complete", "Reschedule"];
   const ATTENDANCESTATUS = ["Pending", "Present", "Absent"];
@@ -222,9 +228,17 @@ const TrainingScheduleSubmitListPage = () => {
     { value: "Reschedule", label: "Reschedule" },
   ];
 
+  const attendanceStatusOptions = [
+    { value: "", label: "All Attendance Status" },
+    { value: "Pending", label: "Pending" },
+    { value: "Present", label: "Present" },
+    { value: "Absent", label: "Absent" },
+  ];
+
   const selectedServiceman = servicemanOptions.find((o) => o?.value === serviceman);
   const selectedTrainer = trainerOptions.find((o) => o?.value === trainer);
   const selectedStatus = statusOptions.find((o) => o?.value === status);
+  const selectedAttendanceStatus = attendanceStatusOptions.find((o) => o?.value === attendanceStatus);
 
   return (
     <div className="page-wrapper page-settings">
@@ -265,6 +279,8 @@ const TrainingScheduleSubmitListPage = () => {
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="30">30</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
               <option value={total}>All</option>
             </select>
           </div>
@@ -303,7 +319,7 @@ const TrainingScheduleSubmitListPage = () => {
 
           {/* Status Filter */}
           <Select
-            className="react-select-container"
+            className="react-select-container me-3"
             classNamePrefix="react-select"
             placeholder="All Status"
             isClearable
@@ -316,6 +332,36 @@ const TrainingScheduleSubmitListPage = () => {
               })
             }
           />
+
+          {/* attendance Status Filter */}
+          <Select
+            className="react-select-container me-3"
+            classNamePrefix="react-select"
+            placeholder="All Attendance Status"
+            isClearable
+            value={selectedAttendanceStatus}
+            options={attendanceStatusOptions}
+            onChange={(selected) =>
+              updateParams({
+                attendanceStatus: selected?.value || "",
+                page: 1,
+              })
+            }
+          />
+
+          <input
+            type="date"
+            className="form-control form-control-sm w-auto me-3"
+            value={selectedDate}
+            onChange={(e) => {
+              setSelectedDate(e.target.value);
+              updateParams({ date: e.target.value, page: 1 });
+            }}
+          />
+        </div>
+
+        <div className="d-flex mt-3 mb-0">
+          <button className="btn btn-primary">Reschedule</button>
         </div>
 
         {/* Table */}
@@ -414,7 +460,7 @@ const TrainingScheduleSubmitListPage = () => {
                               className="btn btn-sm btn-success"
                               type="button"
                               onClick={() => updateAttendanceStatus(d?._id)}
-                              disabled={attendanceMap[d?._id] === d?.status}
+                              disabled={attendanceMap[d?._id] === d?.attendanceStatus}
                             >
                               Update
                             </button>

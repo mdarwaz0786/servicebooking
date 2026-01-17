@@ -32,7 +32,7 @@ export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {
       $gte: start,
       $lte: end,
     };
-  }
+  };
 
   if (serviceman) {
     filters.providerId = serviceman;
