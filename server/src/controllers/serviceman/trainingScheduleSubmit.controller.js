@@ -28,18 +28,6 @@ export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
   const training = await Training.findById(trainingId);
   if (!training) throw new ApiError(404, "Training not found");
 
-  await TrainingScheduleSubmitModel.findOneAndUpdate(
-    {
-      providerId: userId,
-    },
-    {
-      $set: { trainingScheduleStatus: "Reschedule" },
-    },
-    {
-      sort: { createdAt: -1 },
-    }
-  );
-
   const submit = await TrainingScheduleSubmitModel.create({
     providerId: userId,
     trainingId,
@@ -55,7 +43,7 @@ export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
       _id: { $ne: submit?._id },
     },
     {
-      $set: { trainingScheduleStatus: "Reschedule" },
+      trainingScheduleStatus: "Reschedule",
     },
     {
       sort: { createdAt: -1 },
