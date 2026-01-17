@@ -219,6 +219,7 @@ const TrainingScheduleSubmitListPage = () => {
     { value: "Reject", label: "Reject" },
     { value: "Fail", label: "Fail" },
     { value: "Complete", label: "Complete" },
+    { value: "Reschedule", label: "Reschedule" },
   ];
 
   const selectedServiceman = servicemanOptions.find((o) => o?.value === serviceman);
