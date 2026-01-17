@@ -19,8 +19,10 @@ const TrainingScheduleSubmitListPage = () => {
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [statusMap, setStatusMap] = useState({});
+  const [attendanceMap, setAttendanceMap] = useState({});
   const [servicemen, setServicemen] = useState([]);
   const [training, setTraining] = useState([]);
+  const [remarksMap, setRemarksMap] = useState({});
 
   const trainer = searchParams.get("trainer") || "";
   const serviceman = searchParams.get("serviceman") || "";
@@ -154,13 +156,33 @@ const TrainingScheduleSubmitListPage = () => {
     fetchTrainingScheduleSubmit();
   }, [page, limit, debouncedSearch, sort, serviceman, trainer, status]);
 
-  const STATUSES = ["New", "Confirm", "Reject", "Present", "Absent", "Fail", "Complete"];
+  const STATUSES = ["New", "Reject", "Fail", "Complete"];
+  const ATTENDANCESTATUS = ["Pending", "Present", "Absent"];
 
-  const updateStatus = async (id) => {
+  const updateStatus = async (id, remarks) => {
     try {
       const response = await axios.patch(
         `${apis.trainingScheduleSubmit.update}/${id}`,
-        { trainingScheduleStatus: statusMap[id] },
+        { trainingScheduleStatus: statusMap[id], remarks: remarks },
+        {
+          headers: { Authorization: validToken },
+        }
+      );
+
+      if (response?.data?.success) {
+        toast.success("Status updated successfully");
+        fetchTrainingScheduleSubmit();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
+  const updateAttendanceStatus = async (id) => {
+    try {
+      const response = await axios.patch(
+        `${apis.trainingScheduleSubmit.update}/${id}`,
+        { attendanceStatus: attendanceMap[id] },
         {
           headers: { Authorization: validToken },
         }
@@ -192,12 +214,9 @@ const TrainingScheduleSubmitListPage = () => {
   ];
 
   const statusOptions = [
-    { value: "", label: "All Status" },
+    { value: "", label: "All Training Status" },
     { value: "New", label: "New" },
-    { value: "Confirm", label: "Confirm" },
     { value: "Reject", label: "Reject" },
-    { value: "Present", label: "Present" },
-    { value: "Absent", label: "Absent" },
     { value: "Fail", label: "Fail" },
     { value: "Complete", label: "Complete" },
   ];
@@ -311,6 +330,7 @@ const TrainingScheduleSubmitListPage = () => {
                     <th>Date</th>
                     <th>Time</th>
                     <th>Training Status</th>
+                    <th>Attendance Status</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -327,6 +347,7 @@ const TrainingScheduleSubmitListPage = () => {
                         <td>
                           <div className="d-flex align-items-center gap-2">
                             <select
+                              style={{ width: "110px", display: "block" }}
                               className="form-select form-select-sm"
                               value={statusMap[d?._id] || d?.trainingScheduleStatus}
                               onChange={(e) =>
@@ -342,12 +363,59 @@ const TrainingScheduleSubmitListPage = () => {
                                 </option>
                               ))}
                             </select>
+                            <button
+                              className="btn btn-sm btn-success"
+                              type="button"
+                              onClick={() => updateStatus(d?._id, remarksMap[d?._id])}
+                              disabled={statusMap[d?._id] === d?.trainingScheduleStatus}
+                            >
+                              Update
+                            </button>
+                          </div>
+                          {
+                            statusMap[d?._id] !== "New" && (
+                              <input
+                                className="form-control mt-2"
+                                placeholder="Enter Remarks"
+                                type="text"
+                                name={d?._id}
+                                id={d?._id}
+                                onChange={(e) =>
+                                  setRemarksMap({
+                                    ...remarksMap,
+                                    [d?._id]: e.target.value,
+                                  })
+                                }
+                                value={remarksMap[d?._id] ?? d?.remarks ?? ""}
+                              />
+                            )
+                          }
+                        </td>
+                        <td>
+                          <div className="d-flex align-items-center gap-2">
+                            <select
+                              style={{ width: "110px" }}
+                              className="form-select form-select-sm"
+                              value={attendanceMap[d?._id] || d?.attendanceStatus}
+                              onChange={(e) =>
+                                setAttendanceMap({
+                                  ...attendanceMap,
+                                  [d?._id]: e.target.value,
+                                })
+                              }
+                            >
+                              {ATTENDANCESTATUS?.map((status) => (
+                                <option key={status} value={status}>
+                                  {status?.toUpperCase()}
+                                </option>
+                              ))}
+                            </select>
 
                             <button
                               className="btn btn-sm btn-success"
                               type="button"
-                              onClick={() => updateStatus(d?._id)}
-                              disabled={statusMap[d?._id] === d?.status}
+                              onClick={() => updateAttendanceStatus(d?._id)}
+                              disabled={attendanceMap[d?._id] === d?.status}
                             >
                               Update
                             </button>

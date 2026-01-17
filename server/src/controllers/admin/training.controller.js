@@ -6,6 +6,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import { buildPagination } from "../../utils/pagination.js";
+import mongoose from "mongoose";
 
 export const createTraining = asyncHandler(async (req, res) => {
   const {

@@ -15,6 +15,7 @@ import dashboardRoute from "./dashboard.routes.js";
 import supportRoute from "./support.routes.js";
 import nearByRoute from "./withinLocation.routes.js";
 import servicemanEarningRoute from "./servicemanEarning.route.js";
+import servicemanTimeSlotRoute from "./servicemanTimeSlot.route.js";
 
 const router = express.Router();
 
@@ -34,5 +35,6 @@ router.use("/dashboard", dashboardRoute);
 router.use("/support", supportRoute);
 router.use("/nearby", nearByRoute);
 router.use("/serviceman-earning", servicemanEarningRoute);
+router.use("/serviceman-time-slot", servicemanTimeSlotRoute);
 
 export default router;

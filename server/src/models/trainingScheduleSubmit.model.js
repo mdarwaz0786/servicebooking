@@ -28,12 +28,18 @@ const trainingScheduleSubmitSchema = new mongoose.Schema({
   },
   trainingScheduleStatus: {
     type: String,
-    enum: ["New", "Confirm", "Reject", "Present", "Absent", "Fail", "Complete"],
+    enum: ["New", "Reject", "Fail", "Complete", "Reschedule"],
     default: "New",
+  },
+  attendanceStatus: {
+    type: String,
+    enum: ["Present", "Absent", "Pending"],
+    default: "Pending",
   },
   remarks: {
     type: String,
     trim: true,
+    default: "",
   },
   status: {
     type: Boolean,
@@ -69,6 +75,13 @@ trainingScheduleSubmitSchema.virtual("profile", {
   ref: "ServiceManProfile",
   localField: "providerId",
   foreignField: "userId",
+  justOne: true,
+});
+
+trainingScheduleSubmitSchema.virtual("training", {
+  ref: "Training",
+  localField: "trainingId",
+  foreignField: "_id",
   justOne: true,
 });
 

@@ -5,7 +5,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 
 /* --------------------- GET ALL --------------------- */
 export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, sort = "desc", status, serviceman, trainer } = req.query;
+  let { page = 1, limit = 10, sort = "desc", status, attendanceStatus, serviceman, date, trainer } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -16,6 +16,23 @@ export const getTrainingScheduleSubmits = asyncHandler(async (req, res) => {
   if (status) {
     filters.trainingScheduleStatus = status;
   };
+
+  if (attendanceStatus) {
+    filters.attendanceStatus = attendanceStatus;
+  };
+
+  if (date) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
+    filters.scheduleDate = {
+      $gte: start,
+      $lte: end,
+    };
+  }
 
   if (serviceman) {
     filters.providerId = serviceman;
@@ -84,12 +101,18 @@ export const updateTrainingScheduleSubmit = asyncHandler(async (req, res) => {
   const {
     status,
     trainingScheduleStatus,
+    attendanceStatus,
     remarks,
   } = req.body;
 
   submit.remarks = remarks !== undefined ? remarks : submit.remarks;
   submit.status = typeof status === "boolean" ? status : submit.status;
   submit.trainingScheduleStatus = trainingScheduleStatus !== undefined ? trainingScheduleStatus : submit.trainingScheduleStatus;
+  submit.attendanceStatus = attendanceStatus !== undefined ? attendanceStatus : submit.attendanceStatus;
+
+  if (trainingScheduleStatus == "Complete") submit.attendanceStatus = "Present";
+  if (trainingScheduleStatus == "New") submit.attendanceStatus = "Pending";
+  if (trainingScheduleStatus == "Fail") submit.attendanceStatus = "Present";
 
   submit.updatedBy = req.user?._id;
   submit.updatedAt = new Date();
