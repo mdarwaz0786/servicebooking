@@ -8,7 +8,7 @@ import WalletModel from "../../models/wallet.model.js";
 import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateOtp from "../../utils/generateOpt.js";
-import { createScanAndPayQr } from "../../utils/scanAndPay.js";
+import { createScanAndPayQr, createPaymentLink } from "../../utils/scanAndPay.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
@@ -47,10 +47,24 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     payableAmount = bookingData?.payableAmount;
     from = "user";
 
-    qr = await createScanAndPayQr(
+    const bookingUser = {
+      userId:userId,
+      name:"Test",
+      email:"Test@gmail.com",
+      phone:"8285392948",
+    }
+    
+    const userDataForQR = {
+      userId: bookingUser.userId,
+      name: bookingUser.name || bookingUser.fullName,
+      email: bookingUser.email,
+      contact: bookingUser.phone || bookingUser.mobile
+    };
+
+    qr = await createPaymentLink(
       payableAmount,
       `BOOKING_${bookingData?.bookingId}`,
-      userId,
+      userDataForQR,
       "Booking Payment (Scan & Pay)",
     );
   };
@@ -155,7 +169,15 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       purpose: "Wallet Recharge",
       createdBy: transactionData.userId,
     });
-  };
+  }
+  else if (transactionData.productType == "bookingComplete") {
+    return res.status(400).json({
+      success: true,
+      message: "Payment Wait..",
+      data: {},
+    });
+  }
+
 
   return res.status(201).json({
     success: true,
