@@ -10,6 +10,7 @@ import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import compressImage from '../../helpers/compressImage.js';
 import { adjustWalletCredit, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 import generateOtp from "../../utils/generateOpt.js";
+import InvoiceModel from "../../models/invoice.model.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -571,6 +572,10 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { status: "complete" },
     { new: true }
   );
+
+  await InvoiceModel.create({
+
+  });
 
   const earning = await createServicemanEarning(servicemanId, servicemanBookingId, userId)
 

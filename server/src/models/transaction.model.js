@@ -81,8 +81,17 @@ const transactionSchema = new mongoose.Schema({
   paymentTime: {
     type: String,
   },
-  referanceId: { // scan and pay
+  referanceId: {   // used in scan and pay
     type: String,
+    default: '',
+  },
+  qrId: {
+    type: String,
+    default: ''
+  },
+  qrImage: {
+    type: String,
+    default: ''
   },
   from: {
     type: String,

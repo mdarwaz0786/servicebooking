@@ -1,5 +1,5 @@
 import express from "express";
-import { createRazorpayBookingOrder, razorpayWebhook, verifyRazorpayBookingPayment } from "../../controllers/common/payment.controller.js";
+import { createRazorpayBookingOrder, razorpayWebhook, verifyQrPaymentWithoutWebhook, verifyRazorpayBookingPayment } from "../../controllers/common/payment.controller.js";
 
 const router = express.Router();
 
@@ -15,9 +15,17 @@ router.post(
   verifyRazorpayBookingPayment
 );
 
-// scan and pay
+// verify payment without webhook
 router.post(
-  "/scan-pay",
+  "/verify-payment-qr",
+  express.raw({ type: "application/json" }),
+  verifyQrPaymentWithoutWebhook,
+);
+
+// verify payment by webhook
+router.post(
+  "/verify-payment-by-webhook",
+  express.raw({ type: "application/json" }),
   razorpayWebhook,
 );
 

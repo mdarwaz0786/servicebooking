@@ -37,25 +37,25 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     payableAmount = amount;
     from = "serviceman";
   } else if (type == "bookingComplete") {
-    bookingData = await BookingModel.findById(bookingId);
+    bookingData = await BookingModel.findById({ _id: bookingId });
     bookingItems = await BookingItemModel.find({ bookingId: bookingId });
     userId = bookingData?.userId;
 
     itemData = bookingItems;
-    amount = bookingData.amount;
-    gstPercent = bookingData.gstPercent;
-    payableAmount = bookingData.payableAmount;
+    amount = bookingData?.amount;
+    gstPercent = bookingData?.gstPercent;
+    payableAmount = bookingData?.payableAmount;
     from = "user";
 
-    qr = await createScanAndPayQr({
-      amount: payableAmount,
-      referenceId: `BOOKING_${bookingData.bookingId}`,
-      customerId: userId,
-      description: "Booking Payment (Scan & Pay)",
-    });
+    qr = await createScanAndPayQr(
+      payableAmount,
+      `BOOKING_${bookingData?.bookingId}`,
+      userId,
+      "Booking Payment (Scan & Pay)",
+    );
   };
 
-  const razorpayOrder = await createRazorpayOrder(payableAmount);
+  let razorpayOrder = await createRazorpayOrder(payableAmount);
 
   let transactionDetail = await TransactionModel.create({
     bookingId: pId,
@@ -75,15 +75,18 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     paymentTime: '',
     from,
     referenceId: `BOOKING_${bookingData.bookingId}`,
+    qrId: qr ? qr.id : '',
+    qrImage: qr ? qr.image_url : '',
   });
 
   return res.status(200).json({
     success: true,
+    message: "Transaction created successfully",
     order: razorpayOrder,
     bookingData,
     transactionDetail,
-    qrId: qr ? qr.id : null,
-    qrImage: qr ? qr.image_url : null,
+    qrId: qr ? qr.id : '',
+    qrImage: qr ? qr.image_url : '',
   });
 });
 
@@ -136,7 +139,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       paymentStatus: 1,
       paymentBy: "razorpay",
       createdBy: req.user?._id,
-      opt: generateOtp,
+      opt: generateOtp(),
     }, { new: true });
 
     await CartModel.deleteMany({ "userId": transactionData.userId });
@@ -161,41 +164,98 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
   });
 });
 
-// Scan and pay
+// Verify razorpay payment without webhook
+export const verifyQrPaymentWithoutWebhook = asyncHandler(async (req, res) => {
+  const { transactionId } = req.body;
+
+  const transaction = await TransactionModel.findById(transactionId);
+  if (!transaction || transaction.status !== "pending") {
+    return res.status(200).json({ success: false });
+  };
+
+  if (transaction.qrId) {
+    const payments = await fetchQrPayments(transaction.qrId);
+
+    const payment = payments.items.find((p) =>
+      p.status === "captured" &&
+      p.amount === transaction.finalAmount * 100
+    );
+
+    if (!payment) {
+      return res.status(200).json({
+        success: false,
+        message: "Waiting for payment",
+      });
+    };
+
+    transaction.transactionId = payment.id;
+    transaction.status = "success";
+    transaction.paymentDate = new Date();
+    transaction.paymentTime = new Date().toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour12: true,
+    });
+
+    await transaction.save();
+
+    await BookingModel.findByIdAndUpdate(transaction.PID, {
+      paymentStatus: 1,
+      paymentBy: "razorpay_qr",
+      otp: generateOtp(),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "QR payment successful",
+    });
+  };
+
+  return res.status(200).json({ success: false, message: "Payment successfull" });
+});
+
+// Verify razorpay payment by webhook
 export const razorpayWebhook = async (req, res) => {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
   const signature = req.headers["x-razorpay-signature"];
-  const body = JSON.stringify(req.body);
 
   const expectedSignature = crypto
     .createHmac("sha256", webhookSecret)
-    .update(body)
+    .update(req.body)
     .digest("hex");
 
   if (expectedSignature !== signature) {
-    return res.status(400).json({ success: false, message: "Invalid webhook signature" });
-  };
+    return res.status(400).json({ success: false, message: "Invalid signature" });
+  }
 
-  if (req.body.event !== "payment.captured") {
+  const event = JSON.parse(req.body.toString());
+
+  if (event.event !== "payment.captured") {
     return res.status(200).json({ success: true });
-  };
+  }
 
-  const payment = req.body.payload.payment.entity;
+  const payment = event.payload.payment.entity;
 
-  const paymentId = payment.id;
   const referenceId = payment.notes?.reference_id;
 
   if (!referenceId) {
     return res.status(200).json({ success: true });
-  };
+  }
 
   const transaction = await TransactionModel.findOne({
     referenceId,
     status: "pending",
   });
 
-  transaction.transactionId = paymentId;
+  if (!transaction) {
+    return res.status(200).json({ success: true });
+  }
+
+  if (payment.amount !== transaction.finalAmount * 100) {
+    return res.status(400).json({ success: false, message: "Amount mismatch" });
+  }
+
+  transaction.transactionId = payment.id;
   transaction.status = "success";
   transaction.paymentDate = new Date();
   transaction.paymentTime = new Date().toLocaleTimeString("en-IN", {
@@ -209,15 +269,13 @@ export const razorpayWebhook = async (req, res) => {
     await BookingModel.findByIdAndUpdate(transaction.PID, {
       paymentStatus: 1,
       paymentBy: "razorpay_qr",
-      opt: generateOtp,
+      otp: generateOtp(),
     });
-
-    await CartModel.deleteMany({ userId: transaction.userId });
   };
 
   return res.status(200).json({
     success: true,
-    message: "Booking created successfully",
+    message: "Payment processed successfully",
   });
 };
 
