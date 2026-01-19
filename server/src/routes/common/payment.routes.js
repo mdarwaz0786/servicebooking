@@ -1,5 +1,5 @@
 import express from "express";
-import { createRazorpayBookingOrder, verifyRazorpayBookingPayment } from "../../controllers/common/payment.controller.js";
+import { createRazorpayBookingOrder, razorpayWebhook, verifyRazorpayBookingPayment } from "../../controllers/common/payment.controller.js";
 
 const router = express.Router();
 
@@ -13,6 +13,12 @@ router.post(
 router.post(
   "/verify-payment",
   verifyRazorpayBookingPayment
+);
+
+// scan and pay
+router.post(
+  "/scan-pay",
+  razorpayWebhook,
 );
 
 export default router;

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import BookingModel from "../../models/booking.model.js";
@@ -7,15 +8,17 @@ import WalletModel from "../../models/wallet.model.js";
 import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateOtp from "../../utils/generateOpt.js";
+import { createScanAndPayQr } from "../../utils/scanAndPay.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
-  let { pId, type, amount, userId } = req.body;
+  let { pId, type, bookingId, amount, userId } = req.body;
 
   let itemData, bookingData, bookingItems;
   let payableAmount = 0;
   let gstPercent = 0;
   let from = "";
+  let qr;
 
   if (type == 'booking') {
     bookingData = await BookingModel.findById({ _id: pId });
@@ -33,11 +36,29 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     };
     payableAmount = amount;
     from = "serviceman";
+  } else if (type == "bookingComplete") {
+    bookingData = await BookingModel.findById(bookingId);
+    bookingItems = await BookingItemModel.find({ bookingId: bookingId });
+    userId = bookingData?.userId;
+
+    itemData = bookingItems;
+    amount = bookingData.amount;
+    gstPercent = bookingData.gstPercent;
+    payableAmount = bookingData.payableAmount;
+    from = "user";
+
+    qr = await createScanAndPayQr({
+      amount: payableAmount,
+      referenceId: `BOOKING_${bookingData.bookingId}`,
+      customerId: userId,
+      description: "Booking Payment (Scan & Pay)",
+    });
   };
 
   const razorpayOrder = await createRazorpayOrder(payableAmount);
 
   let transactionDetail = await TransactionModel.create({
+    bookingId: pId,
     userId,
     PID: pId,
     transactionId: '',
@@ -53,6 +74,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     paymentDate: '',
     paymentTime: '',
     from,
+    referenceId: `BOOKING_${bookingData.bookingId}`,
   });
 
   return res.status(200).json({
@@ -60,6 +82,8 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     order: razorpayOrder,
     bookingData,
     transactionDetail,
+    qrId: qr ? qr.id : null,
+    qrImage: qr ? qr.image_url : null,
   });
 });
 
@@ -113,10 +137,10 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       paymentBy: "razorpay",
       createdBy: req.user?._id,
       opt: generateOtp,
-    }, { new: true })
+    }, { new: true });
 
     await CartModel.deleteMany({ "userId": transactionData.userId });
-  } else if (transactionData.productType === "wallet") {
+  } else if (transactionData.productType == "wallet") {
     await WalletModel.create({
       providerId: transactionData.userId,
       depositAmount: transactionData.finalAmount,
@@ -136,4 +160,67 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     data: {},
   });
 });
+
+// Scan and pay
+export const razorpayWebhook = async (req, res) => {
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+  const signature = req.headers["x-razorpay-signature"];
+  const body = JSON.stringify(req.body);
+
+  const expectedSignature = crypto
+    .createHmac("sha256", webhookSecret)
+    .update(body)
+    .digest("hex");
+
+  if (expectedSignature !== signature) {
+    return res.status(400).json({ success: false, message: "Invalid webhook signature" });
+  };
+
+  if (req.body.event !== "payment.captured") {
+    return res.status(200).json({ success: true });
+  };
+
+  const payment = req.body.payload.payment.entity;
+
+  const paymentId = payment.id;
+  const referenceId = payment.notes?.reference_id;
+
+  if (!referenceId) {
+    return res.status(200).json({ success: true });
+  };
+
+  const transaction = await TransactionModel.findOne({
+    referenceId,
+    status: "pending",
+  });
+
+  transaction.transactionId = paymentId;
+  transaction.status = "success";
+  transaction.paymentDate = new Date();
+  transaction.paymentTime = new Date().toLocaleTimeString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+
+  await transaction.save();
+
+  if (transaction.productType === "bookingComplete") {
+    await BookingModel.findByIdAndUpdate(transaction.PID, {
+      paymentStatus: 1,
+      paymentBy: "razorpay_qr",
+      opt: generateOtp,
+    });
+
+    await CartModel.deleteMany({ userId: transaction.userId });
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: "Booking created successfully",
+  });
+};
+
+
+
 

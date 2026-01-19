@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
+  bookingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Booking",
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -75,6 +79,9 @@ const transactionSchema = new mongoose.Schema({
     required: false,
   },
   paymentTime: {
+    type: String,
+  },
+  referanceId: { // scan and pay
     type: String,
   },
   from: {
