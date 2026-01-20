@@ -8,6 +8,10 @@ const apis = {
     create: `${BASE_URL}/api/v1/admin/app`,
     get: `${BASE_URL}/api/v1/admin/app`,
   },
+  cashCollected: {
+    create: `${BASE_URL}/api/v1/admin/cash-collected`,
+    get: `${BASE_URL}/api/v1/admin/cash-collected`,
+  },
   pincode: {
     create: `${BASE_URL}/api/v1/admin/pincode`,
     get: `${BASE_URL}/api/v1/admin/pincode`,

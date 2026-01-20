@@ -433,6 +433,14 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/cash-collected"
+                    className={currentPath === "/cash-collected" ? "active" : ""}
+                  >
+                    <span>Cash Collected</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/insurance"
                     className={currentPath === "/insurance" ? "active" : ""}
                   >

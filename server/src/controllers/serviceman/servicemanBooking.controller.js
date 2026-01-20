@@ -3,6 +3,7 @@ import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model
 import BookingModel from "../../models/booking.model.js";
 import ReviewModel from "../../models/review.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
+import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js"
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -553,6 +554,7 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     bookingId,
     servicemanBookingId,
     paymentMode,
+    type,
   } = req.body;
 
   const userId = req.user?._id;
@@ -601,7 +603,66 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     companyDetail: company || {},
     customerDetail: customer || {},
     addressDetail: address || {},
+    type: "Customer",
+    amount: 2000,
   });
+
+  await InvoiceModel.create({
+    bookingId,
+    customerName: customer?.name || "",
+    customerEmail: customer?.email || "",
+    customerMobile: customer?.mobile || "",
+    customerProfileImage: customer?.profileImage || "",
+    deliveryAddress: address?.houseNumber || "",
+    landmark: address?.landmark || "",
+    customerStateName: address?.stateName || "",
+    custmerStateCode: address?.stateCode || "",
+    bookingDetail: bookingDetail || {},
+    bookingItemDetail: bookingItems || [],
+    latestServicemanDetail: provider || {},
+    companyDetail: company || {},
+    customerDetail: customer || {},
+    addressDetail: address || {},
+    type: "Provider",
+    amount: 2000,
+  });
+
+  await InvoiceModel.create({
+    bookingId,
+    customerName: customer?.name || "",
+    customerEmail: customer?.email || "",
+    customerMobile: customer?.mobile || "",
+    customerProfileImage: customer?.profileImage || "",
+    deliveryAddress: address?.houseNumber || "",
+    landmark: address?.landmark || "",
+    customerStateName: address?.stateName || "",
+    custmerStateCode: address?.stateCode || "",
+    bookingDetail: bookingDetail || {},
+    bookingItemDetail: bookingItems || [],
+    latestServicemanDetail: provider || {},
+    companyDetail: company || {},
+    customerDetail: customer || {},
+    addressDetail: address || {},
+    type: "Admin",
+    amount: 2000,
+  });
+
+  if (paymentMode?.toLowerCase() == "cod") {
+    await CashCollectedLoggerModel.create({
+      type,
+      bookingId,
+      providerId: userId,
+      amount: bookingDetail?.payableAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      { paymentStatus: 1 },
+      { new: true }
+    );
+  };
 
   return res.status(201).json({
     success: true,

@@ -2,6 +2,14 @@ import mongoose from "mongoose";
 import InvoiceCounter from "./invoiceCounter.model.js";
 
 const invoiceSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ["Admin", "Provider", "Customer"],
+  },
+  amount: {
+    type: Number,
+    default: 0,
+  },
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",

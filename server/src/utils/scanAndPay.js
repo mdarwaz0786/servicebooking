@@ -147,7 +147,7 @@ export const createPaymentLink = async (
       customer: {
         name: userData.name || "Customer",
         email: userData.email || "",
-        contact: userData.contact || ""
+        contact: '8285392948' || ""
       },
       notify: {
         sms: false,

@@ -4,10 +4,15 @@ import ServiceManBookingModel from "../models/servicemanBooking.model.js";
 import ServiceManProfile from "../models/servicemanProfile.model.js";
 import CompanyModel from "../models/company.model.js";
 
-export const createInvoice = async (bookingId = "6966154e5c6b2c9066c04130") => {
+export const createInvoice = async (bookingId) => {
   const booking = await BookingModel
+    .findById(bookingId)
     .populate({ path: "user", select: "-password" })
     .populate("address")
+    .lean();
+
+  delete booking.userId;
+  delete booking.addressId;
 
   const bookingItems = await BookingItemModel
     .find({ bookingId: bookingId })
@@ -23,10 +28,12 @@ export const createInvoice = async (bookingId = "6966154e5c6b2c9066c04130") => {
   const company = await CompanyModel.findOne();
 
   const servicemanId = latestServicemanAssignment?.servicemanId;
-  const serviceman = await ServiceManProfile.findOne({ _id: servicemanId }).populate("user");
+  const serviceman = await ServiceManProfile
+    .findOne({ _id: servicemanId })
+    .populate("user");
 
   const customer = booking?.user;
-  const address = booking?.aaddress;
+  const address = booking?.address;
 
   return { serviceman, customer, address, company, booking, bookingItems };
 };
