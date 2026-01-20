@@ -1,5 +1,5 @@
 import express from "express";
-import { createRazorpayBookingOrder, razorpayWebhook, verifyQrPaymentWithoutWebhook, verifyRazorpayBookingPayment } from "../../controllers/common/payment.controller.js";
+import { createRazorpayBookingOrder, razorpayWebhook, verifyQrPaymentWithoutWebhook, verifyRazorpayBookingPayment, qrServe } from "../../controllers/common/payment.controller.js";
 
 const router = express.Router();
 
@@ -13,6 +13,11 @@ router.post(
 router.post(
   "/verify-payment",
   verifyRazorpayBookingPayment
+);
+
+router.get(
+  "/qr-serve",
+  qrServe
 );
 
 // verify payment without webhook

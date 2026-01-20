@@ -9,6 +9,7 @@ import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { createScanAndPayQr, createPaymentLink } from "../../utils/scanAndPay.js";
+import axios from "axios";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
@@ -61,12 +62,22 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
       contact: bookingUser.phone || bookingUser.mobile
     };
 
-    qr = await createPaymentLink(
-      payableAmount,
+    qr = await createScanAndPayQr(
+      // payableAmount,
+      1,
       `BOOKING_${bookingData?.bookingId}`,
       userDataForQR,
       "Booking Payment (Scan & Pay)",
     );
+    
+    // qr = await createPaymentLink(
+    //   // payableAmount,
+    //   1,
+    //   `BOOKING_${bookingData?.bookingId}`,
+    //   userDataForQR,
+    //   "Booking Payment (Scan & Pay)",
+    // );
+    console.log("qr", qr)
   };
 
   let razorpayOrder = await createRazorpayOrder(payableAmount);
@@ -91,6 +102,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     referenceId: `BOOKING_${bookingData.bookingId}`,
     qrId: qr ? qr.id : '',
     qrImage: qr ? qr.image_url : '',
+  
   });
 
   return res.status(200).json({
@@ -101,7 +113,25 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     transactionDetail,
     qrId: qr ? qr.id : '',
     qrImage: qr ? qr.image_url : '',
+    qr,
   });
+});
+
+export const qrServe = asyncHandler(async (req, res) => {
+  try {
+    const shortId = req.query.imageUrl?req.query.imageUrl.split("/").pop():shortId; // b2PIUUsJ
+    const razorpayUrl = `https://rzp.io/rzp/${shortId}`;
+
+    const response = await axios.get(razorpayUrl, {
+      responseType: "arraybuffer",
+    }); 
+
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Content-Disposition", "inline");
+    res.send(response.data);
+  } catch (err) {
+    res.status(500).json({ message: "QR load failed" });
+  }
 });
 
 // STEP 2: Verify Payment & Create Booking

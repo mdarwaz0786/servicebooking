@@ -30,10 +30,10 @@ export const createOrGetRazorpayCustomer = async (userData) => {
       },
     });
 
-    console.log("Razorpay customer created:", customer.id);
+    // console.log("Razorpay customer created:", customer.id);
     return customer;
   } catch (error) {
-    console.error("Error creating Razorpay customer:", error);
+    // console.error("Error creating Razorpay customer:", error);
     throw error;
   }
 };
@@ -57,12 +57,12 @@ export const createScanAndPayQr = async (
     // Create or get customer
     const customer = await createOrGetRazorpayCustomer(userData);
 
-    console.log("Creating QR with:", {
-      amount,
-      referenceId,
-      customerId: customer.id,
-      description,
-    });
+    // console.log("Creating QR with:", {
+    //   amount,
+    //   referenceId,
+    //   customerId: customer.id,
+    //   description,
+    // });
 
     const qr = await razorpay.qrCode.create({
       type: "upi_qr",
@@ -78,11 +78,12 @@ export const createScanAndPayQr = async (
       },
     });
 
-    console.log("QR created successfully:", qr.id);
+    // console.log("QR created successfully:", qr.id);
 
     return {
       ...qr,
-      razorpayCustomerId: customer.id
+      razorpayCustomerId: customer.id,
+      shortId:qr.image_url ? qr?.image_url.split("/").pop() : '',
     };
   } catch (error) {
     console.error(
@@ -121,13 +122,13 @@ export const createPaymentLink = async (
       throw new Error("Amount must be at least ₹1");
     }
 
-    console.log("Creating Payment Link with parameters:", {
-      amount: amount,
-      amountInPaise: amountInPaise,
-      referenceId: referenceId,
-      userId: userData.userId,
-      description: description
-    });
+    // console.log("Creating Payment Link with parameters:", {
+    //   amount: amount,
+    //   amountInPaise: amountInPaise,
+    //   referenceId: referenceId,
+    //   userId: userData.userId,
+    //   description: description
+    // });
 
     // Create or get customer
     const customer = await createOrGetRazorpayCustomer(userData);
@@ -136,7 +137,7 @@ export const createPaymentLink = async (
       throw new Error("Failed to create/get Razorpay customer");
     }
 
-    console.log("Using Razorpay customer ID:", customer.id);
+    // console.log("Using Razorpay customer ID:", customer.id);
 
     // Prepare payment link parameters
     const paymentLinkParams = {
@@ -181,17 +182,17 @@ export const createPaymentLink = async (
       paymentLinkParams.expire_by = Math.floor(Date.now() / 1000) + (options.expiryMinutes * 60);
     }
 
-    console.log("Payment Link creation params:", JSON.stringify(paymentLinkParams, null, 2));
+    // console.log("Payment Link creation params:", JSON.stringify(paymentLinkParams, null, 2));
 
     // Create Payment Link
     const paymentLink = await razorpay.paymentLink.create(paymentLinkParams);
 
-    console.log("Payment Link created successfully:", {
-      linkId: paymentLink.id,
-      shortUrl: paymentLink.short_url,
-      status: paymentLink.status,
-      amount: paymentLink.amount / 100
-    });
+    // console.log("Payment Link created successfully:", {
+    //   linkId: paymentLink.id,
+    //   shortUrl: paymentLink.short_url,
+    //   status: paymentLink.status,
+    //   amount: paymentLink.amount / 100
+    // });
 
     // Return enhanced response
     return {
@@ -218,13 +219,13 @@ export const createPaymentLink = async (
     };
 
   } catch (error) {
-    console.error("Razorpay Payment Link creation failed:", {
-      error: error.message,
-      stack: error.stack,
-      referenceId: referenceId,
-      amount: amount,
-      userId: userData?.userId
-    });
+    // console.error("Razorpay Payment Link creation failed:", {
+    //   error: error.message,
+    //   stack: error.stack,
+    //   referenceId: referenceId,
+    //   amount: amount,
+    //   userId: userData?.userId
+    // });
 
     // Throw user-friendly error
     if (error.error && error.error.description) {
