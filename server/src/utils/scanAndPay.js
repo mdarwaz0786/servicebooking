@@ -16,7 +16,7 @@ export const createOrGetRazorpayCustomer = async (userData) => {
     // Check if customer already exists by email or contact
     // Note: Razorpay doesn't have a direct API to fetch by email/phone
     // So you might want to store razorpayCustomerId in your User model
-    
+
     const timestamp = Date.now();
     const uniqueEmail = `${email.split('@')[0]}+${timestamp}@${email.split('@')[1] || 'example.com'}`;
 
@@ -56,7 +56,7 @@ export const createScanAndPayQr = async (
 
     // Create or get customer
     const customer = await createOrGetRazorpayCustomer(userData);
-    
+
     console.log("Creating QR with:", {
       amount,
       referenceId,
@@ -131,7 +131,7 @@ export const createPaymentLink = async (
 
     // Create or get customer
     const customer = await createOrGetRazorpayCustomer(userData);
-    
+
     if (!customer || !customer.id) {
       throw new Error("Failed to create/get Razorpay customer");
     }
@@ -147,11 +147,11 @@ export const createPaymentLink = async (
       customer: {
         name: userData.name || "Customer",
         email: userData.email || "",
-        contact: userData.phone || ""
+        contact: userData.contact || ""
       },
       notify: {
-        sms: true,
-        email: true
+        sms: false,
+        email: false
       },
       reminder_enable: true,
       // UPI and other payment methods
@@ -163,7 +163,7 @@ export const createPaymentLink = async (
         reference_id: referenceId,
         userId: userData.userId,
         userEmail: userData.email || '',
-        userPhone: userData.phone || '',
+        userPhone: userData.contact || '',
         timestamp: new Date().toISOString(),
         type: "ride_payment"
       },
@@ -230,7 +230,7 @@ export const createPaymentLink = async (
     if (error.error && error.error.description) {
       throw new Error(`Razorpay Error: ${error.error.description}`);
     }
-    
+
     throw new Error(`Payment Link creation failed: ${error.message}`);
   }
 };

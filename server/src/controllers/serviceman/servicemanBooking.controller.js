@@ -11,6 +11,7 @@ import compressImage from '../../helpers/compressImage.js';
 import { adjustWalletCredit, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 import generateOtp from "../../utils/generateOpt.js";
 import InvoiceModel from "../../models/invoice.model.js";
+import { createInvoice } from "../../utils/invoice.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -573,15 +574,33 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  await createServicemanEarning(servicemanId, servicemanBookingId, userId)
+
+  const {
+    booking: bookingDetail,
+    bookingItems,
+    serviceman: provider,
+    customer,
+    address,
+    company,
+  } = await createInvoice(bookingId);
+
   await InvoiceModel.create({
-
+    customerName: customer?.name || "",
+    customerEmail: customer?.email || "",
+    customerMobile: customer?.mobile || "",
+    customerProfileImage: customer?.profileImage || "",
+    deliveryAddress: address?.houseNumber || "",
+    landmark: address?.landmark || "",
+    customerStateName: address?.stateName || "",
+    custmerStateCode: address?.stateCode || "",
+    bookingDetail: bookingDetail || {},
+    bookingItemDetail: bookingItems || [],
+    latestServicemanDetail: provider || {},
+    companyDetail: company || {},
+    customerDetail: customer || {},
+    addressDetail: address || {},
   });
-
-  const earning = await createServicemanEarning(servicemanId, servicemanBookingId, userId)
-
-  if (!earning) {
-    throw new ApiError(400, "Failed to create serviceman earning");
-  };
 
   return res.status(201).json({
     success: true,

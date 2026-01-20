@@ -4,7 +4,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 
 // Create address
 export const createAddress = asyncHandler(async (req, res) => {
-  const { houseNumber, landmark, deliveryPersonName, type, lat, long, pincode } = req.body;
+  const { houseNumber, landmark, deliveryPersonName, type, lat, long, pincode, stateName, stateCode } = req.body;
 
   if (!houseNumber || !houseNumber.trim()) {
     throw new ApiError(400, "House number is required");
@@ -19,6 +19,8 @@ export const createAddress = asyncHandler(async (req, res) => {
     lat,
     long,
     pincode,
+    stateName,
+    stateCode,
     createdBy: req.user?._id,
   });
 
@@ -42,7 +44,7 @@ export const getAddressById = asyncHandler(async (req, res) => {
 
 // Update address
 export const updateAddress = asyncHandler(async (req, res) => {
-  const { houseNumber, landmark, deliveryPersonName, type, lat, long, pincode } = req.body;
+  const { houseNumber, landmark, deliveryPersonName, type, lat, long, pincode, stateName, stateCode } = req.body;
 
   const address = await AddressModel.findOne({ _id: req.params.id, userId: req.user?._id });
   if (!address) {
@@ -55,7 +57,9 @@ export const updateAddress = asyncHandler(async (req, res) => {
   address.type = type || address.type;
   address.lat = lat || address.lat;
   address.long = long || address.long;
-  address.pincode = picode || address.pincode;
+  address.pincode = pincode || address.pincode;
+  address.stateName = stateName || address.stateName;
+  address.stateCode = stateCode || address.stateCode;
   address.updatedBy = req.user?._id;
 
   await address.save();
