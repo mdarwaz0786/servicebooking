@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import InvoiceCounter from "./invoiceCounter.model.js";
 
 const invoiceSchema = new mongoose.Schema({
+  bookingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Booking",
+  },
   customerName: {
     type: String,
     default: '',

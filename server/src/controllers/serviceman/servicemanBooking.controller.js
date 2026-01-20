@@ -586,6 +586,7 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
   } = await createInvoice(bookingId);
 
   await InvoiceModel.create({
+    bookingId,
     customerName: customer?.name || "",
     customerEmail: customer?.email || "",
     customerMobile: customer?.mobile || "",
