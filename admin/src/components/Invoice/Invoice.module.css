@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;800&display=swap");
+
+.invoice {
+  width: 1000px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 30px;
+  font-family: "Roboto", sans-serif;
+  color: #111;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.logoSection {
+  display: flex;
+  gap: 16px;
+}
+
+.logoImg {
+  width: 150px;
+  object-fit: contain;
+}
+
+.companyInfo {
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 300px;
+}
+
+.sectionTitle {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.value {
+  font-size: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d9d9d9;
+  margin-bottom: 18px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.items {
+  margin-top: 40px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.itemsHeader {
+  display: flex;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 10px 14px;
+}
+
+.itemsBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 18px 14px;
+  column-gap: 120px;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.itemSac {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  margin-top: 4px;
+}
+
+.breakupRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.breakupRow small {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.totalBar {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
+  font-weight: 800;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  margin-top: 20px;
+  background: #f9f9f9;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  font-size: 12px;
+}
