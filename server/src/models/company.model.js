@@ -28,11 +28,27 @@ const companySchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  authorizedSignature: {   // image
+  authorizedSignature: {
     type: String,
     default: "",
   },
-  qrCode: {        // image
+  qrCode: {
+    type: String,
+    default: "",
+  },
+  logo: {
+    type: String,
+    default: "",
+  },
+  email: {
+    type: String,
+    default: "",
+  },
+  mobile: {
+    type: String,
+    default: "",
+  },
+  websiteUrl: {
     type: String,
     default: "",
   },

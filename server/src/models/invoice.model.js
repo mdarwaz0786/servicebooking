@@ -10,6 +10,10 @@ const invoiceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",
   },
+  servicemanBookingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManBooking",
+  },
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ServiceManProfile",

@@ -124,12 +124,16 @@ import UpdateZonePage from "../pages/Zone/UpdateZonePage";
 import PincodeListPage from "../pages/Pincode/PincodeListPage";
 import PincodeFormPage from "../pages/Pincode/PincodeFormPage";
 import CashCollectedPage from "../pages/CashCollected/CashCollectedPage";
+import InvoiceListPage from "../pages/Invoice/InvoiceListPage";
+import Invoice from "../pages/Invoice/Invoice";
 
 const routesConfig = {
   private: [
     { path: "/", element: DashboardPage },
     { path: "/app-info", element: AppInfoFormPage },
     { path: "/cash-collected", element: CashCollectedPage },
+    { path: "/invoice", element: InvoiceListPage },
+    { path: "/invoice/:id", element: Invoice },
 
     { path: "/categories", element: CategoryListPage },
     { path: "/add-category", element: AddCategoryPage },

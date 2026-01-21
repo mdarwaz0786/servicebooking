@@ -465,29 +465,10 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            <li>
-              <Link to="#"> <i className="fe fe-credit-card" />
-                <span>Invoice</span>
-                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+            <li >
+              <Link to="/invoice" className={currentPath === "/invoice" ? "active" : ""}>
+                <i className="fe fe-tag" /> <span>Invoice</span>
               </Link>
-              <ul>
-                <li>
-                  <Link
-                    to="/invoice/admin"
-                    className={currentPath === "/invoice/admin" ? "active" : ""}
-                  >
-                    <span>Admin</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/invoice/provider"
-                    className={currentPath === "/invoice/provider" ? "active" : ""}
-                  >
-                    <span>Provider</span>
-                  </Link>
-                </li>
-              </ul>
             </li>
 
             <li>
