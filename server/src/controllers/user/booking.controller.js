@@ -33,10 +33,12 @@ export const createBooking = asyncHandler(async (req, res) => {
   if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
 
   const address = await AddressModel.findById(addressId);
+  if (!address) throw new ApiError(400, "Address not found");
 
   const lat = address?.lat;
   const long = address?.long;
   const pin = address?.pincode || pincode;
+  const categoryId = cartProducts[0]?.categoryId;
 
   const verifyPincode = await PincodeModel.findOne({ pincoode: pin });
 
@@ -62,6 +64,7 @@ export const createBooking = asyncHandler(async (req, res) => {
   if (zone) {
     serviceman = await ServiceManProfileModel.findOne({
       zones: zone?._id,
+      categoryIds: categoryId,
     }).select("_id");
   };
 
