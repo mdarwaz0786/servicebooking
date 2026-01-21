@@ -1,4 +1,5 @@
 import CartModel from "../../models/cart.model.js";
+import ServiceModel from "../../models/service.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
@@ -11,7 +12,29 @@ export const addToCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Service ID is required");
   };
 
+  const service = await ServiceModel.findById(serviceId).select("categoryId");
+
+  if (!service) {
+    throw new ApiError(404, "Service not found");
+  }
+
   const resolvedUserId = req.user?._id ? req.user._id : userId;
+
+  let cartItems = await CartModel.find({ userId: resolvedUserId });
+
+  let message;
+
+  if (cartItems.length > 0) {
+    const existingCategoryId = cartItems[0]?.categoryId?.toString();
+
+    if (existingCategoryId !== service?.categoryId?.toString()) {
+      await CartModel.deleteMany({
+        userId: resolvedUserId,
+        categoryId: existingCategoryId,
+      });
+    };
+    message = "Your previous category service is removed from cart";
+  };
 
   let cartItem = await CartModel.findOne({ serviceId, userId: resolvedUserId });
 
@@ -25,6 +48,7 @@ export const addToCart = asyncHandler(async (req, res) => {
   } else {
     cartItem = await CartModel.create({
       serviceId,
+      categoryId: service?.categoryId,
       userId: resolvedUserId,
       quantity,
     });
@@ -34,7 +58,7 @@ export const addToCart = asyncHandler(async (req, res) => {
 
   const reponseData = await getCartData(resolvedUserId);
 
-  return res.status(201).json({ success: true, message: "Added To Cart", data: reponseData });
+  return res.status(201).json({ success: true, message: message ? message : "Added To Cart", data: reponseData });
 });
 
 // Get cart items

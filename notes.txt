@@ -125,3 +125,29 @@ server {
     server_name codediffusion.info www.codediffusion.info;
     return 404; # managed by Certbot
 }
+
+
+// invoice tab babega
+filter me type, booking, provider, customer
+
+// invoice
+calculations in invoice.
+
+// training reschedule -> filter ke acciording and unique provider
+
+// payment verify by qrId, transaction table id, type[bookingComplete](done)
+
+// booking auto assign,
+
+// cart me same category hona chahiye (done)
+
+
+🔁 QR Status Check API (Razorpay)
+GET https://api.razorpay.com/v1/payments/qr_codes/{qr_id}
+
+Example (Node)
+const qrStatus = await razorpay.qrCode.fetch(qrId);
+
+if (qrStatus.payments_count_received > 0) {
+  // Payment received
+}

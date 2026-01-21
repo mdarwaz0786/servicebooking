@@ -8,7 +8,7 @@ import WalletModel from "../../models/wallet.model.js";
 import CartModel from "../../models/cart.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateOtp from "../../utils/generateOpt.js";
-import { createScanAndPayQr, createPaymentLink } from "../../utils/scanAndPay.js";
+import { createScanAndPayQr, createPaymentLink, razorpay } from "../../utils/scanAndPay.js";
 import axios from "axios";
 
 // STEP 1: Create Razorpay Order
@@ -49,12 +49,12 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     from = "user";
 
     const bookingUser = {
-      userId:userId,
-      name:"Test",
-      email:"Test@gmail.com",
-      phone:"8285392948",
+      userId: userId,
+      name: "Test",
+      email: "Test@gmail.com",
+      phone: "8285392948",
     }
-    
+
     const userDataForQR = {
       userId: bookingUser.userId,
       name: bookingUser.name || bookingUser.fullName,
@@ -69,7 +69,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
       userDataForQR,
       "Booking Payment (Scan & Pay)",
     );
-    
+
     // qr = await createPaymentLink(
     //   // payableAmount,
     //   1,
@@ -102,7 +102,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     referenceId: `BOOKING_${bookingData.bookingId}`,
     qrId: qr ? qr.id : '',
     qrImage: qr ? qr.image_url : '',
-  
+
   });
 
   return res.status(200).json({
@@ -119,12 +119,12 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
 export const qrServe = asyncHandler(async (req, res) => {
   try {
-    const shortId = req.query.imageUrl?req.query.imageUrl.split("/").pop():shortId; // b2PIUUsJ
+    const shortId = req.query.imageUrl ? req.query.imageUrl.split("/").pop() : shortId; // b2PIUUsJ
     const razorpayUrl = `https://rzp.io/rzp/${shortId}`;
 
     const response = await axios.get(razorpayUrl, {
       responseType: "arraybuffer",
-    }); 
+    });
 
     res.setHeader("Content-Type", "image/png");
     res.setHeader("Content-Disposition", "inline");
@@ -136,7 +136,7 @@ export const qrServe = asyncHandler(async (req, res) => {
 
 // STEP 2: Verify Payment & Create Booking
 export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
-  const { transactionTableId } = req.body;
+  const { transactionTableId, qrId, type } = req.body;
 
   const {
     razorpay_order_id,
@@ -152,11 +152,20 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     second: "2-digit",
   });
 
-  const isValid = verifyRazorpayPayment({
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-  });
+  let isValid = false;
+
+  if (type == "bookingComplete" && qrId) {
+    const qrStatus = await razorpay.qrCode.fetch(qrId);
+    if (qrStatus.payments_count_received > 0) {
+      isValid = true;
+    };
+  } else {
+    isValid = verifyRazorpayPayment({
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    });
+  };
 
   if (!isValid) {
     await TransactionModel.findByIdAndUpdate({ _id: transactionTableId }, {
@@ -199,15 +208,16 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       purpose: "Wallet Recharge",
       createdBy: transactionData.userId,
     });
-  }
-  else if (transactionData.productType == "bookingComplete") {
-    return res.status(400).json({
-      success: true,
-      message: "Payment Wait..",
-      data: {},
-    });
-  }
+  };
 
+  if (type == "bookingComplete") {
+    await BookingModel.findByIdAndUpdate({ _id: transactionData.PID }, {
+      paymentStatus: 1,
+      paymentBy: "razorpay",
+      createdBy: req.user?._id,
+      opt: generateOtp(),
+    }, { new: true });
+  };
 
   return res.status(201).json({
     success: true,

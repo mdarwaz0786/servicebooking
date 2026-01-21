@@ -251,65 +251,6 @@ const Sidebar = () => {
             </li>
 
             <li>
-              <Link to="#"> <i className="fe fe-credit-card" />
-                <span>Payments</span>
-                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
-              </Link>
-              <ul>
-                <li>
-                  <Link
-                    to="/transactions-user/user"
-                    className={currentPath === "/transactions-user/user" ? "active" : ""}
-                  >
-                    <span>Customer</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/transactions-serviceman/serviceman"
-                    className={currentPath === "/transactions-serviceman/serviceman" ? "active" : ""}
-                  >
-                    <span>Provider</span>
-                  </Link>
-                </li>
-              </ul>
-            </li>
-
-
-            <li>
-              <Link to="#"><i className="fe fe-shopping-cart" />
-                <span>Bookings</span>
-                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
-              </Link>
-              <ul>
-                <li>
-                  <Link
-                    to="/bookings/active"
-                    className={currentPath === "/bookings/active" ? "active" : ""}
-                  >
-                    <span>Active</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/completed-bookings/completed"
-                    className={currentPath === "completed-bookings/completed" ? "active" : ""}
-                  >
-                    <span>Completed</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/cancelled-bookings/cancelled"
-                    className={currentPath === "/cancelled-bookings/cancelled" ? "active" : ""}
-                  >
-                    <span>Cancelled</span>
-                  </Link>
-                </li>
-              </ul>
-            </li>
-
-            <li>
               <Link to="#"><i className="fe fe-user" />
                 <span> Users</span>
                 <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
@@ -461,6 +402,89 @@ const Sidebar = () => {
                     className={currentPath === "/notification" ? "active" : ""}
                   >
                     <span>Notification</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <Link to="#"><i className="fe fe-shopping-cart" />
+                <span>Bookings</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/bookings/active"
+                    className={currentPath === "/bookings/active" ? "active" : ""}
+                  >
+                    <span>Active</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/completed-bookings/completed"
+                    className={currentPath === "completed-bookings/completed" ? "active" : ""}
+                  >
+                    <span>Completed</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/cancelled-bookings/cancelled"
+                    className={currentPath === "/cancelled-bookings/cancelled" ? "active" : ""}
+                  >
+                    <span>Cancelled</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <Link to="#"> <i className="fe fe-credit-card" />
+                <span>Payments</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/transactions-user/user"
+                    className={currentPath === "/transactions-user/user" ? "active" : ""}
+                  >
+                    <span>Customer</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/transactions-serviceman/serviceman"
+                    className={currentPath === "/transactions-serviceman/serviceman" ? "active" : ""}
+                  >
+                    <span>Provider</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <Link to="#"> <i className="fe fe-credit-card" />
+                <span>Invoice</span>
+                <span className="menu-arrow"><i className="fe fe-chevron-right"></i></span>
+              </Link>
+              <ul>
+                <li>
+                  <Link
+                    to="/invoice/admin"
+                    className={currentPath === "/invoice/admin" ? "active" : ""}
+                  >
+                    <span>Admin</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/invoice/provider"
+                    className={currentPath === "/invoice/provider" ? "active" : ""}
+                  >
+                    <span>Provider</span>
                   </Link>
                 </li>
               </ul>

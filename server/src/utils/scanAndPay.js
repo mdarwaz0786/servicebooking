@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const razorpay = new Razorpay({
+export const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
@@ -83,7 +83,7 @@ export const createScanAndPayQr = async (
     return {
       ...qr,
       razorpayCustomerId: customer.id,
-      shortId:qr.image_url ? qr?.image_url.split("/").pop() : '',
+      shortId: qr.image_url ? qr?.image_url.split("/").pop() : '',
     };
   } catch (error) {
     console.error(

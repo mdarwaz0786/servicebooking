@@ -588,27 +588,10 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
   } = await createInvoice(bookingId);
 
   await InvoiceModel.create({
-    bookingId,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
     type: "Customer",
-    amount: 2000,
-  });
-
-  await InvoiceModel.create({
     bookingId,
+    providerId: latestServicemanDetail?._id,
+    customerId: customerDetail?._id,
     customerName: customer?.name || "",
     customerEmail: customer?.email || "",
     customerMobile: customer?.mobile || "",
@@ -623,12 +606,13 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     companyDetail: company || {},
     customerDetail: customer || {},
     addressDetail: address || {},
+  });
+
+  await InvoiceModel.create({
     type: "Provider",
-    amount: 2000,
-  });
-
-  await InvoiceModel.create({
     bookingId,
+    providerId: latestServicemanDetail?._id,
+    customerId: customerDetail?._id,
     customerName: customer?.name || "",
     customerEmail: customer?.email || "",
     customerMobile: customer?.mobile || "",
@@ -643,8 +627,27 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     companyDetail: company || {},
     customerDetail: customer || {},
     addressDetail: address || {},
+  });
+
+  await InvoiceModel.create({
     type: "Admin",
-    amount: 2000,
+    bookingId,
+    providerId: latestServicemanDetail?._id,
+    customerId: customerDetail?._id,
+    customerName: customer?.name || "",
+    customerEmail: customer?.email || "",
+    customerMobile: customer?.mobile || "",
+    customerProfileImage: customer?.profileImage || "",
+    deliveryAddress: address?.houseNumber || "",
+    landmark: address?.landmark || "",
+    customerStateName: address?.stateName || "",
+    custmerStateCode: address?.stateCode || "",
+    bookingDetail: bookingDetail || {},
+    bookingItemDetail: bookingItems || [],
+    latestServicemanDetail: provider || {},
+    companyDetail: company || {},
+    customerDetail: customer || {},
+    addressDetail: address || {},
   });
 
   if (paymentMode?.toLowerCase() == "cod") {
