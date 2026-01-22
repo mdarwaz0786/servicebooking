@@ -18,6 +18,10 @@ const invoiceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "ServiceManProfile",
   },
+  servicemanUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -90,7 +94,18 @@ const invoiceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {},
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+invoiceSchema.virtual("kyc", {
+  ref: "KYC",
+  localField: "servicemanUserId",
+  foreignField: "userId",
+  justOne: true,
+  options: {
+    sort: { createdAt: -1 },
+    match: { status: "approved" },
+  },
+});
 
 invoiceSchema.pre("save", async function (next) {
   if (this.companyInvoiceNumber && this.providerInvoiceNumber) {

@@ -31,6 +31,10 @@ export const getInvoices = asyncHandler(async (req, res) => {
 
   const invoices = await InvoiceModel
     .find(filter)
+    .populate({
+      path: "kyc",
+      select: "status gstNumber",
+    })
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -56,7 +60,12 @@ export const getInvoices = asyncHandler(async (req, res) => {
 export const getInvoiceById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const invoice = await InvoiceModel.findById(id)
+  const invoice = await InvoiceModel
+    .findById(id)
+    .populate({
+      path: "kyc",
+      select: "status gstNumber",
+    })
 
   if (!invoice) {
     throw new ApiError(404, "Invoice not found");

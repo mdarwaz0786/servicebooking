@@ -218,7 +218,7 @@ const InvoiceListPage = () => {
                           <div className="d-flex">
                             <Link to={`/invoice/${d?._id}`}>
                               <button className="btn delete-table me-2">
-                                <i className="fe fe-edit" />
+                                <i className="fe fe-eye" />
                               </button>
                             </Link>
                           </div>
