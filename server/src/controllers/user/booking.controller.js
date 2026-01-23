@@ -14,6 +14,7 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { getSupportConfig } from "../../utils/wallet.utils.js";
+import { convert12To24 } from "../../utils/convert12to24.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -71,8 +72,16 @@ export const createBooking = asyncHandler(async (req, res) => {
   //   }).select("_id userId");
   // }
 
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
   if (zone) {
-    const servicemenWithBalance = await Wallet.aggregate([
+    const bookingTime24 = convert12To24(scheduleTime);
+
+    const servicemen = await Wallet.aggregate([
       // 1️⃣ Active wallets
       { $match: { status: true } },
 
@@ -105,7 +114,7 @@ export const createBooking = asyncHandler(async (req, res) => {
       },
       { $unwind: "$serviceman" },
 
-      // 6️⃣ Zone + category filters
+      // 6️⃣ Zone + category
       {
         $match: {
           "serviceman.zones": zone?._id,
@@ -113,7 +122,7 @@ export const createBooking = asyncHandler(async (req, res) => {
         }
       },
 
-      // 7️⃣ KYC must be APPROVED
+      // 7️⃣ KYC approved
       {
         $lookup: {
           from: "kycs",
@@ -123,13 +132,9 @@ export const createBooking = asyncHandler(async (req, res) => {
         }
       },
       { $unwind: "$kyc" },
-      {
-        $match: {
-          "kyc.status": "approved"
-        }
-      },
+      { $match: { "kyc.status": "approved" } },
 
-      // 8️⃣ First training attendance must be marked
+      // 8️⃣ Training attendance PRESENT
       {
         $lookup: {
           from: "trainingschedulesubmits",
@@ -140,8 +145,8 @@ export const createBooking = asyncHandler(async (req, res) => {
                 $expr: {
                   $and: [
                     { $eq: ["$providerId", "$$providerId"] },
-                    { $eq: ["$type", 1] },               // First training only
-                    { $ne: ["$attendanceStatus", "Present"] },
+                    { $eq: ["$type", 1] },
+                    { $eq: ["$attendanceStatus", "Present"] },
                     { $eq: ["$status", true] }
                   ]
                 }
@@ -152,15 +157,92 @@ export const createBooking = asyncHandler(async (req, res) => {
           as: "trainingAttendance"
         }
       },
+      { $match: { trainingAttendance: { $ne: [] } } },
 
-      // Ensure attendance exists
+      // 9️⃣ Time slot availability
       {
-        $match: {
-          trainingAttendance: { $ne: [] }
+        $lookup: {
+          from: "servicemantimeslots",
+          let: {
+            providerId: "$_id",
+            bookingDate: new Date(scheduleDate),
+            bookingTime: bookingTime24
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$servicemanId", "$$providerId"] },
+                    { $eq: ["$status", true] },
+                    {
+                      $eq: [
+                        { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                        { $dateToString: { format: "%Y-%m-%d", date: "$$bookingDate" } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            { $unwind: "$times" },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $lte: ["$times.from", "$$bookingTime"] },
+                    { $gte: ["$times.to", "$$bookingTime"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "availableSlot"
+        }
+      },
+      { $match: { availableSlot: { $ne: [] } } },
+
+      // 10️⃣ TODAY BOOKING COUNT
+      {
+        $lookup: {
+          from: "servicemanbookings",
+          let: { servicemanId: "$serviceman._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$servicemanId", "$$servicemanId"] },
+                    { $gte: ["$createdAt", startOfToday] },
+                    { $lte: ["$createdAt", endOfToday] }
+                  ]
+                }
+              }
+            },
+            {
+              $group: {
+                _id: "$servicemanId",
+                count: { $sum: 1 }
+              }
+            }
+          ],
+          as: "todayBookings"
         }
       },
 
-      // 9️⃣ Pick one serviceman (you can change strategy)
+      // 11️⃣ Normalize booking count
+      {
+        $addFields: {
+          todayBookingCount: {
+            $ifNull: [{ $arrayElemAt: ["$todayBookings.count", 0] }, 0]
+          }
+        }
+      },
+
+      // 12️⃣ Least bookings FIRST
+      { $sort: { todayBookingCount: 1 } },
+
+      // 13️⃣ Pick ONE serviceman
       { $limit: 1 },
 
       // 🔚 Final output
@@ -168,12 +250,13 @@ export const createBooking = asyncHandler(async (req, res) => {
         $project: {
           _id: "$serviceman._id",
           userId: "$serviceman.userId",
+          todayBookingCount: 1,
           currentCreditPoints: "$latestWallet.currentCreditPoints"
         }
       }
     ]);
 
-    serviceman = servicemenWithBalance[0] || null;
+    serviceman = servicemen[0] || null;
   };
 
   const otp = generateOtp();

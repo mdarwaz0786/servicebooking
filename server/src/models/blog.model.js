@@ -15,6 +15,9 @@ const blogSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  tags: {
+    type: String,
+  },
   shortDescription: {
     type: String,
     required: false,
@@ -41,10 +44,58 @@ const blogSchema = new mongoose.Schema({
     default: null,
   },
   meta: {
-    title: { type: String, trim: true, default: null },
-    keywords: { type: String, trim: true, default: null },
-    author: { type: String, trim: true, default: null },
-    description: { type: String, trim: true, default: null },
+    title: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    keywords: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    slug: {
+      type: String,
+      default: null
+    },
+    image: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    author: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    canonicalTag: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  publishState: {
+    type: String,
+    enum: ["draft", "published", "scheduled"],
+    default: "draft",
+  },
+  publishDate: {
+    type: Date,
+  },
+  publishTime: {
+    type: String,
+  },
+  author: {
+    type: String,
+  },
+  isComment: {
+    type: Boolean,
+    default: true,
   },
   status: {
     type: Boolean,
@@ -67,7 +118,7 @@ blogSchema.pre("save", function (next) {
 
   if (!this.meta.title || this.meta.title.trim() === "") {
     this.meta.title = this.title;
-  }
+  };
 
   next();
 });
@@ -80,8 +131,8 @@ blogSchema.pre("findOneAndUpdate", function (next) {
   if (update.meta && (!update.meta.title || update.meta.title.trim() === "")) {
     if (update.title) {
       update.meta.title = update.title;
-    }
-  }
+    };
+  };
 
   if (update.$set) {
     if (
@@ -90,9 +141,9 @@ blogSchema.pre("findOneAndUpdate", function (next) {
     ) {
       if (update.$set.title) {
         update.$set.meta.title = update.$set.title;
-      }
-    }
-  }
+      };
+    };
+  };
 
   next();
 });
