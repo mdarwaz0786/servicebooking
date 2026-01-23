@@ -21,7 +21,12 @@ export const getInvoices = asyncHandler(async (req, res) => {
     filter.$or = [
       { type: { $regex: search, $options: "i" } },
       { "latestServicemanDetail.name": { $regex: search, $options: "i" } },
+      { "latestServicemanDetail.email": { $regex: search, $options: "i" } },
+      { "latestServicemanDetail.mobile": { $regex: search, $options: "i" } },
       { "bookingDetail.bookingId": { $regex: search, $options: "i" } },
+      { "customerDetail.name": { $regex: search, $options: "i" } },
+      { "customerDetail.email": { $regex: search, $options: "i" } },
+      { "customerDetail.mobile": { $regex: search, $options: "i" } },
     ];
   };
 

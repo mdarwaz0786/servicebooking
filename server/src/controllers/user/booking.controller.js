@@ -6,17 +6,20 @@ import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ReviewModel from "../../models/review.model.js";
 import PincodeModel from "../../models/pincode.model.js";
+import Wallet from "../../models/wallet.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
+import { getSupportConfig } from "../../utils/wallet.utils.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "Unauthorized: User not found");
+  const { acceptCreditPoints } = await getSupportConfig();
 
   const {
     addressId,
@@ -61,11 +64,116 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   let serviceman = null;
 
+  // if (zone) {
+  //   serviceman = await ServiceManProfileModel.findOne({
+  //     zones: zone?._id,
+  //     categoryIds: categoryId,
+  //   }).select("_id userId");
+  // }
+
   if (zone) {
-    serviceman = await ServiceManProfileModel.findOne({
-      zones: zone?._id,
-      categoryIds: categoryId,
-    }).select("_id");
+    const servicemenWithBalance = await Wallet.aggregate([
+      // 1️⃣ Active wallets
+      { $match: { status: true } },
+
+      // 2️⃣ Latest wallet first
+      { $sort: { createdAt: -1 } },
+
+      // 3️⃣ Latest wallet per provider
+      {
+        $group: {
+          _id: "$providerId",
+          latestWallet: { $first: "$$ROOT" }
+        }
+      },
+
+      // 4️⃣ Credit points condition
+      {
+        $match: {
+          "latestWallet.currentCreditPoints": { $gt: acceptCreditPoints }
+        }
+      },
+
+      // 5️⃣ Join serviceman profile
+      {
+        $lookup: {
+          from: "servicemanprofiles",
+          localField: "_id",
+          foreignField: "userId",
+          as: "serviceman"
+        }
+      },
+      { $unwind: "$serviceman" },
+
+      // 6️⃣ Zone + category filters
+      {
+        $match: {
+          "serviceman.zones": zone?._id,
+          "serviceman.categoryIds": categoryId
+        }
+      },
+
+      // 7️⃣ KYC must be APPROVED
+      {
+        $lookup: {
+          from: "kycs",
+          localField: "_id",
+          foreignField: "userId",
+          as: "kyc"
+        }
+      },
+      { $unwind: "$kyc" },
+      {
+        $match: {
+          "kyc.status": "approved"
+        }
+      },
+
+      // 8️⃣ First training attendance must be marked
+      {
+        $lookup: {
+          from: "trainingschedulesubmits",
+          let: { providerId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$providerId", "$$providerId"] },
+                    { $eq: ["$type", 1] },               // First training only
+                    { $ne: ["$attendanceStatus", "Present"] },
+                    { $eq: ["$status", true] }
+                  ]
+                }
+              }
+            },
+            { $limit: 1 }
+          ],
+          as: "trainingAttendance"
+        }
+      },
+
+      // Ensure attendance exists
+      {
+        $match: {
+          trainingAttendance: { $ne: [] }
+        }
+      },
+
+      // 9️⃣ Pick one serviceman (you can change strategy)
+      { $limit: 1 },
+
+      // 🔚 Final output
+      {
+        $project: {
+          _id: "$serviceman._id",
+          userId: "$serviceman.userId",
+          currentCreditPoints: "$latestWallet.currentCreditPoints"
+        }
+      }
+    ]);
+
+    serviceman = servicemenWithBalance[0] || null;
   };
 
   const otp = generateOtp();

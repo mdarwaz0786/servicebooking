@@ -126,18 +126,17 @@ server {
     return 404; # managed by Certbot
 }
 
-
 // invoice tab babega
-filter me type, booking, provider, customer
+filter me type, booking, provider, customer (done)
 
 // invoice
-calculations in invoice.
+calculations in invoice (done).
 
 // training reschedule -> filter ke acciording and unique provider
 
 // payment verify by qrId, transaction table id, type[bookingComplete](done)
 
-// booking auto assign,
+// booking auto assign (done),
 
 // cart me same category hona chahiye (done)
 
