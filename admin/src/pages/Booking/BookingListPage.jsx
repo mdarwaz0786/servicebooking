@@ -240,6 +240,7 @@ const BookingListPage = () => {
                       <th>Mode</th>
                       <th>Amount</th>
                       <th>Assign</th>
+                      <th>Payment Status</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -263,6 +264,7 @@ const BookingListPage = () => {
                               {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
                             </button>
                           </td>
+                          <td>{d?.paymentStatus == 1 ? "Paid" : "Pending"}</td>
                           <td>
                             <div className="d-flex align-items-center gap-2">
                               <select

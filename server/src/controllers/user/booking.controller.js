@@ -1,12 +1,10 @@
 import AddressModel from "../../models/address.model.js";
-import ZoneModel from "../../models/zone.model.js";
 import BookingModel from "../../models/booking.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ReviewModel from "../../models/review.model.js";
 import PincodeModel from "../../models/pincode.model.js";
-import Wallet from "../../models/wallet.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { getCartData } from "../../utils/cart.utils.js";
@@ -14,13 +12,12 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { getSupportConfig } from "../../utils/wallet.utils.js";
-import { convert12To24 } from "../../utils/convert12to24.js";
+import { autoAssignBooking } from "../../utils/autoAssignBooking.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "Unauthorized: User not found");
-  const { acceptCreditPoints } = await getSupportConfig();
 
   const {
     addressId,
@@ -30,7 +27,8 @@ export const createBooking = asyncHandler(async (req, res) => {
     paymentMode,
     paymentBy,
     pincode,
-    isCouponUsed } = req.body;
+    isCouponUsed,
+  } = req.body;
 
   // Get cart data from utility
   const { cartProducts, amountData } = await getCartData(userId);
@@ -48,215 +46,6 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   if (!verifyPincode) {
     throw new ApiError(400, "Sorry, our service is currently not available in your area or pincode");
-  };
-
-  // Find Zone
-  const zone = await ZoneModel.findOne({
-    status: true,
-    geometry: {
-      $geoIntersects: {
-        $geometry: {
-          type: "Point",
-          coordinates: [long, lat],
-        },
-      },
-    },
-  }).select("_id");
-
-  let serviceman = null;
-
-  // if (zone) {
-  //   serviceman = await ServiceManProfileModel.findOne({
-  //     zones: zone?._id,
-  //     categoryIds: categoryId,
-  //   }).select("_id userId");
-  // }
-
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
-  const endOfToday = new Date();
-  endOfToday.setHours(23, 59, 59, 999);
-
-  if (zone) {
-    const bookingTime24 = convert12To24(scheduleTime);
-
-    const servicemen = await Wallet.aggregate([
-      // 1️⃣ Active wallets
-      { $match: { status: true } },
-
-      // 2️⃣ Latest wallet first
-      { $sort: { createdAt: -1 } },
-
-      // 3️⃣ Latest wallet per provider
-      {
-        $group: {
-          _id: "$providerId",
-          latestWallet: { $first: "$$ROOT" }
-        }
-      },
-
-      // 4️⃣ Credit points condition
-      {
-        $match: {
-          "latestWallet.currentCreditPoints": { $gt: acceptCreditPoints }
-        }
-      },
-
-      // 5️⃣ Join serviceman profile
-      {
-        $lookup: {
-          from: "servicemanprofiles",
-          localField: "_id",
-          foreignField: "userId",
-          as: "serviceman"
-        }
-      },
-      { $unwind: "$serviceman" },
-
-      // 6️⃣ Zone + category
-      {
-        $match: {
-          "serviceman.zones": zone?._id,
-          "serviceman.categoryIds": categoryId
-        }
-      },
-
-      // 7️⃣ KYC approved
-      {
-        $lookup: {
-          from: "kycs",
-          localField: "_id",
-          foreignField: "userId",
-          as: "kyc"
-        }
-      },
-      { $unwind: "$kyc" },
-      { $match: { "kyc.status": "approved" } },
-
-      // 8️⃣ Training attendance PRESENT
-      {
-        $lookup: {
-          from: "trainingschedulesubmits",
-          let: { providerId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$providerId", "$$providerId"] },
-                    { $eq: ["$type", 1] },
-                    { $eq: ["$attendanceStatus", "Present"] },
-                    { $eq: ["$status", true] }
-                  ]
-                }
-              }
-            },
-            { $limit: 1 }
-          ],
-          as: "trainingAttendance"
-        }
-      },
-      { $match: { trainingAttendance: { $ne: [] } } },
-
-      // 9️⃣ Time slot availability
-      {
-        $lookup: {
-          from: "servicemantimeslots",
-          let: {
-            providerId: "$_id",
-            bookingDate: new Date(scheduleDate),
-            bookingTime: bookingTime24
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$servicemanId", "$$providerId"] },
-                    { $eq: ["$status", true] },
-                    {
-                      $eq: [
-                        { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
-                        { $dateToString: { format: "%Y-%m-%d", date: "$$bookingDate" } }
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            { $unwind: "$times" },
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $lte: ["$times.from", "$$bookingTime"] },
-                    { $gte: ["$times.to", "$$bookingTime"] }
-                  ]
-                }
-              }
-            }
-          ],
-          as: "availableSlot"
-        }
-      },
-      { $match: { availableSlot: { $ne: [] } } },
-
-      // 10️⃣ TODAY BOOKING COUNT
-      {
-        $lookup: {
-          from: "servicemanbookings",
-          let: { servicemanId: "$serviceman._id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$servicemanId", "$$servicemanId"] },
-                    { $gte: ["$createdAt", startOfToday] },
-                    { $lte: ["$createdAt", endOfToday] }
-                  ]
-                }
-              }
-            },
-            {
-              $group: {
-                _id: "$servicemanId",
-                count: { $sum: 1 }
-              }
-            }
-          ],
-          as: "todayBookings"
-        }
-      },
-
-      // 11️⃣ Normalize booking count
-      {
-        $addFields: {
-          todayBookingCount: {
-            $ifNull: [{ $arrayElemAt: ["$todayBookings.count", 0] }, 0]
-          }
-        }
-      },
-
-      // 12️⃣ Least bookings FIRST
-      { $sort: { todayBookingCount: 1 } },
-
-      // 13️⃣ Pick ONE serviceman
-      { $limit: 1 },
-
-      // 🔚 Final output
-      {
-        $project: {
-          _id: "$serviceman._id",
-          userId: "$serviceman.userId",
-          todayBookingCount: 1,
-          currentCreditPoints: "$latestWallet.currentCreditPoints"
-        }
-      }
-    ]);
-
-    serviceman = servicemen[0] || null;
   };
 
   const otp = generateOtp();
@@ -280,18 +69,11 @@ export const createBooking = asyncHandler(async (req, res) => {
     createdBy: userId,
   });
 
-  if (serviceman) {
-    await ServiceManBookingModel.create({
-      bookingId: booking?._id,
-      servicemanId: serviceman?._id,
-      userId,
-      status: "new",
-      createdBy: userId,
-    });
-  };
+  const { acceptCreditPoints } = await getSupportConfig(booking?._id);
+  const serviceman = await autoAssignBooking(lat, long, categoryId, scheduleDate, scheduleTime, acceptCreditPoints);
 
   // Prepare Booking Items from cartProducts
-  const bookingItems = cartProducts.map(item => ({
+  const bookingItems = cartProducts.map((item) => ({
     bookingId: booking._id,
     userId,
     serviceId: item.serviceId,
@@ -303,10 +85,20 @@ export const createBooking = asyncHandler(async (req, res) => {
   // Insert Booking Items
   await BookingItemModel.insertMany(bookingItems);
 
+  if (serviceman && paymentMode == 'cod') {
+    await ServiceManBookingModel.create({
+      bookingId: booking?._id,
+      servicemanId: serviceman?._id,
+      userId,
+      status: "new",
+      createdBy: userId,
+    });
+  };
+
   // Clear User Cart
   if (paymentMode == 'cod') {
     await CartModel.deleteMany({ userId });
-  }
+  };
 
   return res.status(201).json({
     success: true,

@@ -3,7 +3,7 @@ import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model
 import BookingModel from "../../models/booking.model.js";
 import ReviewModel from "../../models/review.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
-import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js"
+import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -365,13 +365,13 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "User not found");
 
-  await ensureSufficientCredit(userId);
-
   const serviceman = await ServiceManProfileModel.findOne({ userId });
   if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
   const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
+
+  await ensureSufficientCredit(userId, servicemanBooking?.bookingId);
 
   const booking = await BookingModel.findById(servicemanBooking?.bookingId);
   if (!booking) throw new ApiError(404, "Booking not found");
@@ -392,7 +392,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   await booking.save();
   await servicemanBooking.save();
 
-  await adjustWalletCredit(userId, status)
+  await adjustWalletCredit(userId, status, servicemanBooking?.bookingId)
 
   return res.status(200).json({
     success: true,
@@ -564,7 +564,7 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   const servicemanId = serviceman?._id;
 
-  await BookingModel.findByIdAndUpdate(
+  const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
     { status: "complete" },
     { new: true }
@@ -661,15 +661,20 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
       type,
       bookingId,
       providerId: userId,
-      amount: bookingDetail?.payableAmount,
+      amount: updatedBooking?.payableAmount,
       createdBy: userId,
       createdAt: new Date(),
     });
 
     await BookingModel.findByIdAndUpdate(
       bookingId,
-      { paymentStatus: 1 },
-      { new: true }
+      {
+        paymentStatus: 1,
+        cashColletedSubmitAmount: updatedBooking?.payableAmount,
+        cashColletedAmount: updatedBooking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
     );
   };
 

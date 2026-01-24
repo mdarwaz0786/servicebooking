@@ -150,3 +150,5 @@ const qrStatus = await razorpay.qrCode.fetch(qrId);
 if (qrStatus.payments_count_received > 0) {
   // Payment received
 }
+
+// cash colleted amount, cash collected pending amount, cash colleted submit amout
