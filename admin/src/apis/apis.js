@@ -4,6 +4,12 @@ const apis = {
   dashboard: {
     get: `${BASE_URL}/api/v1/admin/dashboard`,
   },
+  role: {
+    create: `${BASE_URL}/api/v1/admin/role`,
+    get: `${BASE_URL}/api/v1/admin/role`,
+    update: `${BASE_URL}/api/v1/admin/role`,
+    delete: `${BASE_URL}/api/v1/admin/role`,
+  },
   app: {
     create: `${BASE_URL}/api/v1/admin/app`,
     get: `${BASE_URL}/api/v1/admin/app`,

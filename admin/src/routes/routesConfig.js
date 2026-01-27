@@ -126,6 +126,8 @@ import PincodeFormPage from "../pages/Pincode/PincodeFormPage";
 import CashCollectedPage from "../pages/CashCollected/CashCollectedPage";
 import InvoiceListPage from "../pages/Invoice/InvoiceListPage";
 import Invoice from "../pages/Invoice/Invoice";
+import RoleListPage from "../pages/Role/RoleListPage";
+import RoleForm from "../pages/Role/RoleForm";
 
 const routesConfig = {
   private: [
@@ -319,6 +321,10 @@ const routesConfig = {
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },
     { path: "/admins", element: AdminListPage },
+
+    { path: "/roles", element: RoleListPage },
+    { path: "/add-role", element: RoleForm },
+    { path: "/update-role/:id", element: RoleForm },
   ],
   public: [
     { path: "/login", element: LoginPage },

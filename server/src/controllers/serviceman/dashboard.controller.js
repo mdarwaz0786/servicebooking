@@ -2,6 +2,7 @@ import WalletModel from "../../models/wallet.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
+import ServicemanTimeSlot from "../../models/servicemanTimeSlot.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
@@ -274,12 +275,29 @@ export const dashboard = asyncHandler(async (req, res) => {
     }
   ]);
 
+  // TODAY TIME SLOTS COUNT
+  const todayTimeSlots = await ServicemanTimeSlot.find({
+    servicemanId: userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
+  });
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  // TOMORROW TIME SLOTS COUNT
+  const tomorrowTimeSlots = await ServicemanTimeSlot.find({
+    servicemanId: userId,
+    date: { $gte: tomorrow, $lte: new Date(tomorrow.getTime() + 86399999) },
+  });
 
   return res.status(200).json({
     success: true,
     message: "Dashboard data fetched successfully",
     data: {
       wallet: summary,
+      todayTimeSlots: todayTimeSlots ? 1 : 0,
+      tomorrowTimeSlots: tomorrowTimeSlots ? 1 : 0,
       bookings: bookingAgg[0]?.bookings || {
         total: 0,
         new: 0,

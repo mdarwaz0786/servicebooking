@@ -174,6 +174,15 @@ const Sidebar = () => {
                     <span>Mobile App Info</span>
                   </Link>
                 </li>
+
+                <li>
+                  <Link
+                    to="/roles"
+                    className={currentPath === "/roles" ? "active" : ""}
+                  >
+                    <span>Role & Permission</span>
+                  </Link>
+                </li>
               </ul>
             </li>
 

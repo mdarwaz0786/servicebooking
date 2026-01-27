@@ -61,6 +61,7 @@ import servicemanByZone from "./servicemanByZone.routes.js";
 import pincodeRoutes from "./pincode.routes.js";
 import cashCollectedRoutes from "./cashCollctedLogger.route.js";
 import invoiceRoutes from "./invoice.routes.js";
+import roleRoutes from "./role.route.js";
 
 const router = express.Router();
 
@@ -126,5 +127,6 @@ router.use("/app", appRoutes);
 router.use("/pincode", pincodeRoutes);
 router.use("/cash-collected", cashCollectedRoutes);
 router.use("/invoice", invoiceRoutes);
+router.use("/role", roleRoutes);
 
 export default router;
