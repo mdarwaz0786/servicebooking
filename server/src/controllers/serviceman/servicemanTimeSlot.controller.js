@@ -3,55 +3,111 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 
+// export const createServicemanTimeSlot = asyncHandler(async (req, res) => {
+//   const servicemanId = req.user?._id;
+//   const selectedTimeSlot = req.body.selectedSlots;
+
+//   let slots = selectedTimeSlot;
+
+//   if (!servicemanId) {
+//     throw new ApiError(401, "Unauthorized");
+//   }
+
+//   if (!Array.isArray(slots) || slots.length === 0) {
+//     throw new ApiError(400, "Time slot data must be a non-empty array");
+//   }
+
+//   const dates = slots.map((item) => item.date);
+
+//   const existingSlots = await ServicemanTimeSlotModel.find({
+//     servicemanId,
+//     date: { $in: dates },
+//   }).select("date");
+
+//   const existingDates = new Set(
+//     existingSlots.map((s) => s.date.toISOString().split("T")[0])
+//   );
+
+//   const payload = slots.filter(({ date, times }) => {
+//     if (!date) return false;
+//     if (!Array.isArray(times) || times.length === 0) return false;
+
+//     const normalizedDate = new Date(date).toISOString().split("T")[0];
+//     return !existingDates.has(normalizedDate);
+//   }).map(({ date, times }) => ({
+//     servicemanId,
+//     date,
+//     times,
+//     createdBy: servicemanId,
+//   }));
+
+//   if (payload.length === 0) {
+//     throw new ApiError(409, "Time slots already exist for all provided dates");
+//   };
+
+//   const createdSlots = await ServicemanTimeSlotModel.insertMany(payload);
+
+//   return res.status(201).json({
+//     success: true,
+//     message: "Time slots created successfully",
+//     data: createdSlots,
+//     skipped: slots.length - payload.length,
+//   });
+// });
+
 export const createServicemanTimeSlot = asyncHandler(async (req, res) => {
   const servicemanId = req.user?._id;
-  const selectedTimeSlot = req.body.selectedSlots;
-
-  let slots = selectedTimeSlot;
+  const slots = req.body;
 
   if (!servicemanId) {
     throw new ApiError(401, "Unauthorized");
-  }
+  };
 
   if (!Array.isArray(slots) || slots.length === 0) {
     throw new ApiError(400, "Time slot data must be a non-empty array");
-  }
-
-  const dates = slots.map((item) => item.date);
-
-  const existingSlots = await ServicemanTimeSlotModel.find({
-    servicemanId,
-    date: { $in: dates },
-  }).select("date");
-
-  const existingDates = new Set(
-    existingSlots.map((s) => s.date.toISOString().split("T")[0])
-  );
-
-  const payload = slots.filter(({ date, times }) => {
-    if (!date) return false;
-    if (!Array.isArray(times) || times.length === 0) return false;
-
-    const normalizedDate = new Date(date).toISOString().split("T")[0];
-    return !existingDates.has(normalizedDate);
-  }).map(({ date, times }) => ({
-    servicemanId,
-    date,
-    times,
-    createdBy: servicemanId,
-  }));
-
-  if (payload.length === 0) {
-    throw new ApiError(409, "Time slots already exist for all provided dates");
   };
 
-  const createdSlots = await ServicemanTimeSlotModel.insertMany(payload);
+  const operations = [];
 
-  return res.status(201).json({
+  for (const slot of slots) {
+    if (!slot.date || !Array.isArray(slot.times) || slot.times.length === 0) {
+      continue;
+    };
+
+    operations.push({
+      updateOne: {
+        filter: {
+          servicemanId,
+          date: new Date(slot.date),
+        },
+        update: {
+          $set: {
+            times: slot.times,
+            updatedBy: servicemanId,
+            status: true,
+          },
+          $setOnInsert: {
+            servicemanId,
+            date: new Date(slot.date),
+            createdBy: servicemanId,
+          },
+        },
+        upsert: true,
+      },
+    });
+  };
+
+  if (!operations.length) {
+    throw new ApiError(400, "No valid slots provided");
+  };
+
+  const result = await ServicemanTimeSlotModel.bulkWrite(operations);
+
+  return res.status(200).json({
     success: true,
-    message: "Time slots created successfully",
-    data: createdSlots,
-    skipped: slots.length - payload.length,
+    message: "Time slots saved successfully",
+    inserted: result.upsertedCount,
+    updated: result.modifiedCount,
   });
 });
 
