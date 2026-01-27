@@ -276,7 +276,7 @@ export const dashboard = asyncHandler(async (req, res) => {
   ]);
 
   // TODAY TIME SLOTS COUNT
-  const todayTimeSlots = await ServicemanTimeSlot.find({
+  const todayTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: startOfDay, $lte: endOfDay },
   });
@@ -286,7 +286,7 @@ export const dashboard = asyncHandler(async (req, res) => {
   tomorrow.setHours(0, 0, 0, 0);
 
   // TOMORROW TIME SLOTS COUNT
-  const tomorrowTimeSlots = await ServicemanTimeSlot.find({
+  const tomorrowTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: tomorrow, $lte: new Date(tomorrow.getTime() + 86399999) },
   });
