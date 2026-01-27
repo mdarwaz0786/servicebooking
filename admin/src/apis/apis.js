@@ -10,6 +10,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/role`,
     delete: `${BASE_URL}/api/v1/admin/role`,
   },
+  subadmin: {
+    create: `${BASE_URL}/api/v1/admin/sub-admin`,
+    get: `${BASE_URL}/api/v1/admin/sub-admin`,
+    update: `${BASE_URL}/api/v1/admin/sub-admin`,
+    delete: `${BASE_URL}/api/v1/admin/sub-admin`,
+  },
   app: {
     create: `${BASE_URL}/api/v1/admin/app`,
     get: `${BASE_URL}/api/v1/admin/app`,

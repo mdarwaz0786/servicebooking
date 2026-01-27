@@ -138,7 +138,7 @@ const RoleListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
-            <Link to="/add-city">
+            <Link to="/add-role">
               <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                 <i className="fa fa-plus me-2"></i>
                 <span>Add</span>

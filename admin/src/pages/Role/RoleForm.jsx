@@ -163,8 +163,8 @@ const RoleForm = () => {
 
   return (
     <div className="page-wrapper">
-      <div className="d-flex justify-content-between align-items-center p-2">
-        <h5 className="mb-0">{id ? "Update Role" : "Add Role"}</h5>
+      <div className="d-flex justify-content-between align-items-center p-3">
+        <h5 className="mb-0">{isEdit ? "Update Role" : "Add Role"}</h5>
         <button
           type="button"
           className="btn btn-outline-secondary btn-sm"
@@ -173,7 +173,7 @@ const RoleForm = () => {
           ← Back
         </button>
       </div>
-      <div className="container py-4">
+      <div className="container">
         <div className="card shadow">
           <div className="card-header bg-dark text-white">
             <h5 className="mb-0" style={{ color: "#fff" }}>
@@ -182,7 +182,14 @@ const RoleForm = () => {
           </div>
 
           <div className="card-body">
-            <form onSubmit={handleSubmit}>
+            <form
+              onSubmit={handleSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit(e);
+                }
+              }}
+            >
 
               {/* BASIC INFO */}
               <div className="row mb-3">
