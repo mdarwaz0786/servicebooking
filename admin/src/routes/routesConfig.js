@@ -128,6 +128,7 @@ import InvoiceListPage from "../pages/Invoice/InvoiceListPage";
 import Invoice from "../pages/Invoice/Invoice";
 import RoleListPage from "../pages/Role/RoleListPage";
 import RoleForm from "../pages/Role/RoleForm";
+import SubAdminForm from "../pages/SubAdmin/SubadminForm";
 
 const routesConfig = {
   private: [
@@ -321,6 +322,8 @@ const routesConfig = {
     { path: "/users", element: UserListPage },
     { path: "/providers", element: ProviderListPage },
     { path: "/admins", element: AdminListPage },
+
+    { path: "/add-subadmin", element: SubAdminForm },
 
     { path: "/roles", element: RoleListPage },
     { path: "/add-role", element: RoleForm },

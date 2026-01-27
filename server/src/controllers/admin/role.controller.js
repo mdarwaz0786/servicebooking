@@ -36,11 +36,11 @@ export const getRoles = asyncHandler(async (req, res) => {
       { roleName: { $regex: search, $options: "i" } },
       { departmentName: { $regex: search, $options: "i" } },
     ];
-  }
+  };
 
   if (status !== undefined) {
     filters.status = status === "true";
-  }
+  };
 
   const sortOption = sort === "asc"
     ? { createdAt: 1 }
@@ -75,10 +75,11 @@ export const getRoleById = asyncHandler(async (req, res) => {
 
   if (!role) {
     throw new ApiError(404, "Role not found");
-  }
+  };
 
   return res.status(200).json({
     success: true,
+    message: "Role fetched successfully",
     data: role,
   });
 });
@@ -90,7 +91,7 @@ export const updateRole = asyncHandler(async (req, res) => {
   const role = await Role.findById(req.params.id);
   if (!role) {
     throw new ApiError(404, "Role not found");
-  }
+  };
 
   role.roleName = roleName ?? role.roleName;
   role.departmentName = departmentName ?? role.departmentName;

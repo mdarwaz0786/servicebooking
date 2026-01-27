@@ -10,6 +10,10 @@ const TimeSchema = new Schema({
     type: String,
     required: [true, "To time is required"],
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
 }, { _id: false });
 
 const ServicemanTimeSlotSchema = new Schema({

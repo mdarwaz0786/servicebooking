@@ -133,7 +133,7 @@ const AdminListPage = () => {
               <option value={total}>All</option>
             </select>
             <div>
-              <Link to="/add-admin">
+              <Link to="/add-subadmin">
                 <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                   <i className="fa fa-plus me-2"></i>
                   <span>Create User</span>
