@@ -163,6 +163,16 @@ const RoleForm = () => {
 
   return (
     <div className="page-wrapper">
+      <div className="d-flex justify-content-between align-items-center p-2">
+        <h5 className="mb-0">{id ? "Update Role" : "Add Role"}</h5>
+        <button
+          type="button"
+          className="btn btn-outline-secondary btn-sm"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </button>
+      </div>
       <div className="container py-4">
         <div className="card shadow">
           <div className="card-header bg-dark text-white">
