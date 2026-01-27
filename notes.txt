@@ -152,3 +152,133 @@ if (qrStatus.payments_count_received > 0) {
 }
 
 // cash colleted amount, cash collected pending amount, cash colleted submit amout
+
+
+{
+  path: "/blog-list",
+  element: (
+    <PermissionRoute module="blog" action="view">
+      <BlogListPage />
+    </PermissionRoute>
+  )
+},
+{
+  path: "/add-blog",
+  element: (
+    <PermissionRoute module="blog" action="add">
+      <AddBlogPage />
+    </PermissionRoute>
+  )
+},
+{
+  path: "/update-blog/:id",
+  element: (
+    <PermissionRoute module="blog" action="update">
+      <UpdateBlogPage />
+    </PermissionRoute>
+  )
+}
+
+import { hasPermission } from "../../utils/permission";
+import { useAuth } from "../../context/auth.context";
+
+const { user } = useAuth();
+
+{hasPermission(user, "blog", "add") && (
+  <button onClick={() => navigate("/add-blog")}>
+    Add Blog
+  </button>
+)}
+
+{hasPermission(user, "blog", "update") && (
+  <button>Edit</button>
+)}
+
+{hasPermission(user, "blog", "delete") && (
+  <button>Delete</button>
+)}
+
+// sidebar
+{hasPermission(user, "blog", "view") && (
+  <NavLink to="/blog-list">Blogs</NavLink>
+)}
+
+
+import jwt from "jsonwebtoken";
+import User from "../../models/user.model.js";
+import ApiError from "../../helpers/apiError.js";
+import asyncHandler from "../../helpers/asyncHandler.js";
+
+const isLoggedIn = (moduleName = null, action = null) =>
+  asyncHandler(async (req, res, next) => {
+
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new ApiError(401, "Authentication token missing.");
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    const user = await User
+      .findById(decoded.id)
+      .populate("permissions")
+      .select("-password");
+
+    if (!user) {
+      throw new ApiError(401, "User not found.");
+    }
+
+    // ✅ SUPER ADMIN BYPASS
+    if (user.role === "admin") {
+      req.user = user;
+      return next();
+    }
+
+    // ✅ PERMISSION CHECK (if provided)
+    if (moduleName && action) {
+
+      const allowed =
+        user?.permissions?.permissions?.[moduleName]?.[action];
+
+      if (!allowed) {
+        throw new ApiError(403, "You don't have permission.");
+      }
+    }
+
+    req.user = user;
+    next();
+  });
+
+export default isLoggedIn;
+
+
+
+router.post(
+  "/",
+  isLoggedIn("blog", "add"),
+  createBlog
+);
+
+router.get(
+  "/",
+  isLoggedIn("blog", "view"),
+  getBlogs
+);
+
+router.put(
+  "/:id",
+  isLoggedIn("blog", "update"),
+  updateBlog
+);
+
+router.delete(
+  "/:id",
+  isLoggedIn("blog", "delete"),
+  deleteBlog
+);
+
+
+
+
