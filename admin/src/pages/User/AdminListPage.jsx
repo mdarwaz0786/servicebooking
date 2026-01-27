@@ -182,7 +182,7 @@ const AdminListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to="#">
+                            <Link to={`/update-subadmin/${d?._id}`}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-edit" />
                               </button>

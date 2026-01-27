@@ -57,7 +57,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 export const createServicemanTimeSlot = asyncHandler(async (req, res) => {
   const servicemanId = req.user?._id;
-  const slots = req.body;
+  const slots = req.body.selectedSlots;
 
   if (!servicemanId) {
     throw new ApiError(401, "Unauthorized");

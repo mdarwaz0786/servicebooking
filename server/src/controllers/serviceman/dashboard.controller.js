@@ -131,6 +131,43 @@ export const dashboard = asyncHandler(async (req, res) => {
       }
     },
 
+    // JOIN BOOKING ITEMS + SERVICE
+    {
+      $lookup: {
+        from: "bookingitems",
+        let: { bookingId: "$booking._id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$bookingId", "$$bookingId"] }
+            }
+          },
+          {
+            $lookup: {
+              from: "services",
+              localField: "serviceId",
+              foreignField: "_id",
+              as: "service"
+            }
+          },
+          {
+            $unwind: {
+              path: "$service",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              // ✅ INCLUDE SERVICE BUT EXCLUDE BIG FIELDS
+              "service.shortDescription": 0,
+              "service.fullDescription": 0
+            }
+          }
+        ],
+        as: "bookingItems"
+      }
+    },
+
     // SORT BY BOOKING.scheduleDate
     {
       $sort: { "booking.scheduleDate": -1 }

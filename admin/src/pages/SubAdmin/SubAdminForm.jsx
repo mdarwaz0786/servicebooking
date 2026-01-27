@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import apis from "../../apis/apis";
+import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 
 const SubAdminForm = () => {
@@ -76,7 +76,7 @@ const SubAdminForm = () => {
         username: d.username || "",
         password: "",
         profileImage: null,
-        profilePreview: d.profileImage || "",
+        profilePreview: d?.profileImage ? `${BASE_URL}/${d?.profileImage}` : "",
         dob: d.dob || "",
         address: d.address || "",
         cityName: d.cityName?._id || "",
@@ -84,9 +84,10 @@ const SubAdminForm = () => {
         pinCode: d.pinCode || "",
         permissions: d.permissions?._id || "",
       });
+
     } catch {
       toast.error("Failed to load subadmin");
-    }
+    };
   };
 
   const handleChange = (e) => {
@@ -137,13 +138,16 @@ const SubAdminForm = () => {
       const fd = new FormData();
 
       Object.keys(formData).forEach((key) => {
-        if (key !== "profilePreview" && formData[key] !== null) {
+        if (key === "profileImage" && formData[key]) {
+          fd.append("image", formData[key]);
+        }
+        else if (key !== "profilePreview" && key !== "profileImage") {
           fd.append(key, formData[key]);
         }
       });
 
       if (isEdit) {
-        await axios.put(`${apis.subadmin.update}/${id}`, fd, {
+        await axios.patch(`${apis.subadmin.update}/${id}`, fd, {
           headers: {
             Authorization: validToken,
             "Content-Type": "multipart/form-data",
@@ -280,9 +284,9 @@ const SubAdminForm = () => {
                     className="form-select"
                   >
                     <option value="">Select City</option>
-                    {cities.map((c) => (
-                      <option key={c._id} value={c._id}>
-                        {c.name}
+                    {cities?.map((c) => (
+                      <option key={c?._id} value={c?._id}>
+                        {c?.name}
                       </option>
                     ))}
                   </select>
@@ -307,9 +311,9 @@ const SubAdminForm = () => {
                     className="form-select"
                   >
                     <option value="">Select Role</option>
-                    {roles.map((r) => (
-                      <option key={r._id} value={r._id}>
-                        {r.roleName}
+                    {roles?.map((r) => (
+                      <option key={r?._id} value={r?._id}>
+                        {r?.roleName}
                       </option>
                     ))}
                   </select>

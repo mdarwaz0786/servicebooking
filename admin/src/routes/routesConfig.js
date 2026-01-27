@@ -324,10 +324,13 @@ const routesConfig = {
     { path: "/admins", element: AdminListPage },
 
     { path: "/add-subadmin", element: SubAdminForm },
+    { path: "/update-subadmin/:id", element: SubAdminForm },
 
     { path: "/roles", element: RoleListPage },
     { path: "/add-role", element: RoleForm },
-    { path: "/update-role/:id", element: RoleForm },
+
+    { path: "/update-role/:id", element: RoleForm }
+
   ],
   public: [
     { path: "/login", element: LoginPage },

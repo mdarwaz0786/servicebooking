@@ -47,7 +47,9 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     ];
   };
 
-  if (role) {
+  if (role == "admin") {
+    filters.role = { $in: ["admin", "subadmin"] };
+  } else if (role) {
     filters.role = role;
   };
 
