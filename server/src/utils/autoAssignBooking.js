@@ -1,6 +1,6 @@
 import ZoneModel from "../models/zone.model.js";
 import Wallet from "../models/wallet.model.js";
-import { convert12To24 } from "./convert12to24.js";
+import { convert12To24 } from "./convert12To24.js";
 
 export const autoAssignBooking = async (
   lat,
