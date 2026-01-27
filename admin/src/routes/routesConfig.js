@@ -128,7 +128,7 @@ import InvoiceListPage from "../pages/Invoice/InvoiceListPage";
 import Invoice from "../pages/Invoice/Invoice";
 import RoleListPage from "../pages/Role/RoleListPage";
 import RoleForm from "../pages/Role/RoleForm";
-import SubAdminForm from "../pages/SubAdmin/SubadminForm";
+import SubAdminForm from "../pages/SubAdmin/SubAdminForm";
 
 const routesConfig = {
   private: [
