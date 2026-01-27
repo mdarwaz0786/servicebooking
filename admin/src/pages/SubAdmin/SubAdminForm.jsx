@@ -23,7 +23,8 @@ const SubAdminForm = () => {
     mobile: "",
     username: "",
     password: "",
-    profileImage: "",
+    profileImage: null,
+    profilePreview: "",
     dob: "",
     address: "",
     cityName: "",
@@ -43,10 +44,10 @@ const SubAdminForm = () => {
       const res = await axios.get(apis.role.get, {
         headers: { Authorization: validToken },
       });
-      setRoles(res.data.data || []);
+      setRoles(res?.data?.data || []);
     } catch (err) {
       console.error(err);
-    };
+    }
   };
 
   const fetchCities = async () => {
@@ -57,7 +58,7 @@ const SubAdminForm = () => {
       setCities(res?.data?.data || []);
     } catch (err) {
       console.error(err);
-    };
+    }
   };
 
   const fetchSubAdmin = async () => {
@@ -66,7 +67,7 @@ const SubAdminForm = () => {
         headers: { Authorization: validToken },
       });
 
-      const d = res?.data?.data;
+      const d = res.data.data;
 
       setFormData({
         name: d.name || "",
@@ -74,7 +75,8 @@ const SubAdminForm = () => {
         mobile: d.mobile || "",
         username: d.username || "",
         password: "",
-        profileImage: d.profileImage || "",
+        profileImage: null,
+        profilePreview: d.profileImage || "",
         dob: d.dob || "",
         address: d.address || "",
         cityName: d.cityName?._id || "",
@@ -82,8 +84,7 @@ const SubAdminForm = () => {
         pinCode: d.pinCode || "",
         permissions: d.permissions?._id || "",
       });
-    } catch (err) {
-      console.log(err);
+    } catch {
       toast.error("Failed to load subadmin");
     }
   };
@@ -95,35 +96,73 @@ const SubAdminForm = () => {
     });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setFormData({
+      ...formData,
+      profileImage: file,
+      profilePreview: URL.createObjectURL(file),
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+
+      if (!formData.name.trim()) {
+        return toast.error("Name is required");
+      };
+
+      if (!formData.mobile.trim()) {
+        return toast.error("Mobile is required");
+      };
+
+      if (!formData.username.trim()) {
+        return toast.error("Username is required");
+      };
+
+      if (!formData.password.trim() && !isEdit) {
+        return toast.error("Password is required");
+      };
+
+      if (!formData.permissions) {
+        return toast.error("Role is required");
+      };
+
       setLoading(true);
 
-      if (!isEdit && !formData.password) {
-        return toast.error("Password is required");
-      }
+      const fd = new FormData();
+
+      Object.keys(formData).forEach((key) => {
+        if (key !== "profilePreview" && formData[key] !== null) {
+          fd.append(key, formData[key]);
+        }
+      });
 
       if (isEdit) {
-        await axios.put(
-          `${apis.subadmin.update}/${id}`,
-          formData,
-          { headers: { Authorization: validToken } }
-        );
+        await axios.put(`${apis.subadmin.update}/${id}`, fd, {
+          headers: {
+            Authorization: validToken,
+            "Content-Type": "multipart/form-data",
+          },
+        });
         toast.success("SubAdmin updated");
       } else {
-        await axios.post(
-          apis.subadmin.create,
-          formData,
-          { headers: { Authorization: validToken } }
-        );
+        await axios.post(apis.subadmin.create, fd, {
+          headers: {
+            Authorization: validToken,
+            "Content-Type": "multipart/form-data",
+          },
+        });
         toast.success("SubAdmin created");
       }
 
       navigate("/admins");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to save");
+      toast.error(err?.response?.data?.message || "Failed");
     } finally {
       setLoading(false);
     }
@@ -131,21 +170,18 @@ const SubAdminForm = () => {
 
   return (
     <div className="page-wrapper">
-      <div className="d-flex justify-content-between align-items-center p-2">
-        <h5>{isEdit ? "Update SubAdmin" : "Create SubAdmin"}</h5>
-        <button
-          className="btn btn-outline-secondary btn-sm"
-          onClick={() => navigate(-1)}
-        >
-          ← Back
+      <div className="d-flex justify-content-between p-2">
+        <h5>{isEdit ? "Update User" : "Create User"}</h5>
+        <button className="btn btn-sm btn-secondary" onClick={() => navigate(-1)}>
+          Back
         </button>
       </div>
 
       <div className="container">
         <div className="card shadow">
           <div className="card-body">
-            <form onSubmit={handleSubmit}>
 
+            <form onSubmit={handleSubmit}>
               <div className="row">
 
                 <div className="col-md-6 mb-3">
@@ -180,14 +216,28 @@ const SubAdminForm = () => {
                   />
                 </div>
 
+                {/* IMAGE */}
                 <div className="col-md-6 mb-3">
-                  <label>Profile Image URL</label>
+                  <label>Profile Image</label>
                   <input
-                    name="profileImage"
-                    value={formData.profileImage}
-                    onChange={handleChange}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
                     className="form-control"
                   />
+
+                  {formData.profilePreview && (
+                    <img
+                      src={formData.profilePreview}
+                      alt="preview"
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: "cover",
+                        marginTop: 10,
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div className="col-md-6 mb-3">
@@ -224,15 +274,15 @@ const SubAdminForm = () => {
                 <div className="col-md-6 mb-3">
                   <label>City</label>
                   <select
-                    name="permissions"
+                    name="cityName"
                     value={formData.cityName}
                     onChange={handleChange}
                     className="form-select"
                   >
                     <option value="">Select City</option>
-                    {cities?.map((r) => (
-                      <option key={r?._id} value={r?._id}>
-                        {r?.name}
+                    {cities.map((c) => (
+                      <option key={c._id} value={c._id}>
+                        {c.name}
                       </option>
                     ))}
                   </select>
@@ -249,7 +299,7 @@ const SubAdminForm = () => {
                 </div>
 
                 <div className="col-md-6 mb-3">
-                  <label>Role Permission</label>
+                  <label>Role</label>
                   <select
                     name="permissions"
                     value={formData.permissions}
@@ -257,9 +307,9 @@ const SubAdminForm = () => {
                     className="form-select"
                   >
                     <option value="">Select Role</option>
-                    {roles?.map((r) => (
-                      <option key={r?._id} value={r?._id}>
-                        {r?.roleName}
+                    {roles.map((r) => (
+                      <option key={r._id} value={r._id}>
+                        {r.roleName}
                       </option>
                     ))}
                   </select>
@@ -289,6 +339,7 @@ const SubAdminForm = () => {
                     />
                   </div>
                 )}
+
               </div>
 
               <button
@@ -299,10 +350,12 @@ const SubAdminForm = () => {
                 {loading
                   ? "Saving..."
                   : isEdit
-                    ? "Update SubAdmin"
-                    : "Create SubAdmin"}
+                    ? "Update User"
+                    : "Create User"}
               </button>
+
             </form>
+
           </div>
         </div>
       </div>
