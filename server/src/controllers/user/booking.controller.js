@@ -1,5 +1,4 @@
 import AddressModel from "../../models/address.model.js";
-import ZoneModel from "../../models/zone.model.js";
 import BookingModel from "../../models/booking.model.js";
 import BookingItemModel from "../../models/bookingItem.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
@@ -12,6 +11,8 @@ import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
+import { getSupportConfig } from "../../utils/wallet.utils.js";
+import { autoAssignBooking } from "../../utils/autoAssignBooking.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -26,7 +27,8 @@ export const createBooking = asyncHandler(async (req, res) => {
     paymentMode,
     paymentBy,
     pincode,
-    isCouponUsed } = req.body;
+    isCouponUsed,
+  } = req.body;
 
   // Get cart data from utility
   const { cartProducts, amountData } = await getCartData(userId);
@@ -44,28 +46,6 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   if (!verifyPincode) {
     throw new ApiError(400, "Sorry, our service is currently not available in your area or pincode");
-  };
-
-  // Find Zone
-  const zone = await ZoneModel.findOne({
-    status: true,
-    geometry: {
-      $geoIntersects: {
-        $geometry: {
-          type: "Point",
-          coordinates: [long, lat],
-        },
-      },
-    },
-  }).select("_id");
-
-  let serviceman = null;
-
-  if (zone) {
-    serviceman = await ServiceManProfileModel.findOne({
-      zones: zone?._id,
-      categoryIds: categoryId,
-    }).select("_id");
   };
 
   const otp = generateOtp();
@@ -89,18 +69,11 @@ export const createBooking = asyncHandler(async (req, res) => {
     createdBy: userId,
   });
 
-  if (serviceman) {
-    await ServiceManBookingModel.create({
-      bookingId: booking?._id,
-      servicemanId: serviceman?._id,
-      userId,
-      status: "new",
-      createdBy: userId,
-    });
-  };
+  const { acceptCreditPoints } = await getSupportConfig(booking?._id);
+  const serviceman = await autoAssignBooking(lat, long, categoryId, scheduleDate, scheduleTime, acceptCreditPoints);
 
   // Prepare Booking Items from cartProducts
-  const bookingItems = cartProducts.map(item => ({
+  const bookingItems = cartProducts.map((item) => ({
     bookingId: booking._id,
     userId,
     serviceId: item.serviceId,
@@ -112,10 +85,20 @@ export const createBooking = asyncHandler(async (req, res) => {
   // Insert Booking Items
   await BookingItemModel.insertMany(bookingItems);
 
+  if (serviceman && paymentMode == 'cod') {
+    await ServiceManBookingModel.create({
+      bookingId: booking?._id,
+      servicemanId: serviceman?._id,
+      userId,
+      status: "new",
+      createdBy: userId,
+    });
+  };
+
   // Clear User Cart
   if (paymentMode == 'cod') {
     await CartModel.deleteMany({ userId });
-  }
+  };
 
   return res.status(201).json({
     success: true,

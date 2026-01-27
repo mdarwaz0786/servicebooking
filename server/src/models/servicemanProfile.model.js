@@ -121,6 +121,10 @@ const serviceManProfileSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isOnline: {
+    type: Boolean,
+    default: true,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

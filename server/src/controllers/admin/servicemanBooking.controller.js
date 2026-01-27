@@ -35,7 +35,7 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Assign zone to this provider");
   }
 
-  const isSufficient = await ensureSufficientCredit(serviceman?.userId);
+  const isSufficient = await ensureSufficientCredit(serviceman?.userId, bookingId);
 
   if (!isSufficient) {
     throw new ApiError(403, "Insufficient credit points");
@@ -57,7 +57,7 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     const status = "cancel";
     const latestServicemanId = latestAssignment?.servicemanId;
 
-    await adjustWalletCredit(latestServicemanId, status);
+    await adjustWalletCredit(latestServicemanId, status, bookingId);
 
     await BookingModel.findByIdAndUpdate(bookingId, {
       $set: {

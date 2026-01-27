@@ -5,19 +5,115 @@ import BookingModel from "../models/booking.model.js";
 import BookingItemModel from "../models/bookingItem.model.js";
 import BookingAdditionalPartModel from "../models/BookingAdditionalPart.model.js";
 import SupportContent from "../models/support.model.js";
+import KycModel from "../models/kyc.model.js";
 import ApiError from "../helpers/apiError.js";
+import mongoose from "mongoose";
 
 // support config
-export const getSupportConfig = async () => {
+export const getSupportConfig = async (bookingId) => {
   const doc = await SupportContent.findOne({ status: true })
     .select("acceptCreditPoints cancelCreditPoints earningPercent")
     .lean();
 
-  return {
-    acceptCreditPoints: doc?.acceptCreditPoints || 10,
-    cancelCreditPoints: doc?.cancelCreditPoints || 10,
-    earningPercent: doc?.earningPercent || 15,
+  let totalCreditPoints = null;
+  let bookingObjectId = null;
+
+  if (bookingId instanceof mongoose.Types.ObjectId) {
+    bookingObjectId = bookingId;
+  } else if (typeof bookingId === "string" && mongoose.Types.ObjectId.isValid(bookingId)) {
+    bookingObjectId = new mongoose.Types.ObjectId(bookingId);
   };
+
+  if (bookingObjectId) {
+    const creditData = await BookingItemModel.aggregate([
+      { $match: { bookingId: bookingObjectId } },
+      {
+        $lookup: {
+          from: "services",
+          localField: "serviceId",
+          foreignField: "_id",
+          as: "service",
+        },
+      },
+      { $unwind: "$service" },
+      {
+        $addFields: {
+          itemCreditPoints: {
+            $multiply: [
+              { $toDouble: "$service.creditPoint" },
+              "$quantity",
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$bookingId",
+          totalCreditPoints: { $sum: "$itemCreditPoints" },
+        },
+      },
+    ]);
+
+    totalCreditPoints = creditData[0]?.totalCreditPoints ?? 0;
+  };
+
+  return {
+    acceptCreditPoints: totalCreditPoints !== null ? totalCreditPoints : doc?.acceptCreditPoints ?? 10,
+    cancelCreditPoints: totalCreditPoints !== null ? totalCreditPoints : doc?.cancelCreditPoints ?? 10,
+    earningPercent: doc?.earningPercent ?? 15,
+  };
+};
+
+// Calculate provider invoice amount
+export const calculateProviderInvoiceAmount = async (
+  servicemanId,
+  bookingId,
+) => {
+  if (!servicemanId || !bookingId) {
+    throw new Error("servicemanId and bookingId are required");
+  };
+
+  const bookingObjectId = bookingId instanceof mongoose.Types.ObjectId ? bookingId : new mongoose.Types.ObjectId(bookingId);
+
+  // 1️⃣ Fetch booking (for additional part amount)
+  const booking = await BookingModel
+    .findById(bookingObjectId)
+    .select("additionalPartAmount")
+    .lean();
+
+  const additionalPartAmount = Number(booking?.additionalPartAmount || 0);
+
+  // 2️⃣ Check provider GST eligibility
+  const kyc = await KycModel.findOne({ userId: servicemanId })
+    .select("gstNumber")
+    .lean();
+
+  const hasGST = Boolean(kyc?.gstNumber);
+  const GST_PERCENT = 18;
+
+  // 3️⃣ Fetch booking items with services
+  const bookingItems = await BookingItemModel
+    .find({ bookingId: bookingObjectId })
+    .populate({ path: "service", select: "salePrice taxablePrice" })
+    .lean();
+
+  let totalSaleMinusTaxable = 0;
+
+  for (const item of bookingItems) {
+    const qty = Number(item?.quantity || 1);
+    const salePrice = Number(item?.service?.salePrice || 0) * qty;
+    const taxableValue = Number(item?.service?.taxablePrice || 0) * qty;
+
+    totalSaleMinusTaxable += salePrice - taxableValue;
+  };
+
+  // 4️⃣ Calculate GST (only if provider has GST)
+  const providerGST = hasGST ? ((totalSaleMinusTaxable + additionalPartAmount) * GST_PERCENT) / 100 : 0;
+
+  // 5️⃣ Final provider invoice amount
+  const totalProviderInvoiceAmount = totalSaleMinusTaxable + additionalPartAmount + providerGST;
+
+  return Number(totalProviderInvoiceAmount?.toFixed(2));
 };
 
 // Get total credit points
@@ -34,15 +130,15 @@ export const getTotalCreditPoints = async (providerId) => {
       total += w.creditPoints;
     } else if (w.transactionType === "Debit") {
       total -= w.creditPoints;
-    }
-  }
+    };
+  };
 
   return total;
 };
 
 // Ensure sufficient credit
-export const ensureSufficientCredit = async (providerId) => {
-  const { acceptCreditPoints } = await getSupportConfig();
+export const ensureSufficientCredit = async (providerId, bookingId) => {
+  const { acceptCreditPoints } = await getSupportConfig(bookingId);
   const totalCreditPoints = await getTotalCreditPoints(providerId);
 
   if (totalCreditPoints < acceptCreditPoints) {
@@ -56,6 +152,7 @@ export const ensureSufficientCredit = async (providerId) => {
 export const adjustWalletCredit = async (
   providerId,
   status,
+  bookingId,
 ) => {
   if (!providerId || !status) return;
 
@@ -65,7 +162,7 @@ export const adjustWalletCredit = async (
   const {
     acceptCreditPoints,
     cancelCreditPoints,
-  } = await getSupportConfig();
+  } = await getSupportConfig(bookingId);
 
   let creditPoints = 0;
   let depositAmount = 0;
@@ -142,10 +239,8 @@ export const createServicemanEarning = async (
   const bookingItems = await BookingItemModel.find({ bookingId: booking?._id }).populate("serviceId").lean();
 
   // 5️⃣ Fetch additional parts
-  const additionalParts = await BookingAdditionalPartModel.find({
-    bookingId: booking?._id,
-    status: true,
-  })
+  const additionalParts = await BookingAdditionalPartModel
+    .find({ bookingId: booking?._id, status: true })
     .populate("rateId")
     .lean();
 
@@ -163,9 +258,16 @@ export const createServicemanEarning = async (
   };
 
   // 7️⃣ Calculate earning
-  const payableAmount = booking?.payableAmount || 0;
-  const { earningPercent } = await getSupportConfig();
-  const earningAmount = Number(((payableAmount * earningPercent) / 100).toFixed(2));
+  const payableAmount = Number(booking?.payableAmount || 0);
+  // const { earningPercent } = await getSupportConfig(booking?._id);
+  // const earningAmount = Number(((payableAmount * earningPercent) / 100).toFixed(2));
+
+  const servicemanEarningAmount = await calculateProviderInvoiceAmount(servicemanId, booking?._id);
+  let earningPercent = 0;
+
+  if (payableAmount > 0) {
+    earningPercent = Number(((servicemanEarningAmount / payableAmount) * 100).toFixed(2));
+  };
 
   // 8️⃣ Create earning entry
   const earning = await ServicemanEarningModel.create({
@@ -176,7 +278,7 @@ export const createServicemanEarning = async (
     service: serviceSnapshot,
     payableAmount,
     earningPercent,
-    earningAmount,
+    earningAmount: servicemanEarningAmount,
     payoutStatus: false,
     status: true,
     createdBy: actionBy,

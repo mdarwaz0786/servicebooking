@@ -152,7 +152,7 @@ const BookingDetailPage = () => {
                   <h6 className="fw-bold text-uppercase text-muted">Service Address</h6>
                   {booking?.addressId ? (
                     <p className="mb-0">
-                      {booking?.address?.deliveryPersonName || "N/A"}, {booking?.address?.houseNumber || "N/A"}, {booking?.address?.landmark || "N/A"}
+                      {booking?.address?.houseNumber || "N/A"}, {booking?.address?.landmark || "N/A"}
                     </p>
                   ) : (
                     <p className="text-muted">No address provided</p>
@@ -261,7 +261,7 @@ const BookingDetailPage = () => {
                     </div>
                     <div className="d-flex justify-content-between border-top pt-2">
                       <span>Total Payable:</span>
-                      <strong className="text-primary fs-5">₹{booking?.payableAmount}</strong>
+                      <strong className="text-primary fs-5">₹{booking?.payableAmount?.toFixed(2)}</strong>
                     </div>
                   </div>
                 </div>

@@ -100,6 +100,18 @@ const bookingSchema = new mongoose.Schema({
     enum: [0, 1],
     default: 0,
   },
+  cashColletedAmount: {
+    type: Number,
+    default: 0,
+  },
+  cashColletedPendingAmount: {
+    type: Number,
+    default: 0,
+  },
+  cashColletedSubmitAmount: {
+    type: Number,
+    default: 0,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

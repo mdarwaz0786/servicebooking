@@ -6,10 +6,14 @@ import BookingItemModel from "../../models/bookingItem.model.js";
 import TransactionModel from "../../models/transaction.model.js";
 import WalletModel from "../../models/wallet.model.js";
 import CartModel from "../../models/cart.model.js";
+import AddressModel from "../../models/address.model.js";
+import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { createScanAndPayQr, createPaymentLink, razorpay } from "../../utils/scanAndPay.js";
 import axios from "axios";
+import { getCartData } from "../../utils/cart.utils.js";
+import { getSupportConfig } from "../../utils/wallet.utils.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
@@ -99,7 +103,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     paymentDate: '',
     paymentTime: '',
     from,
-    referenceId: `BOOKING_${bookingData.bookingId}`,
+    referenceId: `BOOKING_${bookingData?.bookingId}`,
     qrId: qr ? qr.id : '',
     qrImage: qr ? qr.image_url : '',
 
@@ -194,6 +198,27 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       createdBy: req.user?._id,
       opt: generateOtp(),
     }, { new: true });
+
+    const booking = await BookingModel.findById({ _id: transactionData?.PID });
+    const address = await AddressModel.findById(booking?.addressId);
+    const lat = address?.lat;
+    const long = address?.long;
+
+    const { cartProducts } = await getCartData(transactionData?.userId);
+    const categoryId = cartProducts[0]?.categoryId;
+
+    const { acceptCreditPoints } = await getSupportConfig(booking?._id);
+    const serviceman = await autoAssignBooking(lat, long, categoryId, booking?.scheduleDate, booking?.scheduleTime, acceptCreditPoints);
+
+    if (serviceman) {
+      await ServiceManBookingModel.create({
+        bookingId: booking?._id,
+        servicemanId: serviceman?._id,
+        userId,
+        status: "new",
+        createdBy: userId,
+      });
+    };
 
     await CartModel.deleteMany({ "userId": transactionData.userId });
   } else if (transactionData.productType == "wallet") {
