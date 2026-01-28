@@ -16,6 +16,7 @@ import supportRoute from "./support.routes.js";
 import nearByRoute from "./withinLocation.routes.js";
 import servicemanEarningRoute from "./servicemanEarning.route.js";
 import servicemanTimeSlotRoute from "./servicemanTimeSlot.route.js";
+import weeklyWinnerRoute from "./weeklyWinner.route.js";
 
 const router = express.Router();
 
@@ -36,5 +37,6 @@ router.use("/support", supportRoute);
 router.use("/nearby", nearByRoute);
 router.use("/serviceman-earning", servicemanEarningRoute);
 router.use("/serviceman-time-slot", servicemanTimeSlotRoute);
+router.use("/weekly-winner", weeklyWinnerRoute);
 
 export default router;
