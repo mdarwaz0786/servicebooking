@@ -203,6 +203,8 @@ const { user } = useAuth();
   <NavLink to="/blog-list">Blogs</NavLink>
 )}
 
+{hasPermission(user, "blog", "view") && ()}
+
 
 import jwt from "jsonwebtoken";
 import User from "../../models/user.model.js";

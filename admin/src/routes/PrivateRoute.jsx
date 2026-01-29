@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
+import { hasPermission } from "../helpers/hasPermission";
 
-const PrivateRoute = ({ children, roles }) => {
+const PrivateRoute = ({ children, roles, module, action = "view" }) => {
   const { isLoggedIn, isAuthResolved, user } = useAuth();
 
   if (!isAuthResolved) {
@@ -16,7 +17,12 @@ const PrivateRoute = ({ children, roles }) => {
     return <Navigate to="/unauthorized" replace />;
   };
 
+  if (module && !hasPermission(user, module, action)) {
+    return <Navigate to="/unauthorized" replace />;
+  };
+
   return children;
 };
 
 export default PrivateRoute;
+

@@ -15,9 +15,23 @@ const App = () => {
           </PrivateRoute>
         }
       >
-        {routesConfig.private.map(({ path, element: Component }, i) => (
-          <Route key={i} path={path} element={<Component />} />
-        ))}
+        {
+          routesConfig.private.map(({ path, element: Component, module, action }, i) => (
+            <Route
+              key={i}
+              path={path}
+              element={
+                <PrivateRoute
+                  roles={["admin", "subadmin"]}
+                  module={module}
+                  action={action}
+                >
+                  <Component />
+                </PrivateRoute>
+              }
+            />
+          ))
+        }
       </Route>
 
       {routesConfig.public.map(({ path, element: Component }, i) => (
