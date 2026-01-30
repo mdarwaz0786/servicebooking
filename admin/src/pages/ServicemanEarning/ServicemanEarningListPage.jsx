@@ -213,9 +213,9 @@ const ServicemanEarningListPage = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Booking Id</th>
                     <th>Provider</th>
                     <th>Payable Amount</th>
-                    <th>Earning Percent</th>
                     <th>Earning Amout</th>
                     <th>Payout Status</th>
                   </tr>
@@ -225,10 +225,10 @@ const ServicemanEarningListPage = () => {
                     data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.payableAmount}</td>
+                        <td>{d?.service?.booking?.bookingId}</td>
                         <td>{d?.serviceman?.name}</td>
+                        <td>{d?.payableAmount}</td>
                         <td>{d?.earningAmount}</td>
-                        <td>{d?.earningPercent}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">

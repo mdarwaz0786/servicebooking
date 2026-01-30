@@ -259,9 +259,6 @@ export const createServicemanEarning = async (
 
   // 7️⃣ Calculate earning
   const payableAmount = Number(booking?.payableAmount || 0);
-  // const { earningPercent } = await getSupportConfig(booking?._id);
-  // const earningAmount = Number(((payableAmount * earningPercent) / 100).toFixed(2));
-
   const servicemanEarningAmount = await calculateProviderInvoiceAmount(servicemanId, booking?._id);
   let earningPercent = 0;
 
