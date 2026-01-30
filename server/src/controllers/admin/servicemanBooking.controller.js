@@ -54,10 +54,10 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
       cancelTime: getCurrentIndianTime(),
     });
 
-    const status = "cancel";
-    const latestServicemanId = latestAssignment?.servicemanId;
+    // const status = "cancel";
+    // const latestServicemanId = latestAssignment?.servicemanId;
 
-    await adjustWalletCredit(latestServicemanId, status, bookingId);
+    // await adjustWalletCredit(latestServicemanId, status, bookingId);
 
     await BookingModel.findByIdAndUpdate(bookingId, {
       $set: {

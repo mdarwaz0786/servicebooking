@@ -42,12 +42,12 @@ export const checkServicemanNearby = asyncHandler(async (req, res) => {
     userLng
   );
 
-  const isNearby = distance <= 100;
+  const isNearby = distance <= 500;
 
   const data = {
     nearby: isNearby,
     distance: parseInt(distance.toFixed(2)),
-    distanceCheck: 100
+    distanceCheck: 500
   }
 
   return res.status(200).json({
