@@ -1,33 +1,30 @@
+import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import ServicemanTimeSlot from "../../models/servicemanTimeSlot.model.js";
+import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 
-export const target = asyncHandler(async (req, res) => {
+export const monthlyStats = asyncHandler(async (req, res) => {
+  let { year, month } = req.query;
+
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "User not authenticated");
 
   const serviceman = await ServiceManProfileModel.findOne({ userId });
   if (!serviceman) throw new ApiError(404, "Service man profile not found");
 
-  const year = parseInt(req.query.year);
-  const month = parseInt(req.query.month);
+  year = parseInt(year);
+  month = parseInt(month) - 1;
 
-  let dateFilter = {};
+  const startOfMonth = new Date(year, month, 1);
+  const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59);
 
-  if (year && month) {
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 1);
-
-    dateFilter.createdAt = {
-      $gte: startDate,
-      $lt: endDate
-    };
-  };
-
+  /* ---------------- BOOKING STATUS COUNTS ---------------- */
   const bookingAgg = await ServiceManBookingModel.aggregate([
     {
       $match: {
         servicemanId: serviceman?._id,
-        ...dateFilter
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth }
       }
     },
     {
@@ -35,135 +32,84 @@ export const target = asyncHandler(async (req, res) => {
         _id: "$status",
         count: { $sum: 1 }
       }
-    },
+    }
+  ]);
+
+  console.log(bookingAgg)
+
+  const bookingStats = {
+    new: 0,
+    accept: 0,
+    complete: 0,
+    cancel: 0,
+    totalBookings: 0
+  };
+
+  bookingAgg.forEach((b) => {
+    bookingStats[b?._id] = b?.count;
+    bookingStats.totalBookings += b?.count;
+  });
+
+  /* ---------------- ACTIVE & LEAVE HOURS ---------------- */
+  const timeAgg = await ServicemanTimeSlot.aggregate([
     {
-      $group: {
-        _id: null,
-        total: { $sum: "$count" },
-        statuses: {
-          $push: { k: "$_id", v: "$count" }
+      $match: {
+        servicemanId: userId,
+        date: { $gte: startOfMonth, $lte: endOfMonth }
+      }
+    },
+    { $unwind: "$times" },
+    {
+      $addFields: {
+        fromMin: {
+          $add: [
+            { $multiply: [{ $toInt: { $substr: ["$times.from", 0, 2] } }, 60] },
+            { $toInt: { $substr: ["$times.from", 3, 2] } }
+          ]
+        },
+        toMin: {
+          $add: [
+            { $multiply: [{ $toInt: { $substr: ["$times.to", 0, 2] } }, 60] },
+            { $toInt: { $substr: ["$times.to", 3, 2] } }
+          ]
         }
       }
     },
     {
-      $project: {
-        _id: 0,
-        bookings: {
-          $mergeObjects: [
-            {
-              new: 0,
-              accept: 0,
-              reject: 0,
-              ongoing: 0,
-              complete: 0,
-              cancel: 0,
-              partstatusnew: 0,
-              partstatusconfirm: 0,
-              partstatusapprove: 0,
-              partstatusreject: 0
-            },
-            { $arrayToObject: "$statuses" },
-            { total: "$total" }
-          ]
-        }
+      $addFields: {
+        minutes: { $subtract: ["$toMin", "$fromMin"] }
+      }
+    },
+    {
+      $group: {
+        _id: "$status",
+        totalMinutes: { $sum: "$minutes" }
       }
     }
   ]);
 
-  return res.status(200).json({
-    success: true,
-    message: "Dashboard data fetched successfully",
-    data: {
-      bookings: bookingAgg[0]?.bookings || {
-        total: 0,
-        new: 0,
-        accept: 0,
-        reject: 0,
-        ongoing: 0,
-        complete: 0,
-        cancel: 0,
-        partstatusnew: 0,
-        partstatusconfirm: 0,
-        partstatusapprove: 0,
-        partstatusreject: 0
-      },
+  let totalActiveHours = 0;
+  let totalLeaveHours = 0;
+
+  timeAgg.forEach((t) => {
+    if (t?._id === true) {
+      totalActiveHours = t?.totalMinutes / 60;
+    } else {
+      totalLeaveHours = t?.totalMinutes / 60;
     }
   });
-});
 
-
-export const weeklyWinner = asyncHandler(async (req, res) => {
-  const userId = req.user?._id;
-  if (!userId) throw new ApiError(401, "User not authenticated");
-
-  const serviceman = await ServiceManProfileModel.findOne({ userId });
-  if (!serviceman) throw new ApiError(404, "Service man profile not found");
-
-  const year = parseInt(req.query.year);
-  const month = parseInt(req.query.month);
-
-  let dateFilter = {};
-
-  if (year && month) {
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 1);
-
-    dateFilter.createdAt = {
-      $gte: startDate,
-      $lt: endDate
-    };
-  };
-
-  const bookingAgg = await ServiceManBookingModel.aggregate([
-    {
-      $match: {
-        servicemanId: serviceman?._id,
-        ...dateFilter
-      }
-    },
-    {
-      $group: {
-        _id: "$status",
-        count: { $sum: 1 }
-      }
-    },
-    {
-      $group: {
-        _id: null,
-        total: { $sum: "$count" },
-        statuses: {
-          $push: { k: "$_id", v: "$count" }
-        }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        bookings: {
-          $mergeObjects: [
-            {
-              new: 0,
-              accept: 0,
-              reject: 0,
-              ongoing: 0,
-              complete: 0,
-              cancel: 0,
-              partstatusnew: 0,
-              partstatusconfirm: 0,
-              partstatusapprove: 0,
-              partstatusreject: 0
-            },
-            { $arrayToObject: "$statuses" },
-            { total: "$total" }
-          ]
-        }
-      }
-    }
-  ]);
-
+  /* ---------------- RESPONSE ---------------- */
   return res.status(200).json({
     success: true,
-    message: "Dashboard data fetched successfully",
-    data: {},
+    message: "Date fetched successfully",
+    year,
+    month: month + 1,
+    new: bookingStats.new,
+    accept: bookingStats.accept,
+    complete: bookingStats.complete,
+    cancel: bookingStats.cancel,
+    totalActiveHours: Math.round(totalActiveHours),
+    totalLeaveHours: Math.round(totalLeaveHours)
   });
 });
