@@ -112,13 +112,13 @@ export const weeklyWinner = asyncHandler(async (req, res) => {
     {
       $lookup: {
         from: "servicemantimeslots",
-        let: { sid: "$_id.servicemanId" },
+        let: { userId: "$serviceman.userId" },
         pipeline: [
           {
             $match: {
               $expr: {
                 $and: [
-                  { $eq: ["$servicemanId", "$$sid"] },
+                  { $eq: ["$servicemanId", "$$userId"] },
                   { $gte: ["$date", startOfMonth] },
                   { $lte: ["$date", endOfMonth] }
                 ]
