@@ -19,13 +19,17 @@ const cashSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  staus: {
-    type: Boolean,
-    default: true,
-  },
   type: {
     type: String,
     enum: ["Company", "Provider"],
+  },
+  isSubmit: {
+    type: Boolean,
+    default: false,
+  },
+  staus: {
+    type: Boolean,
+    default: true,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

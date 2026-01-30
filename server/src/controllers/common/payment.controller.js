@@ -13,7 +13,7 @@ import generateOtp from "../../utils/generateOpt.js";
 import { createScanAndPayQr, createPaymentLink, razorpay } from "../../utils/scanAndPay.js";
 import axios from "axios";
 import { getCartData } from "../../utils/cart.utils.js";
-import { getSupportConfig } from "../../utils/wallet.utils.js";
+import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
@@ -215,10 +215,14 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
         bookingId: booking?._id,
         servicemanId: serviceman?._id,
         userId,
-        status: "new",
+        status: "accept",
         createdBy: userId,
       });
     };
+
+    const status = "accept";
+
+    await adjustWalletCredit(serviceman?.userId, status, booking?._id);
 
     await CartModel.deleteMany({ "userId": transactionData.userId });
   } else if (transactionData.productType == "wallet") {

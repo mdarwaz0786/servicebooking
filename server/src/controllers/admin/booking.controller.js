@@ -375,7 +375,7 @@ export const updateBooking = asyncHandler(async (req, res) => {
     const latestServiceman = await ServiceManProfile.findById(lastServicemanBooking?.servicemanId);
 
     if (req.body.status == "cancel") {
-      await adjustWalletCredit(latestServiceman?.userId, status, lastServicemanBooking?.bookingId);
+      await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
     };
   };
 
