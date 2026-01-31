@@ -359,7 +359,6 @@ export const serviceManBookingVerifyOtp = asyncHandler(async (req, res) => {
 
 // Accept Booking
 export const serviceManBookingAccept = asyncHandler(async (req, res) => {
-  // const { status } = req.body;
   let status = 'accept';
 
   const userId = req.user?._id;
@@ -370,6 +369,18 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
 
   const servicemanBooking = await ServiceManBookingModel.findOne({ _id: req.params.id, servicemanId: serviceman?._id });
   if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
+
+  const alreadyAccepted = await ServiceManBookingModel.findOne({
+    bookingId: servicemanBooking?.bookingId,
+    status: "accept",
+  });
+
+  if (alreadyAccepted) {
+    return res.status(400).json({
+      success: false,
+      message: "Booking has already been accepted by another serviceman",
+    });
+  };
 
   await ensureSufficientCredit(userId, servicemanBooking?.bookingId);
 
@@ -388,6 +399,15 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   servicemanBooking.updatedBy = userId;
   servicemanBooking.actionById = userId;
   booking.actionById = userId;
+
+  await ServiceManBookingModel.updateMany(
+    {
+      bookingId: booking?._id,
+      _id: { $ne: servicemanBooking?._id },
+      status: "new",
+    },
+    { $set: { status: "reject" } },
+  );
 
   await booking.save();
   await servicemanBooking.save();
