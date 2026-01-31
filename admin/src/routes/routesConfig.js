@@ -129,10 +129,12 @@ import Invoice from "../pages/Invoice/Invoice";
 import RoleListPage from "../pages/Role/RoleListPage";
 import RoleForm from "../pages/Role/RoleForm";
 import SubAdminForm from "../pages/SubAdmin/SubAdminForm";
+import NotificationForm from "../pages/Notification/NotificationForm";
 
 const routesConfig = {
   private: [
     { path: "/", element: DashboardPage },
+    { path: "/send-notification", element: NotificationForm, module: "notification", action: "add" },
     { path: "/app-info", element: AppInfoFormPage, module: "mobileAppInfo", action: "view" },
     { path: "/cash-collected", element: CashCollectedPage, module: "providerCashcollected", action: "view" },
     { path: "/invoice", element: InvoiceListPage, module: "invoice", action: "view" },

@@ -180,10 +180,9 @@ serviceManProfileSchema.virtual("trainingScheduleSubmit", {
 
 serviceManProfileSchema.pre("save", async function (next) {
   if (this.servicemanId) return next();
-
   try {
     const lastRecord = await this.constructor
-      .findOne({ servicemanId: { $regex: /GI$/ } })
+      .findOne({ servicemanId: { $regex: /^GI\d+$/ } })
       .sort({ createdAt: -1 })
       .select("servicemanId")
       .lean();
@@ -191,13 +190,17 @@ serviceManProfileSchema.pre("save", async function (next) {
     let nextNumber = 101;
 
     if (lastRecord?.servicemanId) {
-      const numericPart = parseInt(lastRecord.servicemanId.replace("GI", ""), 10);
+      const numericPart = parseInt(
+        lastRecord.servicemanId.replace("GI", ""),
+        10
+      );
+
       if (!isNaN(numericPart)) {
         nextNumber = numericPart + 1;
       };
     };
 
-    this.servicemanId = `${nextNumber}GI`;
+    this.servicemanId = `GI${nextNumber}`;
     next();
   } catch (error) {
     next(error);

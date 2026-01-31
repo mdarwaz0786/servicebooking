@@ -99,6 +99,22 @@ export const createBooking = asyncHandler(async (req, res) => {
     await adjustWalletCredit(serviceman?.userId, status, booking?._id);
   };
 
+  if (!serviceman && paymentMode === "cod") {
+    const servicemen = await ServiceManProfileModel
+      .find({ categoryIds: categoryId })
+      .select("_id");
+
+    const bookings = servicemen?.map((sm) => ({
+      bookingId: booking?._id,
+      servicemanId: sm?._id,
+      userId,
+      status: "new",
+      createdBy: userId,
+    }));
+
+    await ServiceManBookingModel.insertMany(bookings);
+  };
+
   // Clear User Cart
   if (paymentMode == 'cod') {
     await CartModel.deleteMany({ userId });
