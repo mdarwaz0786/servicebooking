@@ -35,8 +35,6 @@ export const monthlyStats = asyncHandler(async (req, res) => {
     }
   ]);
 
-  console.log(bookingAgg)
-
   const bookingStats = {
     new: 0,
     accept: 0,
@@ -109,6 +107,7 @@ export const monthlyStats = asyncHandler(async (req, res) => {
     accept: bookingStats.accept,
     complete: bookingStats.complete,
     cancel: bookingStats.cancel,
+    totalBookings: bookingStats.totalBookings,
     totalActiveHours: Math.round(totalActiveHours),
     totalLeaveHours: Math.round(totalLeaveHours)
   });
