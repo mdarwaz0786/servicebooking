@@ -74,7 +74,7 @@ const roleSchema = new mongoose.Schema({
       type: PermissionSchema,
       default: () => ({}),
     },
-    providerAppSuppory: {
+    providerAppSupport: {
       type: PermissionSchema,
       default: () => ({}),
     },
@@ -126,6 +126,10 @@ const roleSchema = new mongoose.Schema({
       type: PermissionSchema,
       default: () => ({}),
     },
+    earning: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
     providerEarning: {
       type: PermissionSchema,
       default: () => ({}),
@@ -139,6 +143,10 @@ const roleSchema = new mongoose.Schema({
       default: () => ({}),
     },
     providerTraining: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    providerTrainingScheduleSubmit: {
       type: PermissionSchema,
       default: () => ({}),
     },
@@ -159,6 +167,18 @@ const roleSchema = new mongoose.Schema({
       default: () => ({}),
     },
     providerNotification: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    activeBooking: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    cancelBooking: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    completeBooking: {
       type: PermissionSchema,
       default: () => ({}),
     },

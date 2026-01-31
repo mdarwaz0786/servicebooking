@@ -11,7 +11,7 @@ import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
-import { getSupportConfig } from "../../utils/wallet.utils.js";
+import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
 import { autoAssignBooking } from "../../utils/autoAssignBooking.js";
 
 // Create Booking + Booking Items
@@ -90,9 +90,29 @@ export const createBooking = asyncHandler(async (req, res) => {
       bookingId: booking?._id,
       servicemanId: serviceman?._id,
       userId,
-      status: "new",
+      status: "accept",
       createdBy: userId,
     });
+
+    const status = "accept";
+
+    await adjustWalletCredit(serviceman?.userId, status, booking?._id);
+  };
+
+  if (!serviceman && paymentMode === "cod") {
+    const servicemen = await ServiceManProfileModel
+      .find({ categoryIds: categoryId })
+      .select("_id");
+
+    const bookings = servicemen?.map((sm) => ({
+      bookingId: booking?._id,
+      servicemanId: sm?._id,
+      userId,
+      status: "new",
+      createdBy: userId,
+    }));
+
+    await ServiceManBookingModel.insertMany(bookings);
   };
 
   // Clear User Cart

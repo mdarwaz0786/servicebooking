@@ -361,7 +361,7 @@ const TrainingScheduleSubmitListPage = () => {
               }}
             />
 
-            <button
+            {/* <button
               className="btn btn-primary"
               type="button"
               onClick={() => console.log("modal opened")}
@@ -369,7 +369,7 @@ const TrainingScheduleSubmitListPage = () => {
               data-bs-target="#scheduleModal"
             >
               Reschedule
-            </button>
+            </button> */}
           </div>
 
           {/* Table */}

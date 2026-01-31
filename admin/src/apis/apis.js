@@ -4,6 +4,9 @@ const apis = {
   dashboard: {
     get: `${BASE_URL}/api/v1/admin/dashboard`,
   },
+  notification: {
+    send: `${BASE_URL}/api/v1/admin/notification`,
+  },
   role: {
     create: `${BASE_URL}/api/v1/admin/role`,
     get: `${BASE_URL}/api/v1/admin/role`,

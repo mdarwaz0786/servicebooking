@@ -33,7 +33,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 // Get All Users
 export const getAllUsers = asyncHandler(async (req, res) => {
-  let { search, role, sort = "desc", page = 1, limit = 10 } = req.query;
+  let { search, role, sort = "desc", page, limit } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -47,7 +47,9 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     ];
   };
 
-  if (role) {
+  if (role == "admin") {
+    filters.role = { $in: ["admin", "subadmin"] };
+  } else if (role) {
     filters.role = role;
   };
 

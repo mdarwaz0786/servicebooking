@@ -8,6 +8,7 @@ import { getCartData } from "../../utils/cart.utils.js";
 import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateBookingId from "../../utils/generateBookingId.js";
+import { adjustWalletCredit } from "../../utils/wallet.utils.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -362,13 +363,19 @@ export const updateBooking = asyncHandler(async (req, res) => {
       .lean();
 
     if (lastServicemanBooking) {
-      const b = await ServiceManBookingModel.findByIdAndUpdate(
+      await ServiceManBookingModel.findByIdAndUpdate(
         lastServicemanBooking?._id,
         {
           status: req.body.status,
           updatedBy: req.user?._id,
         },
       );
+    };
+
+    const latestServiceman = await ServiceManProfile.findById(lastServicemanBooking?.servicemanId);
+
+    if (req.body.status == "cancel") {
+      await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
     };
   };
 

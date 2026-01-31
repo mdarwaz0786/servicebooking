@@ -1,18 +1,15 @@
 import UserModel from "../../models/user.model.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
-import bcrypt from "bcryptjs";
 
 // Login user
 export const loginUser = async (req, res) => {
   try {
-    const { mobile, password } = req.body;
+    const { username, password } = req.body;
 
-    //  console.log(await bcrypt.hash(password, 10));
-
-    const user = await UserModel.findOne({ mobile }).select("+password");
+    const user = await UserModel.findOne({ username }).select("+password");
     if (!user) {
-      return res.status(400).json({ success: false, message: "Invalid mobile number" });
+      return res.status(400).json({ success: false, message: "Invalid username" });
     };
 
     const isMatch = await user.comparePassword(password);

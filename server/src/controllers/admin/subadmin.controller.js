@@ -91,7 +91,7 @@ export const getSubAdmins = asyncHandler(async (req, res) => {
 
   const subadmins = await UserModel.find(filters)
     .select("-password -status -isKycUpdate")
-    .populate("permissions", "roleName")
+    .populate("permissions", "roleName", "cityName",)
     .sort(sortOption)
     .skip(skip)
     .limit(limit)
@@ -123,7 +123,8 @@ export const getSubAdminById = asyncHandler(async (req, res) => {
     role: "subadmin",
   })
     .select("-password -status -isKycUpdate")
-    .populate("permissions");
+    .populate("permissions")
+    .populate("cityName");
 
   if (!subadmin) {
     throw new ApiError(404, "SubAdmin not found");

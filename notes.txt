@@ -55,7 +55,7 @@ VITE_GOOGLE_MAP_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
 
 // client ENV:
 VITE_API_SERVER_BASE_URL=https://oyekabadwale.com/
-VITE_RAZORPAY_KEY_ID=rzp_test_RHmDyqCFCKQ5XV
+VITE_RAZORPAY_KEY_ID=rzp_live_S62R4zJt1L6jJ1
 VITE_APP_NAME=Green India Team
 VITE_GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
 VITE_PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
@@ -66,14 +66,53 @@ PORT=3001
 NODE_ENV=development
 JWT_SECRET_KEY=servicebooking@app
 EXPIRES_IN=999d
+
 RAZORPAY_KEY_ID=rzp_live_S62R4zJt1L6jJ1
 RAZORPAY_KEY_SECRET=QUQ4d5ICOpQB4aD9WpF0BLlW
+
 SMS_USERNAME=OYEKABADWALE
 SMS_APIKEY=F0961-5D9E1
 SMS_SENDER=GREIND
 SMS_ROUTE=DND
 SMS_TEMPLATE_ID=1707175189826818672
-SMS_API_URL=https://123.108.46.13/sms-panel/api/http/index.php 
+SMS_API_URL=https://123.108.46.13/sms-panel/api/http/index.php
+
+
+// Local ENV
+// Admin:
+VITE_API_BASE_URL=http://192.168.1.10:8080
+VITE_API_SERVER_BASE_URL=http://145.223.18.56:3001/
+VITE_GOOGLE_MAP_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+
+// Client:
+VITE_API_SERVER_BASE_URL=http://192.168.1.10:8080/
+VITE_RAZORPAY_KEY_ID=rzp_live_S62R4zJt1L6jJ1
+VITE_APP_NAME=Green India Team
+VITE_GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+VITE_PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
+
+// Server
+MONGODB_URL=mongodb://admin:Shaurya1819@145.223.18.56:27017/greenindiateam?authSource=admin&directConnection=true&replicaSet=rs0
+PORT=8080
+NODE_ENV=development
+JWT_SECRET_KEY=servicebooking@app
+EXPIRES_IN=999d
+
+RAZORPAY_KEY_ID=rzp_live_S62R4zJt1L6jJ1
+RAZORPAY_KEY_SECRET=QUQ4d5ICOpQB4aD9WpF0BLlW
+
+GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
+
+SMS_USERNAME=OYEKABADWALE
+SMS_APIKEY=F0961-5D9E1
+SMS_SENDER=GREIND
+SMS_ROUTE=DND
+SMS_TEMPLATE_ID=1707175189826818672
+SMS_API_URL=https://123.108.46.13/sms-panel/api/http/index.php
+
+
+
 
 // Push Notification-> provider id[multiple], title, description, toAll (all provider)
 // Brand list-> name, code, image, description
@@ -152,3 +191,135 @@ if (qrStatus.payments_count_received > 0) {
 }
 
 // cash colleted amount, cash collected pending amount, cash colleted submit amout
+
+
+{
+  path: "/blog-list",
+  element: (
+    <PermissionRoute module="blog" action="view">
+      <BlogListPage />
+    </PermissionRoute>
+  )
+},
+{
+  path: "/add-blog",
+  element: (
+    <PermissionRoute module="blog" action="add">
+      <AddBlogPage />
+    </PermissionRoute>
+  )
+},
+{
+  path: "/update-blog/:id",
+  element: (
+    <PermissionRoute module="blog" action="update">
+      <UpdateBlogPage />
+    </PermissionRoute>
+  )
+}
+
+import { hasPermission } from "../../utils/permission";
+import { useAuth } from "../../context/auth.context";
+
+const { user } = useAuth();
+
+{hasPermission(user, "blog", "add") && (
+  <button onClick={() => navigate("/add-blog")}>
+    Add Blog
+  </button>
+)}
+
+{hasPermission(user, "blog", "update") && (
+  <button>Edit</button>
+)}
+
+{hasPermission(user, "blog", "delete") && (
+  <button>Delete</button>
+)}
+
+// sidebar
+{hasPermission(user, "blog", "view") && (
+  <NavLink to="/blog-list">Blogs</NavLink>
+)}
+
+{hasPermission(user, "blog", "view") && ()}
+
+
+import jwt from "jsonwebtoken";
+import User from "../../models/user.model.js";
+import ApiError from "../../helpers/apiError.js";
+import asyncHandler from "../../helpers/asyncHandler.js";
+
+const isLoggedIn = (moduleName = null, action = null) =>
+  asyncHandler(async (req, res, next) => {
+
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new ApiError(401, "Authentication token missing.");
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    const user = await User
+      .findById(decoded.id)
+      .populate("permissions")
+      .select("-password");
+
+    if (!user) {
+      throw new ApiError(401, "User not found.");
+    }
+
+    // ✅ SUPER ADMIN BYPASS
+    if (user.role === "admin") {
+      req.user = user;
+      return next();
+    }
+
+    // ✅ PERMISSION CHECK (if provided)
+    if (moduleName && action) {
+
+      const allowed =
+        user?.permissions?.permissions?.[moduleName]?.[action];
+
+      if (!allowed) {
+        throw new ApiError(403, "You don't have permission.");
+      }
+    }
+
+    req.user = user;
+    next();
+  });
+
+export default isLoggedIn;
+
+
+
+router.post(
+  "/",
+  isLoggedIn("blog", "add"),
+  createBlog
+);
+
+router.get(
+  "/",
+  isLoggedIn("blog", "view"),
+  getBlogs
+);
+
+router.put(
+  "/:id",
+  isLoggedIn("blog", "update"),
+  updateBlog
+);
+
+router.delete(
+  "/:id",
+  isLoggedIn("blog", "delete"),
+  deleteBlog
+);
+
+
+
+
