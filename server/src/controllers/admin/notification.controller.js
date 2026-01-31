@@ -2,7 +2,6 @@ import Notification from "../../models/notification.model.js";
 import User from "../../models/user.model.js";
 import firebase from "../../firebase/index.js";
 
-// Send notification
 export const createNotification = async (req, res) => {
   try {
     const { user, title, message, role } = req.body;
@@ -10,56 +9,57 @@ export const createNotification = async (req, res) => {
     if (!message || !role) {
       return res.status(400).json({
         success: false,
-        message: "Message and role are required.",
+        message: "Message and role are required",
       });
     };
 
-    let fcmTokens = [];
     let userIds = [];
 
-    /* ---------- IF USERS PROVIDED → SEND ONLY THEM ---------- */
+    /* SEND TO SELECTED USERS (TOKEN) */
     if (user && user.length > 0) {
+
       const users = await User.find({
         _id: { $in: user },
-        role: role,
+        role,
         fcmToken: { $exists: true, $ne: null },
       });
 
-      fcmTokens = users.map((u) => u?.fcmToken);
-      userIds = users.map((u) => u?._id);
+      if (!users.length) {
+        return res.status(400).json({
+          success: false,
+          message: "Fcm token not found for selected user",
+        });
+      };
+
+      const tokens = users?.map((u) => u?.fcmToken);
+      userIds = users?.map((u) => u?._id);
+
+      await Promise.allSettled(
+        tokens.map((token) =>
+          firebase.messaging().send({
+            token,
+            notification: {
+              title: title || "GI TEAM",
+              body: message,
+            },
+          })
+        )
+      );
     }
 
-    /* ---------- ELSE → SEND TO ALL USERS OF ROLE ---------- */
+    /*  SEND TO ROLE USING TOPIC */
     else {
-      const users = await User.find({
-        role: role,
-        fcmToken: { $exists: true, $ne: null },
-      });
-
-      fcmTokens = users.map((u) => u?.fcmToken);
-      userIds = users.map((u) => u?._id);
-    };
-
-    if (fcmTokens.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No valid FCM tokens found.",
+      await firebase.messaging().send({
+        topic: role, // "user" OR "serviceman"
+        notification: {
+          title: title || "GI TEAM",
+          body: message,
+        },
       });
     };
 
-    /* ---------- FIREBASE PAYLOAD ---------- */
-    const payload = {
-      notification: {
-        title: title || "GI TEAM",
-        body: message,
-      },
-    };
-
-    /* ---------- SEND PUSH ---------- */
-    await Promise.allSettled(fcmTokens.map((token) => firebase.messaging().send({ ...payload, token })));
-
-    /* ---------- SAVE ---------- */
-    const newNotification = new Notification({
+    /* SAVE IN DB */
+    const notification = await Notification.create({
       user: userIds,
       title,
       message,
@@ -67,12 +67,10 @@ export const createNotification = async (req, res) => {
       toAll: !(user && user.length > 0),
     });
 
-    await newNotification.save();
-
     return res.status(200).json({
       success: true,
-      message: "Notification send successfully",
-      data: newNotification,
+      message: "Notification sent successfully",
+      data: notification,
     });
 
   } catch (error) {

@@ -49,6 +49,10 @@ const NotificationForm = () => {
 
     if (!message) return toast.error("Message is required");
 
+    if (!role) {
+      return toast.error("Role is required");
+    };
+
     if (!role && selectedUsers.length === 0) {
       return toast.error("Select role or users");
     };
@@ -59,12 +63,11 @@ const NotificationForm = () => {
       const payload = {
         title,
         message,
+        role,
       };
 
       if (selectedUsers.length > 0) {
         payload.user = selectedUsers.map((u) => u?.value);
-      } else {
-        payload.role = role;
       };
 
       await axios.post(
@@ -101,7 +104,7 @@ const NotificationForm = () => {
               <div className="col-md-6">
                 {/* Role */}
                 <div className="mb-3">
-                  <label className="form-label">Role</label>
+                  <label className="form-label">Role <span className="text-danger">*</span></label>
                   <select
                     className="form-select"
                     value={role}
@@ -109,6 +112,7 @@ const NotificationForm = () => {
                       setRole(e.target.value);
                       setSelectedUsers([]);
                     }}
+                    required
                   >
                     <option value="">-- Select Role --</option>
                     <option value="user">User</option>
@@ -147,13 +151,14 @@ const NotificationForm = () => {
 
             {/* Message */}
             <div className="mb-3">
-              <label className="form-label">Message *</label>
+              <label className="form-label">Message <span className="text-danger">*</span></label>
               <textarea
                 className="form-control"
                 rows="4"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Enter Message"
+                required
               />
             </div>
 
