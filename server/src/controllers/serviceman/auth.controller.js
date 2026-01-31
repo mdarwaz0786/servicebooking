@@ -29,7 +29,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 // Verify OTP
 export const verifyOtp = asyncHandler(async (req, res) => {
-  const { mobile, otp } = req.body;
+  const { mobile, fcmToken, otp } = req.body;
 
   const otpRecord = await OtpModel.findOne({ mobile });
   if (!otpRecord) throw new ApiError(400, "OTP not found. Please login again");
@@ -42,9 +42,14 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   let user = await UserModel.findOne({ mobile, role: "serviceman" }).populate("kyc profile");
   let isNew = 1;
 
+  if (user) {
+    user.fcmToken = fcmToken;
+    await user.save();
+  };
+
   if (!user) {
     isNew = 0;
-    user = await UserModel.create({ mobile: mobile, role: "serviceman" });
+    user = await UserModel.create({ mobile: mobile, fcmToken, role: "serviceman" });
   };
 
   return res.status(200).json({

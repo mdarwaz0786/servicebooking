@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema({
-  userId: [{
+  user: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   }],
@@ -9,13 +9,13 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  description: {
+  message: {
     type: String,
     trim: true,
   },
-  toAll: {
-    type: Boolean,
-    default: false,
+  role: {
+    type: String,
+    enum: ["user", "serviceman"],
   },
   date: {
     type: String,

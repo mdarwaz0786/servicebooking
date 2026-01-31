@@ -84,6 +84,14 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",
   },
+  fcmToken: {
+    type: String,
+    default: null,
+  },
+  deviceId: {
+    type: String,
+    default: null,
+  },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 userSchema.virtual("profile", {
