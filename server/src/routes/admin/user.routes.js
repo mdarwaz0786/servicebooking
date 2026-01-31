@@ -10,7 +10,7 @@ import isLoggedIn from "../../middlewares/admin/auth.middleware.js";
 const router = express.Router();
 
 router.post("/register", isLoggedIn, registerUser);
-router.get("/", isLoggedIn, getAllUsers);
+router.get("/", getAllUsers);
 router.get("/:id", isLoggedIn, getUserDetails);
 router.patch("/:id", isLoggedIn, updateUserStatus);
 

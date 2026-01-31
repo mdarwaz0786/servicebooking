@@ -48,6 +48,14 @@ const Sidebar = () => {
               </Link>
             </li>
 
+            {hasPermission(user, "notification", "add") && (
+              <li>
+                <Link to="/send-notification" className={currentPath === "/send-notification" ? "active" : ""}>
+                  <i className="fe fe-bell" /> <span>Notification</span>
+                </Link>
+              </li>
+            )}
+
             <li>
               {
                 (

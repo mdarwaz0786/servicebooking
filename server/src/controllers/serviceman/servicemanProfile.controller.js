@@ -180,7 +180,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     message: "Data fetched successfully",
     data: {
       ...profileObj,
-      averageRating: avgRating,
+      averageRating: avgRating || 4.8,
       totalReviews,
       totalEarning: earning[0]?.totalEarning || 0,
       completedJob: completedBookingCount || 0,

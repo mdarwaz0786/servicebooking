@@ -516,7 +516,6 @@ export const dashboard = asyncHandler(async (req, res) => {
       totalEarnning: totalEarning,
       todayEarnning: todayEarning,
       winnerOfTheWeek: winnerOfTheWeek,
-      weeklyWinner: weeklyWinner,
     }
   });
 });

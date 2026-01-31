@@ -17,6 +17,10 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     enum: ["user", "serviceman"],
   },
+  toAll: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: String,
     default: Date.now,

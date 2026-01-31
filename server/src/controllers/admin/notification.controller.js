@@ -7,19 +7,20 @@ export const createNotification = async (req, res) => {
   try {
     const { user, title, message, role } = req.body;
 
-    if (!message) {
+    if (!message || !role) {
       return res.status(400).json({
         success: false,
-        message: "Message is required.",
+        message: "Message and role are required.",
       });
-    }
+    };
 
     let fcmTokens = [];
     let userIds = [];
 
-    /* ---------- SEND BY ROLE ---------- */
-    if (role) {
+    /* ---------- IF USERS PROVIDED → SEND ONLY THEM ---------- */
+    if (user && user.length > 0) {
       const users = await User.find({
+        _id: { $in: user },
         role: role,
         fcmToken: { $exists: true, $ne: null },
       });
@@ -28,30 +29,23 @@ export const createNotification = async (req, res) => {
       userIds = users.map((u) => u?._id);
     }
 
-    /* ---------- SEND TO SELECTED USERS ---------- */
+    /* ---------- ELSE → SEND TO ALL USERS OF ROLE ---------- */
     else {
-      if (!user || user.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Users are required.",
-        });
-      };
-
       const users = await User.find({
-        _id: { $in: user },
+        role: role,
         fcmToken: { $exists: true, $ne: null },
       });
 
       fcmTokens = users.map((u) => u?.fcmToken);
       userIds = users.map((u) => u?._id);
-    }
+    };
 
     if (fcmTokens.length === 0) {
       return res.status(400).json({
         success: false,
         message: "No valid FCM tokens found.",
       });
-    }
+    };
 
     /* ---------- FIREBASE PAYLOAD ---------- */
     const payload = {
@@ -62,11 +56,7 @@ export const createNotification = async (req, res) => {
     };
 
     /* ---------- SEND PUSH ---------- */
-    await Promise.allSettled(
-      fcmTokens.map(token =>
-        firebase.messaging().send({ ...payload, token })
-      )
-    );
+    await Promise.allSettled(fcmTokens.map((token) => firebase.messaging().send({ ...payload, token })));
 
     /* ---------- SAVE ---------- */
     const newNotification = new Notification({
@@ -74,12 +64,14 @@ export const createNotification = async (req, res) => {
       title,
       message,
       role,
+      toAll: !(user && user.length > 0),
     });
 
     await newNotification.save();
 
     return res.status(200).json({
       success: true,
+      message: "Notification send successfully",
       data: newNotification,
     });
 
@@ -88,5 +80,5 @@ export const createNotification = async (req, res) => {
       success: false,
       message: error.message,
     });
-  }
+  };
 };
