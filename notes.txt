@@ -78,6 +78,42 @@ SMS_TEMPLATE_ID=1707175189826818672
 SMS_API_URL=https://123.108.46.13/sms-panel/api/http/index.php
 
 
+// Local ENV
+// Admin:
+VITE_API_BASE_URL=http://192.168.1.10:8080
+VITE_API_SERVER_BASE_URL=http://145.223.18.56:3001/
+VITE_GOOGLE_MAP_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+
+// Client:
+VITE_API_SERVER_BASE_URL=http://192.168.1.10:8080/
+VITE_RAZORPAY_KEY_ID=rzp_live_S62R4zJt1L6jJ1
+VITE_APP_NAME=Green India Team
+VITE_GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+VITE_PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
+
+// Server
+MONGODB_URL=mongodb://admin:Shaurya1819@145.223.18.56:27017/greenindiateam?authSource=admin&directConnection=true&replicaSet=rs0
+PORT=8080
+NODE_ENV=development
+JWT_SECRET_KEY=servicebooking@app
+EXPIRES_IN=999d
+
+RAZORPAY_KEY_ID=rzp_live_S62R4zJt1L6jJ1
+RAZORPAY_KEY_SECRET=QUQ4d5ICOpQB4aD9WpF0BLlW
+
+GOOGLE_API_KEY=AIzaSyDSPdEeCFwq2SOvU3gtmad31bEfbTKtjko
+PLACE_ID=ChIJN7R4GfofDTkRtUWu8aAYjeM
+
+SMS_USERNAME=OYEKABADWALE
+SMS_APIKEY=F0961-5D9E1
+SMS_SENDER=GREIND
+SMS_ROUTE=DND
+SMS_TEMPLATE_ID=1707175189826818672
+SMS_API_URL=https://123.108.46.13/sms-panel/api/http/index.php
+
+
+
+
 // Push Notification-> provider id[multiple], title, description, toAll (all provider)
 // Brand list-> name, code, image, description
 // Provider certificate-> provider name (provider table id), title, number, issued from, issue date, expiry date, description, upload certificate.
