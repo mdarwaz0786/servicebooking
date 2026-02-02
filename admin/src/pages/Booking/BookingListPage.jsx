@@ -84,22 +84,22 @@ const BookingListPage = () => {
     setSearchParams(params);
   };
 
-  const deleteBooking = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+  // const deleteBooking = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this booking?")) return;
 
-    try {
-      const response = await axios.delete(`${apis.booking.delete}/${id}`, {
-        headers: { Authorization: validToken },
-      });
+  //   try {
+  //     const response = await axios.delete(`${apis.booking.delete}/${id}`, {
+  //       headers: { Authorization: validToken },
+  //     });
 
-      if (response?.data?.success) {
-        toast.success("Booking deleted successfully");
-        fetchBookings();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete booking");
-    };
-  };
+  //     if (response?.data?.success) {
+  //       toast.success("Booking deleted successfully");
+  //       fetchBookings();
+  //     };
+  //   } catch (error) {
+  //     toast.error(error?.response?.data?.message || "Failed to delete booking");
+  //   };
+  // };
 
   useEffect(() => {
     fetchBookings();
@@ -145,13 +145,24 @@ const BookingListPage = () => {
     { label: "Accept", value: "accept" },
     { label: "Ongoing", value: "ongoing" },
     { label: "Reject", value: "reject" },
-    { label: "Complete", value: "complete" },
-    { label: "Cancel", value: "cancel" },
     { label: "Part New", value: "partstatusnew" },
     { label: "Part Confirm", value: "partstatusconfirm" },
     { label: "Part Approve", value: "partstatusapprove" },
     { label: "Part Reject", value: "partstatusreject" },
+    { label: "Complete", value: "complete" },
+    { label: "Cancel", value: "cancel" },
   ];
+
+  const getVisibleFilters = () => {
+    if (status == "completed") return [];
+    if (status == "cancelled") return [];
+
+    if (status == "active") {
+      return BOOKING_STATUS_FILTERS?.filter((s) => s?.value != "cancel" && s?.value != "complete");
+    };
+
+    return BOOKING_STATUS_FILTERS;
+  };
 
   return (
     <>
@@ -207,7 +218,7 @@ const BookingListPage = () => {
 
             {/* Booking Status Filters */}
             <div className="d-flex flex-wrap gap-2 mb-0 mt-4">
-              {BOOKING_STATUS_FILTERS?.map((s) => (
+              {getVisibleFilters().map((s) => (
                 <button
                   key={s?.value}
                   type="button"
@@ -252,7 +263,7 @@ const BookingListPage = () => {
                           <td>{(page - 1) * limit + index + 1}</td>
                           <td>{d?.bookingId}</td>
                           <td>{d?.paymentMode}</td>
-                          <td>₹{d?.payableAmount}</td>
+                          <td>₹{d?.payableAmount?.toFixed(2)}</td>
                           <td>
                             <button
                               className="btn btn-primary"
@@ -260,11 +271,17 @@ const BookingListPage = () => {
                               onClick={() => setSelectedBooking(d)}
                               data-bs-toggle="modal"
                               data-bs-target="#serviceManBookingModal"
+                              disabled={d?.status == "complete"}
                             >
                               {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
                             </button>
                           </td>
-                          <td>{d?.paymentStatus == 1 ? "Paid" : "Pending"}</td>
+                          <td>
+                            {d?.paymentMode == "cod" ?
+                              d?.paymentStatus == 1 ? "Paid" : "Pending"
+                              : d?.paymentStatus == 1 ? "Paid" : "Failed"
+                            }
+                          </td>
                           <td>
                             <div className="d-flex align-items-center gap-2">
                               <select
@@ -276,6 +293,7 @@ const BookingListPage = () => {
                                     [d?._id]: e.target.value,
                                   })
                                 }
+                                disabled={d?.status == "complete"}
                               >
                                 {BOOKING_STATUSES?.map((status) => (
                                   <option key={status} value={status}>
@@ -304,13 +322,14 @@ const BookingListPage = () => {
                               </Link>
 
                               {/* Delete Button */}
-                              <button
+                              {/* <button
                                 className="btn delete-table"
                                 type="button"
+                                disabled
                                 onClick={() => deleteBooking(d?._id)}
                               >
                                 <i className="fe fe-trash-2" />
-                              </button>
+                              </button> */}
                             </div>
                           </td>
                         </tr>

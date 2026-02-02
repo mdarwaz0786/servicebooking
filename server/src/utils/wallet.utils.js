@@ -116,6 +116,55 @@ export const calculateProviderInvoiceAmount = async (
   return Number(totalProviderInvoiceAmount?.toFixed(2));
 };
 
+// Calculate admin invoice amount
+export const calculateAdminInvoiceAmount = async (bookingId) => {
+  if (!bookingId) {
+    throw new Error("bookingId is required");
+  };
+
+  const bookingObjectId =
+    bookingId instanceof mongoose.Types.ObjectId
+      ? bookingId
+      : new mongoose.Types.ObjectId(bookingId);
+
+  // 1️⃣ Fetch booking (for additional part amount)
+  const booking = await BookingModel
+    .findById(bookingObjectId)
+    .select("additionalPartAmount")
+    .lean();
+
+  const additionalPartAmount = Number(booking?.additionalPartAmount || 0);
+
+  // 10% of additional part amount goes to admin
+  const percentOfAdditionalPartAmount = additionalPartAmount * 0.1;
+
+  // 2️⃣ Fetch booking items with services
+  const bookingItems = await BookingItemModel
+    .find({ bookingId: bookingObjectId })
+    .populate({ path: "service", select: "taxablePrice" })
+    .lean();
+
+  const GST_PERCENT = 18;
+  let totalAdminInvoiceAmount = 0;
+
+  for (const item of bookingItems) {
+    const qty = Number(item?.quantity || 1);
+    const taxableValue =
+      Number(item?.service?.taxablePrice || 0) * qty;
+
+    // GST on (taxable + 10% additional part)
+    const gstAmount =
+      ((taxableValue + percentOfAdditionalPartAmount) * GST_PERCENT) / 100;
+
+    const adminTotalAmount =
+      taxableValue + percentOfAdditionalPartAmount + gstAmount;
+
+    totalAdminInvoiceAmount += adminTotalAmount;
+  };
+
+  return Number(totalAdminInvoiceAmount.toFixed(2));
+};
+
 // Get total credit points
 export const getTotalCreditPoints = async (providerId) => {
   const wallets = await Wallet.find(

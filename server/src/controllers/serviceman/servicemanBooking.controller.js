@@ -32,6 +32,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   const filters = {};
 
   filters.servicemanId = serviceman?._id;
+  filters.status = { $ne: "taken" };
 
   if (search) {
     filters.$or = [
@@ -40,7 +41,10 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   };
 
   if (status) {
-    filters.status = status;
+    filters.status = {
+      $eq: status,
+      $ne: "taken",
+    };
   };
 
   let sortOption = {};
@@ -379,7 +383,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   if (alreadyAccepted) {
     return res.status(400).json({
       success: false,
-      message: "Booking has already been accepted by another serviceman",
+      message: "Booking has been taken by another provider",
     });
   };
 
@@ -407,7 +411,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
       _id: { $ne: servicemanBooking?._id },
       status: "new",
     },
-    { $set: { status: "cancel" } },
+    { $set: { status: "taken" } },
   );
 
   await booking.save();
@@ -587,13 +591,15 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
-    { status: "complete" },
+    { status: "complete", paymentStatus: 1 },
     { new: true }
   );
 
   await ServiceManBookingModel.findByIdAndUpdate(
     servicemanBookingId,
-    { status: "complete" },
+    {
+      status: "complete",
+    },
     { new: true }
   );
 
@@ -690,7 +696,6 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     await BookingModel.findByIdAndUpdate(
       bookingId,
       {
-        paymentStatus: 1,
         cashColletedSubmitAmount: updatedBooking?.payableAmount,
         cashColletedAmount: updatedBooking?.payableAmount,
         cashColletedPendingAmount: 0,

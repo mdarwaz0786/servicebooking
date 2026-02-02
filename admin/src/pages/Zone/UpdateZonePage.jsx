@@ -29,6 +29,7 @@ const UpdateZonePage = () => {
   const [oldZones, setOldZones] = useState([]);
 
   const [name, setName] = useState("");
+  const [search, setSearch] = useState("");
   const [coordinates, setCoordinates] = useState([]);
   const [oldCoordinates, setOldCoordinates] = useState([]);
   const [isRedrawing, setIsRedrawing] = useState(false);
@@ -45,10 +46,11 @@ const UpdateZonePage = () => {
         { headers: { Authorization: validToken } }
       );
 
-      const zone = res.data.data;
-      setName(zone.name);
+      const zone = res?.data?.data;
+      setName(zone?.name);
+      setSearch(zone?.search);
 
-      const cleanedCoords = zone.geometry.coordinates[0]
+      const cleanedCoords = zone?.geometry?.coordinates[0]
         .slice(0, -1)
         .map(([lng, lat]) => ({ lat, lng }));
 
@@ -115,7 +117,7 @@ const UpdateZonePage = () => {
 
       await axios.patch(
         `${apis.zone.update}/${id}`,
-        { name, coordinates: geoCoords },
+        { name, search, coordinates: geoCoords },
         { headers: { Authorization: validToken } }
       );
 
@@ -142,12 +144,13 @@ const UpdateZonePage = () => {
           return {
             id: zone?._id,
             name: zone?.name,
+            search: zone?.search,
             paths: coords,
           };
         });
 
         setOldZones(zones);
-      }
+      };
     } catch (err) {
       console.error(err);
       toast.error("Failed to load zones");
@@ -194,6 +197,7 @@ const UpdateZonePage = () => {
               type="text"
               className="form-control mb-3"
               placeholder="Search place"
+              onChange={(e) => setSearch(e.target.value)}
             />
           </Autocomplete>
 

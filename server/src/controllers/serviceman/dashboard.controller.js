@@ -63,7 +63,7 @@ export const dashboard = asyncHandler(async (req, res) => {
 
   //  BOOKING STATUS COUNTS
   const bookingAgg = await ServiceManBookingModel.aggregate([
-    { $match: { servicemanId: serviceman?._id } },
+    { $match: { servicemanId: serviceman?._id, status: { $ne: "taken" } } },
     {
       $group: {
         _id: "$status",
@@ -107,7 +107,8 @@ export const dashboard = asyncHandler(async (req, res) => {
   const todayBookings = await ServiceManBookingModel.aggregate([
     {
       $match: {
-        servicemanId: serviceman?._id
+        servicemanId: serviceman?._id,
+        status: { $ne: "taken" },
       }
     },
 
