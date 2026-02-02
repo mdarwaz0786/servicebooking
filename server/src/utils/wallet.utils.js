@@ -165,6 +165,68 @@ export const calculateAdminInvoiceAmount = async (bookingId) => {
   return Number(totalAdminInvoiceAmount.toFixed(2));
 };
 
+// Calculate provider earning amount
+export const calculateProviderEarningAmount = async (
+  servicemanId,
+  bookingId,
+  paymentMode,
+) => {
+  if (!servicemanId || !bookingId) {
+    throw new Error("servicemanId and bookingId are required");
+  };
+
+  const bookingObjectId = bookingId instanceof mongoose.Types.ObjectId ? bookingId : new mongoose.Types.ObjectId(bookingId);
+
+  // 1️⃣ Fetch booking (for additional part amount)
+  const booking = await BookingModel
+    .findById(bookingObjectId)
+    .select("additionalPartAmount paymentStatus paymentMode")
+    .lean();
+
+  const additionalPartAmount = Number(booking?.additionalPartAmount || 0);
+
+  // 3️⃣ Fetch booking items with services
+  const bookingItems = await BookingItemModel
+    .find({ bookingId: bookingObjectId })
+    .populate({ path: "service", select: "salePrice taxablePrice transactionCharge" })
+    .lean();
+
+  let totalSalePrice = 0;
+  let totalTransactionCharge = 0;
+
+  for (const item of bookingItems) {
+    const qty = Number(item?.quantity || 1);
+    const salePrice = Number(item?.service?.salePrice || 0) * qty;
+    totalTransactionCharge = Number(item?.service?.transactionCharge || 0) * qty;
+
+    totalSalePrice += salePrice;
+  };
+
+  const totalProviderEarningAmount = 0;
+  const deductAddtionalPartPercent = 0.1;
+
+  const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
+
+  if (paymentMode?.toLowerCase() == "cod" && booking?.paymentMode == "cod") {
+    totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount);
+
+    // cash collcted will be deductAdditionalPartAmount
+    // payout true
+  };
+
+  if (paymentMode?.toLowerCase() == "cod" && booking?.paymentMode == "online") {
+    totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
+  };
+
+  if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "online") {
+    totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
+
+    // payout false
+  };
+
+  return Number(totalProviderEarningAmount?.toFixed(2));
+};
+
 // Get total credit points
 export const getTotalCreditPoints = async (providerId) => {
   const wallets = await Wallet.find(

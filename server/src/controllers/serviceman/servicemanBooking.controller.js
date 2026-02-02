@@ -614,6 +614,27 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     company,
   } = await createInvoice(bookingId);
 
+  if (paymentMode?.toLowerCase() == "cod") {
+    await CashCollectedLoggerModel.create({
+      type,
+      bookingId,
+      providerId: userId,
+      amount: updatedBooking?.payableAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedSubmitAmount: updatedBooking?.payableAmount,
+        cashColletedAmount: updatedBooking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
+    );
+  };
+
   await InvoiceModel.create({
     type: "Customer",
     bookingId,
@@ -682,27 +703,6 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     customerDetail: customer || {},
     addressDetail: address || {},
   });
-
-  if (paymentMode?.toLowerCase() == "cod") {
-    await CashCollectedLoggerModel.create({
-      type,
-      bookingId,
-      providerId: userId,
-      amount: updatedBooking?.payableAmount,
-      createdBy: userId,
-      createdAt: new Date(),
-    });
-
-    await BookingModel.findByIdAndUpdate(
-      bookingId,
-      {
-        cashColletedSubmitAmount: updatedBooking?.payableAmount,
-        cashColletedAmount: updatedBooking?.payableAmount,
-        cashColletedPendingAmount: 0,
-      },
-      { new: true },
-    );
-  };
 
   return res.status(201).json({
     success: true,

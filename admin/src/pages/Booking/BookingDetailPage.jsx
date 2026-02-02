@@ -252,7 +252,7 @@ const BookingDetailPage = () => {
                       <strong>₹{booking?.amount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>GST ({booking?.gstPercent}%):</span>
+                      <span>Taxes and Fee: </span>
                       <strong>₹{booking?.gstAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
