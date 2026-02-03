@@ -50,6 +50,7 @@ const AddServicePage = () => {
     metaAuthor: "",
     metaKeywords: "",
     metaDescription: "",
+    isMediaUpload: 0,
   });
 
   useEffect(() => {
@@ -256,6 +257,7 @@ const AddServicePage = () => {
           transactionCharge: "",
           shortDescription: "",
           fullDescription: "",
+          isMediaUpload: 1,
         }));
         setImage(null);
         setPreview(null);
@@ -469,7 +471,7 @@ const AddServicePage = () => {
               </div>
 
               <div className="row">
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Rating</label>
                   <input
                     type="number"
@@ -480,7 +482,7 @@ const AddServicePage = () => {
                     placeholder="1-5"
                   />
                 </div>
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Number of Reviews</label>
                   <input
                     type="number"
@@ -490,6 +492,25 @@ const AddServicePage = () => {
                     className="form-control"
                     placeholder="0"
                   />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">
+                    Media Upload Required
+                  </label>
+                  <select
+                    name="isMediaUpload"
+                    value={formData.isMediaUpload}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isMediaUpload: Number(e.target.value),
+                      }))
+                    }
+                    className="form-control"
+                  >
+                    <option value={0}>No</option>
+                    <option value={1}>Yes</option>
+                  </select>
                 </div>
               </div>
 

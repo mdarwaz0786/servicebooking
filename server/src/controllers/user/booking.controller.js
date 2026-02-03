@@ -80,6 +80,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     quantity: item.quantity,
     mrpPrice: item.mrpPrice || 0,
     salePrice: item.salePrice || 0,
+    isMediaUpload: item?.isMediaUpload || 0,
   }));
 
   // Insert Booking Items

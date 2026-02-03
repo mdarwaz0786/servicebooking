@@ -113,7 +113,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
             {
               path: "service",
               model: "Service",
-              select: "name image",
+              select: "name image isMediaUpload",
               strictPopulate: false,
             },
             {
@@ -255,7 +255,7 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
             {
               path: "service",
               model: "Service",
-              select: "name image",
+              select: "name image isMediaUpload",
               strictPopulate: false,
             },
             {
