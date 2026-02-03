@@ -41,30 +41,47 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   };
 
   if (status) {
-    if (status == "cancel") {
+
+    if (status === "all") {
       filters.status = {
-        $in: ["cancel", "reject"],
-        $ne: "taken",
+        $nin: ["complete", "cancel", "reject", "taken"],
       };
     }
-    else if (status == "onHold") {
+
+    else if (status === "cancel") {
+      filters.status = {
+        $in: ["cancel", "reject"],
+      };
+    }
+
+    else if (status === "hold") {
       filters.status = {
         $in: [
           "partstatusnew",
           "partstatusconfirm",
-          "partstatusapprove",
-          "partstatusreject",
         ],
-        $ne: "taken",
       };
     }
+
+    else if (status === "ongoing") {
+      filters.status = {
+        $in: [
+          "assign",
+          "accept",
+          "partstatusapprove",
+          "partstatusreject",
+          "ongoing",
+        ],
+      };
+    }
+
     else {
       filters.status = {
         $eq: status,
-        $ne: "taken",
       };
     }
   };
+
 
   let sortOption = {};
 
