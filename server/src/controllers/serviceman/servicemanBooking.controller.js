@@ -42,19 +42,19 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
 
   if (status) {
 
-    if (status === "all") {
+    if (status == "all") {
       filters.status = {
         $nin: ["complete", "cancel", "reject", "taken"],
       };
     }
 
-    else if (status === "cancel") {
+    else if (status == "cancel") {
       filters.status = {
         $in: ["cancel", "reject"],
       };
     }
 
-    else if (status === "hold") {
+    else if (status == "hold") {
       filters.status = {
         $in: [
           "partstatusnew",
@@ -63,7 +63,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
       };
     }
 
-    else if (status === "ongoing") {
+    else if (status == "ongoing") {
       filters.status = {
         $in: [
           "assign",
@@ -81,7 +81,6 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
       };
     }
   };
-
 
   let sortOption = {};
 

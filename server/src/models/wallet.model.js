@@ -6,6 +6,10 @@ const walletSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "Provider ID is required"],
   },
+  bookingId: {
+    type: String,
+    default: "",
+  },
   creditPoints: {
     type: Number,
     default: 0,

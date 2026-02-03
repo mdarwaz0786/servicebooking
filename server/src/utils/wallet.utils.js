@@ -265,7 +265,7 @@ export const adjustWalletCredit = async (
   status,
   bookingId,
 ) => {
-  if (!providerId || !status) return;
+  if (!providerId || !status || !bookingId) return;
 
   const previousBalance = await getTotalCreditPoints(providerId);
   let currentCreditPoints;
@@ -280,7 +280,9 @@ export const adjustWalletCredit = async (
   let transactionType = "";
   let purpose = ""
 
-  if (status === "accept") {
+  const booking = await BookingModel.findById(bookingId).select("bookingId");
+
+  if (status == "accept") {
     creditPoints = acceptCreditPoints;
     transactionType = "Debit";
     purpose = "Deduct for accept booking";
@@ -294,7 +296,7 @@ export const adjustWalletCredit = async (
     };
   };
 
-  if (status === "cancel") {
+  if (status == "cancel") {
     creditPoints = cancelCreditPoints;
     transactionType = "Credit";
     purpose = "Add for cancel booking";
@@ -305,6 +307,7 @@ export const adjustWalletCredit = async (
 
   return await Wallet.create({
     providerId,
+    bookingId: booking?.bookingId,
     creditPoints,
     depositAmount,
     transactionType,
