@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const bookingMediaSchema = new mongoose.Schema({
+  servicemanBookingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Booking",
+  },
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",
@@ -8,9 +12,23 @@ const bookingMediaSchema = new mongoose.Schema({
   bookingItemId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "BookingItem",
+    index: true,
+  },
+  servicemanId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManProfile",
+  },
+  mediaTimeline: {
+    type: Number,
+    enum: [1, 2],     // 1 = Before, 2 = After
   },
   mediaType: {
     type: String,
+    enum: ["image", "video"],
+  },
+  media: {
+    type: String,
+    trim: true,
   },
   status: {
     type: Boolean,
