@@ -112,6 +112,7 @@ export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
   if (!bookingItemId) {
     throw new ApiError(400, "booking item id is required");
   };
+
   const profile = await ServiceManProfileModel.findOne({ userId }).select("_id");
 
   let servicemanId = profile?._id;
