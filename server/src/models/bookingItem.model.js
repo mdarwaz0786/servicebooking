@@ -57,6 +57,13 @@ bookingItemSchema.virtual("service", {
   justOne: true
 });
 
+bookingItemSchema.virtual("bookingMedia", {
+  ref: "BookingMedia",
+  localField: "_id",
+  foreignField: "bookingItemId",
+  justOne: false,
+});
+
 bookingItemSchema.virtual("additionalParts", {
   ref: "BookingAdditionalPart",
   localField: "_id",
