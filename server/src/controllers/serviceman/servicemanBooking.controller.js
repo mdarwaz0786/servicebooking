@@ -53,7 +53,11 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
         $in: ["cancel", "reject"],
       };
     }
-
+    else if (status == "new") {
+      filters.status = {
+        $in: ["new", "accept"],
+      };
+    }
     else if (status == "hold") {
       filters.status = {
         $in: [
