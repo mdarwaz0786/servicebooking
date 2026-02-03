@@ -52,14 +52,6 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
       ? await Promise.all(req.files.videos.map((file) => compressVideo(file.buffer, "servicemanBookingVideos")))
       : [];
 
-    uploadedVideos = req.files?.videos
-      ? await Promise.all(
-        req.files.videos.map((file) =>
-          compressVideo(file.buffer, "servicemanBookingVideos")
-        )
-      )
-      : [];
-
     for (let i = 0; i < uploadedImages.length; i++) {
       await BookingMediaModel.create({
         servicemanBookingId,
@@ -127,6 +119,14 @@ export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
     if (!smbooking) {
       throw new ApiError(404, "Serviceman booking not found");
     };
+
+    uploadedImages = req.files?.images
+      ? await Promise.all(req.files.images.map((file) => compressImage(file.buffer, "servicemanBookingImages")))
+      : [];
+
+    uploadedVideos = req.files?.videos
+      ? await Promise.all(req.files.videos.map((file) => compressVideo(file.buffer, "servicemanBookingVideos")))
+      : [];
 
     const bookingId = smbooking?.bookingId;
 
