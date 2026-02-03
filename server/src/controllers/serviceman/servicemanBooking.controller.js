@@ -109,12 +109,20 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
         {
           path: "bookingItems",
           strictPopulate: false,
-          populate: {
-            path: "service",
-            model: "Service",
-            select: "name image",
-            strictPopulate: false,
-          },
+          populate: [
+            {
+              path: "service",
+              model: "Service",
+              select: "name image",
+              strictPopulate: false,
+            },
+            {
+              path: "bookingMedia",
+              model: "BookingMedia",
+              select: "mediaTimeline mediaType media",
+              strictPopulate: false,
+            }
+          ]
         },
       ],
     })
@@ -243,12 +251,20 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
         {
           path: "bookingItems",
           strictPopulate: false,
-          populate: {
-            path: "service",
-            model: "Service",
-            select: "name image categoryId subCategoryId",
-            strictPopulate: false,
-          },
+          populate: [
+            {
+              path: "service",
+              model: "Service",
+              select: "name image",
+              strictPopulate: false,
+            },
+            {
+              path: "bookingMedia",
+              model: "BookingMedia",
+              select: "mediaTimeline mediaType media",
+              strictPopulate: false,
+            }
+          ]
         },
       ],
     })

@@ -44,7 +44,7 @@ const bookingMediaSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+}, { timestamps: true });
 
 const BookingMediaModel = mongoose.model("BookingMedia", bookingMediaSchema);
 
