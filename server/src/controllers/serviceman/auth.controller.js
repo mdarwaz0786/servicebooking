@@ -39,11 +39,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   await OtpModel.deleteOne({ mobile });
 
-<<<<<<< HEAD
   let user = await UserModel.findOne({ mobile: mobile, role: "serviceman" }).populate("kyc profile");
-=======
-  let user = await UserModel.findOne({ mobile, role: "serviceman" }).populate("kyc profile");
->>>>>>> a0862b15ebddc7f79281892265bd7855e91b13c6
   let isNew = 1;
 
   if (user) {

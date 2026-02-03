@@ -531,10 +531,16 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     //   servicemanBooking.selfie = selfiePath;
     // };
 
+
+    console.log(req.files?.selfie);
+    
+
     if (req.files?.selfie?.[0]) {
       selfiePath = await compressImage(req.files.selfie[0].buffer, "servicemanSelfies");
       servicemanBooking.selfie = selfiePath;
     };
+
+    return false;
 
     booking.status = status || booking?.status;
     servicemanBooking.status = status || servicemanBooking?.status;
