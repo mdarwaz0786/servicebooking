@@ -224,6 +224,27 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
 
     await adjustWalletCredit(serviceman?.userId, status, booking?._id);
 
+    if (!serviceman) {
+      const servicemen = await autoAssignMultipleServicemen(
+        categoryId,
+        booking?.scheduleDate,
+        booking?.scheduleTime,
+        acceptCreditPoints
+      );
+
+      if (servicemen?.length) {
+        const bookings = servicemen?.map((sm) => ({
+          bookingId: booking?._id,
+          servicemanId: sm?._id,
+          userId,
+          status: "new",
+          createdBy: userId,
+        }));
+
+        await ServiceManBookingModel.insertMany(bookings);
+      };
+    };
+
     await CartModel.deleteMany({ "userId": transactionData.userId });
   } else if (transactionData.productType == "wallet") {
     await WalletModel.create({

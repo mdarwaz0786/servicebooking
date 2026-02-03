@@ -299,7 +299,7 @@ const DashboardPage = () => {
                                         <span>Computer Repair</span>
                                       </Link>
                                     </td> */}
-                                    <td>₹{d?.payableAmount}</td>
+                                    <td>₹{d?.payableAmount?.toFixed(2)}</td>
                                     <td>{d?.status?.charAt(0)?.toUpperCase() + d?.status?.slice(1)}</td>
                                   </tr>
                                 ))

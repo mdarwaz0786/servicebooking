@@ -32,6 +32,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   const filters = {};
 
   filters.servicemanId = serviceman?._id;
+  filters.status = { $ne: "taken" };
 
   if (search) {
     filters.$or = [
@@ -40,7 +41,45 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   };
 
   if (status) {
-    filters.status = status;
+
+    if (status == "all") {
+      filters.status = {
+        $nin: ["complete", "cancel", "reject", "taken"],
+      };
+    }
+
+    else if (status == "cancel") {
+      filters.status = {
+        $in: ["cancel", "reject"],
+      };
+    }
+
+    else if (status == "hold") {
+      filters.status = {
+        $in: [
+          "partstatusnew",
+          "partstatusconfirm",
+        ],
+      };
+    }
+
+    else if (status == "ongoing") {
+      filters.status = {
+        $in: [
+          "assign",
+          "accept",
+          "partstatusapprove",
+          "partstatusreject",
+          "ongoing",
+        ],
+      };
+    }
+
+    else {
+      filters.status = {
+        $eq: status,
+      };
+    }
   };
 
   let sortOption = {};
@@ -379,7 +418,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   if (alreadyAccepted) {
     return res.status(400).json({
       success: false,
-      message: "Booking has already been accepted by another serviceman",
+      message: "Booking has been taken by another provider",
     });
   };
 
@@ -407,7 +446,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
       _id: { $ne: servicemanBooking?._id },
       status: "new",
     },
-    { $set: { status: "cancel" } },
+    { $set: { status: "taken" } },
   );
 
   await booking.save();
@@ -593,13 +632,15 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
-    { status: "complete" },
+    { status: "complete", paymentStatus: 1 },
     { new: true }
   );
 
   await ServiceManBookingModel.findByIdAndUpdate(
     servicemanBookingId,
-    { status: "complete" },
+    {
+      status: "complete",
+    },
     { new: true }
   );
 
@@ -613,6 +654,27 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     address,
     company,
   } = await createInvoice(bookingId);
+
+  if (paymentMode?.toLowerCase() == "cod") {
+    await CashCollectedLoggerModel.create({
+      type,
+      bookingId,
+      providerId: userId,
+      amount: updatedBooking?.payableAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedSubmitAmount: updatedBooking?.payableAmount,
+        cashColletedAmount: updatedBooking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
+    );
+  };
 
   await InvoiceModel.create({
     type: "Customer",
@@ -682,28 +744,6 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     customerDetail: customer || {},
     addressDetail: address || {},
   });
-
-  if (paymentMode?.toLowerCase() == "cod") {
-    await CashCollectedLoggerModel.create({
-      type,
-      bookingId,
-      providerId: userId,
-      amount: updatedBooking?.payableAmount,
-      createdBy: userId,
-      createdAt: new Date(),
-    });
-
-    await BookingModel.findByIdAndUpdate(
-      bookingId,
-      {
-        paymentStatus: 1,
-        cashColletedSubmitAmount: updatedBooking?.payableAmount,
-        cashColletedAmount: updatedBooking?.payableAmount,
-        cashColletedPendingAmount: 0,
-      },
-      { new: true },
-    );
-  };
 
   return res.status(201).json({
     success: true,

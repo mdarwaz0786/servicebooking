@@ -12,7 +12,7 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
-import { autoAssignBooking } from "../../utils/autoAssignBooking.js";
+import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -100,19 +100,25 @@ export const createBooking = asyncHandler(async (req, res) => {
   };
 
   if (!serviceman && paymentMode === "cod") {
-    const servicemen = await ServiceManProfileModel
-      .find({ categoryIds: categoryId })
-      .select("_id");
 
-    const bookings = servicemen?.map((sm) => ({
-      bookingId: booking?._id,
-      servicemanId: sm?._id,
-      userId,
-      status: "new",
-      createdBy: userId,
-    }));
+    const servicemen = await autoAssignMultipleServicemen(
+      categoryId,
+      scheduleDate,
+      scheduleTime,
+      acceptCreditPoints
+    );
 
-    await ServiceManBookingModel.insertMany(bookings);
+    if (servicemen?.length) {
+      const bookings = servicemen?.map((sm) => ({
+        bookingId: booking?._id,
+        servicemanId: sm?._id,
+        userId,
+        status: "new",
+        createdBy: userId,
+      }));
+
+      await ServiceManBookingModel.insertMany(bookings);
+    };
   };
 
   // Clear User Cart

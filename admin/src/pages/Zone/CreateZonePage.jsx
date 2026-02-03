@@ -28,6 +28,7 @@ const CreateZonePage = () => {
   const [oldZones, setOldZones] = useState([]);
 
   const [name, setName] = useState("");
+  const [search, setSearch] = useState("");
   const [coordinates, setCoordinates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
@@ -70,13 +71,14 @@ const CreateZonePage = () => {
       setLoading(true);
       await axios.post(
         apis.zone.create,
-        { name, coordinates },
+        { name, search, coordinates },
         { headers: { Authorization: validToken } }
       );
 
       toast.success("Zone created successfully");
       navigate(-1);
       setName("");
+      setSearch("");
       setCoordinates([]);
     } catch (err) {
       toast.error(err.response?.data?.message || "Error");
@@ -143,6 +145,7 @@ const CreateZonePage = () => {
               type="text"
               className="form-control mb-3"
               placeholder="Search place"
+              onChange={(e) => setSearch(e.target.value)}
             />
           </Autocomplete>
 

@@ -56,7 +56,7 @@ const bookingSchema = new mongoose.Schema({
   },
   status: { // booking status 
     type: String,
-    enum: ["new", "assign", "accept", "ongoing", "reject", "complete", "cancel", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
+    enum: ["new", "assign", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
     index: true,
   },

@@ -11,7 +11,7 @@ export const createCashCollected = asyncHandler(async (req, res) => {
 
   if (!bookingId) {
     throw new ApiError(400, "Booking is required");
-  }
+  };
 
   const existingBooking = await BookingModel
     .findById(bookingId)
@@ -23,11 +23,11 @@ export const createCashCollected = asyncHandler(async (req, res) => {
 
   if (!providerId) {
     throw new ApiError(400, "Provider is required");
-  }
+  };
 
   if (!amount || amount <= 0) {
     throw new ApiError(400, "Valid amount is required");
-  }
+  };
 
   const cash = await CashCollectedLoggerModel.create({
     bookingId,

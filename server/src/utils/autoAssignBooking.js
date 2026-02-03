@@ -207,3 +207,143 @@ export const autoAssignBooking = async (
 
   return servicemen[0] || null;
 };
+
+
+export const autoAssignMultipleServicemen = async (
+  categoryId,
+  bookingDate,
+  scheduleTime,
+  acceptCreditPoints
+) => {
+  const bookingTime24 = convert12To24(scheduleTime);
+
+  const servicemen = await Wallet.aggregate([
+    { $match: { status: true } },
+
+    { $sort: { createdAt: -1 } },
+
+    {
+      $group: {
+        _id: "$providerId",
+        latestWallet: { $first: "$$ROOT" },
+      },
+    },
+
+    {
+      $match: {
+        "latestWallet.currentCreditPoints": { $gt: acceptCreditPoints },
+      },
+    },
+
+    {
+      $lookup: {
+        from: "servicemanprofiles",
+        localField: "_id",
+        foreignField: "userId",
+        as: "serviceman",
+      },
+    },
+    { $unwind: "$serviceman" },
+
+    {
+      $match: {
+        "serviceman.categoryIds": categoryId,
+      },
+    },
+
+    {
+      $lookup: {
+        from: "kycs",
+        localField: "_id",
+        foreignField: "userId",
+        as: "kyc",
+      },
+    },
+    { $unwind: "$kyc" },
+    { $match: { "kyc.status": "approved" } },
+
+    {
+      $lookup: {
+        from: "trainingschedulesubmits",
+        let: { providerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$providerId", "$$providerId"] },
+                  { $eq: ["$type", 1] },
+                  { $eq: ["$attendanceStatus", "Present"] },
+                  { $eq: ["$status", true] },
+                ],
+              },
+            },
+          },
+          { $limit: 1 },
+        ],
+        as: "trainingAttendance",
+      },
+    },
+    { $match: { trainingAttendance: { $ne: [] } } },
+
+    {
+      $lookup: {
+        from: "servicemantimeslots",
+        let: {
+          providerId: "$_id",
+          bookingDate: new Date(bookingDate),
+          bookingTime: bookingTime24,
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$servicemanId", "$$providerId"] },
+                  { $eq: ["$status", true] },
+                  {
+                    $eq: [
+                      { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                      {
+                        $dateToString: {
+                          format: "%Y-%m-%d",
+                          date: "$$bookingDate",
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+          { $unwind: "$times" },
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $lte: ["$times.from", "$$bookingTime"] },
+                  { $gte: ["$times.to", "$$bookingTime"] },
+                ],
+              },
+            },
+          },
+        ],
+        as: "availableSlot",
+      },
+    },
+
+    { $match: { availableSlot: { $ne: [] } } },
+
+    {
+      $project: {
+        _id: "$serviceman._id",
+        userId: "$serviceman.userId",
+        currentCreditPoints: "$latestWallet.currentCreditPoints",
+      },
+    },
+
+  ]);
+
+  return servicemen;
+};
+
