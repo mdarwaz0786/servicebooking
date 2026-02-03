@@ -19,7 +19,8 @@ const getServicemanId = async (servicemanId, userId) => {
 
 // Upload images and videos before start
 export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
-  let { servicemanBookingId, bookingItemId } = req.params;
+  let { servicemanBookingId } = req.params;
+  let { bookingItemId } = req.body;
   const userId = req.user?._id;
 
   if (!servicemanBookingId) {
@@ -97,7 +98,9 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
 
 // Upload images and videos after complete
 export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
-  let { servicemanBookingId, bookingItemId } = req.params;
+  let { servicemanBookingId } = req.params;
+  let { bookingItemId } = req.body;
+
   const userId = req.user?._id;
 
   if (!servicemanBookingId) {
