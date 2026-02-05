@@ -130,6 +130,7 @@ import RoleListPage from "../pages/Role/RoleListPage";
 import RoleForm from "../pages/Role/RoleForm";
 import SubAdminForm from "../pages/SubAdmin/SubAdminForm";
 import NotificationForm from "../pages/Notification/NotificationForm";
+import AddBankTransferPage from "../pages/ServicemanEarning/AddBankTransferPage";
 
 const routesConfig = {
   private: [
@@ -186,6 +187,7 @@ const routesConfig = {
     { path: "/earning", element: EarningListPage, module: "earning", action: "view" },
     { path: "/add-earning", element: AddEarningPage, module: "earning", action: "add" },
     { path: "/update-earning/:id", element: UpdateEarningPage, module: "earning", action: "update" },
+    { path: "/add-bank-transfer", element: AddBankTransferPage, module: "bankTransfer", action: "add" },
 
     { path: "/serviceman-earning", element: ServicemanEarningListPage, module: "providerTrainingScheduleSubmit", action: "view" },
 

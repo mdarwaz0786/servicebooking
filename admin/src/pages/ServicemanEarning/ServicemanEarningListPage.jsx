@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -170,6 +170,13 @@ const ServicemanEarningListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+
+            <Link to="/add-bank-transfer">
+              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                <i className="fa fa-plus me-2"></i>
+                <span>Add Bank Transfer</span>
+              </button>
+            </Link>
           </div>
         </div>
 
