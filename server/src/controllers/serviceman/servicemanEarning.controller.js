@@ -3,6 +3,7 @@ import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import BankTransferModel from "../../models/bankTransfer.model.js";
 
 // get total earning new
 export const getTotalEarnings = asyncHandler(async (req, res) => {
@@ -13,15 +14,24 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
     ? parseInt(year)
     : new Date().getFullYear();
 
-  const startOfYear = new Date(`${selectedYear}-01-01`);
-  const endOfYear = new Date(`${selectedYear}-12-31`);
+  const startOfYear = new Date(selectedYear, 0, 1, 0, 0, 0);
+  const endOfYear = new Date(selectedYear, 11, 31, 23, 59, 59);
 
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const last3MonthStart = new Date();
-  last3MonthStart.setMonth(now.getMonth() - 2);
-  last3MonthStart.setDate(1);
+  const startOfMonth = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    1,
+    0, 0, 0
+  );
+
+  const last3MonthStart = new Date(
+    now.getFullYear(),
+    now.getMonth() - 2,
+    1,
+    0, 0, 0
+  );
 
   const objectId = new mongoose.Types.ObjectId(servicemanId);
 
@@ -36,7 +46,12 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
     },
     {
       $group: {
-        _id: { $month: "$createdAt" },
+        _id: {
+          $month: {
+            date: "$createdAt",
+            timezone: "Asia/Kolkata"
+          }
+        },
         totalAmount: { $sum: "$earningAmount" },
       },
     },
@@ -48,9 +63,15 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
     "July", "August", "September", "October", "November", "December"
   ];
 
-  const monthWise = earningData.map(item => ({
-    month: monthNames[item._id - 1],
-    amount: item.totalAmount,
+  const earningMap = {};
+
+  earningData?.forEach((item) => {
+    earningMap[item?._id] = item?.totalAmount;
+  });
+
+  const monthWise = monthNames?.map((monthName, index) => ({
+    month: monthName,
+    amount: earningMap[index + 1] || 0
   }));
 
   /* ---------------- Totals (Single Aggregation) ---------------- */
@@ -92,6 +113,12 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
 
   const stats = totals[0];
 
+  const bankTransfer = await BankTransferModel
+    .find({ servicemanId })
+    .select("amount fromDate toDate paymentStatus paymentMode")
+    .sort({ createdAt: -1 })
+    .limit(10);
+
   return res.json({
     success: true,
     message: "Data fetched successfully",
@@ -104,7 +131,8 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
         lastThreeMonthEarningAmount: stats.lastThreeMonths[0]?.amount || 0,
         thisYearEarningAmount: stats.thisYear[0]?.amount || 0,
       },
-      monthWiseEarning: monthWise
+      monthWiseEarning: monthWise,
+      bankTransfer: bankTransfer,
     },
   });
 });

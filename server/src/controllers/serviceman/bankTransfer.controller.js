@@ -46,9 +46,15 @@ export const getEarnings = asyncHandler(async (req, res) => {
     "July", "August", "September", "October", "November", "December"
   ];
 
-  const monthWise = earningData.map(item => ({
-    month: monthNames[item._id - 1],
-    amount: item.totalAmount,
+  const earningMap = {};
+
+  earningData.forEach((item) => {
+    earningMap[item?._id] = item?.totalAmount;
+  });
+
+  const monthWise = monthNames.map((monthName, index) => ({
+    month: monthName,
+    amount: earningMap[index + 1] || 0
   }));
 
   /* ---------------- Totals (Single Aggregation) ---------------- */
@@ -90,6 +96,11 @@ export const getEarnings = asyncHandler(async (req, res) => {
 
   const stats = totals[0];
 
+  const bankTransfer = await BankTransferModel
+    .find({ servicemanId })
+    .sort({ createdAt: -1 })
+    .limit(10);
+
   return res.json({
     success: true,
     message: "Data fetched successfully",
@@ -102,7 +113,8 @@ export const getEarnings = asyncHandler(async (req, res) => {
         lastThreeMonthEarningAmount: stats.lastThreeMonths[0]?.amount || 0,
         thisYearEarningAmount: stats.thisYear[0]?.amount || 0,
       },
-      monthWiseEarning: monthWise
+      monthWiseEarning: monthWise,
+      bankTransfer: bankTransfer,
     },
   });
 });
