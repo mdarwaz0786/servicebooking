@@ -3,6 +3,7 @@ import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import BankTransferModel from "../../models/bankTransfer.model.js";
 
 // get total earning new
 export const getTotalEarnings = asyncHandler(async (req, res) => {
@@ -48,9 +49,15 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
     "July", "August", "September", "October", "November", "December"
   ];
 
-  const monthWise = earningData.map(item => ({
-    month: monthNames[item._id - 1],
-    amount: item.totalAmount,
+  const earningMap = {};
+
+  earningData?.forEach((item) => {
+    earningMap[item?._id] = item?.totalAmount;
+  });
+
+  const monthWise = monthNames.map((monthName, index) => ({
+    month: monthName,
+    amount: earningMap[index + 1] || 0
   }));
 
   /* ---------------- Totals (Single Aggregation) ---------------- */
@@ -92,6 +99,12 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
 
   const stats = totals[0];
 
+  const bankTransfer = await BankTransferModel
+    .find({ servicemanId })
+    .select("amount fromDate toDate paymentStatus paymentMode")
+    .sort({ createdAt: -1 })
+    .limit(10);
+
   return res.json({
     success: true,
     message: "Data fetched successfully",
@@ -104,7 +117,8 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
         lastThreeMonthEarningAmount: stats.lastThreeMonths[0]?.amount || 0,
         thisYearEarningAmount: stats.thisYear[0]?.amount || 0,
       },
-      monthWiseEarning: monthWise
+      monthWiseEarning: monthWise,
+      bankTransfer: bankTransfer,
     },
   });
 });
