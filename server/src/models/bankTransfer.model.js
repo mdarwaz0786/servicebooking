@@ -1,39 +1,35 @@
 import mongoose from "mongoose";
 
-const payoutSchema = new mongoose.Schema({
+const bankTransferSchema = new mongoose.Schema({
   servicemanId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  earningIds: [{
+  earningId: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "ServicemanEarning",
   }],
-  paymentMode: {
-    type: String,
-    enum: ["bank", "cash"],
-    default: "bank",
-  },
-  paidToServiceman: {
-    type: Number,
-    default: 0,
-  },
-  paidToGI: {
+  amount: {
     type: Number,
     default: 0,
   },
   fromDate: {
     type: Date,
-    default: Date.now,
+    required: true,
   },
   toDate: {
     type: Date,
-    default: Date.now,
+    required: true,
   },
   paymentStatus: {
     type: String,
     enum: ["success", "fail"],
     default: "success",
+  },
+  paymentMode: {
+    type: String,
+    enum: ["online", "cash"],
+    default: "online",
   },
   status: {
     type: Boolean,
@@ -51,6 +47,6 @@ const payoutSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-const PayoutModel = mongoose.model("Payout", payoutSchema);
+const BankTransferModel = mongoose.model("BankTransfer", bankTransferSchema);
 
-export default PayoutModel;
+export default BankTransferModel;

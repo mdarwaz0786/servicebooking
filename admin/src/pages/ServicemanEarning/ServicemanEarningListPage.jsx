@@ -215,7 +215,6 @@ const ServicemanEarningListPage = () => {
                     <th>#</th>
                     <th>Booking Id</th>
                     <th>Provider</th>
-                    <th>Payable Amount</th>
                     <th>Earning Amout</th>
                     <th>Payout Status</th>
                   </tr>
@@ -227,7 +226,6 @@ const ServicemanEarningListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.service?.booking?.bookingId}</td>
                         <td>{d?.serviceman?.name}</td>
-                        <td>{d?.payableAmount}</td>
                         <td>{d?.earningAmount}</td>
                         <td>
                           <div className="active-switch">
@@ -235,6 +233,7 @@ const ServicemanEarningListPage = () => {
                               <input
                                 type="checkbox"
                                 checked={d?.payoutStatus}
+                                disabled
                                 onChange={() => toggleStatus(d?._id, d?.payoutStatus)}
                               />
                               <span className="sliders round" />
