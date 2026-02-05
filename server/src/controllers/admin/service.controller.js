@@ -18,6 +18,7 @@ export const createService = asyncHandler(async (req, res) => {
     mrpPrice,
     salePrice,
     taxablePrice,
+    isMediaUpload,
     timeTaking,
     shortDescription,
     fullDescription,
@@ -221,6 +222,7 @@ export const updateService = asyncHandler(async (req, res) => {
     shortDescription,
     fullDescription,
     status,
+    isMediaUpload,
     categoryId,
     subCategoryId,
     subSubCategoryId,
@@ -274,6 +276,7 @@ export const updateService = asyncHandler(async (req, res) => {
   service.name = name || service.name;
   service.rating = rating || service.rating;
   service.review = review || service.review;
+  service.isMediaUpload = isMediaUpload || service.isMediaUpload;
   service.mrpPrice = mrpPrice !== undefined ? mrpPrice : service.mrpPrice;
   service.salePrice = salePrice !== undefined ? salePrice : service.salePrice;
   service.timeTaking = timeTaking || service.timeTaking;

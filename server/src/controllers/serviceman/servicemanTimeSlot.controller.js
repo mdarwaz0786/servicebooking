@@ -129,6 +129,7 @@ export const getServicemanTimeSlots = asyncHandler(async (req, res) => {
     .limit(limit)
     .lean();
 
+
   const total = await ServicemanTimeSlotModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
 

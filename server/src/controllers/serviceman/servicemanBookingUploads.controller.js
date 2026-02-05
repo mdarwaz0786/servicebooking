@@ -19,7 +19,8 @@ const getServicemanId = async (servicemanId, userId) => {
 
 // Upload images and videos before start
 export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
-  let { servicemanBookingId, bookingItemId } = req.params;
+  let { servicemanBookingId } = req.params;
+  let { bookingItemId } = req.body;
   const userId = req.user?._id;
 
   if (!servicemanBookingId) {
@@ -30,7 +31,9 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
     throw new ApiError(400, "booking item id is required");
   };
 
-  let servicemanId = await getServicemanId(servicemanId, userId);
+  const profile = await ServiceManProfileModel.findOne({ userId }).select("_id");
+
+  let servicemanId = profile?._id;
 
   let uploadedImages = [];
   let uploadedVideos = [];
@@ -52,21 +55,13 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
       ? await Promise.all(req.files.videos.map((file) => compressVideo(file.buffer, "servicemanBookingVideos")))
       : [];
 
-    uploadedVideos = req.files?.videos
-      ? await Promise.all(
-        req.files.videos.map((file) =>
-          compressVideo(file.buffer, "servicemanBookingVideos")
-        )
-      )
-      : [];
-
     for (let i = 0; i < uploadedImages.length; i++) {
       await BookingMediaModel.create({
         servicemanBookingId,
         bookingId,
         bookingItemId,
         servicemanId,
-        mediaTimeline: 2,
+        mediaTimeline: 1,
         mediaType: "image",
         media: uploadedImages[i],
         createdBy: userId,
@@ -79,7 +74,7 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
         bookingId,
         bookingItemId,
         servicemanId,
-        mediaTimeline: 2,
+        mediaTimeline: 1,
         mediaType: "video",
         media: uploadedVideos[j],
         createdBy: userId,
@@ -105,7 +100,9 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
 
 // Upload images and videos after complete
 export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
-  let { servicemanBookingId, bookingItemId } = req.params;
+  let { servicemanBookingId } = req.params;
+  let { bookingItemId } = req.body;
+
   const userId = req.user?._id;
 
   if (!servicemanBookingId) {
@@ -116,7 +113,9 @@ export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
     throw new ApiError(400, "booking item id is required");
   };
 
-  let servicemanId = await getServicemanId(servicemanId, userId);
+  const profile = await ServiceManProfileModel.findOne({ userId }).select("_id");
+
+  let servicemanId = profile?._id;
 
   let uploadedImages = [];
   let uploadedVideos = [];
@@ -127,6 +126,14 @@ export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
     if (!smbooking) {
       throw new ApiError(404, "Serviceman booking not found");
     };
+
+    uploadedImages = req.files?.images
+      ? await Promise.all(req.files.images.map((file) => compressImage(file.buffer, "servicemanBookingImages")))
+      : [];
+
+    uploadedVideos = req.files?.videos
+      ? await Promise.all(req.files.videos.map((file) => compressVideo(file.buffer, "servicemanBookingVideos")))
+      : [];
 
     const bookingId = smbooking?.bookingId;
 
