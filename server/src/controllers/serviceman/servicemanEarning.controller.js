@@ -1,8 +1,115 @@
+import mongoose from "mongoose";
 import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 
+// get total earning new
+export const getTotalEarnings = asyncHandler(async (req, res) => {
+  const servicemanId = req.user?._id;
+  const { year } = req.query;
+
+  const selectedYear = year
+    ? parseInt(year)
+    : new Date().getFullYear();
+
+  const startOfYear = new Date(`${selectedYear}-01-01`);
+  const endOfYear = new Date(`${selectedYear}-12-31`);
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const last3MonthStart = new Date();
+  last3MonthStart.setMonth(now.getMonth() - 2);
+  last3MonthStart.setDate(1);
+
+  const objectId = new mongoose.Types.ObjectId(servicemanId);
+
+  /* ---------------- Month Wise (Selected Year) ---------------- */
+  const earningData = await ServicemanEarningModel.aggregate([
+    {
+      $match: {
+        servicemanId: objectId,
+        status: true,
+        createdAt: { $gte: startOfYear, $lte: endOfYear },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        totalAmount: { $sum: "$earningAmount" },
+      },
+    },
+    { $sort: { "_id": 1 } }
+  ]);
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const monthWise = earningData.map(item => ({
+    month: monthNames[item._id - 1],
+    amount: item.totalAmount,
+  }));
+
+  /* ---------------- Totals (Single Aggregation) ---------------- */
+  const totals = await ServicemanEarningModel.aggregate([
+    {
+      $match: {
+        servicemanId: objectId,
+        status: true
+      }
+    },
+    {
+      $facet: {
+        totalEarning: [
+          { $group: { _id: null, amount: { $sum: "$earningAmount" } } }
+        ],
+        totalPaid: [
+          { $match: { payoutStatus: true } },
+          { $group: { _id: null, amount: { $sum: "$earningAmount" } } }
+        ],
+        totalUnpaid: [
+          { $match: { payoutStatus: false } },
+          { $group: { _id: null, amount: { $sum: "$earningAmount" } } }
+        ],
+        thisMonth: [
+          { $match: { createdAt: { $gte: startOfMonth } } },
+          { $group: { _id: null, amount: { $sum: "$earningAmount" } } }
+        ],
+        lastThreeMonths: [
+          { $match: { createdAt: { $gte: last3MonthStart } } },
+          { $group: { _id: null, amount: { $sum: "$earningAmount" } } }
+        ],
+        thisYear: [
+          { $match: { createdAt: { $gte: startOfYear, $lte: endOfYear } } },
+          { $group: { _id: null, amount: { $sum: "$earningAmount" } } }
+        ]
+      }
+    }
+  ]);
+
+  const stats = totals[0];
+
+  return res.json({
+    success: true,
+    message: "Data fetched successfully",
+    data: {
+      totals: {
+        totalEarningAmount: stats.totalEarning[0]?.amount || 0,
+        receivedEarningAmount: stats.totalPaid[0]?.amount || 0,
+        remainingEarningAmount: stats.totalUnpaid[0]?.amount || 0,
+        thisMonthEarningAmount: stats.thisMonth[0]?.amount || 0,
+        lastThreeMonthEarningAmount: stats.lastThreeMonths[0]?.amount || 0,
+        thisYearEarningAmount: stats.thisYear[0]?.amount || 0,
+      },
+      monthWiseEarning: monthWise
+    },
+  });
+});
+
+// get total earning old
 export const getServicemanEarnings = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "User not authenticated");
