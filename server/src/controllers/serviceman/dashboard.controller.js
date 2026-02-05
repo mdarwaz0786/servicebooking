@@ -481,7 +481,7 @@ export const dashboard = asyncHandler(async (req, res) => {
   const todayTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: startOfDay, $lte: endOfDay },
-    "times": { $elemMatch: { status: true } }
+    times: { $elemMatch: { status: true } }
   });
 
   const tomorrow = new Date();
@@ -492,7 +492,7 @@ export const dashboard = asyncHandler(async (req, res) => {
   const tomorrowTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: tomorrow, $lte: new Date(tomorrow.getTime() + 86399999) },
-    "times": { $elemMatch: { status: true } }
+    times: { $elemMatch: { status: true } }
   });
 
   return res.status(200).json({
