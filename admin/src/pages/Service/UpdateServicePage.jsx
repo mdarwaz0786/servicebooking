@@ -518,7 +518,7 @@ const UpdateServicePage = () => {
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">
-                    Media Upload Required
+                    Repairing Diagnostic
                   </label>
                   <select
                     name="isMediaUpload"
@@ -542,7 +542,7 @@ const UpdateServicePage = () => {
                   <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
                   <input required type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
-                <div className="col-md-4 mb-3">
+                {/* <div className="col-md-4 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
                   <select
                     name="repairingDiagnostic"
@@ -553,7 +553,7 @@ const UpdateServicePage = () => {
                     <option value={true}>Yes</option>
                     <option value={false}>No</option>
                   </select>
-                </div>
+                </div> */}
                 <div className="col-md-4 mb-3">
                   <label className="form-label">Off Price</label>
                   <input type="number" placeholder="Add price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" required disabled={true} />
