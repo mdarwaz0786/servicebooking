@@ -112,7 +112,7 @@ export const createServicemanTimeSlot = asyncHandler(async (req, res) => {
 });
 
 export const getServicemanTimeSlots = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, sort = "asc" } = req.query;
+  let { page = 1, limit = 10, sort = "desc" } = req.query;
   const servicemanId = req.user?._id;
 
   page = parseInt(page, 10);

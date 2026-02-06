@@ -11,6 +11,7 @@ import generateBookingId from "../../utils/generateBookingId.js";
 import { adjustWalletCredit } from "../../utils/wallet.utils.js";
 import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model.js";
 import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
+import BookingMediaModel from "../../models/bookingMedia.model.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -247,6 +248,41 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
+  const medias = await BookingMediaModel
+    .find({ bookingId: booking?._id })
+    .lean();
+
+  const mediaMap = {};
+
+  for (const m of medias) {
+    const key = String(m.servicemanBookingId);
+
+    if (!mediaMap[key]) {
+      mediaMap[key] = {
+        beforeStartImages: [],
+        beforeStartVideos: [],
+        afterCompleteImages: [],
+        afterCompleteVideos: [],
+      };
+    }
+
+    if (m.mediaTimeline === 1 && m.mediaType === "image") {
+      mediaMap[key].beforeStartImages.push(m.media);
+    }
+
+    if (m.mediaTimeline === 1 && m.mediaType === "video") {
+      mediaMap[key].beforeStartVideos.push(m.media);
+    }
+
+    if (m.mediaTimeline === 2 && m.mediaType === "image") {
+      mediaMap[key].afterCompleteImages.push(m.media);
+    }
+
+    if (m.mediaTimeline === 2 && m.mediaType === "video") {
+      mediaMap[key].afterCompleteVideos.push(m.media);
+    }
+  }
+
   /* ---------------- ALL ASSIGNMENTS ---------------- */
   const assignments = await ServiceManBookingModel
     .find({ bookingId: booking?._id })
@@ -262,10 +298,62 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .lean();
 
   /* ---------------- LATEST ASSIGNMENT ---------------- */
-  const assign = assignments[0] || null;
+  const latestAssign = assignments[0] || null;
 
-  booking.latestServiceman = assign
+  const latestMedia = latestAssign
+    ? mediaMap[String(latestAssign?._id)] || {
+      beforeStartImages: [],
+      beforeStartVideos: [],
+      afterCompleteImages: [],
+      afterCompleteVideos: [],
+    }
+    : null;
+  booking.latestServiceman = latestAssign
     ? {
+      assignmentId: latestAssign?._id,
+      status: latestAssign?.status,
+      assignedDate: latestAssign?.assignedDate,
+      assignedTime: latestAssign?.assignedTime,
+      startDate: latestAssign?.startDate,
+      startTime: latestAssign?.startTime,
+      endDate: latestAssign?.endDate,
+      endTime: latestAssign?.endTime,
+      cancelDate: latestAssign?.cancelDate,
+      cancelTime: latestAssign?.cancelTime,
+      acceptDate: latestAssign?.acceptDate,
+      acceptTime: latestAssign?.acceptTime,
+      rejectDate: latestAssign?.rejectDate,
+      rejectTime: latestAssign?.rejectTime,
+      selfie: latestAssign?.selfie,
+
+      beforeStartImages: latestMedia?.beforeStartImages,
+      beforeStartVideos: latestMedia?.beforeStartVideos,
+      afterCompleteImages: latestMedia?.afterCompleteImages,
+      afterCompleteVideos: latestMedia?.afterCompleteVideos,
+
+      serviceman: latestAssign?.servicemanId
+        ? {
+          profileId: latestAssign?.servicemanId?._id,
+          name: latestAssign?.servicemanId?.name,
+          email: latestAssign?.servicemanId?.email,
+          mobile: latestAssign?.servicemanId?.user?.mobile,
+          profileImage: latestAssign?.servicemanId?.profileImage,
+        }
+        : null,
+    }
+    : null;
+
+  /* ---------------- SERVICEMAN HISTORY ---------------- */
+  booking.servicemanHistory = assignments?.slice(1)?.map((assign) => {
+    const historyMedia =
+      mediaMap[String(assign?._id)] || {
+        beforeStartImages: [],
+        beforeStartVideos: [],
+        afterCompleteImages: [],
+        afterCompleteVideos: [],
+      };
+
+    return {
       assignmentId: assign?._id,
       status: assign?.status,
       assignedDate: assign?.assignedDate,
@@ -281,10 +369,12 @@ export const getBookingById = asyncHandler(async (req, res) => {
       rejectDate: assign?.rejectDate,
       rejectTime: assign?.rejectTime,
       selfie: assign?.selfie,
-      beforeStartImages: assign?.beforeStartImages,
-      beforeStartVideos: assign?.beforeStartVideos,
-      afterCompleteImages: assign?.afterCompleteImages,
-      afterCompleteVideos: assign?.afterCompleteVideos,
+
+      beforeStartImages: historyMedia?.beforeStartImages,
+      beforeStartVideos: historyMedia?.beforeStartVideos,
+      afterCompleteImages: historyMedia?.afterCompleteImages,
+      afterCompleteVideos: historyMedia?.afterCompleteVideos,
+
       serviceman: assign?.servicemanId
         ? {
           profileId: assign?.servicemanId?._id,
@@ -294,40 +384,8 @@ export const getBookingById = asyncHandler(async (req, res) => {
           profileImage: assign?.servicemanId?.profileImage,
         }
         : null,
-    }
-    : null;
-
-  /* ---------------- ASSIGNMENT HISTORY ---------------- */
-  booking.servicemanHistory = assignments?.slice(1)?.map((assign) => ({
-    assignmentId: assign?._id,
-    status: assign?.status,
-    assignedDate: assign?.assignedDate,
-    assignedTime: assign?.assignedTime,
-    startDate: assign?.startDate,
-    startTime: assign?.startTime,
-    endDate: assign?.endDate,
-    endTime: assign?.endTime,
-    cancelDate: assign?.cancelDate,
-    cancelTime: assign?.cancelTime,
-    acceptDate: assign?.acceptDate,
-    acceptTime: assign?.acceptTime,
-    rejectDate: assign?.rejectDate,
-    rejectTime: assign?.rejectTime,
-    selfie: assign?.selfie,
-    beforeStartImages: assign?.beforeStartImages,
-    beforeStartVideos: assign?.beforeStartVideos,
-    afterCompleteImages: assign?.afterCompleteImages,
-    afterCompleteVideos: assign?.afterCompleteVideos,
-    serviceman: assign?.servicemanId
-      ? {
-        profileId: assign?.servicemanId?._id,
-        name: assign?.servicemanId?.name,
-        email: assign?.servicemanId?.email,
-        mobile: assign?.servicemanId?.user?.mobile,
-        profileImage: assign?.servicemanId?.profileImage,
-      }
-      : null,
-  }));
+    };
+  });
 
   /* ---------------- BOOKING ITEMS ---------------- */
   const items = await BookingItemModel
