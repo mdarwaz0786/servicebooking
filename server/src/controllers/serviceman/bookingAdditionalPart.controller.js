@@ -24,7 +24,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
 
   const documents = parts?.map((item) => {
     const unitPrice = Number(item?.unitPrice) || 0;
-    const quantity = Number(item?.quantity) || 0;
+    const quantity = Number(item?.quantity) || 1;
 
     const partTotal = unitPrice * quantity;
     additionalPartTotalAmount += partTotal;
@@ -50,10 +50,12 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   });
 
   const oldAmount = Number(booking?.amount) || 0;
+  const oldPayableAmount = Number(booking?.payableAmount) || 0;
   // const oldDiscountAmount = Number(booking?.discountAmount) || 0;
   // const gstPercent = Number(booking?.gstPercent) || 0;
 
   const updatedAmount = oldAmount + additionalPartTotalAmount;
+  const updatedPayableAmount = oldPayableAmount + additionalPartTotalAmount;
 
   // let updatedDiscountAmount = 0;
 
@@ -73,7 +75,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
       amount: updatedAmount,
       // discountAmount: updatedDiscountAmount,
       // gstAmount,
-      payableAmount: updatedAmount,
+      payableAmount: updatedPayableAmount,
       updatedBy: userId,
       updatedAt: new Date(),
     },

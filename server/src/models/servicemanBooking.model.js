@@ -80,6 +80,9 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  oldAdditionalParts: {
+    type: mongoose.Schema.Types.Mixed,
+  },
   beforeStartImages: {
     type: [String],
     default: [],

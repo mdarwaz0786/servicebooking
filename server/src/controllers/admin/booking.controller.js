@@ -9,6 +9,8 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateBookingId from "../../utils/generateBookingId.js";
 import { adjustWalletCredit } from "../../utils/wallet.utils.js";
+import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model.js";
+import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -385,6 +387,10 @@ export const updateBooking = asyncHandler(async (req, res) => {
     if (req.body.status == "cancel") {
       await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
     };
+  };
+
+  if (req.body.status == "partstatusreject") {
+    await rejectAdditionalParts(booking?._id);
   };
 
   return res.status(200).json({

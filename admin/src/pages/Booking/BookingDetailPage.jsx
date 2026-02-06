@@ -253,9 +253,10 @@ const BookingDetailPage = () => {
                         <th>Part Name</th>
                         <th>Item Name</th>
                         <th>Old Price</th>
-                        <th className="text-center">Quantity</th>
                         <th className="text-end">Labour Charge</th>
                         <th className="text-end">Unit Price</th>
+                        <th className="text-center">Quantity</th>
+                        <th className="text-center">Total Price</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -264,18 +265,18 @@ const BookingDetailPage = () => {
                           <td>{item?.description}</td>
                           <td>{item?.serviceItemId?.service?.name}</td>
                           <td>
-                            <p className="mb-1">Price: {item?.oldAmount?.price}</p>
-                            <p className="mb-1">Discount: {item?.oldAmount?.discount}</p>
-                            <p className="mb-1">Labour Charge: {item?.oldAmount?.laborCharge}</p>
+                            <p className="mb-1">Price: ₹{item?.oldAmount?.price}</p>
+                            <p className="mb-1">Discount: - ₹{item?.oldAmount?.discount}</p>
+                            <p className="mb-1">Labour Charge: ₹{item?.oldAmount?.laborCharge}</p>
                           </td>
-                          <td className="text-center">{item?.quantity}</td>
-                          <td className="text-end">₹{item?.laborCharge}</td>
-                          <td className="text-end" style={{ width: "200px" }}>
+                          <td>₹{item?.laborCharge}</td>
+                          <td style={{ width: "300px" }}>
                             <div className="d-flex gap-2">
                               <input
                                 type="text"
                                 className="form-control"
                                 value={item?.unitPrice || ""}
+                                style={{ width: "100px" }}
                                 onChange={(e) =>
                                   setAdditionalParts((prev) =>
                                     prev?.map(p =>
@@ -297,6 +298,8 @@ const BookingDetailPage = () => {
 
                             </div>
                           </td>
+                          <td>{item?.quantity}</td>
+                          <td>₹{(Number(item?.quantity) * Number(item?.unitPrice)) + Number(item?.laborCharge)}</td>
                         </tr>
                       ))}
                     </tbody>

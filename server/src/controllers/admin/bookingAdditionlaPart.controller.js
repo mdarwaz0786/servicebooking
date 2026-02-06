@@ -12,9 +12,9 @@ export const updateUnitPrice = asyncHandler(async (req, res) => {
   };
 
   const part = await BookingAdditionalPartModel.findById(id);
-  const oldUnitPrice = part?.unitPrice;
-  const quantity = part?.quantity;
-  const oldAdditionalPartAmount = oldUnitPrice * quantity;
+  const oldUnitPrice = Number(part?.unitPrice);
+  const quantity = Number(part?.quantity);
+  const oldAdditionalPartAmount = Number(oldUnitPrice * quantity);
 
   const updatedPart = await BookingAdditionalPartModel.findByIdAndUpdate(
     id,
@@ -31,23 +31,25 @@ export const updateUnitPrice = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Additional part not found");
   };
 
-  const newAditionalPartAmount = quantity * unitPrice;
+  const newAditionalPartAmount = Number(quantity * unitPrice);
 
   const booking = await BookingModel.findById(bookingId);
-  const bookingAdditionalPartAmount = booking?.additionalPartAmount;
+  const bookingAdditionalPartAmount = Number(booking?.additionalPartAmount);
+  const bookingAmount = Number(booking?.amount);
+  const bookingPayableAmount = Number(booking?.payableAmount);
 
-  const additionalPartAmountDifference = oldAdditionalPartAmount - newAditionalPartAmount;
+  const additionalPartAmountDifference = Number(oldAdditionalPartAmount) - Number(newAditionalPartAmount);
 
-  const newAmount = "";
-  const newPayableAmout = "";
-  const finalAdditionalPartAmount = additionalPartAmountDifference;
+  const finalAdditionalPartAmount = Number(bookingAdditionalPartAmount) - Number(additionalPartAmountDifference);
+  const newAmount = Number(bookingAmount) - Number(additionalPartAmountDifference);
+  const newPayableAmout = Number(bookingPayableAmount) - Number(additionalPartAmountDifference);
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
-      additionalPartAmount: additionalPartTotalAmount,
-      amount: updatedAmount,
-      payableAmount: updatedAmount,
+      additionalPartAmount: finalAdditionalPartAmount,
+      amount: newAmount,
+      payableAmount: newPayableAmout,
       updatedBy: req.user?._id,
       updatedAt: new Date(),
     },
