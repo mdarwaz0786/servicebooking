@@ -31,9 +31,14 @@ export const updateUnitPrice = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Additional part not found");
   };
 
-  const newAditionalPartAmount = quantity * unitPrice;
-
   const booking = await BookingModel.findById(bookingId);
+
+  const newAditionalPartAmount = quantity * unitPrice;
+  const bookingAdditionalPartAmount = booking?.additionalPartAmount;
+
+  const partAmountDifference = oldAdditionalPartAmount - newAditionalPartAmount;
+
+
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
