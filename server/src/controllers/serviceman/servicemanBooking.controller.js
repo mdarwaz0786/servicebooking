@@ -238,6 +238,9 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
       _id: req.params.id,
       servicemanId: serviceman?._id,
     })
+    .select(
+      "-afterCompleteImages -afterCompleteVideos -beforeStartImages -beforeStartVideos"
+    )
     .populate("serviceman user")
     .populate({
       path: "booking",
@@ -591,7 +594,7 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     // };
 
 
-    console.log(req.files?.selfie);
+
     
 
     if (req.files?.selfie?.[0]) {
@@ -599,7 +602,7 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
       servicemanBooking.selfie = selfiePath;
     };
 
-    return false;
+    
 
     booking.status = status || booking?.status;
     servicemanBooking.status = status || servicemanBooking?.status;

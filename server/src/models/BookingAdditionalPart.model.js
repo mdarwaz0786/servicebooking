@@ -37,10 +37,6 @@ const bookingAdditionalPartSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "BookingItem",
   },
-  timer: {
-    type: Date,
-    default: () => new Date(Date.now() + 5 * 60 * 1000),
-  },
   status: {
     type: Boolean,
     default: true,

@@ -495,7 +495,7 @@ const AddServicePage = () => {
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">
-                    Media Upload Required
+                    Repairing Diagnostic
                   </label>
                   <select
                     name="isMediaUpload"
@@ -519,7 +519,7 @@ const AddServicePage = () => {
                   <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
                   <input required type="number" placeholder="for e.g. 299 or 199" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
-                <div className="col-md-4 mb-3">
+                {/* <div className="col-md-4 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
                   <select
                     name="repairingDiagnostic"
@@ -530,7 +530,7 @@ const AddServicePage = () => {
                     <option value={true}>Yes</option>
                     <option value={false}>No</option>
                   </select>
-                </div>
+                </div> */}
                 <div className="col-md-4 mb-3">
                   <label className="form-label">Off Price</label>
                   <input type="number" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" readOnly disabled={true} />
