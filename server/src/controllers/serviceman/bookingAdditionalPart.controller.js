@@ -67,6 +67,11 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   // const gstAmount = (updatedAmount * gstPercent) / 100;
   // const payableAmount = updatedAmount + gstAmount - updatedDiscountAmount;
 
+  const nowUTC = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const nowIST = new Date(nowUTC.getTime() + istOffset);
+  const timer = new Date(nowIST.getTime() + 5 * 60 * 1000);
+
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
@@ -77,6 +82,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
       // gstAmount,
       payableAmount: updatedPayableAmount,
       updatedBy: userId,
+      timer,
       updatedAt: new Date(),
     },
     { new: true }

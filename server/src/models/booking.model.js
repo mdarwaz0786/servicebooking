@@ -114,12 +114,6 @@ const bookingSchema = new mongoose.Schema({
   },
   timer: {
     type: Date,
-    default: () => {
-      const nowUTC = new Date();
-      const istOffset = 5.5 * 60 * 60 * 1000;
-      const nowIST = new Date(nowUTC.getTime() + istOffset);
-      return new Date(nowIST.getTime() + 5 * 60 * 1000);
-    }
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
