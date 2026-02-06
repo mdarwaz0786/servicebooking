@@ -11,14 +11,35 @@ const rejectAdditionalParts = async (bookingId) => {
     .find({ bookingId })
     .lean();
 
+  const totalAdditionalPartAmount = additionalParts?.reduce((sum, item) => {
+    const unitPrice = Number(item?.unitPrice) || 0;
+    const quantity = Number(item?.quantity) || 0;
+    return sum + (unitPrice * quantity);
+  }, 0);
+
+  const booking = await BookingModel.findById(bookingId);
+  const amount = Number(booking?.amount);
+  const payableAmount = Number(booking?.payableAmount);
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    {
+      additionalPartAmount: 0,
+      amount: Number(amount) - Number(totalAdditionalPartAmount),
+      payableAmount: Number(payableAmount) - Number(totalAdditionalPartAmount),
+      updatedAt: new Date(),
+    },
+    { new: true }
+  );
+
   await ServiceManBookingModel.findOneAndUpdate(
     { bookingId },
     {
       $set: {
         oldAdditionalParts: additionalParts
-      }
+      },
     },
-    { new: true }
+    { new: true },
   );
 
   await BookingAdditionalPartModel.deleteMany({ bookingId });
