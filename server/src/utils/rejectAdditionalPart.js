@@ -18,7 +18,6 @@ const rejectAdditionalParts = async (bookingId) => {
   }, 0);
 
   const booking = await BookingModel.findById(bookingId);
-  const additionalPartAmount = Number(booking?.additionalPartAmount);
   const amount = Number(booking?.amount);
   const payableAmount = Number(booking?.payableAmount);
 
