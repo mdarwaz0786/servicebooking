@@ -13,6 +13,10 @@ const bankTransferSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  transactionId: {
+    type: String,
+    default: "",
+  },
   fromDate: {
     type: Date,
     required: true,

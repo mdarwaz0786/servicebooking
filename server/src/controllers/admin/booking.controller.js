@@ -231,8 +231,16 @@ export const getBookingById = asyncHandler(async (req, res) => {
   const booking = await BookingModel
     .findById(id)
     .populate({ path: "user", select: "-password -role" })
-    .populate({ path: "address" })
-    .populate("additionalParts")
+    .populate({
+      path: "additionalParts",
+      populate: {
+        path: "serviceItemId",
+        populate: {
+          path: "service",
+          select: "name"
+        }
+      }
+    })
     .lean();
 
   if (!booking) throw new ApiError(404, "Booking not found");
