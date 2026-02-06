@@ -112,6 +112,7 @@ export const getEarnings = asyncHandler(async (req, res) => {
         thisMonthEarningAmount: stats.thisMonth[0]?.amount || 0,
         lastThreeMonthEarningAmount: stats.lastThreeMonths[0]?.amount || 0,
         thisYearEarningAmount: stats.thisYear[0]?.amount || 0,
+        cashCollectedSubmitPending: 0,
       },
       monthWiseEarning: monthWise,
       bankTransfer: bankTransfer,

@@ -50,20 +50,20 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   });
 
   const oldAmount = Number(booking?.amount) || 0;
-  const oldDiscountAmount = Number(booking?.discountAmount) || 0;
-  const gstPercent = Number(booking?.gstPercent) || 0;
+  // const oldDiscountAmount = Number(booking?.discountAmount) || 0;
+  // const gstPercent = Number(booking?.gstPercent) || 0;
 
   const updatedAmount = oldAmount + additionalPartTotalAmount;
 
-  let updatedDiscountAmount = 0;
+  // let updatedDiscountAmount = 0;
 
-  if (oldAmount > 0 && oldDiscountAmount > 0) {
-    const discountPercent = oldDiscountAmount / oldAmount;
-    updatedDiscountAmount = updatedAmount * discountPercent;
-  };
+  // if (oldAmount > 0 && oldDiscountAmount > 0) {
+  //   const discountPercent = oldDiscountAmount / oldAmount;
+  //   updatedDiscountAmount = updatedAmount * discountPercent;
+  // };
 
-  const gstAmount = (updatedAmount * gstPercent) / 100;
-  const payableAmount = updatedAmount + gstAmount - updatedDiscountAmount;
+  // const gstAmount = (updatedAmount * gstPercent) / 100;
+  // const payableAmount = updatedAmount + gstAmount - updatedDiscountAmount;
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
@@ -71,9 +71,9 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
       status: "partstatusnew",
       additionalPartAmount: additionalPartTotalAmount,
       amount: updatedAmount,
-      discountAmount: updatedDiscountAmount,
-      gstAmount,
-      payableAmount,
+      // discountAmount: updatedDiscountAmount,
+      // gstAmount,
+      payableAmount: updatedAmount,
       updatedBy: userId,
       updatedAt: new Date(),
     },

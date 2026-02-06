@@ -10,6 +10,9 @@ const apis = {
   earningAmout: {
     get: `${BASE_URL}/api/v1/admin/bank-transfer/earning-amount-bydate`,
   },
+  bookingAdditonalPart: {
+    updateUnitPrice: `${BASE_URL}/api/v1/admin/booking-additional-part`,
+  },
   notification: {
     send: `${BASE_URL}/api/v1/admin/notification`,
   },
