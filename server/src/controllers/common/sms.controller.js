@@ -2,7 +2,7 @@ import { sendSMS } from "../../utils/sms.js";
 
 export const sendSMSToMobile = async (req, res) => {
   try {
-    const { mobile, templateId, otp } = req.body;
+    const { mobile } = req.body;
 
     if (!mobile) {
       return res.status(400).json({
@@ -11,21 +11,15 @@ export const sendSMSToMobile = async (req, res) => {
       });
     };
 
-    if (!templateId) {
-      return res.status(400).json({
-        success: false,
-        message: "TemplateId is required",
-      });
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    const options = {
+      mobile: mobile,
+      otp: otp,
+      type: "login",
     };
 
-    if (!otp) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP is required",
-      });
-    };
-
-    const result = await sendSMS(mobile, templateId, otp);
+    const result = await sendSMS(options);
 
     return res.status(200).json({
       success: true,

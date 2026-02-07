@@ -114,7 +114,7 @@ const BookingListPage = () => {
     "complete",
     "cancel",
     "partstatusnew",
-    "partstatusconfirm",
+    // "partstatusconfirm",
     "partstatusapprove",
     "partstatusreject",
   ];
@@ -146,7 +146,7 @@ const BookingListPage = () => {
     { label: "Ongoing", value: "ongoing" },
     { label: "Reject", value: "reject" },
     { label: "Part New", value: "partstatusnew" },
-    { label: "Part Confirm", value: "partstatusconfirm" },
+    // { label: "Part Confirm", value: "partstatusconfirm" },
     { label: "Part Approve", value: "partstatusapprove" },
     { label: "Part Reject", value: "partstatusreject" },
     { label: "Complete", value: "complete" },

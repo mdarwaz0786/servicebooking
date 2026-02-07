@@ -9,7 +9,6 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateBookingId from "../../utils/generateBookingId.js";
 import { adjustWalletCredit } from "../../utils/wallet.utils.js";
-import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model.js";
 import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 import BookingMediaModel from "../../models/bookingMedia.model.js";
 
@@ -123,13 +122,6 @@ export const getBookings = asyncHandler(async (req, res) => {
     sortOption = sort;
   };
 
-  // filters.$nor = [
-  //   {
-  //     paymentMode: "online",
-  //     paymentStatus: 0,
-  //   },
-  // ];
-
   const bookings = await BookingModel
     .find(filters)
     .populate({ path: "user", select: "-password" })
@@ -234,6 +226,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   const booking = await BookingModel
     .findById(id)
     .populate({ path: "user", select: "-password -role" })
+    .populate({ path: "address", select: "" })
     .populate({
       path: "additionalParts",
       populate: {

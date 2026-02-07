@@ -13,7 +13,8 @@ import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
 import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
-import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model.js";
+import ServiceManProfile from "../../models/servicemanProfile.model.js";
+import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -354,5 +355,57 @@ export const getBookingById = asyncHandler(async (req, res) => {
       booking: booking,
       items: items,
     },
+  });
+});
+
+// Update Booking
+export const updateBooking = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.user?._id) {
+    throw new ApiError(401, "Unauthorized");
+  };
+
+  const updateData = {
+    ...req.body,
+    updatedBy: req.user?._id,
+  };
+
+  const booking = await BookingModel.findByIdAndUpdate(id, updateData, { new: true });
+
+  if (!booking) throw new ApiError(404, "Booking not found");
+
+  if (req.body.status) {
+    const lastServicemanBooking = await ServiceManBookingModel.findOne({
+      bookingId: booking?._id,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (lastServicemanBooking) {
+      await ServiceManBookingModel.findByIdAndUpdate(
+        lastServicemanBooking?._id,
+        {
+          status: req.body.status,
+          updatedBy: req.user?._id,
+        },
+      );
+    };
+
+    const latestServiceman = await ServiceManProfile.findById(lastServicemanBooking?.servicemanId);
+
+    if (req.body.status == "cancel") {
+      await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
+    };
+  };
+
+  if (req.body.status == "partstatusreject") {
+    await rejectAdditionalParts(booking?._id);
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: "Updated successfully",
+    data: booking,
   });
 });

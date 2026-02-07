@@ -41,11 +41,11 @@ const BookingDetailPage = () => {
     if (id) fetchBookingDetail();
   }, [id]);
 
-  const handleUnitPriceUpdate = async (id, value) => {
+  const handleUnitPriceUpdate = async (id, price, bookingId) => {
     try {
       await axios.patch(
         `${apis.bookingAdditonalPart.updateUnitPrice}/${id}`,
-        { unitPrice: value },
+        { unitPrice: price, bookingId: bookingId },
         {
           headers: {
             Authorization: validToken,
@@ -56,7 +56,7 @@ const BookingDetailPage = () => {
       toast.success("Unit price updated");
       setAdditionalParts((prev) =>
         prev?.map((item) =>
-          item?._id == id ? { ...item, unitPrice: value } : item
+          item?._id == id ? { ...item, unitPrice: price } : item
         )
       );
       fetchBookingDetail();
@@ -290,7 +290,7 @@ const BookingDetailPage = () => {
                               <button
                                 className="btn btn-sm btn-dark"
                                 onClick={() =>
-                                  handleUnitPriceUpdate(item?._id, item?.unitPrice)
+                                  handleUnitPriceUpdate(item?._id, item?.unitPrice, item?.bookingId)
                                 }
                               >
                                 Update

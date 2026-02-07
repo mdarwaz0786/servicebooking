@@ -4,6 +4,7 @@ import {
   createBooking,
   getBookings,
   getBookingById,
+  updateBooking,
 } from "../../controllers/user/booking.controller.js";
 
 const router = express.Router();
@@ -12,5 +13,6 @@ const router = express.Router();
 router.post("/create-booking", isLoggedIn, createBooking);
 router.get("/", isLoggedIn, getBookings);
 router.get("/:id", isLoggedIn, getBookingById);
+router.post("/update-status/:id", isLoggedIn, updateBooking);
 
 export default router;
