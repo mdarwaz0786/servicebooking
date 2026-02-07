@@ -282,6 +282,10 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
+  const createdAt = new Date(booking?.createdAt);
+  const now = new Date();
+  const diffInMinutes = (now - createdAt) / (1000 * 60);
+
   const latestAssignment = await ServiceManBookingModel
     .findOne({ bookingId: booking?._id })
     .sort({ createdAt: -1 })
@@ -332,14 +336,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
     }
     : null;
 
-  // const additionalParts = await BookingAdditionalPartModel.find({
-  //   bookingId: booking?._id,
-  //   status: true,
-  // })
-  //   .populate("rateId")
-  //   .lean();
-
-  // booking.additionalParts = additionalParts;
+  booking.isCancel = diffInMinutes > 30 ? 0 : 1;
 
   const items = await BookingItemModel
     .find({ bookingId: booking._id })
