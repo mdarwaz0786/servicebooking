@@ -140,6 +140,10 @@ export const AppProvider = ({ children }) => {
       myBooking: `${userUrl}booking`,
       myBookingDetail: `${userUrl}booking`,
 
+      approveAllAdditionalParts: `${userUrl}booking/update-status`,
+      rejectAllAdditionalParts: `${userUrl}booking/update-status`,
+      cancelAllAdditionalParts: `${userUrl}booking/update-status`,
+
       myReview: `${userUrl}review`,
       myReviewRemove: `${userUrl}review`,
       myReviewAdd: `${userUrl}review`,
