@@ -678,7 +678,7 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     company,
   } = await createInvoice(bookingId);
 
-  if (paymentMode?.toLowerCase() == "cod") {
+  if (paymentMode?.toLowerCase() == "cash") {
     await CashCollectedLoggerModel.create({
       type,
       bookingId,

@@ -299,7 +299,7 @@ const BookingDetailPage = () => {
                             </div>
                           </td>
                           <td>{item?.quantity}</td>
-                          <td>₹{(Number(item?.quantity) * Number(item?.unitPrice)) + Number(item?.laborCharge)}</td>
+                          <td>₹{(Number(item?.quantity) * Number(item?.unitPrice))}</td>
                         </tr>
                       ))}
                     </tbody>
