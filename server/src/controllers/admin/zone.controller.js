@@ -31,8 +31,8 @@ export const createZone = async (req, res) => {
 export const getZones = async (req, res) => {
   try {
     const {
-      page = 1,
-      limit = 10,
+      page,
+      limit,
       search = "",
       sortBy = "createdAt",
       sortOrder = "desc",
@@ -43,11 +43,11 @@ export const getZones = async (req, res) => {
 
     if (search) {
       query.name = { $regex: search, $options: "i" };
-    }
+    };
 
     if (status !== undefined) {
       query.status = status === "true";
-    }
+    };
 
     const skip = (page - 1) * limit;
 

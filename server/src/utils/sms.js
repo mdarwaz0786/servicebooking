@@ -5,57 +5,29 @@ const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-const SMS_TEMPLATES = {
-  // Login OTP
-  "1707175189826818672": {
-    name: "login",
-    format: (otp) => `${otp} is your Green India Team Account Login verification code. DO NOT SHARE this code with anyone for account safety. www.greenindiateam.com`,
-  },
-
-  // Team Verification
-  "1707174902097548288": {
-    name: "team_verification",
-    format: (otp) => `Your Green India Team Verification code is:${otp} visit: https://greenindiateam.com GREIND`,
-  },
-};
-
 export const sendSMS = async (options = {}) => {
   const mobile = options?.mobile;
-  const type = options['type'];
-
-  let templateId = '';
-  let message = '';
-
-  if (type == 'otp') {
-    const otp = options['otp'];
-    templateId = '1707174902097548288';
-    message = `Your Green India Team Verification code is:${otp} visit: https://greenindiateam.com GREIND`;
-  }
-  else if (type == 'bookingComplete') {
-    const bookingData = options['bookingData'];
-    templateId = '1707174902097548288';
-    message = `Your Green India Team Verification code is:${otp} visit: https://greenindiateam.com GREIND`;
-  }
+  const type = options?.type;
+  const otp = options?.otp;
 
   if (!mobile) {
     throw new Error("Mobile is required");
   };
 
-  if (!templateId) {
-    throw new Error("TemplateId is required");
+  if (!type) {
+    throw new Error("Type is required");
   };
 
-  if (!otp) {
-    throw new Error("OTP is required");
+  let templateId = '';
+  let message = '';
+
+  if (type == 'login') {
+    templateId = '1707175189826818672';
+    message = `${otp} is your Green India Team Account Login verification code. DO NOT SHARE this code with anyone for account safety. www.greenindiateam.com`;
+  } else if (type == "teamVerification") {
+    templateId = '1707174902097548288';
+    message = `Your Green India Team Verification code is:${otp} visit: https://greenindiateam.com GREIND`;
   };
-
-  const template = SMS_TEMPLATES[templateId];
-
-  if (!template) {
-    throw new Error("Invalid SMS Template ID");
-  };
-
-  // const message = template.format(otp);
 
   const smsUrl =
     `${process.env.SMS_API_URL}` +
