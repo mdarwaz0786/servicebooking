@@ -1,6 +1,6 @@
 import BookingAdditionalPartModel from "../models/BookingAdditionalPart.model.js";
 import ServiceManBookingModel from "../models/servicemanBooking.model.js";
-import BookingModel from "../models/blog.model.js";
+import BookingModel from "../models/booking.model.js";
 
 const rejectAdditionalParts = async (bookingId) => {
   if (!bookingId) {
@@ -18,15 +18,16 @@ const rejectAdditionalParts = async (bookingId) => {
   }, 0);
 
   const booking = await BookingModel.findById(bookingId);
-  const amount = Number(booking?.amount);
-  const payableAmount = Number(booking?.payableAmount);
+
+  const newAmount = Number(booking?.amount || 0) - totalAdditionalPartAmount;
+  const newPayable = Number(booking?.payableAmount || 0) - totalAdditionalPartAmount;
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
       additionalPartAmount: 0,
-      amount: Number(amount) - Number(totalAdditionalPartAmount),
-      payableAmount: Number(payableAmount) - Number(totalAdditionalPartAmount),
+      amount: Math.max(newAmount, 0),
+      payableAmount: Math.max(newPayable, 0),
       updatedAt: new Date(),
     },
     { new: true }
@@ -43,7 +44,6 @@ const rejectAdditionalParts = async (bookingId) => {
   );
 
   await BookingAdditionalPartModel.deleteMany({ bookingId });
-
   return true;
 };
 

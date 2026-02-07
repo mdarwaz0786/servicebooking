@@ -3,6 +3,7 @@ import BookingModel from "../../models/booking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 
 // ================= CREATE ADDITIONAL PARTS =================
 export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
@@ -51,21 +52,9 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
 
   const oldAmount = Number(booking?.amount) || 0;
   const oldPayableAmount = Number(booking?.payableAmount) || 0;
-  // const oldDiscountAmount = Number(booking?.discountAmount) || 0;
-  // const gstPercent = Number(booking?.gstPercent) || 0;
 
   const updatedAmount = oldAmount + additionalPartTotalAmount;
   const updatedPayableAmount = oldPayableAmount + additionalPartTotalAmount;
-
-  // let updatedDiscountAmount = 0;
-
-  // if (oldAmount > 0 && oldDiscountAmount > 0) {
-  //   const discountPercent = oldDiscountAmount / oldAmount;
-  //   updatedDiscountAmount = updatedAmount * discountPercent;
-  // };
-
-  // const gstAmount = (updatedAmount * gstPercent) / 100;
-  // const payableAmount = updatedAmount + gstAmount - updatedDiscountAmount;
 
   const nowUTC = new Date();
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -78,8 +67,6 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
       status: "partstatusnew",
       additionalPartAmount: additionalPartTotalAmount,
       amount: updatedAmount,
-      // discountAmount: updatedDiscountAmount,
-      // gstAmount,
       payableAmount: updatedPayableAmount,
       updatedBy: userId,
       timer,
@@ -126,6 +113,8 @@ export const bookingAdditionalPartsCancel = asyncHandler(async (req, res) => {
     { status: "ongoing" },
     { new: true }
   );
+
+  await rejectAdditionalParts(bookingId);
 
   return res.status(201).json({
     success: true,
