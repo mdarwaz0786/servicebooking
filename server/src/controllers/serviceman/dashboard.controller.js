@@ -477,11 +477,30 @@ export const dashboard = asyncHandler(async (req, res) => {
     { $sort: { weekNumber: 1 } }
   ]);
 
+  const nowIST = new Date().toLocaleTimeString("en-GB", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   // TODAY TIME SLOTS COUNT
   const todayTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: startOfDay, $lte: endOfDay },
-    times: { $elemMatch: { status: true } }
+    times: {
+      $elemMatch: {
+        status: true,
+        $or: [
+          {
+            from: { $lte: nowIST },
+            to: { $gte: nowIST },
+          },
+          {
+            from: { $gt: nowIST },
+          },
+        ],
+      },
+    },
   });
 
   const tomorrow = new Date();

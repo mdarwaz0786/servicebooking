@@ -24,6 +24,7 @@ import disclaimerRoutes from "./disclaimer.routes.js";
 import metaTagRoutes from "./metaTag.route.js";
 import appRoutes from "./app.route.js";
 import cityRoutes from "./city.route.js";
+import smsRoutes from "./sms.routes.js";
 
 const router = express.Router();
 
@@ -52,5 +53,6 @@ router.use("/disclaimer", disclaimerRoutes);
 router.use("/meta-tag", metaTagRoutes);
 router.use("/app", appRoutes);
 router.use("/city", cityRoutes);
+router.use("/send-sms", smsRoutes);
 
 export default router;
