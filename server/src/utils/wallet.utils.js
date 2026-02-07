@@ -207,14 +207,14 @@ export const calculateProviderEarningAmount = async (
 
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
-  if (paymentMode?.toLowerCase() == "cod" && booking?.paymentMode == "cod") {
+  if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount);
 
     // cash collcted will be deductAdditionalPartAmount
     // payout true
   };
 
-  if (paymentMode?.toLowerCase() == "cod" && booking?.paymentMode == "online") {
+  if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
   };
 
