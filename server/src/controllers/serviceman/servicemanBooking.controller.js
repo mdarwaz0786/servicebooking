@@ -238,6 +238,9 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
       _id: req.params.id,
       servicemanId: serviceman?._id,
     })
+    .select(
+      "-afterCompleteImages -afterCompleteVideos -beforeStartImages -beforeStartVideos"
+    )
     .populate("serviceman user")
     .populate({
       path: "booking",
@@ -590,10 +593,16 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     //   servicemanBooking.selfie = selfiePath;
     // };
 
+
+
+    
+
     if (req.files?.selfie?.[0]) {
       selfiePath = await compressImage(req.files.selfie[0].buffer, "servicemanSelfies");
       servicemanBooking.selfie = selfiePath;
     };
+
+    
 
     booking.status = status || booking?.status;
     servicemanBooking.status = status || servicemanBooking?.status;

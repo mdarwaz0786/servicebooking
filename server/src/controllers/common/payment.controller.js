@@ -260,6 +260,10 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     });
   };
 
+
+  console.log(transactionData)
+
+
   if (type == "bookingComplete") {
     await BookingModel.findByIdAndUpdate({ _id: transactionData.PID }, {
       paymentStatus: 1,
