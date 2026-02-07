@@ -19,7 +19,24 @@ const SMS_TEMPLATES = {
   },
 };
 
-export const sendSMS = async (mobile, templateId, otp) => {
+export const sendSMS = async (options = {}) => {
+  const mobile = options?.mobile;
+  const type = options['type'];
+
+  let templateId = '';
+  let message = '';
+
+  if (type == 'otp') {
+    const otp = options['otp'];
+    templateId = '1707174902097548288';
+    message = `Your Green India Team Verification code is:${otp} visit: https://greenindiateam.com GREIND`;
+  }
+  else if (type == 'bookingComplete') {
+    const bookingData = options['bookingData'];
+    templateId = '1707174902097548288';
+    message = `Your Green India Team Verification code is:${otp} visit: https://greenindiateam.com GREIND`;
+  }
+
   if (!mobile) {
     throw new Error("Mobile is required");
   };
@@ -38,7 +55,7 @@ export const sendSMS = async (mobile, templateId, otp) => {
     throw new Error("Invalid SMS Template ID");
   };
 
-  const message = template.format(otp);
+  // const message = template.format(otp);
 
   const smsUrl =
     `${process.env.SMS_API_URL}` +

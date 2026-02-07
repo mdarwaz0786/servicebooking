@@ -13,6 +13,7 @@ import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
 import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
+import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -330,9 +331,21 @@ export const getBookingById = asyncHandler(async (req, res) => {
     }
     : null;
 
+  // const additionalParts = await BookingAdditionalPartModel.find({
+  //   bookingId: booking?._id,
+  //   status: true,
+  // })
+  //   .populate("rateId")
+  //   .lean();
+
+  // booking.additionalParts = additionalParts;
+
   const items = await BookingItemModel
-    .find({ bookingId: booking?._id })
-    .populate({ path: "service", select: "" })
+    .find({ bookingId: booking._id })
+    .populate({ path: "service", select: "-shortDescription -fullDescription" })
+    .populate({
+      path: "additionalParts",
+    })
     .lean();
 
   return res.status(200).json({
