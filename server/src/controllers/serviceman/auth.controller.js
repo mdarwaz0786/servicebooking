@@ -4,16 +4,27 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
 import OtpModel from "../../models/otp.model.js";
 import generateOtp from "../../utils/generateOpt.js";
+import { sendSMS } from "../../utils/sms.js";
 
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {
   const { mobile } = req.body;
 
-  const otp = generateOtp(mobile);
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+  // const otp = generateOtp();
+
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   // const UserRecord = await UserModel.findOne({ 'mobile': mobile, 'role': 'user' });
   // if (UserRecord) throw new ApiError(400, "Mobile exist in user account..");
+
+  const options = {
+    mobile: mobile,
+    otp: otp,
+    type: "teamVerification",
+  };
+
+  await sendSMS(options);
 
   await OtpModel.findOneAndUpdate(
     { mobile },
