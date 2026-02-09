@@ -25,15 +25,7 @@ const servicemanEarningSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
-  service: {
-    type: mongoose.Schema.Types.Mixed,
-    default: {},
-  },
   payableAmount: {
-    type: Number,
-    default: 0,
-  },
-  earningPercent: {
     type: Number,
     default: 0,
   },

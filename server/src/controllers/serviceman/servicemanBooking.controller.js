@@ -9,14 +9,14 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import compressImage from '../../helpers/compressImage.js';
-import { adjustWalletCredit, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
+import { adjustWalletCredit, calculateAdminInvoiceAmount, calculateProviderEarningAmount, calculateProviderInvoiceAmount, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 import generateOtp from "../../utils/generateOpt.js";
 import InvoiceModel from "../../models/invoice.model.js";
 import { createInvoice } from "../../utils/invoice.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10 } = req.query;
+  let { search, dateRange, status, sort = "desc", page = 1, limit = 10 } = req.query;
 
   const userId = req.user?._id;
 
@@ -84,6 +84,35 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
         $eq: status,
       };
     }
+  };
+
+  if (dateRange) {
+    let startDate;
+    let endDate = new Date();
+
+    if (dateRange == "today") {
+      startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    else if (dateRange == "week") {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 6);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    else if (dateRange == "month") {
+      startDate = new Date();
+      startDate.setDate(1);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    if (startDate) {
+      filters.createdAt = {
+        $gte: startDate,
+        $lte: endDate,
+      };
+    };
   };
 
   let sortOption = {};
@@ -595,14 +624,14 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
 
 
 
-    
+
 
     if (req.files?.selfie?.[0]) {
       selfiePath = await compressImage(req.files.selfie[0].buffer, "servicemanSelfies");
       servicemanBooking.selfie = selfiePath;
     };
 
-    
+
 
     booking.status = status || booking?.status;
     servicemanBooking.status = status || servicemanBooking?.status;
@@ -643,7 +672,6 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     bookingId,
     servicemanBookingId,
     paymentMode,
-    type,
   } = req.body;
 
   const userId = req.user?._id;
@@ -653,9 +681,12 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   const servicemanId = serviceman?._id;
 
-  const updatedBooking = await BookingModel.findByIdAndUpdate(
+  await BookingModel.findByIdAndUpdate(
     bookingId,
-    { status: "complete", paymentStatus: 1 },
+    {
+      status: "complete",
+      paymentStatus: 1,
+    },
     { new: true }
   );
 
@@ -667,7 +698,7 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  await createServicemanEarning(servicemanId, servicemanBookingId, userId)
+  await calculateProviderEarningAmount(servicemanId, bookingId, paymentMode, userId, servicemanBookingId)
 
   const {
     booking: bookingDetail,
@@ -678,29 +709,15 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     company,
   } = await createInvoice(bookingId);
 
-  if (paymentMode?.toLowerCase() == "cash") {
-    await CashCollectedLoggerModel.create({
-      type,
-      bookingId,
-      providerId: userId,
-      amount: updatedBooking?.payableAmount,
-      createdBy: userId,
-      createdAt: new Date(),
-    });
-
-    await BookingModel.findByIdAndUpdate(
-      bookingId,
-      {
-        cashColletedSubmitAmount: updatedBooking?.payableAmount,
-        cashColletedAmount: updatedBooking?.payableAmount,
-        cashColletedPendingAmount: 0,
-      },
-      { new: true },
-    );
-  };
+  const adminInvoiceAmount = await calculateAdminInvoiceAmount(bookingId);
+  const providerInvoiceAmount = await calculateProviderInvoiceAmount(bookingId);
+  const totalInvoiceAmount = adminInvoiceAmount + providerInvoiceAmount;
 
   await InvoiceModel.create({
     type: "Customer",
+    adminInvoiceAmount,
+    providerInvoiceAmount,
+    totalInvoiceAmount,
     bookingId,
     servicemanBookingId,
     providerId: provider?._id,
@@ -724,6 +741,9 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   await InvoiceModel.create({
     type: "Provider",
+    adminInvoiceAmount,
+    providerInvoiceAmount,
+    totalInvoiceAmount,
     bookingId,
     servicemanBookingId,
     providerId: provider?._id,
@@ -747,6 +767,9 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   await InvoiceModel.create({
     type: "Admin",
+    adminInvoiceAmount,
+    providerInvoiceAmount,
+    totalInvoiceAmount,
     bookingId,
     servicemanBookingId,
     providerId: provider?._id,
@@ -770,7 +793,7 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    message: "Completed successfully",
+    message: "Booking completed successfully",
     data: {},
   });
 });

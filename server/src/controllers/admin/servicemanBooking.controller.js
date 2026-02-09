@@ -6,13 +6,15 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import { adjustWalletCredit, ensureSufficientCredit } from "../../utils/wallet.utils.js";
+import sendNotification from "../../utils/sendNotification.js";
 
 // Create Service Man Booking
 export const createServiceManBooking = asyncHandler(async (req, res) => {
   const {
     bookingId,
     servicemanId,
-    userId
+    userId,
+    getAll,
   } = req.body;
 
   if (!bookingId || !servicemanId || !userId) {
@@ -54,14 +56,9 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
       cancelTime: getCurrentIndianTime(),
     });
 
-    // const status = "cancel";
-    // const latestServicemanId = latestAssignment?.servicemanId;
-
-    // await adjustWalletCredit(latestServicemanId, status, bookingId);
-
     await BookingModel.findByIdAndUpdate(bookingId, {
       $set: {
-        status: "assign",
+        status: "new",
         actionById: req.user?._id,
         updatedBy: req.user?._id,
       },
@@ -74,6 +71,22 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     userId,
     createdBy: req.user?._id,
   });
+
+  const type = getAll === false ? "bookingSameZone" : "bookingOtherZone";
+  const title = getAll === false ? "Booking Accepted" : "New Booking";
+  const message = getAll === false ? "One booking is accepted to you kindly proceed furthur" : "You have received a new booking kindly accept it if you can serve it";
+
+  if (serviceman?.userId) {
+    await sendNotification(
+      [serviceman?.userId],
+      title,
+      message,
+      "serviceman",
+      {
+        type: type,
+      }
+    );
+  };
 
   return res.status(201).json({
     success: true,

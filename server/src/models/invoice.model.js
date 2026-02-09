@@ -6,6 +6,18 @@ const invoiceSchema = new mongoose.Schema({
     type: String,
     enum: ["Admin", "Provider", "Customer"],
   },
+  adminInvoiceAmount: {
+    type: Number,
+    default: 0,
+  },
+  providerInvoiceAmount: {
+    type: Number,
+    default: 0,
+  },
+  totalInvoiceAmount: {
+    type: Number,
+    default: 0,
+  },
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",

@@ -19,18 +19,6 @@ const cashSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  type: {
-    type: String,
-    enum: ["Company", "Provider"],
-  },
-  isSubmited: {
-    type: Boolean,
-    default: false,
-  },
-  submitAmount: {
-    type: Number,
-    default: 0,
-  },
   staus: {
     type: Boolean,
     default: true,

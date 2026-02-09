@@ -8,6 +8,7 @@ import SupportContent from "../models/support.model.js";
 import KycModel from "../models/kyc.model.js";
 import ApiError from "../helpers/apiError.js";
 import mongoose from "mongoose";
+import CashCollectedLoggerModel from "../models/cashCollectedLogger.model.js";
 
 // support config
 export const getSupportConfig = async (bookingId) => {
@@ -170,6 +171,8 @@ export const calculateProviderEarningAmount = async (
   servicemanId,
   bookingId,
   paymentMode,
+  userId,
+  servicemanBookingId,
 ) => {
   if (!servicemanId || !bookingId) {
     throw new Error("servicemanId and bookingId are required");
@@ -177,15 +180,13 @@ export const calculateProviderEarningAmount = async (
 
   const bookingObjectId = bookingId instanceof mongoose.Types.ObjectId ? bookingId : new mongoose.Types.ObjectId(bookingId);
 
-  // 1️⃣ Fetch booking (for additional part amount)
   const booking = await BookingModel
     .findById(bookingObjectId)
-    .select("additionalPartAmount paymentStatus paymentMode")
+    .select("additionalPartAmount paymentStatus paymentMode payableAmount userId")
     .lean();
 
   const additionalPartAmount = Number(booking?.additionalPartAmount || 0);
 
-  // 3️⃣ Fetch booking items with services
   const bookingItems = await BookingItemModel
     .find({ bookingId: bookingObjectId })
     .populate({ path: "service", select: "salePrice taxablePrice transactionCharge" })
@@ -208,20 +209,95 @@ export const calculateProviderEarningAmount = async (
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
   if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
-    totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount);
+    await CashCollectedLoggerModel.create({
+      bookingId,
+      providerId: userId,
+      amount: deductAdditionalPartAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
 
-    // cash collcted will be deductAdditionalPartAmount
-    // payout true
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedSubmitAmount: booking?.payableAmount,
+        cashColletedAmount: booking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
+    );
   };
 
   if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
+    totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
+
+    await CashCollectedLoggerModel.create({
+      bookingId,
+      providerId: userId,
+      amount: deductAdditionalPartAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedSubmitAmount: booking?.payableAmount,
+        cashColletedAmount: booking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
+    );
+  };
+
+  if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "cod") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
+
+    await ServicemanEarningModel.create({
+      booking: bookingId,
+      servicemanBooking: servicemanBookingId,
+      servicemanId: userId,
+      userId: booking?.userId,
+      payableAmount: booking?.payableAmount,
+      earningAmount: totalProviderEarningAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedSubmitAmount: booking?.payableAmount,
+        cashColletedAmount: booking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
+    );
   };
 
   if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
 
-    // payout false
+    await ServicemanEarningModel.create({
+      booking: bookingId,
+      servicemanBooking: servicemanBookingId,
+      servicemanId: userId,
+      userId: booking?.userId,
+      payableAmount: booking?.payableAmount,
+      earningAmount: totalProviderEarningAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedSubmitAmount: booking?.payableAmount,
+        cashColletedAmount: booking?.payableAmount,
+        cashColletedPendingAmount: 0,
+      },
+      { new: true },
+    );
   };
 
   return Number(totalProviderEarningAmount?.toFixed(2));

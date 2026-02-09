@@ -15,6 +15,7 @@ import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.j
 import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
 import ServiceManProfile from "../../models/servicemanProfile.model.js";
 import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
+import sendNotification from "../../utils/sendNotification.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -97,13 +98,30 @@ export const createBooking = asyncHandler(async (req, res) => {
       createdBy: userId,
     });
 
+    await BookingModel.findByIdAndUpdate(booking?._id, {
+      $set: {
+        status: "accept",
+      },
+    });
+
     const status = "accept";
 
     await adjustWalletCredit(serviceman?.userId, status, booking?._id);
+
+    if (serviceman?.userId) {
+      await sendNotification(
+        [serviceman?.userId],
+        "Booking Accepted",
+        "One booking is accepted to you kindly proceed furthur",
+        "serviceman",
+        {
+          type: "bookingSameZone",
+        }
+      );
+    };
   };
 
   if (!serviceman && paymentMode === "cod") {
-
     const servicemen = await autoAssignMultipleServicemen(
       categoryId,
       scheduleDate,
@@ -121,6 +139,20 @@ export const createBooking = asyncHandler(async (req, res) => {
       }));
 
       await ServiceManBookingModel.insertMany(bookings);
+
+      const servicemanUserIds = servicemen
+        .map((sm) => sm?.userId)
+        .filter(Boolean);
+
+      await sendNotification(
+        servicemanUserIds,
+        "New Booking",
+        "You have received a new booking kindly accept it if you can serve it",
+        "serviceman",
+        {
+          type: "bookingOtherZone",
+        }
+      );
     };
   };
 

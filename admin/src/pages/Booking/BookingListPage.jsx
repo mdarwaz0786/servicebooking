@@ -107,7 +107,7 @@ const BookingListPage = () => {
 
   const BOOKING_STATUSES = [
     "new",
-    "assign",
+    // "assign",
     "accept",
     "ongoing",
     "reject",
@@ -141,7 +141,7 @@ const BookingListPage = () => {
   const BOOKING_STATUS_FILTERS = [
     { label: "All", value: "all" },
     { label: "New", value: "new" },
-    { label: "Assign", value: "assign" },
+    // { label: "Assign", value: "assign" },
     { label: "Accept", value: "accept" },
     { label: "Ongoing", value: "ongoing" },
     { label: "Reject", value: "reject" },

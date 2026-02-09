@@ -14,6 +14,7 @@ import { createScanAndPayQr, createPaymentLink, razorpay } from "../../utils/sca
 import axios from "axios";
 import { getCartData } from "../../utils/cart.utils.js";
 import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
+import sendNotification from "../../utils/sendNotification.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
@@ -218,11 +219,29 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
         status: "accept",
         createdBy: userId,
       });
+
+      await BookingModel.findByIdAndUpdate(booking?._id, {
+        $set: {
+          status: "accept",
+        },
+      });
+
+      const status = "accept";
+
+      await adjustWalletCredit(serviceman?.userId, status, booking?._id);
+
+      if (serviceman?.userId) {
+        await sendNotification(
+          [serviceman?.userId],
+          "Booking Accepted",
+          "One booking is accepted to you kindly proceed furthur",
+          "serviceman",
+          {
+            type: "bookingSameZone",
+          }
+        );
+      }
     };
-
-    const status = "accept";
-
-    await adjustWalletCredit(serviceman?.userId, status, booking?._id);
 
     if (!serviceman) {
       const servicemen = await autoAssignMultipleServicemen(
@@ -242,6 +261,20 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
         }));
 
         await ServiceManBookingModel.insertMany(bookings);
+
+        const servicemanUserIds = servicemen
+          .map((sm) => sm?.userId)
+          .filter(Boolean);
+
+        await sendNotification(
+          servicemanUserIds,
+          "New Booking",
+          "You have received a new booking kindly accept it if you can serve it",
+          "serviceman",
+          {
+            type: "bookingOtherZone",
+          }
+        );
       };
     };
 
