@@ -197,8 +197,8 @@ export const calculateProviderEarningAmount = async (
     totalSalePrice += salePrice;
   };
 
-  const totalProviderEarningAmount = 0;
-  const deductAddtionalPartPercent = 0.1;
+  let totalProviderEarningAmount = 0;
+  let deductAddtionalPartPercent = 0.1;
 
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
