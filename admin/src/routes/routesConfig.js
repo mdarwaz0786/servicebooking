@@ -131,6 +131,8 @@ import RoleForm from "../pages/Role/RoleForm";
 import SubAdminForm from "../pages/SubAdmin/SubAdminForm";
 import NotificationForm from "../pages/Notification/NotificationForm";
 import AddBankTransferPage from "../pages/ServicemanEarning/AddBankTransferPage";
+import CashCollectedSubmitPage from "../pages/CashCollectedSubmit/CashCollectedSubmitPage";
+import CreateCashCollectedSubmitPage from "../pages/CashCollectedSubmit/CreateCashCollectedSubmitPage";
 
 const routesConfig = {
   private: [
@@ -138,6 +140,8 @@ const routesConfig = {
     { path: "/send-notification", element: NotificationForm, module: "notification", action: "add" },
     { path: "/app-info", element: AppInfoFormPage, module: "mobileAppInfo", action: "view" },
     { path: "/cash-collected", element: CashCollectedPage, module: "providerCashcollected", action: "view" },
+    { path: "/create-cash-submit", element: CreateCashCollectedSubmitPage, module: "providerCashSubmit", action: "add" },
+    { path: "/cash-submit", element: CashCollectedSubmitPage, module: "providerCashSubmit", action: "view" },
     { path: "/invoice", element: InvoiceListPage, module: "invoice", action: "view" },
     { path: "/invoice/:id", element: Invoice, module: "invoice", action: "view" },
 

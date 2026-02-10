@@ -1,35 +1,33 @@
-import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js";
-import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
+import CashCollectedSubmitModel from "../../models/cashCollectedSubmit.model.js";
 import BookingModel from "../../models/booking.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 
-// create
-export const createCashCollected = asyncHandler(async (req, res) => {
+/* ============================
+   CREATE
+============================ */
+export const createCashCollectedSubmit = asyncHandler(async (req, res) => {
   const { bookingId, providerId, amount } = req.body;
 
   if (!bookingId) {
     throw new ApiError(400, "Booking is required");
-  };
-
-  const existingBooking = await BookingModel
-    .findById(bookingId)
-    .select("_id payableAmount paymentStatus cashColletedAmount cashColletedPendingAmount cashColletedSubmitAmount");
-
-  if (!existingBooking) {
-    throw new ApiError(404, "Booking not found");
-  };
+  }
 
   if (!providerId) {
     throw new ApiError(400, "Provider is required");
-  };
+  }
 
   if (!amount || amount <= 0) {
     throw new ApiError(400, "Valid amount is required");
-  };
+  }
 
-  const cash = await CashCollectedLoggerModel.create({
+  const booking = await BookingModel.findById(bookingId).select("_id");
+  if (!booking) {
+    throw new ApiError(404, "Booking not found");
+  }
+
+  const cashSubmit = await CashCollectedSubmitModel.create({
     bookingId,
     providerId,
     amount,
@@ -39,25 +37,32 @@ export const createCashCollected = asyncHandler(async (req, res) => {
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
-      paymentStatus: 1,
-      cashColletedSubmitAmount: amount,
-      cashColletedAmount: existingBooking?.cashColletedAmount + amount,
-      cashColletedPendingAmount: existingBooking?.payableAmount - (existingBooking?.cashColletedAmount + amount),
+      cashCollectedSubmitAmount: amount,
+      cashCollectedPendingAmount: 0,
     },
-    { new: true },
+    { new: true }
   );
 
   return res.status(201).json({
     success: true,
-    message: "Created successfully",
-    data: cash,
+    message: "Cash submitted successfully",
+    data: cashSubmit,
   });
 });
 
-// get all
-export const getCashCollectedList = asyncHandler(async (req, res) => {
-  let { search, status, serviceman, sort = "desc", page = 1, limit = 10 } =
-    req.query;
+/* ============================
+   GET ALL
+============================ */
+export const getCashCollectedSubmitList = asyncHandler(async (req, res) => {
+  let {
+    search,
+    status,
+    serviceman,
+    bookingId,
+    sort = "desc",
+    page = 1,
+    limit = 10,
+  } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -69,8 +74,12 @@ export const getCashCollectedList = asyncHandler(async (req, res) => {
     filters.providerId = serviceman;
   }
 
+  if (bookingId) {
+    filters.bookingId = bookingId;
+  }
+
   if (status !== undefined) {
-    filters.status = status === "true";
+    filters.staus = status === "true";
   }
 
   if (search) {
@@ -82,8 +91,7 @@ export const getCashCollectedList = asyncHandler(async (req, res) => {
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const cashList = await CashCollectedLoggerModel
-    .find(filters)
+  const list = await CashCollectedSubmitModel.find(filters)
     .populate("booking")
     .populate("profile", "name email mobile profileImage")
     .populate("serviceman")
@@ -92,7 +100,7 @@ export const getCashCollectedList = asyncHandler(async (req, res) => {
     .limit(limit)
     .lean();
 
-  const total = await CashCollectedLoggerModel.countDocuments(filters);
+  const total = await CashCollectedSubmitModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);
 
   return res.status(200).json({
@@ -104,20 +112,22 @@ export const getCashCollectedList = asyncHandler(async (req, res) => {
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    data: cashList,
+    data: list,
     pagination: buildPagination({ page, limit, total }),
   });
 });
 
-// get single
-export const getCashCollectedById = asyncHandler(async (req, res) => {
-  const cash = await CashCollectedLoggerModel.findById(req.params.id)
+/* ============================
+   GET SINGLE
+============================ */
+export const getCashCollectedSubmitById = asyncHandler(async (req, res) => {
+  const cash = await CashCollectedSubmitModel.findById(req.params.id)
     .populate("booking")
     .populate("profile", "name email mobile profileImage")
-    .populate("serviceman")
+    .populate("serviceman");
 
   if (!cash) {
-    throw new ApiError(404, "Cash entry not found");
+    throw new ApiError(404, "Cash submit record not found");
   }
 
   return res.status(200).json({
@@ -126,5 +136,3 @@ export const getCashCollectedById = asyncHandler(async (req, res) => {
     data: cash,
   });
 });
-
-

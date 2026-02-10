@@ -220,37 +220,44 @@ export const calculateProviderEarningAmount = async (
     await BookingModel.findByIdAndUpdate(
       bookingId,
       {
-        cashColletedSubmitAmount: booking?.payableAmount,
-        cashColletedAmount: booking?.payableAmount,
-        cashColletedPendingAmount: 0,
+        cashColletedAmount: deductAdditionalPartAmount,
+        cashColletedPendingAmount: deductAdditionalPartAmount,
       },
       { new: true },
     );
-  };
-
-  if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
+  } else if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
 
-    await CashCollectedLoggerModel.create({
-      bookingId,
-      providerId: userId,
-      amount: deductAdditionalPartAmount,
+    await ServicemanEarningModel.create({
+      booking: bookingId,
+      servicemanBooking: servicemanBookingId,
+      servicemanId: userId,
+      userId: booking?.userId,
+      payableAmount: booking?.payableAmount,
+      earningAmount: totalProviderEarningAmount,
       createdBy: userId,
       createdAt: new Date(),
     });
 
-    await BookingModel.findByIdAndUpdate(
-      bookingId,
-      {
-        cashColletedSubmitAmount: booking?.payableAmount,
-        cashColletedAmount: booking?.payableAmount,
-        cashColletedPendingAmount: 0,
-      },
-      { new: true },
-    );
-  };
+    if (deductAdditionalPartAmount > 0) {
+      await CashCollectedLoggerModel.create({
+        bookingId,
+        providerId: userId,
+        amount: deductAdditionalPartAmount,
+        createdBy: userId,
+        createdAt: new Date(),
+      });
 
-  if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "cod") {
+      await BookingModel.findByIdAndUpdate(
+        bookingId,
+        {
+          cashColletedAmount: deductAdditionalPartAmount,
+          cashColletedPendingAmount: deductAdditionalPartAmount,
+        },
+        { new: true },
+      );
+    }
+  } else if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "cod") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
 
     await ServicemanEarningModel.create({
@@ -273,9 +280,7 @@ export const calculateProviderEarningAmount = async (
       },
       { new: true },
     );
-  };
-
-  if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "online") {
+  } else if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
 
     await ServicemanEarningModel.create({

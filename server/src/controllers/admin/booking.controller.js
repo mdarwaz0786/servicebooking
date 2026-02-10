@@ -11,6 +11,7 @@ import generateBookingId from "../../utils/generateBookingId.js";
 import { adjustWalletCredit } from "../../utils/wallet.utils.js";
 import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 import BookingMediaModel from "../../models/bookingMedia.model.js";
+import mongoose from "mongoose";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -466,3 +467,62 @@ export const deleteBooking = asyncHandler(async (req, res) => {
     message: "Deleted successfully",
   });
 });
+
+// Filter provider booking
+export const getProviderBookings = async (req, res) => {
+  try {
+    const { servicemanId } = req.query;
+
+    const matchStage = {
+      status: "complete",
+    };
+
+    if (servicemanId) {
+      if (!mongoose.Types.ObjectId.isValid(servicemanId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid servicemanId",
+        });
+      };
+
+      matchStage.servicemanId = new mongoose.Types.ObjectId(servicemanId);
+    };
+
+    const bookings = await ServiceManBookingModel.aggregate([
+      {
+        $match: matchStage,
+      },
+      {
+        $lookup: {
+          from: "bookings",
+          localField: "bookingId",
+          foreignField: "_id",
+          as: "booking",
+        },
+      },
+      { $unwind: "$booking" },
+
+      {
+        $project: {
+          _id: 0,
+          bookingId: "$booking._id",
+          bookingCode: "$booking.bookingId",
+          status: "$booking.status",
+          cashColletedPendingAmount: "$booking.cashColletedPendingAmount"
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Bookings fetched successfully",
+      count: bookings.length,
+      data: bookings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Server error",
+    });
+  }
+};

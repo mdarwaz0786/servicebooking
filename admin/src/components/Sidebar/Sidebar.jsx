@@ -51,7 +51,7 @@ const Sidebar = () => {
             {hasPermission(user, "notification", "add") && (
               <li>
                 <Link to="/send-notification" className={currentPath === "/send-notification" ? "active" : ""}>
-                  <i className="fe fe-bell" /> <span>Notification</span>
+                  <i className="fe fe-bell" /> <span>Send Notification</span>
                 </Link>
               </li>
             )}
@@ -71,7 +71,8 @@ const Sidebar = () => {
                   hasPermission(user, "zone", "view") ||
                   hasPermission(user, "providerAppSupport", "view") ||
                   hasPermission(user, "mobileAppInfo", "view") ||
-                  hasPermission(user, "role", "view")
+                  hasPermission(user, "role", "view") ||
+                  hasPermission(user, "earning", "view")
                 ) && (
                   <Link to="#"><i className="fe fe-briefcase"></i>
                     <span>Master</span>
@@ -233,6 +234,17 @@ const Sidebar = () => {
                       className={currentPath === "/roles" ? "active" : ""}
                     >
                       <span>Role & Permission</span>
+                    </Link>
+                  </li>
+                )}
+
+                {hasPermission(user, "earning", "view") && (
+                  <li>
+                    <Link
+                      to="/earning"
+                      className={currentPath === "/earning" ? "active" : ""}
+                    >
+                      <span>Earning</span>
                     </Link>
                   </li>
                 )}
@@ -401,7 +413,6 @@ const Sidebar = () => {
                   hasPermission(user, "providerKyc", "view") ||
                   hasPermission(user, "providerProfile", "view") ||
                   hasPermission(user, "providerTraining", "view") ||
-                  hasPermission(user, "providerEarning", "view") ||
                   hasPermission(user, "providerWallet", "view") ||
                   hasPermission(user, "providerCashcollected", "view") ||
                   hasPermission(user, "providerInsurance", "view") ||
@@ -480,17 +491,6 @@ const Sidebar = () => {
                   </li>
                 )}
 
-                {hasPermission(user, "providerEarning", "view") && (
-                  <li>
-                    <Link
-                      to="/earning"
-                      className={currentPath === "/earning" ? "active" : ""}
-                    >
-                      <span>Earning</span>
-                    </Link>
-                  </li>
-                )}
-
                 {hasPermission(user, "providerWallet", "view") && (
                   <li>
                     <Link
@@ -513,6 +513,17 @@ const Sidebar = () => {
                   </li>
                 )}
 
+                {hasPermission(user, "providerCashSubmit", "view") && (
+                  <li>
+                    <Link
+                      to="/cash-submit"
+                      className={currentPath === "/cash-submit" ? "active" : ""}
+                    >
+                      <span>Cash Submit</span>
+                    </Link>
+                  </li>
+                )}
+
                 {hasPermission(user, "providerInsurance", "view") && (
                   <li>
                     <Link
@@ -531,17 +542,6 @@ const Sidebar = () => {
                       className={currentPath === "/certificate" ? "active" : ""}
                     >
                       <span>Certificate</span>
-                    </Link>
-                  </li>
-                )}
-
-                {hasPermission(user, "providerNotification", "view") && (
-                  <li>
-                    <Link
-                      to="/notification"
-                      className={currentPath === "/notification" ? "active" : ""}
-                    >
-                      <span>Notification</span>
                     </Link>
                   </li>
                 )}

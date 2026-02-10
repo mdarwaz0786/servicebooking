@@ -66,6 +66,7 @@ import subAdminRoutes from "./subadmin.routes.js";
 import notificationRoutes from "./notification.route.js";
 import bandTransferRoutes from "./bankTransfer.routes.js";
 import bookingAdditionalPartRoutes from "./bookingAdditionalPart.routes.js";
+import cashCollectedSubmitRoutes from "./cashCollectedSubmit.routes.js";
 
 const router = express.Router();
 
@@ -130,6 +131,7 @@ router.use("/support-content", supportContentRoutes);
 router.use("/app", appRoutes);
 router.use("/pincode", pincodeRoutes);
 router.use("/cash-collected", cashCollectedRoutes);
+router.use("/cash-collected-submit", cashCollectedSubmitRoutes);
 router.use("/invoice", invoiceRoutes);
 router.use("/role", roleRoutes);
 router.use("/sub-admin", subAdminRoutes);

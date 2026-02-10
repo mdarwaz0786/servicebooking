@@ -8,7 +8,7 @@ import { useAuth } from "../../context/auth.context";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
 
-const CashCollectedPage = () => {
+const CashCollectedSubmitPage = () => {
   const { validToken } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ const CashCollectedPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.cashCollected.get, {
+      const response = await axios.get(apis.cashCollectedSubmit.get, {
         headers: { Authorization: validToken },
         params: { page, limit, search: debouncedSearch, sort, serviceman },
       });
@@ -104,7 +104,7 @@ const CashCollectedPage = () => {
     <div className="page-wrapper page-settings">
       <div className="content">
         <div className="content-page-header content-page-headersplit mb-0 d-flex align-items-center justify-content-between">
-          <h5>Cash Collected {data?.length}</h5>
+          <h5>Cash Collected Submit {data?.length}</h5>
           <div className="d-flex gap-2 align-items-center">
             {/* Search */}
             <input
@@ -135,6 +135,12 @@ const CashCollectedPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+            <Link to="/create-cash-submit">
+              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                <i className="fa fa-plus me-2"></i>
+                <span>Add</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -166,8 +172,8 @@ const CashCollectedPage = () => {
                     <th>#</th>
                     <th>Booking Id</th>
                     <th>Provider</th>
-                    <th>Collected Amount</th>
-                    <th>Total Collected Amount</th>
+                    <th>Submit Amount</th>
+                    <th>Total Submit Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -178,7 +184,7 @@ const CashCollectedPage = () => {
                         <td>{d?.booking?.bookingId || "-"}</td>
                         <td>{d?.profile?.name || "-"}</td>
                         <td>₹{d?.amount || "-"}</td>
-                        <td>₹{d?.totalCashCollected || "-"}</td>
+                        <td>₹{d?.totalSubmitAmount || "-"}</td>
                       </tr>
                     ))
                   ) : !loading ? (
@@ -206,4 +212,4 @@ const CashCollectedPage = () => {
   );
 };
 
-export default CashCollectedPage;
+export default CashCollectedSubmitPage;

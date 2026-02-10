@@ -69,11 +69,9 @@ const BookingDetailPage = () => {
   const getPaymentStatus = (status) => {
     switch (status) {
       case 0:
-        return "Created";
+        return "Pending";
       case 1:
         return "Success";
-      case 2:
-        return "Failed";
       default:
         return "Unknown";
     };
@@ -147,6 +145,7 @@ const BookingDetailPage = () => {
                     <p className="mb-1"><strong>Booking Status:</strong> {booking?.status}</p>
                     <p className="mb-1"><strong>Payment Status:</strong> {getPaymentStatus(booking?.paymentStatus)}</p>
                     <p className="mb-1"><strong>Payment Mode:</strong> {booking?.paymentMode}</p>
+                    <p className="mb-1"><strong>OTP:</strong> {booking?.otp}</p>
                   </div>
                   <div className="col-md-6">
                     <h6 className="fw-bold text-uppercase text-muted">Customer</h6>

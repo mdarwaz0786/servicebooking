@@ -102,15 +102,12 @@ const bookingSchema = new mongoose.Schema({
   },
   cashColletedAmount: {
     type: Number,
-    default: 0,
-  },
-  cashColletedPendingAmount: {
-    type: Number,
-    default: 0,
   },
   cashColletedSubmitAmount: {
     type: Number,
-    default: 0,
+  },
+  cashColletedPendingAmount: {
+    type: Number,
   },
   timer: {
     type: Date,
