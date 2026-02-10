@@ -67,11 +67,11 @@ export const getSupportConfig = async (bookingId) => {
 
 // Calculate provider invoice amount
 export const calculateProviderInvoiceAmount = async (
-  servicemanId,
+  userId,
   bookingId,
 ) => {
-  if (!servicemanId || !bookingId) {
-    throw new Error("servicemanId and bookingId are required");
+  if (!userId || !bookingId) {
+    throw new Error("userId and bookingId are required");
   };
 
   const bookingObjectId = bookingId instanceof mongoose.Types.ObjectId ? bookingId : new mongoose.Types.ObjectId(bookingId);
@@ -85,7 +85,7 @@ export const calculateProviderInvoiceAmount = async (
   const additionalPartAmount = Number(booking?.additionalPartAmount || 0);
 
   // 2️⃣ Check provider GST eligibility
-  const kyc = await KycModel.findOne({ userId: servicemanId })
+  const kyc = await KycModel.findOne({ userId: userId })
     .select("gstNumber")
     .lean();
 
@@ -150,16 +150,11 @@ export const calculateAdminInvoiceAmount = async (bookingId) => {
 
   for (const item of bookingItems) {
     const qty = Number(item?.quantity || 1);
-    const taxableValue =
-      Number(item?.service?.taxablePrice || 0) * qty;
+    const taxableValue = Number(item?.service?.taxablePrice || 0) * qty;
 
     // GST on (taxable + 10% additional part)
-    const gstAmount =
-      ((taxableValue + percentOfAdditionalPartAmount) * GST_PERCENT) / 100;
-
-    const adminTotalAmount =
-      taxableValue + percentOfAdditionalPartAmount + gstAmount;
-
+    const gstAmount = ((taxableValue + percentOfAdditionalPartAmount) * GST_PERCENT) / 100;
+    const adminTotalAmount = taxableValue + percentOfAdditionalPartAmount + gstAmount;
     totalAdminInvoiceAmount += adminTotalAmount;
   };
 
@@ -168,14 +163,13 @@ export const calculateAdminInvoiceAmount = async (bookingId) => {
 
 // Calculate provider earning amount
 export const calculateProviderEarningAmount = async (
-  servicemanId,
   bookingId,
   paymentMode,
   userId,
   servicemanBookingId,
 ) => {
-  if (!servicemanId || !bookingId) {
-    throw new Error("servicemanId and bookingId are required");
+  if (!bookingId) {
+    throw new Error("BookingId is required");
   };
 
   const bookingObjectId = bookingId instanceof mongoose.Types.ObjectId ? bookingId : new mongoose.Types.ObjectId(bookingId);
@@ -209,22 +203,24 @@ export const calculateProviderEarningAmount = async (
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
   if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
-    await CashCollectedLoggerModel.create({
-      bookingId,
-      providerId: userId,
-      amount: deductAdditionalPartAmount,
-      createdBy: userId,
-      createdAt: new Date(),
-    });
+    if (deductAdditionalPartAmount > 0) {
+      await CashCollectedLoggerModel.create({
+        bookingId,
+        providerId: userId,
+        amount: deductAdditionalPartAmount,
+        createdBy: userId,
+        createdAt: new Date(),
+      });
 
-    await BookingModel.findByIdAndUpdate(
-      bookingId,
-      {
-        cashColletedAmount: deductAdditionalPartAmount,
-        cashColletedPendingAmount: deductAdditionalPartAmount,
-      },
-      { new: true },
-    );
+      await BookingModel.findByIdAndUpdate(
+        bookingId,
+        {
+          cashColletedAmount: deductAdditionalPartAmount,
+          cashColletedPendingAmount: deductAdditionalPartAmount,
+        },
+        { new: true },
+      );
+    };
   } else if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
 
@@ -256,7 +252,7 @@ export const calculateProviderEarningAmount = async (
         },
         { new: true },
       );
-    }
+    };
   } else if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "cod") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
 

@@ -13,6 +13,7 @@ import { adjustWalletCredit, calculateAdminInvoiceAmount, calculateProviderEarni
 import generateOtp from "../../utils/generateOpt.js";
 import InvoiceModel from "../../models/invoice.model.js";
 import { createInvoice } from "../../utils/invoice.js";
+import { generateInvoice } from "../../utils/generateInvoice.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -676,11 +677,6 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   const userId = req.user?._id;
 
-  const serviceman = await ServiceManProfileModel.findOne({ userId });
-  if (!serviceman) throw new ApiError(404, "Service man profile not found");
-
-  const servicemanId = serviceman?._id;
-
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
@@ -698,98 +694,8 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  await calculateProviderEarningAmount(servicemanId, bookingId, paymentMode, userId, servicemanBookingId)
-
-  const {
-    booking: bookingDetail,
-    bookingItems,
-    serviceman: provider,
-    customer,
-    address,
-    company,
-  } = await createInvoice(bookingId);
-
-  const adminInvoiceAmount = await calculateAdminInvoiceAmount(bookingId);
-  const providerInvoiceAmount = await calculateProviderInvoiceAmount(bookingId);
-  const totalInvoiceAmount = adminInvoiceAmount + providerInvoiceAmount;
-
-  await InvoiceModel.create({
-    type: "Customer",
-    adminInvoiceAmount,
-    providerInvoiceAmount,
-    totalInvoiceAmount,
-    bookingId,
-    servicemanBookingId,
-    providerId: provider?._id,
-    servicemanUserId: provider?.userId,
-    customerId: customer?._id,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
-  });
-
-  await InvoiceModel.create({
-    type: "Provider",
-    adminInvoiceAmount,
-    providerInvoiceAmount,
-    totalInvoiceAmount,
-    bookingId,
-    servicemanBookingId,
-    providerId: provider?._id,
-    servicemanUserId: provider?.userId,
-    customerId: customer?._id,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
-  });
-
-  await InvoiceModel.create({
-    type: "Admin",
-    adminInvoiceAmount,
-    providerInvoiceAmount,
-    totalInvoiceAmount,
-    bookingId,
-    servicemanBookingId,
-    providerId: provider?._id,
-    servicemanUserId: provider?.userId,
-    customerId: customer?._id,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
-  });
+  await calculateProviderEarningAmount(bookingId, paymentMode, userId, servicemanBookingId);
+  await generateInvoice(userId, bookingId, servicemanBookingId);
 
   return res.status(201).json({
     success: true,
