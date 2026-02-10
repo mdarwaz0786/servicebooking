@@ -17,6 +17,7 @@ import { adjustWalletCredit, calculateProviderEarningAmount, getSupportConfig } 
 import sendNotification from "../../utils/sendNotification.js";
 import { generateInvoice } from "../../utils/generateInvoice.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
+import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {

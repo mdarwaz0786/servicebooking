@@ -22,7 +22,6 @@ export const getCartData = async (userId) => {
   let transactionCharge = 0;
   let taxPercent = 0;
 
-
   cartItems.forEach((item) => {
     amount += item.salePrice * item.quantity;
     mrpAmount += item.mrpPrice * item.quantity;
@@ -30,7 +29,6 @@ export const getCartData = async (userId) => {
     taxablePrice += parseFloat(item.taxablePrice);
     transactionCharge += parseFloat(item.transactionCharge);
     taxPercent += parseFloat(item.taxPercent);
-
   });
 
   payableAmount = amount;
@@ -38,11 +36,6 @@ export const getCartData = async (userId) => {
   payableAmount += gstAmount;
 
   payableAmount -= discountAmount;
-
-
-
-
-
 
   return {
     cartProducts: cartItems,
