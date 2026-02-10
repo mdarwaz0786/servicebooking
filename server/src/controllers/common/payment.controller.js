@@ -193,7 +193,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     paymentTime: paymentTime,
   }, { new: true });
 
-  const transactionData = await TransactionModel.findById({ _id: transactionTableId });
+  const transactionData = await TransactionModel.findOne({ _id: transactionTableId });
 
   if (transactionData.productType == 'booking') {
     await BookingModel.findOneAndUpdate({ _id: transactionData.PID }, {

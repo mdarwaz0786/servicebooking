@@ -31,12 +31,8 @@ const sendNotification = async (
       fcmToken: { $exists: true, $ne: null },
     });
 
-    if (!foundUsers.length) {
-      throw new Error("Fcm token not found for selected users");
-    };
-
-    const tokens = foundUsers.map((u) => u?.fcmToken);
-    userIds = foundUsers.map((u) => u?._id);
+    const tokens = foundUsers?.map((u) => u?.fcmToken);
+    userIds = foundUsers?.map((u) => u?._id);
 
     await Promise.allSettled(
       tokens.map((token) =>
