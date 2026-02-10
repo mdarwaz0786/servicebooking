@@ -222,7 +222,7 @@ const ServicemanEarningListPage = () => {
                     <th>#</th>
                     <th>Booking Id</th>
                     <th>Provider</th>
-                    <th>Earning Amout</th>
+                    <th>Earning Amount</th>
                     <th>Payout Status</th>
                   </tr>
                 </thead>
@@ -231,7 +231,7 @@ const ServicemanEarningListPage = () => {
                     data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.service?.booking?.bookingId}</td>
+                        <td>{d?.service?.booking?.bookingId || d?.booking?.bookingId}</td>
                         <td>{d?.serviceman?.name}</td>
                         <td>₹{d?.earningAmount}</td>
                         <td>
