@@ -115,7 +115,6 @@ const CreateCashCollectedSubmitPage = () => {
 
     if (!providerId) return toast.error("Provider is required");
     if (!bookingId) return toast.error("Booking is required");
-    if (!amount || amount <= 0) return toast.error("Valid amount is required");
 
     try {
       setLoading(true);

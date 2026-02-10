@@ -19,7 +19,7 @@ export const createCashCollectedSubmit = asyncHandler(async (req, res) => {
   }
 
   if (!amount || amount <= 0) {
-    throw new ApiError(400, "Valid amount is required");
+    throw new ApiError(400, "Booking amount already collected");
   }
 
   const booking = await BookingModel.findById(bookingId).select("_id");

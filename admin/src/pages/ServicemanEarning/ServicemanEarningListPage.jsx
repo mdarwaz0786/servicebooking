@@ -233,7 +233,7 @@ const ServicemanEarningListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.service?.booking?.bookingId}</td>
                         <td>{d?.serviceman?.name}</td>
-                        <td>{d?.earningAmount}</td>
+                        <td>₹{d?.earningAmount}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">
