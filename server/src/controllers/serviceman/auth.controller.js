@@ -10,9 +10,8 @@ import { sendSMS } from "../../utils/sms.js";
 export const loginUser = asyncHandler(async (req, res) => {
   const { mobile } = req.body;
 
-  // const otp = generateOtp();
-
-  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  // const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  const otp = generateOtp();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   // const UserRecord = await UserModel.findOne({ 'mobile': mobile, 'role': 'user' });

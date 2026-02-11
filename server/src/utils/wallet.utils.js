@@ -202,38 +202,39 @@ export const calculateProviderEarningAmount = async (
 
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
-  if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
+  // gstAmount
 
+  if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
     await ServicemanEarningModel.create({
       booking: bookingId,
       servicemanBooking: servicemanBookingId,
       servicemanId: userId,
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
-      earningAmount: Number(booking?.payableAmount) - deductAdditionalPartAmount,
+      earningAmount: Number(booking?.payableAmount) - Number(booking?.gstAmount) - deductAdditionalPartAmount,
       payoutStatus: true,
       createdBy: userId,
       createdAt: new Date(),
     });
 
-    if (deductAdditionalPartAmount > 0) {
-      await CashCollectedLoggerModel.create({
-        bookingId,
-        providerId: userId,
-        amount: deductAdditionalPartAmount,
-        createdBy: userId,
-        createdAt: new Date(),
-      });
+    const cashCollectedAmount = Number(booking?.gstAmount) + Number(deductAdditionalPartAmount);
 
-      await BookingModel.findByIdAndUpdate(
-        bookingId,
-        {
-          cashColletedAmount: deductAdditionalPartAmount,
-          cashColletedPendingAmount: deductAdditionalPartAmount,
-        },
-        { new: true },
-      );
-    };
+    await CashCollectedLoggerModel.create({
+      bookingId,
+      providerId: userId,
+      amount: cashCollectedAmount,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        cashColletedAmount: cashCollectedAmount,
+        cashColletedPendingAmount: cashCollectedAmount,
+      },
+      { new: true },
+    );
   } else if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
 
