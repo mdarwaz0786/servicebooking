@@ -99,6 +99,10 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  paymentMode: {
+    type: String,
+    enum: ["cash", "online"],
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

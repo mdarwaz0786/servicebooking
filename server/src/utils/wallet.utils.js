@@ -213,6 +213,7 @@ export const calculateProviderEarningAmount = async (
       payableAmount: booking?.payableAmount,
       earningAmount: Number(booking?.payableAmount) - Number(booking?.gstAmount) - deductAdditionalPartAmount,
       payoutStatus: true,
+      paymentMode: "cash",
       createdBy: userId,
       createdAt: new Date(),
     });
@@ -235,6 +236,12 @@ export const calculateProviderEarningAmount = async (
       },
       { new: true },
     );
+
+    await ServiceManBookingModel.findOneAndUpdate(
+      { bookingId: bookingId },
+      { paymentMode: "cash" },
+      { new: true },
+    );
   } else if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
 
@@ -245,6 +252,7 @@ export const calculateProviderEarningAmount = async (
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
       earningAmount: totalProviderEarningAmount,
+      paymentMode: "cash",
       createdBy: userId,
       createdAt: new Date(),
     });
@@ -266,6 +274,12 @@ export const calculateProviderEarningAmount = async (
         },
         { new: true },
       );
+
+      await ServiceManBookingModel.findOneAndUpdate(
+        { bookingId: bookingId },
+        { paymentMode: "cash" },
+        { new: true },
+      );
     };
   } else if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "cod") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
@@ -277,6 +291,7 @@ export const calculateProviderEarningAmount = async (
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
       earningAmount: totalProviderEarningAmount,
+      paymentMode: "online",
       createdBy: userId,
       createdAt: new Date(),
     });
@@ -290,6 +305,12 @@ export const calculateProviderEarningAmount = async (
       },
       { new: true },
     );
+
+    await ServiceManBookingModel.findOneAndUpdate(
+      { bookingId: bookingId },
+      { paymentMode: "online" },
+      { new: true },
+    );
   } else if (paymentMode?.toLowerCase() == "online" && booking?.paymentMode == "online") {
     totalProviderEarningAmount = totalSalePrice + (additionalPartAmount - deductAdditionalPartAmount) - totalTransactionCharge;
 
@@ -300,6 +321,7 @@ export const calculateProviderEarningAmount = async (
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
       earningAmount: totalProviderEarningAmount,
+      paymentMode: "online",
       createdBy: userId,
       createdAt: new Date(),
     });
@@ -311,6 +333,12 @@ export const calculateProviderEarningAmount = async (
         cashColletedAmount: booking?.payableAmount,
         cashColletedPendingAmount: 0,
       },
+      { new: true },
+    );
+
+    await ServiceManBookingModel.findOneAndUpdate(
+      { bookingId: bookingId },
+      { paymentMode: "online" },
       { new: true },
     );
   };

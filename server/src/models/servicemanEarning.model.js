@@ -29,6 +29,10 @@ const servicemanEarningSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  paymentMode: {
+    type: String,
+    enum: ["cash", "online"],
+  },
   earningAmount: {
     type: Number,
     default: 0,
