@@ -88,6 +88,7 @@ export const loggedInUser = asyncHandler(async (req, res) => {
   });
 });
 
+// logout user
 export const logoutUser = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
@@ -103,7 +104,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
         deviceId: null,
       },
     },
-    { new: true }
+    { new: true },
   );
 
   return res.status(200).json({ success: true, message: "Logout successful" });
