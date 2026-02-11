@@ -177,8 +177,8 @@ const CashCollectedPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.booking?.bookingId || "-"}</td>
                         <td>{d?.profile?.name || "-"}</td>
-                        <td>₹{d?.amount || "-"}</td>
-                        <td>₹{d?.totalCashCollected || "-"}</td>
+                        <td>₹{d?.amount?.toFixed(2) || "-"}</td>
+                        <td>₹{d?.totalCashCollected?.toFixed(2) || "-"}</td>
                       </tr>
                     ))
                   ) : !loading ? (

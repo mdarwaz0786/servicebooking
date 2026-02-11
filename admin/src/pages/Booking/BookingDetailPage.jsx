@@ -244,66 +244,72 @@ const BookingDetailPage = () => {
                 </div>
 
                 {/* Addional Parts Table */}
-                <h6 className="fw-bold text-uppercase text-muted mb-3 mt-4">Additional Part</h6>
-                <div className="table-responsive">
-                  <table className="table table-bordered align-middle">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Part Name</th>
-                        <th>Item Name</th>
-                        <th>Old Price</th>
-                        <th className="text-end">Labour Charge</th>
-                        <th className="text-end">Unit Price</th>
-                        <th className="text-center">Quantity</th>
-                        <th className="text-center">Total Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {additionalParts?.map((item) => (
-                        <tr key={item?._id}>
-                          <td>{item?.description}</td>
-                          <td>{item?.serviceItemId?.service?.name}</td>
-                          <td>
-                            <p className="mb-1">Price: ₹{item?.oldAmount?.price}</p>
-                            <p className="mb-1">Discount: - ₹{item?.oldAmount?.discount}</p>
-                            <p className="mb-1">Labour Charge: ₹{item?.oldAmount?.laborCharge}</p>
-                          </td>
-                          <td>₹{item?.laborCharge}</td>
-                          <td style={{ width: "300px" }}>
-                            <div className="d-flex gap-2">
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={item?.unitPrice || ""}
-                                style={{ width: "100px" }}
-                                onChange={(e) =>
-                                  setAdditionalParts((prev) =>
-                                    prev?.map(p =>
-                                      p?._id === item._id
-                                        ? { ...p, unitPrice: e.target.value }
-                                        : p
-                                    )
-                                  )
-                                }
-                              />
-                              <button
-                                className="btn btn-sm btn-dark"
-                                onClick={() =>
-                                  handleUnitPriceUpdate(item?._id, item?.unitPrice, item?.bookingId)
-                                }
-                              >
-                                Update
-                              </button>
+                {
+                  (additionalParts?.length > 0) && (
+                    <>
+                      <h6 className="fw-bold text-uppercase text-muted mb-3 mt-4">Additional Part</h6>
+                      <div className="table-responsive">
+                        <table className="table table-bordered align-middle">
+                          <thead className="table-light">
+                            <tr>
+                              <th>Part Name</th>
+                              <th>Item Name</th>
+                              <th>Old Price</th>
+                              <th className="text-end">Labour Charge</th>
+                              <th className="text-end">Unit Price</th>
+                              <th className="text-center">Quantity</th>
+                              <th className="text-center">Total Price</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {additionalParts?.map((item) => (
+                              <tr key={item?._id}>
+                                <td>{item?.description}</td>
+                                <td>{item?.serviceItemId?.service?.name}</td>
+                                <td>
+                                  <p className="mb-1">Price: ₹{item?.oldAmount?.price}</p>
+                                  <p className="mb-1">Discount: - ₹{item?.oldAmount?.discount}</p>
+                                  <p className="mb-1">Labour Charge: ₹{item?.oldAmount?.laborCharge}</p>
+                                </td>
+                                <td>₹{item?.laborCharge}</td>
+                                <td style={{ width: "300px" }}>
+                                  <div className="d-flex gap-2">
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={item?.unitPrice || ""}
+                                      style={{ width: "100px" }}
+                                      onChange={(e) =>
+                                        setAdditionalParts((prev) =>
+                                          prev?.map(p =>
+                                            p?._id === item._id
+                                              ? { ...p, unitPrice: e.target.value }
+                                              : p
+                                          )
+                                        )
+                                      }
+                                    />
+                                    <button
+                                      className="btn btn-sm btn-dark"
+                                      onClick={() =>
+                                        handleUnitPriceUpdate(item?._id, item?.unitPrice, item?.bookingId)
+                                      }
+                                    >
+                                      Update
+                                    </button>
 
-                            </div>
-                          </td>
-                          <td>{item?.quantity}</td>
-                          <td>₹{(Number(item?.quantity) * Number(item?.unitPrice))}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                                  </div>
+                                </td>
+                                <td>{item?.quantity}</td>
+                                <td>₹{(Number(item?.quantity) * Number(item?.unitPrice))}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )
+                }
 
                 {/* Totals */}
                 <div className="d-flex justify-content-end mt-3">
@@ -357,44 +363,49 @@ const BookingDetailPage = () => {
             <hr />
 
             {/* Serviceman History */}
-            <h6 className="fw-bold text-uppercase text-muted mb-3">
-              Provider Assignment History
-            </h6>
-            <div className="row">
-              {booking?.servicemanHistory?.map((h, i) => (
-                <div key={i} className="col-md-6 mb-3">
-                  <div className="border rounded-3 p-3 h-100">
-                    <div className="d-flex align-items-center gap-3">
-                      <img
-                        src={
-                          h?.serviceman?.profileImage
-                            ? `${BASE_URL}/${h?.serviceman?.profileImage}`
-                            : "https://via.placeholder.com/90"
-                        }
-                        className="rounded-circle border"
-                        style={{ width: 90, height: 90, objectFit: "cover" }}
-                        alt="profile"
-                      />
-                      <div>
-                        <p className="mb-1 text-muted">
-                          <strong>Name:</strong> {h?.serviceman?.name}
-                        </p>
-                        <p className="mb-1 text-muted">
-                          <strong>Email:</strong> {h?.serviceman?.email}
-                        </p>
-                        <p className="mb-1 text-muted">
-                          <strong>Mobile:</strong> {h?.serviceman?.mobile}
-                        </p>
-                        <p className="mb-0 text-muted">
-                          <strong>Status:</strong>{" "}
-                          <span className="text-capitalize">{h?.status}</span>
-                        </p>
+            {
+              (booking?.servicemanHistory?.length > 0) && (
+                <>
+                  <h6 className="fw-bold text-uppercase text-muted mb-3">
+                    Provider Assignment History
+                  </h6>
+                  <div className="row">
+                    {booking?.servicemanHistory?.map((h, i) => (
+                      <div key={i} className="col-md-6 mb-3">
+                        <div className="border rounded-3 p-3 h-100">
+                          <div className="d-flex align-items-center gap-3">
+                            <img
+                              src={
+                                h?.serviceman?.profileImage
+                                  ? `${BASE_URL}/${h?.serviceman?.profileImage}`
+                                  : "https://via.placeholder.com/90"
+                              }
+                              className="rounded-circle border"
+                              style={{ width: 90, height: 90, objectFit: "cover" }}
+                              alt="profile"
+                            />
+                            <div>
+                              <p className="mb-1 text-muted">
+                                <strong>Name:</strong> {h?.serviceman?.name}
+                              </p>
+                              <p className="mb-1 text-muted">
+                                <strong>Email:</strong> {h?.serviceman?.email}
+                              </p>
+                              <p className="mb-1 text-muted">
+                                <strong>Mobile:</strong> {h?.serviceman?.mobile}
+                              </p>
+                              <p className="mb-0 text-muted">
+                                <strong>Status:</strong>{" "}
+                                <span className="text-capitalize">{h?.status}</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
+                </>
+              )}
           </>
         )}
 
@@ -493,94 +504,99 @@ const BookingDetailPage = () => {
             )}
 
             {/* ================= SERVICEMAN HISTORY ================= */}
-            <h6 className="fw-bold text-uppercase text-muted mb-3">
-              Provider History Media
-            </h6>
 
-            {booking?.servicemanHistory?.map((h, i) => (
-              <div key={i} className="border rounded-3 p-3 mb-4">
-                {/* Serviceman Info */}
-                <div className="d-flex align-items-center gap-3 mb-3">
-                  <img
-                    src={`${BASE_URL}/${h?.serviceman?.profileImage}`}
-                    className="rounded-circle border"
-                    style={{ width: 80, height: 80, objectFit: "cover" }}
-                    alt="serviceman"
-                  />
-                  <div>
-                    <p className="mb-0"><strong>Name:</strong> {h?.serviceman?.name}</p>
-                    <p className="mb-0"><strong>Email:</strong> {h?.serviceman?.email}</p>
-                    <p className="mb-0"><strong>Mobile:</strong> {h?.serviceman?.mobile}</p>
-                    <p className="mb-0"><strong>Status:</strong> {h?.status}</p>
+            {(booking?.servicemanHistory?.length > 0) && (
+              <>
+                <h6 className="fw-bold text-uppercase text-muted mb-3">
+                  Provider History Media
+                </h6>
+
+                {booking?.servicemanHistory?.map((h, i) => (
+                  <div key={i} className="border rounded-3 p-3 mb-4">
+                    {/* Serviceman Info */}
+                    <div className="d-flex align-items-center gap-3 mb-3">
+                      <img
+                        src={`${BASE_URL}/${h?.serviceman?.profileImage}`}
+                        className="rounded-circle border"
+                        style={{ width: 80, height: 80, objectFit: "cover" }}
+                        alt="serviceman"
+                      />
+                      <div>
+                        <p className="mb-0"><strong>Name:</strong> {h?.serviceman?.name}</p>
+                        <p className="mb-0"><strong>Email:</strong> {h?.serviceman?.email}</p>
+                        <p className="mb-0"><strong>Mobile:</strong> {h?.serviceman?.mobile}</p>
+                        <p className="mb-0"><strong>Status:</strong> {h?.status}</p>
+                      </div>
+                    </div>
+
+                    {/* Selfie */}
+                    {h?.selfie && (
+                      <>
+                        <p className="fw-semibold mb-1">Selfie</p>
+                        <img
+                          src={`${BASE_URL}/${h?.selfie}`}
+                          className="img-thumbnail mb-3"
+                          style={{ width: 160 }}
+                          alt="selfie"
+                        />
+                      </>
+                    )}
+
+                    {/* Before Start */}
+                    {(h?.beforeStartImages?.length > 0 || h?.beforeStartVideos?.length > 0) && (
+                      <>
+                        <p className="fw-semibold">Before Start</p>
+                        <div className="d-flex flex-wrap gap-2">
+                          {h?.beforeStartImages?.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={`${BASE_URL}/${img}`}
+                              className="img-thumbnail"
+                              style={{ width: 140 }}
+                              alt="before"
+                            />
+                          ))}
+                          {h?.beforeStartVideos?.map((vid, idx) => (
+                            <video
+                              key={idx}
+                              src={`${BASE_URL}/${vid}`}
+                              controls
+                              style={{ width: 200 }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {/* After Complete */}
+                    {(h?.afterCompleteImages?.length > 0 || h?.afterCompleteVideos?.length > 0) && (
+                      <>
+                        <p className="fw-semibold mt-3">After Complete</p>
+                        <div className="d-flex flex-wrap gap-2">
+                          {h.afterCompleteImages.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={`${BASE_URL}/${img}`}
+                              className="img-thumbnail"
+                              style={{ width: 140 }}
+                              alt="after"
+                            />
+                          ))}
+                          {h?.afterCompleteVideos?.map((vid, idx) => (
+                            <video
+                              key={idx}
+                              src={`${BASE_URL}/${vid}`}
+                              controls
+                              style={{ width: 200 }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
-                </div>
-
-                {/* Selfie */}
-                {h?.selfie && (
-                  <>
-                    <p className="fw-semibold mb-1">Selfie</p>
-                    <img
-                      src={`${BASE_URL}/${h?.selfie}`}
-                      className="img-thumbnail mb-3"
-                      style={{ width: 160 }}
-                      alt="selfie"
-                    />
-                  </>
-                )}
-
-                {/* Before Start */}
-                {(h?.beforeStartImages?.length > 0 || h?.beforeStartVideos?.length > 0) && (
-                  <>
-                    <p className="fw-semibold">Before Start</p>
-                    <div className="d-flex flex-wrap gap-2">
-                      {h?.beforeStartImages?.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={`${BASE_URL}/${img}`}
-                          className="img-thumbnail"
-                          style={{ width: 140 }}
-                          alt="before"
-                        />
-                      ))}
-                      {h?.beforeStartVideos?.map((vid, idx) => (
-                        <video
-                          key={idx}
-                          src={`${BASE_URL}/${vid}`}
-                          controls
-                          style={{ width: 200 }}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {/* After Complete */}
-                {(h?.afterCompleteImages?.length > 0 || h?.afterCompleteVideos?.length > 0) && (
-                  <>
-                    <p className="fw-semibold mt-3">After Complete</p>
-                    <div className="d-flex flex-wrap gap-2">
-                      {h.afterCompleteImages.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={`${BASE_URL}/${img}`}
-                          className="img-thumbnail"
-                          style={{ width: 140 }}
-                          alt="after"
-                        />
-                      ))}
-                      {h?.afterCompleteVideos?.map((vid, idx) => (
-                        <video
-                          key={idx}
-                          src={`${BASE_URL}/${vid}`}
-                          controls
-                          style={{ width: 200 }}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+                ))}
+              </>
+            )}
           </>
         )}
       </div>

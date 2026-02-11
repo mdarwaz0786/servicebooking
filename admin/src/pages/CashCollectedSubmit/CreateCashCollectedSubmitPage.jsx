@@ -205,8 +205,8 @@ const CreateCashCollectedSubmitPage = () => {
                   <input
                     type="text"
                     className="form-control"
-                    value={formData.amount}
-                    disabled={formData.amount}
+                    value={Number(formData?.amount)?.toFixed(2)}
+                    disabled={!formData.amount}
                   />
                 </div>
               </div>
