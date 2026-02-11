@@ -87,3 +87,24 @@ export const loggedInUser = asyncHandler(async (req, res) => {
     data: req.user,
   });
 });
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  };
+
+  await UserModel.findByIdAndUpdate(
+    userId,
+    {
+      $set: {
+        fcmToken: null,
+        deviceId: null,
+      },
+    },
+    { new: true }
+  );
+
+  return res.status(200).json({ success: true, message: "Logout successful" });
+});
