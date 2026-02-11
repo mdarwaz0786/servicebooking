@@ -203,6 +203,19 @@ export const calculateProviderEarningAmount = async (
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
   if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
+
+    await ServicemanEarningModel.create({
+      booking: bookingId,
+      servicemanBooking: servicemanBookingId,
+      servicemanId: userId,
+      userId: booking?.userId,
+      payableAmount: booking?.payableAmount,
+      earningAmount: Number(booking?.payableAmount) - deductAdditionalPartAmount,
+      payoutStatus: true,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
     if (deductAdditionalPartAmount > 0) {
       await CashCollectedLoggerModel.create({
         bookingId,
