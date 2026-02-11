@@ -176,7 +176,7 @@ export const calculateProviderEarningAmount = async (
 
   const booking = await BookingModel
     .findById(bookingObjectId)
-    .select("additionalPartAmount paymentStatus paymentMode payableAmount userId")
+    .select("additionalPartAmount paymentStatus paymentMode payableAmount gstAmount userId")
     .lean();
 
   const additionalPartAmount = Number(booking?.additionalPartAmount || 0);
