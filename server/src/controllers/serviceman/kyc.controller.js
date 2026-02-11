@@ -11,6 +11,14 @@ export const createKyc = asyncHandler(async (req, res) => {
   const { accountNumber, confirmAccountNumber } = req.body;
   const userId = req.user?._id;
 
+  const existingKyc = await KycModel
+    .findOne({ userId: userId })
+    .sort({ createdAt: -1 });
+
+  if (existingKyc?.status == "pending") {
+    throw new ApiError(400, "Your last kyc is pending");
+  };
+
   if (accountNumber !== confirmAccountNumber) {
     throw new ApiError(400, "Account number and confirm account number do not match");
   };
