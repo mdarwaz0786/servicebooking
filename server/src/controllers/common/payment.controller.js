@@ -95,7 +95,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     userId,
     PID: pId,
     transactionId: '',
-    productName: type === "wallet" ? "Wallet Recharge" : "Booking Services",
+    productName: type == "wallet" ? "Wallet Recharge" : "Booking Services",
     productType: type,
     type: 1,
     itemData: itemData,
@@ -110,7 +110,6 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     referenceId: `BOOKING_${bookingData?.bookingId}`,
     qrId: qr ? qr.id : '',
     qrImage: qr ? qr.image_url : '',
-
   });
 
   return res.status(200).json({

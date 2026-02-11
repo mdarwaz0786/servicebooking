@@ -4,6 +4,8 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import BankTransferModel from "../../models/bankTransfer.model.js";
+import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js";
+import CashCollectedSubmitModel from "../../models/cashCollectedSubmit.model.js";
 
 // get total earning new
 export const getTotalEarnings = asyncHandler(async (req, res) => {
@@ -119,6 +121,16 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .limit(10);
 
+  const cashCollected = await CashCollectedLoggerModel.findOne({
+    providerId: servicemanId,
+  }).sort({ createdAt: -1 });
+
+  const cashCollectedSubmit = await CashCollectedSubmitModel.findOne({
+    providerId: servicemanId,
+  }).sort({ createdAt: -1 });
+
+  let cashCollectedSubmitPending = Number(cashCollected?.totalCashCollected || 0) - Number(cashCollectedSubmit?.totalSubmitAmount || 0);
+
   return res.json({
     success: true,
     message: "Data fetched successfully",
@@ -130,7 +142,7 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
         thisMonthEarningAmount: stats.thisMonth[0]?.amount || 0,
         lastThreeMonthEarningAmount: stats.lastThreeMonths[0]?.amount || 0,
         thisYearEarningAmount: stats.thisYear[0]?.amount || 0,
-        cashCollectedSubmitPending: 0,
+        cashCollectedSubmitPending: cashCollectedSubmitPending,
       },
       monthWiseEarning: monthWise,
       bankTransfer: bankTransfer,
