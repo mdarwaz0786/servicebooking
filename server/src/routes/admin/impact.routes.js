@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/", isLoggedIn, createImpact);
 router.get("/", isLoggedIn, getImpacts);
-router.get("/:id", isLoggedIn, getImpactById);
+router.get("/:id", getImpactById);
 router.patch("/:id", isLoggedIn, updateImpact);
 router.delete("/:id", isLoggedIn, deleteImpact);
 

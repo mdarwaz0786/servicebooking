@@ -4,7 +4,7 @@ const blogSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "BlogCategory",
-    required: [true, "Category is required"],
+    required: [true, "Blog Category is required"],
   },
   title: {
     type: String,
@@ -79,23 +79,16 @@ const blogSchema = new mongoose.Schema({
       default: null
     },
   },
-  publishState: {
+  publishStatus: {
     type: String,
     enum: ["draft", "published", "scheduled"],
     default: "draft",
   },
-  publishDate: {
+  publishDateTime: {
     type: Date,
-  },
-  publishTime: {
-    type: String,
   },
   author: {
     type: String,
-  },
-  isComment: {
-    type: Boolean,
-    default: true,
   },
   status: {
     type: Boolean,
@@ -151,3 +144,6 @@ blogSchema.pre("findOneAndUpdate", function (next) {
 const BlogModel = mongoose.model("Blog", blogSchema);
 
 export default BlogModel;
+
+
+// tags input, 
