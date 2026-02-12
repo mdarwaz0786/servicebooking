@@ -16,7 +16,7 @@ const UserSidebar = () => {
         <div className="card-header user-sidebar-header mb-4">
           <div className="d-flex justify-content-center align-items-center flex-column">
             <span className="user rounded-circle avatar avatar-xxl mb-2">
-              <img src={imageCheck(user.image, 'user.png')} className="img-fluid rounded-circle" alt="Img" />
+              <img src={imageCheck(user.profileImage, 'user.png')} className="img-fluid rounded-circle" alt="Img" />
             </span>
             <h6 className="mb-2">{user.name}</h6>
             <h6 className="mb-2">{user.mobile}</h6>

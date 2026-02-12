@@ -7,6 +7,8 @@ import OtpModel from "../../models/otp.model.js";
 import compressImage from "../../helpers/compressImage.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { sendSMS } from "../../utils/sms.js";
+import fs from "fs";
+import path from "path";
 
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {

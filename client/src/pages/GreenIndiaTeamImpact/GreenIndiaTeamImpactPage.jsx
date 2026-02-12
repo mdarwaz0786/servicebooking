@@ -43,7 +43,7 @@ const GreenIndiaTeamImpactPage = () => {
       <div className="col-md-10 mx-auto">
 
         <div
-            className="mt-1"
+            className="mt-1 editor-text"
             dangerouslySetInnerHTML={{ __html: data.description }}
             ></div>
       </div>
