@@ -187,7 +187,7 @@ const BookingDetailPage = () => {
                   <>
                     <hr />
                     <div className="mb-4">
-                      <h6 className="fw-bold text-uppercase text-muted">Latest Assigned Provider</h6>
+                      <h6 className="fw-bold text-uppercase text-muted">Provider</h6>
                       <div className="d-flex align-items-center gap-3 mt-3">
                         <img
                           src={
@@ -209,9 +209,6 @@ const BookingDetailPage = () => {
                           <p className="mb-1">
                             <strong>Mobile:</strong> {booking?.latestServiceman?.serviceman?.mobile}
                           </p>
-                          <p className="mb-1">
-                            <strong>Staus:</strong> {booking?.latestServiceman?.status}
-                          </p>
                         </div>
                       </div>
                     </div>
@@ -225,18 +222,20 @@ const BookingDetailPage = () => {
                     <thead className="table-light">
                       <tr>
                         <th>Service Name</th>
-                        <th className="text-center">Quantity</th>
                         <th className="text-end">MRP Price</th>
                         <th className="text-end">Sale Price</th>
+                        <th className="text-center">Quantity</th>
+                        <th className="text-end">Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       {items?.map((item, i) => (
                         <tr key={i}>
                           <td>{item?.service?.name}</td>
-                          <td className="text-center">{item?.quantity}</td>
                           <td className="text-end">₹{item?.mrpPrice}</td>
                           <td className="text-end">₹{item?.salePrice}</td>
+                          <td className="text-center">{item?.quantity}</td>
+                          <td className="text-end">₹{item?.salePrice * item?.quantity}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -294,6 +293,7 @@ const BookingDetailPage = () => {
                                       onClick={() =>
                                         handleUnitPriceUpdate(item?._id, item?.unitPrice, item?.bookingId)
                                       }
+                                      disabled={booking?.status == "complete"}
                                     >
                                       Update
                                     </button>
@@ -315,8 +315,12 @@ const BookingDetailPage = () => {
                 <div className="d-flex justify-content-end mt-3">
                   <div style={{ minWidth: "300px" }}>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>Total Amount:</span>
-                      <strong>₹{booking?.amount}</strong>
+                      <span>Amount:</span>
+                      <strong>₹{booking?.amount - booking?.additionalPartAmount}</strong>
+                    </div>
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Part Amount:</span>
+                      <strong>₹{booking?.additionalPartAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
                       <span>Taxes and Fee: </span>
@@ -327,7 +331,7 @@ const BookingDetailPage = () => {
                       <strong>-₹{booking?.discountAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between border-top pt-2">
-                      <span>Total Payable:</span>
+                      <span>Total Payable Amount:</span>
                       <strong className="text-primary fs-5">₹{booking?.payableAmount?.toFixed(2)}</strong>
                     </div>
                   </div>
@@ -342,7 +346,7 @@ const BookingDetailPage = () => {
             {/* Latest Serviceman */}
             {booking?.latestServiceman?.serviceman && (
               <div className="mb-4">
-                <h6 className="fw-bold text-uppercase text-muted">Latest Provider</h6>
+                <h6 className="fw-bold text-uppercase text-muted">Provider</h6>
                 <div className="d-flex align-items-center gap-3 mt-3">
                   <img
                     src={`${BASE_URL}/${booking?.latestServiceman?.serviceman?.profileImage}`}
@@ -354,7 +358,6 @@ const BookingDetailPage = () => {
                     <p className="mb-0 text-muted"><strong>Name:</strong> {booking?.latestServiceman?.serviceman?.name}</p>
                     <p className="mb-0 text-muted"><strong>Email:</strong> {booking?.latestServiceman?.serviceman?.email}</p>
                     <p className="mb-0 text-muted"><strong>Mobile:</strong> {booking?.latestServiceman?.serviceman?.mobile}</p>
-                    <p className="mb-0 text-muted"><strong>Status:</strong> {booking?.latestServiceman?.status}</p>
                   </div>
                 </div>
               </div>
@@ -367,7 +370,7 @@ const BookingDetailPage = () => {
               (booking?.servicemanHistory?.length > 0) && (
                 <>
                   <h6 className="fw-bold text-uppercase text-muted mb-3">
-                    Provider Assignment History
+                    Provider History
                   </h6>
                   <div className="row">
                     {booking?.servicemanHistory?.map((h, i) => (
@@ -394,10 +397,6 @@ const BookingDetailPage = () => {
                               <p className="mb-1 text-muted">
                                 <strong>Mobile:</strong> {h?.serviceman?.mobile}
                               </p>
-                              <p className="mb-0 text-muted">
-                                <strong>Status:</strong>{" "}
-                                <span className="text-capitalize">{h?.status}</span>
-                              </p>
                             </div>
                           </div>
                         </div>
@@ -413,7 +412,7 @@ const BookingDetailPage = () => {
           <>
             {/* ================= LATEST SERVICEMAN ================= */}
             <h6 className="fw-bold text-uppercase text-muted mb-3">
-              Latest Provider Media
+              Provider Media
             </h6>
 
             {booking?.latestServiceman && (
@@ -430,7 +429,6 @@ const BookingDetailPage = () => {
                     <p className="mb-0"><strong>Name:</strong> {booking?.latestServiceman?.serviceman?.name}</p>
                     <p className="mb-0"><strong>Email:</strong> {booking?.latestServiceman?.serviceman?.email}</p>
                     <p className="mb-0"><strong>Mobile:</strong> {booking?.latestServiceman?.serviceman?.mobile}</p>
-                    <p className="mb-0"><strong>Status:</strong> {booking?.latestServiceman?.status}</p>
                   </div>
                 </div>
 
@@ -508,7 +506,7 @@ const BookingDetailPage = () => {
             {(booking?.servicemanHistory?.length > 0) && (
               <>
                 <h6 className="fw-bold text-uppercase text-muted mb-3">
-                  Provider History Media
+                  Provider Media History
                 </h6>
 
                 {booking?.servicemanHistory?.map((h, i) => (
@@ -525,7 +523,6 @@ const BookingDetailPage = () => {
                         <p className="mb-0"><strong>Name:</strong> {h?.serviceman?.name}</p>
                         <p className="mb-0"><strong>Email:</strong> {h?.serviceman?.email}</p>
                         <p className="mb-0"><strong>Mobile:</strong> {h?.serviceman?.mobile}</p>
-                        <p className="mb-0"><strong>Status:</strong> {h?.status}</p>
                       </div>
                     </div>
 

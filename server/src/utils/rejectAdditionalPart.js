@@ -13,21 +13,21 @@ const rejectAdditionalParts = async (bookingId) => {
 
   const totalAdditionalPartAmount = additionalParts?.reduce((sum, item) => {
     const unitPrice = Number(item?.unitPrice) || 0;
-    const quantity = Number(item?.quantity) || 0;
+    const quantity = Number(item?.quantity) || 1;
     return sum + (unitPrice * quantity);
   }, 0);
 
   const booking = await BookingModel.findById(bookingId);
 
-  const newAmount = Number(booking?.amount || 0) - totalAdditionalPartAmount;
-  const newPayable = Number(booking?.payableAmount || 0) - totalAdditionalPartAmount;
+  const newAmount = Number(booking?.amount) - totalAdditionalPartAmount;
+  const newPayable = Number(booking?.payableAmount) - totalAdditionalPartAmount;
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
       additionalPartAmount: 0,
-      amount: Math.max(newAmount, 0),
-      payableAmount: Math.max(newPayable, 0),
+      amount: newAmount,
+      payableAmount: newPayable,
       updatedAt: new Date(),
     },
     { new: true }

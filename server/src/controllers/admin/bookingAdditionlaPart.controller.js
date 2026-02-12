@@ -14,7 +14,9 @@ export const updateUnitPrice = asyncHandler(async (req, res) => {
   const part = await BookingAdditionalPartModel.findById(id);
   const oldUnitPrice = Number(part?.unitPrice);
   const quantity = Number(part?.quantity);
-  const oldAdditionalPartAmount = Number(oldUnitPrice * quantity);
+
+  const unitPriceDifference = oldUnitPrice - Number(unitPrice);
+  const totalUnitPriceDifference = unitPriceDifference * quantity;
 
   const updatedPart = await BookingAdditionalPartModel.findByIdAndUpdate(
     id,
@@ -31,23 +33,19 @@ export const updateUnitPrice = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Additional part not found");
   };
 
-  const newAditionalPartAmount = Number(quantity * unitPrice);
-
   const booking = await BookingModel.findById(bookingId);
   const bookingAdditionalPartAmount = Number(booking?.additionalPartAmount);
   const bookingAmount = Number(booking?.amount);
   const bookingPayableAmount = Number(booking?.payableAmount);
 
-  const additionalPartAmountDifference = Number(oldAdditionalPartAmount) - Number(newAditionalPartAmount);
-
-  const finalAdditionalPartAmount = Number(bookingAdditionalPartAmount) - Number(additionalPartAmountDifference);
-  const newAmount = Number(bookingAmount) - Number(additionalPartAmountDifference);
-  const newPayableAmout = Number(bookingPayableAmount) - Number(additionalPartAmountDifference);
+  const newAdditionalPartAmount = Number(bookingAdditionalPartAmount) - Number(totalUnitPriceDifference);
+  const newAmount = Number(bookingAmount) - Number(totalUnitPriceDifference);
+  const newPayableAmout = Number(bookingPayableAmount) - Number(totalUnitPriceDifference);
 
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
-      additionalPartAmount: finalAdditionalPartAmount,
+      additionalPartAmount: newAdditionalPartAmount,
       amount: newAmount,
       payableAmount: newPayableAmout,
       updatedBy: req.user?._id,

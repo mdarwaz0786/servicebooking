@@ -202,8 +202,6 @@ export const calculateProviderEarningAmount = async (
 
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
-  // gstAmount
-
   if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
     await ServicemanEarningModel.create({
       booking: bookingId,
