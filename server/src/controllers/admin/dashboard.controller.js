@@ -44,7 +44,7 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
     },
 
     { $sort: { avgRating: -1, totalReviews: -1 } },
-    { $limit: 5 },
+    { $limit: 10 },
 
     // booking
     {
@@ -183,7 +183,7 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
     },
 
     { $sort: { avgRating: -1, totalReviews: -1 } },
-    { $limit: 5 },
+    { $limit: 10 },
 
     /* ---- SERVICEMAN PROFILE ---- */
     {

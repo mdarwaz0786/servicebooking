@@ -88,7 +88,7 @@ const DashboardPage = () => {
                         <div className="home-userhead">
                           <div className="home-usercount">
                             {/* <span><img src="/assets/img/icons/user-circle.svg" alt="img" /></span> */}
-                            <h6>Providers</h6>
+                            <h6>Provider</h6>
                           </div>
                           <div className="home-useraction">
                             <Link className="delete-table bg-white" to="/providers" data-bs-toggle="dropdown" aria-expanded="true">
@@ -267,9 +267,9 @@ const DashboardPage = () => {
                                 <th>Booking Id</th>
                                 <th>Date</th>
                                 {/* <th>Provider</th> */}
-                                <th>User</th>
+                                <th>Customer</th>
                                 {/* <th>Service</th> */}
-                                <th>Payable Amount</th>
+                                <th>Amount</th>
                                 <th>Status</th>
                               </tr>
                             </thead>
