@@ -10,9 +10,15 @@ const AboutUsPage = () => {
   const providers = [
     {
       name: "SARVESH KUMAR MISHRA",
-      role: "(Director)",
+      role: "(Director & Founder))",
       img: "assets/img/home/sarvesh-mishra.svg",
-      description: "Sarvesh Mishra founded Green India Team with a vision to make home appliance repair simple, reliable, and accessible. His strong leadership and commitment to quality have guided the company toward excellence and customer trust.",
+      description: `
+I started Sarv Laxmi Green India Pvt. Ltd. with one simple belief: every home deserves honest service and respectful professionals. Before systems, before apps, before expansion plans—there was a thought that kept me awake at night: “If my own family needed help at home, who would I trust?”
+That question became the foundation of Green India Team.
+I have always believed that business is not just about growth, but about responsibility. When we enter someone’s home, we enter their personal space, their comfort zone. That is not a small thing. That is a duty. My vision has been clear from day one—to build a team that works on good faith, best effort, and real accountability, not shortcuts.
+Green India Team is my promise to customers and my commitment to technicians. I want our professionals to feel proud of their skills and our customers to feel relaxed the moment we arrive. We are not here to claim perfection—we are here to show up, do the right work, and stand by it.
+“When service is driven by intention, trust follows naturally.”
+This company is not just about repairs, cleaning, or installations. It is about creating a culture where work has dignity, homes feel safer, and service feels human. That is the future I am building—one home, one job, one honest effort at a time.`,
     }
   ];
 
@@ -455,22 +461,21 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
 
         <div className="row">
           {providers.map((provider, index) => (
-            <div className="col-lg-6 col-md-6 m-auto" key={index}>
+            <div className="col-lg-12 col-md-12 m-auto" key={index}>
               <div className="card providerset p-0 flex-fill">
                 <div className="card-body row">
-                  <div className="providerset-img col-4 col-sm-12">
-                    <a href="provider-details.html">
+                  <div className="providerset-img col-4 col-sm-6">
+                    <a >
                       <img src={provider.img} alt={provider.name} />
                     </a>
                   </div>
 
-                  <div className="providerset-content col-8 col-sm-12">
+                  <div className="providerset-content col-8 col-sm-6">
                     <div className="providerset-price">
                       <div className="d-flex justify-content-between align-items-center flex-fill">
                         <div className="providerset-name">
                           <h4 className="d-flex align-items-center">
                             <a
-                              href="provider-details.html"
                               className="me-1 text-truncate"
                             >
                               {provider.name}

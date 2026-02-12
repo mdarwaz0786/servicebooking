@@ -9,6 +9,7 @@ const UserBookingDetailPage = () => {
     const { Urls, postData, formatDateTime, formatDate, PriceFormat, imageCheck, bookingStatus, toggleModal } = useContext(AppContext);
     const [data, setdata] = useState([]);
     const [items, setitems] = useState([]);
+    const [isCancel, setisCancel] = useState();
     const [additionalParts, setAdditionalParts] = useState([]);
     const [showApproveReject, setShowApproveReject] = useState(false);
 
@@ -17,6 +18,7 @@ const UserBookingDetailPage = () => {
             const response = await postData({}, Urls.myBookingDetail + '/' + bookingId, "GET", 0, 1);
             setdata(response.data.booking ? response.data.booking : []);
             setitems(response.data.items ? response.data.items : []);
+            setisCancel(response.data.items ? response.data.isCancel : null);
             
             // Extract all additional parts from all items
             const allParts = [];
@@ -132,6 +134,16 @@ const UserBookingDetailPage = () => {
                                     <i className="ti ti-file-text me-1" />
                                     Invoice
                                 </Link>
+                                {isCancel && data.status!='cancel'?
+                                <button
+                                    className="btn btn-danger d-flex align-items-center justify-content-center"
+                                    onClick={handleCancelBooking}
+                                >
+                                    <i className="ti ti-x me-0" />
+                                    Cancel
+                                </button>
+                                :null
+                                }
                             </div>
                         </div>
                     </div>
