@@ -16,6 +16,11 @@ const serviceManProfileSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
+  subCategoryIds: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "SubCategory",
+    required: true,
+  },
   city: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "City",
@@ -151,6 +156,13 @@ serviceManProfileSchema.virtual("user", {
 serviceManProfileSchema.virtual("categories", {
   ref: "Category",
   localField: "categoryIds",
+  foreignField: "_id",
+  justOne: false,
+});
+
+serviceManProfileSchema.virtual("subCategories", {
+  ref: "SubCategory",
+  localField: "subCategoryIds",
   foreignField: "_id",
   justOne: false,
 });

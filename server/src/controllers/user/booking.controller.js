@@ -228,7 +228,7 @@ export const getBookings = asyncHandler(async (req, res) => {
 
   for (let booking of bookings) {
     const latestAssignment = await ServiceManBookingModel
-      .findOne({ bookingId: booking._id })
+      .findOne({ bookingId: booking?._id, status: { $nin: ["taken", "new"] }, })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -407,6 +407,7 @@ export const updateBooking = asyncHandler(async (req, res) => {
   if (req.body.status) {
     const lastServicemanBooking = await ServiceManBookingModel.findOne({
       bookingId: booking?._id,
+      status: { $nin: ["taken", "new"] },
     })
       .sort({ createdAt: -1 })
       .lean();

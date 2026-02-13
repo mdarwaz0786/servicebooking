@@ -15,6 +15,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   const {
     categoryIds,
+    subCategoryIds,
     city,
     name,
     email,
@@ -35,6 +36,10 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 
   if (categoryIds && !categoryIds.length) {
     throw new ApiError(400, "At least one category is required");
+  };
+
+  if (subCategoryIds && !subCategoryIds.length) {
+    throw new ApiError(400, "At least one sub category is required");
   };
 
   let newImagePath = null;
@@ -74,6 +79,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
     profile = await ServiceManProfileModel.create({
       userId,
       categoryIds,
+      subCategoryIds,
       city,
       name,
       email,
@@ -136,6 +142,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel
     .findOne({ userId })
     .populate("categories")
+    .populate("subCategories")
     .populate("user")
     .populate("kyc")
     .populate("zones")
