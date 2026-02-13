@@ -20,6 +20,7 @@ import weeklyWinnerRoute from "./weeklyWinner.route.js";
 import targetRoute from "./target.routes.js";
 import bankTransferRoute from "./bankTransfer.routes.js";
 import brandRoutes from "./brand.routes.js";
+import subCategoryRoutes from "./subCategory.routes.js";
 
 const router = express.Router();
 
@@ -44,5 +45,6 @@ router.use("/weekly-winner", weeklyWinnerRoute);
 router.use("/target", targetRoute);
 router.use("/bank-transfer", bankTransferRoute);
 router.use("/brand", brandRoutes);
+router.use("/sub-category", subCategoryRoutes);
 
 export default router;
