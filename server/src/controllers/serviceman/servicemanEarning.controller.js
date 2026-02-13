@@ -150,7 +150,7 @@ export const getTotalEarnings = asyncHandler(async (req, res) => {
   });
 });
 
-// get total earning old
+// get total earning updated
 export const getServicemanEarnings = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "User not authenticated");
@@ -166,12 +166,15 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
 
   const aggregation = await ServicemanEarningModel.aggregate([
     { $match: matchStage },
+
     {
       $facet: {
         data: [
           { $sort: { createdAt: -1 } },
           { $skip: skip },
           { $limit: limit },
+
+          // 🔹 Booking (ALL FIELDS)
           {
             $lookup: {
               from: "bookings",
@@ -181,6 +184,106 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
             },
           },
           { $unwind: { path: "$booking", preserveNullAndEmptyArrays: true } },
+
+          // 🔹 Booking Items
+          {
+            $lookup: {
+              from: "bookingitems",
+              localField: "booking._id",
+              foreignField: "bookingId",
+              as: "bookingItems",
+            },
+          },
+
+          // 🔹 Services
+          {
+            $lookup: {
+              from: "services",
+              localField: "bookingItems.serviceId",
+              foreignField: "_id",
+              as: "servicesData",
+            },
+          },
+
+          // 🔹 Additional Parts
+          {
+            $lookup: {
+              from: "bookingadditionalparts",
+              localField: "bookingItems._id",
+              foreignField: "serviceItemId",
+              as: "additionalPartsData",
+            },
+          },
+
+          // 🔹 Merge Service + Additional Parts
+          {
+            $addFields: {
+              bookingItems: {
+                $map: {
+                  input: "$bookingItems",
+                  as: "item",
+                  in: {
+                    $mergeObjects: [
+                      "$$item",
+                      {
+                        service: {
+                          $let: {
+                            vars: {
+                              serviceObj: {
+                                $arrayElemAt: [
+                                  {
+                                    $filter: {
+                                      input: "$servicesData",
+                                      as: "srv",
+                                      cond: {
+                                        $eq: ["$$srv._id", "$$item.serviceId"],
+                                      },
+                                    },
+                                  },
+                                  0,
+                                ],
+                              },
+                            },
+                            in: {
+                              $cond: [
+                                "$$serviceObj",
+                                {
+                                  $mergeObjects: [
+                                    "$$serviceObj",
+                                    { shortDescription: "$$REMOVE" }, // ❌ Exclude shortDescription
+                                  ],
+                                },
+                                null,
+                              ],
+                            },
+                          },
+                        },
+                        additionalParts: {
+                          $filter: {
+                            input: "$additionalPartsData",
+                            as: "part",
+                            cond: {
+                              $eq: ["$$part.serviceItemId", "$$item._id"],
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+
+          // 🔹 Remove temporary arrays only
+          {
+            $project: {
+              servicesData: 0,
+              additionalPartsData: 0,
+            },
+          },
+
+          // 🔹 Serviceman Booking (ALL FIELDS)
           {
             $lookup: {
               from: "servicemanbookings",
@@ -190,6 +293,8 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
             },
           },
           { $unwind: { path: "$servicemanBooking", preserveNullAndEmptyArrays: true } },
+
+          // 🔹 Customer
           {
             $lookup: {
               from: "users",
@@ -199,6 +304,8 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
             },
           },
           { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+
+          // 🔹 Serviceman Profile
           {
             $lookup: {
               from: "servicemanprofiles",
@@ -208,42 +315,8 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
             },
           },
           { $unwind: { path: "$servicemanProfile", preserveNullAndEmptyArrays: true } },
-          {
-            $project: {
-              _id: 1,
-              payableAmount: 1,
-              earningPercent: 1,
-              earningAmount: 1,
-              payoutStatus: 1,
-              service: 1,
-              createdAt: 1,
-              booking: {
-                _id: "$booking._id",
-                bookingId: "$booking.bookingId",
-                status: "$booking.status",
-                payableAmount: "$booking.payableAmount",
-                scheduleDate: "$booking.scheduleDate",
-                scheduleTime: "$booking.scheduleTime",
-              },
-              servicemanBooking: {
-                _id: "$servicemanBooking._id",
-                status: "$servicemanBooking.status",
-                acceptDate: "$servicemanBooking.acceptDate",
-                completeDate: "$servicemanBooking.endDate",
-              },
-              customer: {
-                _id: "$customer._id",
-                name: "$customer.name",
-                mobile: "$customer.mobile",
-              },
-              serviceman: {
-                _id: "$servicemanProfile._id",
-                name: "$servicemanProfile.name",
-                mobile: "$servicemanProfile.mobile",
-              },
-            },
-          },
         ],
+
         summary: [
           {
             $group: {
@@ -256,6 +329,7 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
         ],
       },
     },
+
     {
       $project: {
         data: 1,
@@ -284,7 +358,8 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
     totalPages,
     hasPrevPage: page > 1,
     hasNextPage: page < totalPages,
-    pagination: buildPagination({ page, limit, total: summary.totalRecords }),
   });
 });
+
+
 
