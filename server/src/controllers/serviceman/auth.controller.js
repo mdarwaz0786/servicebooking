@@ -4,16 +4,26 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import generateToken from "../../helpers/generateToken.js";
 import OtpModel from "../../models/otp.model.js";
 import generateOtp from "../../utils/generateOpt.js";
+import { sendSMS } from "../../utils/sms.js";
 
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {
   const { mobile } = req.body;
 
-  const otp = generateOtp(mobile);
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+  // const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  const otp = generateOtp();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   // const UserRecord = await UserModel.findOne({ 'mobile': mobile, 'role': 'user' });
   // if (UserRecord) throw new ApiError(400, "Mobile exist in user account..");
+
+  const options = {
+    mobile: mobile,
+    otp: otp,
+    type: "teamVerification",
+  };
+
+  await sendSMS(options);
 
   await OtpModel.findOneAndUpdate(
     { mobile },
@@ -39,7 +49,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   await OtpModel.deleteOne({ mobile });
 
-  let user = await UserModel.findOne({ mobile, role: "serviceman" }).populate("kyc profile");
+  let user = await UserModel.findOne({ mobile: mobile, role: "serviceman" }).populate("kyc profile");
   let isNew = 1;
 
   if (user) {
@@ -75,4 +85,26 @@ export const loggedInUser = asyncHandler(async (req, res) => {
     message: "Data fetched successfully",
     data: req.user,
   });
+});
+
+// logout user
+export const logoutUser = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  };
+
+  await UserModel.findByIdAndUpdate(
+    userId,
+    {
+      $set: {
+        fcmToken: null,
+        deviceId: null,
+      },
+    },
+    { new: true },
+  );
+
+  return res.status(200).json({ success: true, message: "Logout successful" });
 });

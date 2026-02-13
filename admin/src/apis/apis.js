@@ -4,6 +4,15 @@ const apis = {
   dashboard: {
     get: `${BASE_URL}/api/v1/admin/dashboard`,
   },
+  bankTransfer: {
+    create: `${BASE_URL}/api/v1/admin/bank-transfer`,
+  },
+  earningAmout: {
+    get: `${BASE_URL}/api/v1/admin/bank-transfer/earning-amount-bydate`,
+  },
+  bookingAdditonalPart: {
+    updateUnitPrice: `${BASE_URL}/api/v1/admin/booking-additional-part`,
+  },
   notification: {
     send: `${BASE_URL}/api/v1/admin/notification`,
   },
@@ -29,6 +38,10 @@ const apis = {
   cashCollected: {
     create: `${BASE_URL}/api/v1/admin/cash-collected`,
     get: `${BASE_URL}/api/v1/admin/cash-collected`,
+  },
+  cashCollectedSubmit: {
+    create: `${BASE_URL}/api/v1/admin/cash-collected-submit`,
+    get: `${BASE_URL}/api/v1/admin/cash-collected-submit`,
   },
   pincode: {
     create: `${BASE_URL}/api/v1/admin/pincode`,
@@ -76,6 +89,7 @@ const apis = {
     get: `${BASE_URL}/api/v1/admin/booking`,
     delete: `${BASE_URL}/api/v1/admin/booking/delete-booking`,
     update: `${BASE_URL}/api/v1/admin/booking/update-booking`,
+    servicemanBooking: `${BASE_URL}/api/v1/admin/booking/serviceman-booking`,
   },
   transaction: {
     get: `${BASE_URL}/api/v1/admin/transaction`,

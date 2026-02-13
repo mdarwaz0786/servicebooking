@@ -84,22 +84,22 @@ const BookingListPage = () => {
     setSearchParams(params);
   };
 
-  const deleteBooking = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+  // const deleteBooking = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this booking?")) return;
 
-    try {
-      const response = await axios.delete(`${apis.booking.delete}/${id}`, {
-        headers: { Authorization: validToken },
-      });
+  //   try {
+  //     const response = await axios.delete(`${apis.booking.delete}/${id}`, {
+  //       headers: { Authorization: validToken },
+  //     });
 
-      if (response?.data?.success) {
-        toast.success("Booking deleted successfully");
-        fetchBookings();
-      };
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to delete booking");
-    };
-  };
+  //     if (response?.data?.success) {
+  //       toast.success("Booking deleted successfully");
+  //       fetchBookings();
+  //     };
+  //   } catch (error) {
+  //     toast.error(error?.response?.data?.message || "Failed to delete booking");
+  //   };
+  // };
 
   useEffect(() => {
     fetchBookings();
@@ -107,14 +107,14 @@ const BookingListPage = () => {
 
   const BOOKING_STATUSES = [
     "new",
-    "assign",
+    // "assign",
     "accept",
     "ongoing",
     "reject",
     "complete",
     "cancel",
     "partstatusnew",
-    "partstatusconfirm",
+    // "partstatusconfirm",
     "partstatusapprove",
     "partstatusreject",
   ];
@@ -141,17 +141,28 @@ const BookingListPage = () => {
   const BOOKING_STATUS_FILTERS = [
     { label: "All", value: "all" },
     { label: "New", value: "new" },
-    { label: "Assign", value: "assign" },
+    // { label: "Assign", value: "assign" },
     { label: "Accept", value: "accept" },
     { label: "Ongoing", value: "ongoing" },
     { label: "Reject", value: "reject" },
-    { label: "Complete", value: "complete" },
-    { label: "Cancel", value: "cancel" },
     { label: "Part New", value: "partstatusnew" },
-    { label: "Part Confirm", value: "partstatusconfirm" },
+    // { label: "Part Confirm", value: "partstatusconfirm" },
     { label: "Part Approve", value: "partstatusapprove" },
     { label: "Part Reject", value: "partstatusreject" },
+    { label: "Complete", value: "complete" },
+    { label: "Cancel", value: "cancel" },
   ];
+
+  const getVisibleFilters = () => {
+    if (status == "completed") return [];
+    if (status == "cancelled") return [];
+
+    if (status == "active") {
+      return BOOKING_STATUS_FILTERS?.filter((s) => s?.value != "cancel" && s?.value != "complete");
+    };
+
+    return BOOKING_STATUS_FILTERS;
+  };
 
   return (
     <>
@@ -207,7 +218,7 @@ const BookingListPage = () => {
 
             {/* Booking Status Filters */}
             <div className="d-flex flex-wrap gap-2 mb-0 mt-4">
-              {BOOKING_STATUS_FILTERS?.map((s) => (
+              {getVisibleFilters().map((s) => (
                 <button
                   key={s?.value}
                   type="button"
@@ -246,82 +257,99 @@ const BookingListPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings?.length > 0 ? (
-                      bookings?.map((d, index) => (
-                        <tr key={d?._id}>
-                          <td>{(page - 1) * limit + index + 1}</td>
-                          <td>{d?.bookingId}</td>
-                          <td>{d?.paymentMode}</td>
-                          <td>₹{d?.payableAmount}</td>
-                          <td>
-                            <button
-                              className="btn btn-primary"
-                              type="button"
-                              onClick={() => setSelectedBooking(d)}
-                              data-bs-toggle="modal"
-                              data-bs-target="#serviceManBookingModal"
-                            >
-                              {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
-                            </button>
-                          </td>
-                          <td>{d?.paymentStatus == 1 ? "Paid" : "Pending"}</td>
-                          <td>
-                            <div className="d-flex align-items-center gap-2">
-                              <select
-                                className="form-select form-select-sm"
-                                value={statusMap[d?._id] || d?.status}
-                                onChange={(e) =>
-                                  setStatusMap({
-                                    ...statusMap,
-                                    [d?._id]: e.target.value,
-                                  })
-                                }
-                              >
-                                {BOOKING_STATUSES?.map((status) => (
-                                  <option key={status} value={status}>
-                                    {status?.toUpperCase()}
-                                  </option>
-                                ))}
-                              </select>
-
-                              <button
-                                className="btn btn-sm btn-success"
-                                type="button"
-                                onClick={() => updateBookingStatus(d?._id)}
-                                disabled={statusMap[d?._id] === d?.status}
-                              >
-                                Update
-                              </button>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="d-flex">
-                              {/* View Button */}
-                              <Link to={`/booking-detail/${d?._id}`}>
-                                <button className="btn delete-table me-2" type="button">
-                                  <i className="fe fe-eye" />
-                                </button>
-                              </Link>
-
-                              {/* Delete Button */}
-                              <button
-                                className="btn delete-table"
-                                type="button"
-                                onClick={() => deleteBooking(d?._id)}
-                              >
-                                <i className="fe fe-trash-2" />
-                              </button>
+                    {
+                      loading ? (
+                        <tr>
+                          <td colSpan="8" className="text-center py-4">
+                            <div className="spinner-border text-primary" role="status">
+                              <span className="visually-hidden">Loading...</span>
                             </div>
                           </td>
                         </tr>
-                      ))
-                    ) : !loading ? (
-                      <tr>
-                        <td colSpan="6" className="text-center">
+                      ) : bookings?.length > 0 ? (
+                        bookings?.map((d, index) => (
+                          <tr key={d?._id}>
+                            <td>{(page - 1) * limit + index + 1}</td>
+                            <td>{d?.bookingId}</td>
+                            <td>{d?.paymentMode}</td>
+                            <td>₹{d?.payableAmount?.toFixed(2)}</td>
+                            <td>
+                              <button
+                                className="btn btn-primary"
+                                type="button"
+                                onClick={() => setSelectedBooking(d)}
+                                data-bs-toggle="modal"
+                                data-bs-target="#serviceManBookingModal"
+                                disabled={d?.status == "complete"}
+                              >
+                                {(d?.serviceman && Object.keys(d.serviceman).length > 0) ? "Re-assign" : "Assign"}
+                              </button>
+                            </td>
+                            <td>
+                              {d?.paymentMode == "cod" ?
+                                d?.paymentStatus == 1 ? "Paid" : "Pending"
+                                : d?.paymentStatus == 1 ? "Paid" : "Failed"
+                              }
+                            </td>
+                            <td>
+                              <div className="d-flex align-items-center gap-2">
+                                <select
+                                  className="form-select form-select-sm"
+                                  value={statusMap[d?._id] || d?.status}
+                                  onChange={(e) =>
+                                    setStatusMap({
+                                      ...statusMap,
+                                      [d?._id]: e.target.value,
+                                    })
+                                  }
+                                  disabled={d?.status == "complete"}
+                                >
+                                  {BOOKING_STATUSES?.map((status) => (
+                                    <option key={status} value={status}>
+                                      {status?.toUpperCase()}
+                                    </option>
+                                  ))}
+                                </select>
+
+                                <button
+                                  className="btn btn-sm btn-success"
+                                  type="button"
+                                  onClick={() => updateBookingStatus(d?._id)}
+                                  disabled={statusMap[d?._id] === d?.status}
+                                >
+                                  Update
+                                </button>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="d-flex">
+                                {/* View Button */}
+                                <Link to={`/booking-detail/${d?._id}`}>
+                                  <button className="btn delete-table me-2" type="button">
+                                    <i className="fe fe-eye" />
+                                  </button>
+                                </Link>
+
+                                {/* Delete Button */}
+                                {/* <button
+                                className="btn delete-table"
+                                type="button"
+                                disabled
+                                onClick={() => deleteBooking(d?._id)}
+                              >
+                                <i className="fe fe-trash-2" />
+                              </button> */}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (<tr>
+                        <td colSpan="8" className="text-center">
                           No bookings found
                         </td>
                       </tr>
-                    ) : null}
+                      )
+                    }
                   </tbody>
                 </table>
               </div>

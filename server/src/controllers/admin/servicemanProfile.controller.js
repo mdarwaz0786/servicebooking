@@ -70,7 +70,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
 
 // Get All Service Man Profiles
 export const getServiceManProfiles = asyncHandler(async (req, res) => {
-  let { search, status, page = 1, limit = 10, sort = "desc", user, category, experienceLevel, profileStatus } = req.query;
+  let { search, status, page, limit, sort = "desc", user, category, experienceLevel, profileStatus } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);

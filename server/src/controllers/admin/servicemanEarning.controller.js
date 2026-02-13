@@ -25,7 +25,7 @@ export const getServicemanEarnings = asyncHandler(async (req, res) => {
   };
 
   if (payoutStatus) {
-    matchStage.payoutStatus = payoutStatus;
+    matchStage.payoutStatus = payoutStatus == "true" ? true : false;
   };
 
   const aggregation = await ServicemanEarningModel.aggregate([

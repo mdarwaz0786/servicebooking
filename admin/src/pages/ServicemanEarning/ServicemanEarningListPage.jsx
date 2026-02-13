@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/auth.context";
@@ -170,6 +170,13 @@ const ServicemanEarningListPage = () => {
               <option value="30">30</option>
               <option value={total}>All</option>
             </select>
+
+            <Link to="/add-bank-transfer">
+              <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
+                <i className="fa fa-plus me-2"></i>
+                <span>Add Bank Transfer</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -215,8 +222,7 @@ const ServicemanEarningListPage = () => {
                     <th>#</th>
                     <th>Booking Id</th>
                     <th>Provider</th>
-                    <th>Payable Amount</th>
-                    <th>Earning Amout</th>
+                    <th>Earning Amount</th>
                     <th>Payout Status</th>
                   </tr>
                 </thead>
@@ -225,16 +231,16 @@ const ServicemanEarningListPage = () => {
                     data?.map((d, index) => (
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
-                        <td>{d?.service?.booking?.bookingId}</td>
+                        <td>{d?.service?.booking?.bookingId || d?.booking?.bookingId}</td>
                         <td>{d?.serviceman?.name}</td>
-                        <td>{d?.payableAmount}</td>
-                        <td>{d?.earningAmount}</td>
+                        <td>₹{d?.earningAmount}</td>
                         <td>
                           <div className="active-switch">
                             <label className="switch">
                               <input
                                 type="checkbox"
                                 checked={d?.payoutStatus}
+                                disabled
                                 onChange={() => toggleStatus(d?._id, d?.payoutStatus)}
                               />
                               <span className="sliders round" />

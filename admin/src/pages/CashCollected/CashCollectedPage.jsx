@@ -168,7 +168,6 @@ const CashCollectedPage = () => {
                     <th>Provider</th>
                     <th>Collected Amount</th>
                     <th>Total Collected Amount</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -178,17 +177,8 @@ const CashCollectedPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.booking?.bookingId || "-"}</td>
                         <td>{d?.profile?.name || "-"}</td>
-                        <td>{d?.amount || "-"}</td>
-                        <td>{d?.totalCashCollected || "-"}</td>
-                        <td>
-                          <div className="d-flex">
-                            <Link to="#">
-                              <button className="btn delete-table me-2">
-                                <i className="fe fe-edit" />
-                              </button>
-                            </Link>
-                          </div>
-                        </td>
+                        <td>₹{d?.amount?.toFixed(2) || "-"}</td>
+                        <td>₹{d?.totalCashCollected?.toFixed(2) || "-"}</td>
                       </tr>
                     ))
                   ) : !loading ? (

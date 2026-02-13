@@ -187,7 +187,7 @@ const Invoice = () => {
                 <div>
                   <div className={styles.breakupRow}>
                     <span>Gross Amount</span>
-                    <span>Rs. {(item?.taxableValue + percentOfAdditionalPartAmount)}</span>
+                    <span>Rs. {Number(item?.taxableValue + percentOfAdditionalPartAmount)?.toFixed(2)}</span>
                   </div>
 
                   <div className={styles.breakupRow}>
@@ -197,7 +197,7 @@ const Invoice = () => {
 
                   <div className={styles.breakupRow}>
                     <span>Taxable Value</span>
-                    <span>Rs. {(item?.taxableValue + percentOfAdditionalPartAmount)}</span>
+                    <span>Rs. {Number(item?.taxableValue + percentOfAdditionalPartAmount)?.toFixed(2)}</span>
                   </div>
 
                   <div className={styles.breakupRow}>

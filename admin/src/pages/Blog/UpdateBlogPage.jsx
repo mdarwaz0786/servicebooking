@@ -291,7 +291,7 @@ const UpdateBlogPage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <Editor
-                  id="fullDescription"
+                  id="blogUpdateFullDescription"
                   name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleDescriptionChange}

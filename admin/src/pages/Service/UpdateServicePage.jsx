@@ -51,6 +51,7 @@ const UpdateServicePage = () => {
     metaAuthor: "",
     metaKeywords: "",
     metaDescription: "",
+    isMediaUpload: 0,
   });
 
   useEffect(() => {
@@ -81,6 +82,7 @@ const UpdateServicePage = () => {
             transactionCharge: s?.transactionCharge || "",
             shortDescription: s?.shortDescription || "",
             fullDescription: s?.fullDescription || "",
+            isMediaUpload: s?.isMediaUpload || 0,
             pageName: meta?.pageName || "",
             metaTitle: meta?.metaTitle || "",
             metaAuthor: meta?.metaAuthor || "",
@@ -492,7 +494,7 @@ const UpdateServicePage = () => {
               </div>
 
               <div className="row">
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Rating</label>
                   <input
                     type="number"
@@ -503,7 +505,7 @@ const UpdateServicePage = () => {
                     placeholder="1-5"
                   />
                 </div>
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Number of Reviews</label>
                   <input
                     type="number"
@@ -514,6 +516,25 @@ const UpdateServicePage = () => {
                     placeholder="0"
                   />
                 </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">
+                    Repairing Diagnostic
+                  </label>
+                  <select
+                    name="isMediaUpload"
+                    value={formData.isMediaUpload}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isMediaUpload: Number(e.target.value),
+                      }))
+                    }
+                    className="form-control"
+                  >
+                    <option value={0}>No</option>
+                    <option value={1}>Yes</option>
+                  </select>
+                </div>
               </div>
 
               <div className="row">
@@ -521,7 +542,7 @@ const UpdateServicePage = () => {
                   <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
                   <input required type="number" placeholder="0" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
-                <div className="col-md-4 mb-3">
+                {/* <div className="col-md-4 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
                   <select
                     name="repairingDiagnostic"
@@ -532,7 +553,7 @@ const UpdateServicePage = () => {
                     <option value={true}>Yes</option>
                     <option value={false}>No</option>
                   </select>
-                </div>
+                </div> */}
                 <div className="col-md-4 mb-3">
                   <label className="form-label">Off Price</label>
                   <input type="number" placeholder="Add price" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" required disabled={true} />
@@ -554,7 +575,7 @@ const UpdateServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
                 <Editor
-                  id="shortDescription"
+                  id="updateServiceShortDescription"
                   name="sortDescription"
                   value={formData.shortDescription}
                   onChange={handleShortDescriptionChange}
@@ -566,7 +587,7 @@ const UpdateServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <Editor
-                  id="fullDescription"
+                  id="updateServiceFullDescription"
                   name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleFullDescriptionChange}

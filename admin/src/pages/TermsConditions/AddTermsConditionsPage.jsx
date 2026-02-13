@@ -134,7 +134,7 @@ const AddTermsConditionsPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <Editor
-                  id="description"
+                  id="addTermsConditionDescription"
                   name="description"
                   value={formData.description}
                   onChange={handleDescriptionChange}

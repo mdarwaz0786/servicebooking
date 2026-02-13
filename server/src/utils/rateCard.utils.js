@@ -17,9 +17,5 @@ export const calculateServicePrice = (serviceCharge = {}) => {
     finalPrice = labour;
   };
 
-  if (finalPrice == 0) {
-    finalPrice = labour;
-  };
-
-  return finalPrice;
+  return finalPrice + labour;
 };

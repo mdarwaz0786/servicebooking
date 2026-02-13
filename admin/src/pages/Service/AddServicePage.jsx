@@ -50,6 +50,7 @@ const AddServicePage = () => {
     metaAuthor: "",
     metaKeywords: "",
     metaDescription: "",
+    isMediaUpload: 0,
   });
 
   useEffect(() => {
@@ -256,6 +257,7 @@ const AddServicePage = () => {
           transactionCharge: "",
           shortDescription: "",
           fullDescription: "",
+          isMediaUpload: 1,
         }));
         setImage(null);
         setPreview(null);
@@ -469,7 +471,7 @@ const AddServicePage = () => {
               </div>
 
               <div className="row">
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Rating</label>
                   <input
                     type="number"
@@ -480,7 +482,7 @@ const AddServicePage = () => {
                     placeholder="1-5"
                   />
                 </div>
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Number of Reviews</label>
                   <input
                     type="number"
@@ -491,6 +493,25 @@ const AddServicePage = () => {
                     placeholder="0"
                   />
                 </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">
+                    Repairing Diagnostic
+                  </label>
+                  <select
+                    name="isMediaUpload"
+                    value={formData.isMediaUpload}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isMediaUpload: Number(e.target.value),
+                      }))
+                    }
+                    className="form-control"
+                  >
+                    <option value={0}>No</option>
+                    <option value={1}>Yes</option>
+                  </select>
+                </div>
               </div>
 
               <div className="row">
@@ -498,7 +519,7 @@ const AddServicePage = () => {
                   <label className="form-label">Taxable Price <span className="text-danger">*</span></label>
                   <input required type="number" placeholder="for e.g. 299 or 199" name="taxablePrice" value={formData.taxablePrice} onChange={handleChange} className="form-control" />
                 </div>
-                <div className="col-md-4 mb-3">
+                {/* <div className="col-md-4 mb-3">
                   <label className="form-label">Repairing Diagnostic</label>
                   <select
                     name="repairingDiagnostic"
@@ -509,7 +530,7 @@ const AddServicePage = () => {
                     <option value={true}>Yes</option>
                     <option value={false}>No</option>
                   </select>
-                </div>
+                </div> */}
                 <div className="col-md-4 mb-3">
                   <label className="form-label">Off Price</label>
                   <input type="number" name="offerContent" value={formData.offerContent} onChange={handleChange} className="form-control" readOnly disabled={true} />
@@ -531,7 +552,7 @@ const AddServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
                 <Editor
-                  id="shortDescription"
+                  id="addServiceShortDescription"
                   name="sortDescription"
                   value={formData.shortDescription}
                   onChange={handleShortDescriptionChange}
@@ -543,7 +564,7 @@ const AddServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <Editor
-                  id="fullDescription"
+                  id="addServiceFullDescription"
                   name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleFullDescriptionChange}

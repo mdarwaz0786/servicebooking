@@ -12,7 +12,10 @@ import CartModel from "../../models/cart.model.js";
 import { buildPagination } from "../../utils/pagination.js";
 import generateOtp from "../../utils/generateOpt.js";
 import { adjustWalletCredit, getSupportConfig } from "../../utils/wallet.utils.js";
-import { autoAssignBooking } from "../../utils/autoAssignBooking.js";
+import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
+import ServiceManProfile from "../../models/servicemanProfile.model.js";
+import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
+import sendNotification from "../../utils/sendNotification.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -80,6 +83,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     quantity: item.quantity,
     mrpPrice: item.mrpPrice || 0,
     salePrice: item.salePrice || 0,
+    isMediaUpload: item?.isMediaUpload || 0,
   }));
 
   // Insert Booking Items
@@ -94,25 +98,62 @@ export const createBooking = asyncHandler(async (req, res) => {
       createdBy: userId,
     });
 
+    await BookingModel.findByIdAndUpdate(booking?._id, {
+      $set: {
+        status: "accept",
+      },
+    });
+
     const status = "accept";
 
     await adjustWalletCredit(serviceman?.userId, status, booking?._id);
+
+    if (serviceman?.userId) {
+      await sendNotification(
+        [serviceman?.userId],
+        "Booking Accepted",
+        "One booking is accepted to you kindly proceed furthur",
+        "serviceman",
+        {
+          type: "bookingSameZone",
+        }
+      );
+    };
   };
 
   if (!serviceman && paymentMode === "cod") {
-    const servicemen = await ServiceManProfileModel
-      .find({ categoryIds: categoryId })
-      .select("_id");
+    const servicemen = await autoAssignMultipleServicemen(
+      categoryId,
+      scheduleDate,
+      scheduleTime,
+      acceptCreditPoints
+    );
 
-    const bookings = servicemen?.map((sm) => ({
-      bookingId: booking?._id,
-      servicemanId: sm?._id,
-      userId,
-      status: "new",
-      createdBy: userId,
-    }));
+    if (servicemen?.length) {
+      const bookings = servicemen?.map((sm) => ({
+        bookingId: booking?._id,
+        servicemanId: sm?._id,
+        userId,
+        status: "new",
+        createdBy: userId,
+      }));
 
-    await ServiceManBookingModel.insertMany(bookings);
+      await ServiceManBookingModel.insertMany(bookings);
+
+      const servicemanUserIds = servicemen
+        .map((sm) => sm?.userId)
+        .filter(Boolean);
+
+      await sendNotification(
+        servicemanUserIds,
+        "New Booking",
+        "You have received a new booking kindly accept it if you can serve it",
+        "serviceman",
+        {
+          type: "bookingOtherZone",
+        }
+      );
+    };
   };
 
   // Clear User Cart
@@ -273,6 +314,10 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   if (!booking) throw new ApiError(404, "Booking not found");
 
+  const createdAt = new Date(booking?.createdAt);
+  const now = new Date();
+  const diffInMinutes = (now - createdAt) / (1000 * 60);
+
   const latestAssignment = await ServiceManBookingModel
     .findOne({ bookingId: booking?._id })
     .sort({ createdAt: -1 })
@@ -323,9 +368,14 @@ export const getBookingById = asyncHandler(async (req, res) => {
     }
     : null;
 
+  booking.isCancel = diffInMinutes > 30 ? 0 : 1;
+
   const items = await BookingItemModel
-    .find({ bookingId: booking?._id })
-    .populate({ path: "service", select: "" })
+    .find({ bookingId: booking._id })
+    .populate({ path: "service", select: "-shortDescription -fullDescription" })
+    .populate({
+      path: "additionalParts",
+    })
     .lean();
 
   return res.status(200).json({
@@ -334,5 +384,57 @@ export const getBookingById = asyncHandler(async (req, res) => {
       booking: booking,
       items: items,
     },
+  });
+});
+
+// Update Booking
+export const updateBooking = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.user?._id) {
+    throw new ApiError(401, "Unauthorized");
+  };
+
+  const updateData = {
+    ...req.body,
+    updatedBy: req.user?._id,
+  };
+
+  const booking = await BookingModel.findByIdAndUpdate(id, updateData, { new: true });
+
+  if (!booking) throw new ApiError(404, "Booking not found");
+
+  if (req.body.status) {
+    const lastServicemanBooking = await ServiceManBookingModel.findOne({
+      bookingId: booking?._id,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (lastServicemanBooking) {
+      await ServiceManBookingModel.findByIdAndUpdate(
+        lastServicemanBooking?._id,
+        {
+          status: req.body.status,
+          updatedBy: req.user?._id,
+        },
+      );
+    };
+
+    const latestServiceman = await ServiceManProfile.findById(lastServicemanBooking?.servicemanId);
+
+    if (req.body.status == "cancel") {
+      await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
+    };
+  };
+
+  if (req.body.status == "partstatusreject") {
+    await rejectAdditionalParts(booking?._id);
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: "Updated successfully",
+    data: booking,
   });
 });

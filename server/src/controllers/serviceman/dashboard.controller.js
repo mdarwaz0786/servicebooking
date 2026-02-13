@@ -63,7 +63,7 @@ export const dashboard = asyncHandler(async (req, res) => {
 
   //  BOOKING STATUS COUNTS
   const bookingAgg = await ServiceManBookingModel.aggregate([
-    { $match: { servicemanId: serviceman?._id } },
+    { $match: { servicemanId: serviceman?._id, status: { $ne: "taken" } } },
     {
       $group: {
         _id: "$status",
@@ -107,7 +107,8 @@ export const dashboard = asyncHandler(async (req, res) => {
   const todayBookings = await ServiceManBookingModel.aggregate([
     {
       $match: {
-        servicemanId: serviceman?._id
+        servicemanId: serviceman?._id,
+        status: { $nin: ["taken", "complete", "cancel"] },
       }
     },
 
@@ -476,10 +477,30 @@ export const dashboard = asyncHandler(async (req, res) => {
     { $sort: { weekNumber: 1 } }
   ]);
 
+  const nowIST = new Date().toLocaleTimeString("en-GB", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   // TODAY TIME SLOTS COUNT
   const todayTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: startOfDay, $lte: endOfDay },
+    times: {
+      $elemMatch: {
+        status: true,
+        $or: [
+          {
+            from: { $lte: nowIST },
+            to: { $gte: nowIST },
+          },
+          {
+            from: { $gt: nowIST },
+          },
+        ],
+      },
+    },
   });
 
   const tomorrow = new Date();
@@ -490,6 +511,7 @@ export const dashboard = asyncHandler(async (req, res) => {
   const tomorrowTimeSlots = await ServicemanTimeSlot.findOne({
     servicemanId: userId,
     date: { $gte: tomorrow, $lte: new Date(tomorrow.getTime() + 86399999) },
+    times: { $elemMatch: { status: true } }
   });
 
   return res.status(200).json({

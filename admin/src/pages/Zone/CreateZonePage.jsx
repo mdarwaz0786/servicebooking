@@ -1,3 +1,215 @@
+// /* eslint-disable react-hooks/exhaustive-deps */
+// import { useState, useCallback, useRef, useEffect } from "react";
+// import {
+//   GoogleMap,
+//   DrawingManager,
+//   LoadScript,
+//   Autocomplete,
+//   Polygon,
+// } from "@react-google-maps/api";
+// import axios from "axios";
+// import { toast } from "react-toastify";
+// import apis from "../../apis/apis";
+// import { useAuth } from "../../context/auth.context";
+// import { useNavigate } from "react-router-dom";
+
+// const libraries = ["drawing", "places"];
+
+// const containerStyle = {
+//   width: "100%",
+//   height: "300px",
+// };
+
+// const defaultCenter = { lat: 28.6139, lng: 77.2090 };
+
+// const CreateZonePage = () => {
+//   const navigate = useNavigate();
+//   const { validToken } = useAuth();
+//   const [oldZones, setOldZones] = useState([]);
+
+//   const [name, setName] = useState("");
+//   const [search, setSearch] = useState("");
+//   const [selectedLocation, setSelectedLocation] = useState(null);
+//   const [coordinates, setCoordinates] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [center, setCenter] = useState(defaultCenter);
+
+//   const autocompleteRef = useRef(null);
+
+//   const onPolygonComplete = useCallback((polygon) => {
+//     const path = polygon.getPath().getArray().map((p) => [
+//       p.lng(),
+//       p.lat(),
+//     ]);
+
+//     path.push(path[0]);
+
+//     setCoordinates(path);
+//     polygon.setMap(null);
+
+//     toast.success("Zone area selected");
+//   }, []);
+
+//   const onPlaceChanged = () => {
+//     if (!autocompleteRef.current) return;
+
+//     const place = autocompleteRef.current.getPlace();
+//     if (!place.geometry) return;
+
+//     const location = place.geometry.location;
+
+//     const latLng = {
+//       lat: location.lat(),
+//       lng: location.lng(),
+//     };
+
+//     setCenter(latLng);
+//     setSelectedLocation(latLng);
+//   };
+
+//   console.log(selectedLocation);
+
+//   const handleSubmit = async () => {
+//     if (!name) return toast.error("Zone name is required");
+//     if (!coordinates.length)
+//       return toast.error("Please draw zone area on map");
+
+//     try {
+//       setLoading(true);
+//       await axios.post(
+//         apis.zone.create,
+//         { name, search, coordinates },
+//         { headers: { Authorization: validToken } }
+//       );
+
+//       toast.success("Zone created successfully");
+//       navigate(-1);
+//       setName("");
+//       setSearch("");
+//       setCoordinates([]);
+//     } catch (err) {
+//       toast.error(err.response?.data?.message || "Error");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const fetchOldZone = async () => {
+//     try {
+//       const res = await axios.get(apis.zone.get, {
+//         headers: { Authorization: validToken },
+//       });
+
+//       if (res?.data?.success) {
+//         const zones = res?.data?.data?.map((zone) => {
+//           const coords = zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({ lat, lng }));
+
+//           return {
+//             id: zone?._id,
+//             name: zone?.name,
+//             paths: coords,
+//           };
+//         });
+
+//         setOldZones(zones);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       toast.error("Failed to load zones");
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchOldZone();
+//   }, []);
+
+//   return (
+//     <div className="page-wrapper">
+//       <div className="container mt-4">
+//         <div className="d-flex justify-content-between align-items-center mb-3">
+//           <h4>Add Zone</h4>
+//           <button className="btn btn-primary" onClick={() => navigate(-1)}>
+//             Back
+//           </button>
+//         </div>
+
+//         <input
+//           className="form-control mb-3"
+//           value={name}
+//           onChange={(e) => setName(e.target.value)}
+//           placeholder="Zone name"
+//         />
+
+//         <LoadScript
+//           googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
+//           libraries={libraries}
+//         >
+//           <Autocomplete
+//             onLoad={(ref) => (autocompleteRef.current = ref)}
+//             onPlaceChanged={onPlaceChanged}
+//           >
+//             <input
+//               type="text"
+//               className="form-control mb-3"
+//               placeholder="Search place"
+//               onChange={(e) => setSearch(e.target.value)}
+//             />
+//           </Autocomplete>
+
+//           <GoogleMap
+//             mapContainerStyle={containerStyle}
+//             center={center}
+//             zoom={12}
+//             options={{
+//               gestureHandling: "greedy",
+//               scrollwheel: true,
+//               draggable: true,
+//               keyboardShortcuts: true,
+//             }}
+//           >
+//             {oldZones?.map((zone) => (
+//               <Polygon
+//                 key={zone.id}
+//                 paths={zone.paths}
+//                 options={{
+//                   fillColor: "#9e9e9e",
+//                   fillOpacity: 0.25,
+//                   strokeColor: "#616161",
+//                   strokeOpacity: 0.9,
+//                   strokeWeight: 2,
+//                   clickable: false,
+//                 }}
+//               />
+//             ))}
+//             <DrawingManager
+//               onPolygonComplete={onPolygonComplete}
+//               options={{
+//                 drawingControl: true,
+//                 drawingControlOptions: {
+//                   drawingModes: ["polygon"],
+//                 },
+//               }}
+//             />
+//           </GoogleMap>
+//         </LoadScript>
+
+//         <div className="text-center">
+//           <button
+//             className="btn btn-primary mt-3 mb-3"
+//             onClick={handleSubmit}
+//             disabled={loading}
+//           >
+//             {loading ? "Saving..." : "Save"}
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CreateZonePage;
+
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useRef, useEffect } from "react";
 import {
@@ -25,29 +237,76 @@ const defaultCenter = { lat: 28.6139, lng: 77.2090 };
 const CreateZonePage = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
+
   const [oldZones, setOldZones] = useState([]);
 
   const [name, setName] = useState("");
+  const [search, setSearch] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  // backend format => [[lng, lat], ...]
   const [coordinates, setCoordinates] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
 
   const autocompleteRef = useRef(null);
 
+  /* ------------------ MANUAL DRAW (OPTIONAL) ------------------ */
   const onPolygonComplete = useCallback((polygon) => {
-    const path = polygon.getPath().getArray().map((p) => [
-      p.lng(),
-      p.lat(),
-    ]);
+    const path = polygon
+      .getPath()
+      .getArray()
+      .map((p) => [p.lng(), p.lat()]);
 
-    path.push(path[0]);
+    path.push(path[0]); // close polygon
 
     setCoordinates(path);
     polygon.setMap(null);
 
-    toast.success("Zone area selected");
+    toast.success("Zone area selected manually");
   }, []);
 
+  /* ------------------ AUTO BOUNDARY FROM OSM ------------------ */
+  const fetchBoundaryFromOSM = async (placeName) => {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        placeName
+      )}&polygon_geojson=1`;
+
+      const res = await axios.get(url);
+
+      if (!res.data?.length || !res.data[0]?.geojson) {
+        toast.error("Boundary not found for this place");
+        return;
+      }
+
+      const geo = res.data[0].geojson;
+
+      let points = [];
+
+      if (geo.type === "Polygon") {
+        points = geo.coordinates[0];
+      } else if (geo.type === "MultiPolygon") {
+        points = geo.coordinates[0][0];
+      }
+
+      if (!points.length) {
+        toast.error("Invalid boundary data");
+        return;
+      }
+
+      setCoordinates(points);
+      setCenter({ lat: points[0][1], lng: points[0][0] });
+
+      toast.success("Zone boundary loaded automatically");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch boundary");
+    }
+  };
+
+  /* ------------------ PLACE SELECT ------------------ */
   const onPlaceChanged = () => {
     if (!autocompleteRef.current) return;
 
@@ -55,28 +314,43 @@ const CreateZonePage = () => {
     if (!place.geometry) return;
 
     const location = place.geometry.location;
-    setCenter({
+
+    const latLng = {
       lat: location.lat(),
       lng: location.lng(),
-    });
+    };
+
+    setCenter(latLng);
+    setSelectedLocation(latLng);
+
+    // AUTO BOUNDARY DRAW
+    fetchBoundaryFromOSM(place.name);
   };
 
+  /* ------------------ SAVE ZONE ------------------ */
   const handleSubmit = async () => {
     if (!name) return toast.error("Zone name is required");
     if (!coordinates.length)
-      return toast.error("Please draw zone area on map");
+      return toast.error("Please select or draw zone area");
 
     try {
       setLoading(true);
+
       await axios.post(
         apis.zone.create,
-        { name, coordinates },
+        {
+          name,
+          search,
+          coordinates,
+        },
         { headers: { Authorization: validToken } }
       );
 
       toast.success("Zone created successfully");
       navigate(-1);
+
       setName("");
+      setSearch("");
       setCoordinates([]);
     } catch (err) {
       toast.error(err.response?.data?.message || "Error");
@@ -85,6 +359,7 @@ const CreateZonePage = () => {
     }
   };
 
+  /* ------------------ LOAD OLD ZONES ------------------ */
   const fetchOldZone = async () => {
     try {
       const res = await axios.get(apis.zone.get, {
@@ -92,12 +367,16 @@ const CreateZonePage = () => {
       });
 
       if (res?.data?.success) {
-        const zones = res?.data?.data?.map((zone) => {
-          const coords = zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({ lat, lng }));
+        const zones = res.data.data.map((zone) => {
+          const coords =
+            zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({
+              lat,
+              lng,
+            })) || [];
 
           return {
-            id: zone?._id,
-            name: zone?.name,
+            id: zone._id,
+            name: zone.name,
             paths: coords,
           };
         });
@@ -113,6 +392,9 @@ const CreateZonePage = () => {
   useEffect(() => {
     fetchOldZone();
   }, []);
+
+
+  console.log(selectedLocation);
 
   return (
     <div className="page-wrapper">
@@ -142,7 +424,9 @@ const CreateZonePage = () => {
             <input
               type="text"
               className="form-control mb-3"
-              placeholder="Search place"
+              placeholder="Search city / area"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </Autocomplete>
 
@@ -154,10 +438,10 @@ const CreateZonePage = () => {
               gestureHandling: "greedy",
               scrollwheel: true,
               draggable: true,
-              keyboardShortcuts: true,
             }}
           >
-            {oldZones?.map((zone) => (
+            {/* OLD ZONES */}
+            {oldZones.map((zone) => (
               <Polygon
                 key={zone.id}
                 paths={zone.paths}
@@ -171,6 +455,22 @@ const CreateZonePage = () => {
                 }}
               />
             ))}
+
+            {/* AUTO / MANUAL SELECTED ZONE */}
+            {coordinates.length > 0 && (
+              <Polygon
+                paths={coordinates.map(([lng, lat]) => ({ lat, lng }))}
+                options={{
+                  fillColor: "#4F46E5",
+                  fillOpacity: 0.35,
+                  strokeColor: "#4F46E5",
+                  strokeOpacity: 1,
+                  strokeWeight: 2,
+                }}
+              />
+            )}
+
+            {/* OPTIONAL MANUAL DRAW */}
             <DrawingManager
               onPolygonComplete={onPolygonComplete}
               options={{

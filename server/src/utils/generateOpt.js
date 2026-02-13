@@ -1,5 +1,5 @@
 const generateOtp = () => {
-  const opt = Math.floor(1000 + Math.random() * 9000).toString();
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
   return 1234;
 };
 

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const zoneSchema = new mongoose.Schema({
   name: String,
+  search: String,
   geometry: {
     type: {
       type: String,

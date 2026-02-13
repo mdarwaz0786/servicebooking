@@ -7,11 +7,12 @@ import { toast } from "react-toastify";
 
 const ServicemanBookingModal = ({ booking, fetchBookings }) => {
   const { validToken } = useAuth();
-  const [getAll, setGetAll] = useState("false");
+  const [getAll, setGetAll] = useState(false);
   const [formData, setFormData] = useState({
     bookingId: "",
     userId: "",
     servicemanId: "",
+    getAll: false,
   });
 
   const modalRef = useRef(null);
@@ -39,12 +40,13 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
   useEffect(() => {
     if (booking?._id && modalInstance.current) {
       modalInstance.current.show();
-      setFormData({
-        bookingId: booking?._id,
-        userId: booking?.userId,
+      setFormData((prev) => ({
+        ...prev,
+        bookingId: booking._id,
+        userId: booking.userId,
         servicemanId: "",
-      });
-    };
+      }));
+    }
   }, [booking?._id]);
 
   const [serviceMen, setServiceMen] = useState([]);
@@ -57,8 +59,8 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
           headers: { Authorization: validToken },
           params: {
             all: getAll,
-            lat: getAll === "false" ? booking?.address?.lat : undefined,
-            long: getAll === "false" ? booking?.address?.long : undefined,
+            lat: !getAll ? booking?.address?.lat : undefined,
+            long: !getAll ? booking?.address?.long : undefined,
           },
         });
 
@@ -136,7 +138,11 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
                 <select
                   className="form-select"
                   value={getAll}
-                  onChange={(e) => setGetAll(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value === "true";
+                    setGetAll(value);
+                    setFormData((prev) => ({ ...prev, getAll: value }));
+                  }}
                 >
                   <option value="false">No (Zone Based)</option>
                   <option value="true">Yes (All Provider)</option>

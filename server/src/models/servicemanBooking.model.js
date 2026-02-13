@@ -29,7 +29,7 @@ const serviceManBookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["new", "accept", "reject", "ongoing", "complete", "cancel", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
+    enum: ["new", "assign", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
   },
   actionById: {
@@ -80,6 +80,9 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  oldAdditionalParts: {
+    type: mongoose.Schema.Types.Mixed,
+  },
   beforeStartImages: {
     type: [String],
     default: [],
@@ -95,6 +98,10 @@ const serviceManBookingSchema = new mongoose.Schema({
   afterCompleteVideos: {
     type: [String],
     default: [],
+  },
+  paymentMode: {
+    type: String,
+    enum: ["cash", "online"],
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

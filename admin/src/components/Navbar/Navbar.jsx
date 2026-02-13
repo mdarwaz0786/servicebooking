@@ -35,16 +35,16 @@ const Navbar = () => {
       <div className="header-split">
         <div className="page-headers">
           <div className="search-bar">
-            <span><i className="fe fe-search" /></span>
-            <input type="text" placeholder="Search" className="form-control" />
+            {/* <span><i className="fe fe-search" /></span> */}
+            {/* <input type="text" placeholder="Search" className="form-control" /> */}
           </div>
         </div>
         <ul className="nav user-menu">
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link to="/" className="viewsite">
               <i className="fe fe-globe me-2" />View Site
             </Link>
-          </li>
+          </li> */}
 
           {/* User Menu */}
           <li
@@ -58,9 +58,9 @@ const Navbar = () => {
               <span className="user-img">
                 <img
                   className="rounded-circle"
-                  src="assets/img/avatar.png"
+                  src="/assets/img/avatar.png"
                   width={60}
-                  alt="Admin"
+                  alt="avatar"
                 />
               </span>
               <span className="user-content">

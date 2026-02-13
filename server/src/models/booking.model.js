@@ -56,7 +56,7 @@ const bookingSchema = new mongoose.Schema({
   },
   status: { // booking status 
     type: String,
-    enum: ["new", "assign", "accept", "ongoing", "reject", "complete", "cancel", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
+    enum: ["new", "assign", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
     index: true,
   },
@@ -102,15 +102,15 @@ const bookingSchema = new mongoose.Schema({
   },
   cashColletedAmount: {
     type: Number,
-    default: 0,
-  },
-  cashColletedPendingAmount: {
-    type: Number,
-    default: 0,
   },
   cashColletedSubmitAmount: {
     type: Number,
-    default: 0,
+  },
+  cashColletedPendingAmount: {
+    type: Number,
+  },
+  timer: {
+    type: Date,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

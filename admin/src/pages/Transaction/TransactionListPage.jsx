@@ -262,7 +262,7 @@ const TransactionListPage = () => {
                         <td>{d?.transactionId || "-"}</td>
                         <td>{d?.user?.name || "-"}</td>
                         <td>{d?.user?.mobile}</td>
-                        <td>{d?.finalAmount}</td>
+                        <td>{d?.finalAmount?.toFixed(2)}</td>
                         <td>{d?.PID?.paymentMode}</td>
                         <td>Debit</td>
                         <td>{formatDate(d?.createdAt)}</td>

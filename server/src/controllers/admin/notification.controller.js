@@ -24,13 +24,6 @@ export const createNotification = async (req, res) => {
         fcmToken: { $exists: true, $ne: null },
       });
 
-      if (!users.length) {
-        return res.status(400).json({
-          success: false,
-          message: "Fcm token not found for selected user",
-        });
-      };
-
       const tokens = users?.map((u) => u?.fcmToken);
       userIds = users?.map((u) => u?._id);
 

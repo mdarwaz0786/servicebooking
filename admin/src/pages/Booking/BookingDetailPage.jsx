@@ -41,14 +41,37 @@ const BookingDetailPage = () => {
     if (id) fetchBookingDetail();
   }, [id]);
 
+  const handleUnitPriceUpdate = async (id, price, bookingId) => {
+    try {
+      await axios.patch(
+        `${apis.bookingAdditonalPart.updateUnitPrice}/${id}`,
+        { unitPrice: price, bookingId: bookingId },
+        {
+          headers: {
+            Authorization: validToken,
+          },
+        }
+      );
+
+      toast.success("Unit price updated");
+      setAdditionalParts((prev) =>
+        prev?.map((item) =>
+          item?._id == id ? { ...item, unitPrice: price } : item
+        )
+      );
+      fetchBookingDetail();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to update unit price");
+    }
+  };
+
   const getPaymentStatus = (status) => {
     switch (status) {
       case 0:
-        return "Created";
+        return "Pending";
       case 1:
         return "Success";
-      case 2:
-        return "Failed";
       default:
         return "Unknown";
     };
@@ -122,6 +145,7 @@ const BookingDetailPage = () => {
                     <p className="mb-1"><strong>Booking Status:</strong> {booking?.status}</p>
                     <p className="mb-1"><strong>Payment Status:</strong> {getPaymentStatus(booking?.paymentStatus)}</p>
                     <p className="mb-1"><strong>Payment Mode:</strong> {booking?.paymentMode}</p>
+                    <p className="mb-1"><strong>OTP:</strong> {booking?.otp}</p>
                   </div>
                   <div className="col-md-6">
                     <h6 className="fw-bold text-uppercase text-muted">Customer</h6>
@@ -163,7 +187,7 @@ const BookingDetailPage = () => {
                   <>
                     <hr />
                     <div className="mb-4">
-                      <h6 className="fw-bold text-uppercase text-muted">Latest Assigned Provider</h6>
+                      <h6 className="fw-bold text-uppercase text-muted">Provider</h6>
                       <div className="d-flex align-items-center gap-3 mt-3">
                         <img
                           src={
@@ -185,9 +209,6 @@ const BookingDetailPage = () => {
                           <p className="mb-1">
                             <strong>Mobile:</strong> {booking?.latestServiceman?.serviceman?.mobile}
                           </p>
-                          <p className="mb-1">
-                            <strong>Staus:</strong> {booking?.latestServiceman?.status}
-                          </p>
                         </div>
                       </div>
                     </div>
@@ -201,18 +222,20 @@ const BookingDetailPage = () => {
                     <thead className="table-light">
                       <tr>
                         <th>Service Name</th>
-                        <th className="text-center">Quantity</th>
                         <th className="text-end">MRP Price</th>
                         <th className="text-end">Sale Price</th>
+                        <th className="text-center">Quantity</th>
+                        <th className="text-end">Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       {items?.map((item, i) => (
                         <tr key={i}>
                           <td>{item?.service?.name}</td>
-                          <td className="text-center">{item?.quantity}</td>
                           <td className="text-end">₹{item?.mrpPrice}</td>
                           <td className="text-end">₹{item?.salePrice}</td>
+                          <td className="text-center">{item?.quantity}</td>
+                          <td className="text-end">₹{item?.salePrice * item?.quantity}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -220,39 +243,87 @@ const BookingDetailPage = () => {
                 </div>
 
                 {/* Addional Parts Table */}
-                <h6 className="fw-bold text-uppercase text-muted mb-3 mt-4">Additional Part</h6>
-                <div className="table-responsive">
-                  <table className="table table-bordered align-middle">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Part Name</th>
-                        <th className="text-center">Quantity</th>
-                        <th className="text-end">Unit Price</th>
-                        <th className="text-end">Labour Charge</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {additionalParts?.map((item) => (
-                        <tr key={item?._id}>
-                          <td>{item?.description}</td>
-                          <td className="text-center">{item?.quantity}</td>
-                          <td className="text-end">₹{item?.unitPrice}</td>
-                          <td className="text-end">₹{item?.laborCharge}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                {
+                  (additionalParts?.length > 0) && (
+                    <>
+                      <h6 className="fw-bold text-uppercase text-muted mb-3 mt-4">Additional Part</h6>
+                      <div className="table-responsive">
+                        <table className="table table-bordered align-middle">
+                          <thead className="table-light">
+                            <tr>
+                              <th>Part Name</th>
+                              <th>Item Name</th>
+                              <th>Old Price</th>
+                              <th className="text-end">Labour Charge</th>
+                              <th className="text-end">Unit Price</th>
+                              <th className="text-center">Quantity</th>
+                              <th className="text-center">Total Price</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {additionalParts?.map((item) => (
+                              <tr key={item?._id}>
+                                <td>{item?.description}</td>
+                                <td>{item?.serviceItemId?.service?.name}</td>
+                                <td>
+                                  <p className="mb-1">Price: ₹{item?.oldAmount?.price}</p>
+                                  <p className="mb-1">Discount: - ₹{item?.oldAmount?.discount}</p>
+                                  <p className="mb-1">Labour Charge: ₹{item?.oldAmount?.laborCharge}</p>
+                                </td>
+                                <td>₹{item?.laborCharge}</td>
+                                <td style={{ width: "300px" }}>
+                                  <div className="d-flex gap-2">
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={item?.unitPrice || ""}
+                                      style={{ width: "100px" }}
+                                      onChange={(e) =>
+                                        setAdditionalParts((prev) =>
+                                          prev?.map(p =>
+                                            p?._id === item._id
+                                              ? { ...p, unitPrice: e.target.value }
+                                              : p
+                                          )
+                                        )
+                                      }
+                                    />
+                                    <button
+                                      className="btn btn-sm btn-dark"
+                                      onClick={() =>
+                                        handleUnitPriceUpdate(item?._id, item?.unitPrice, item?.bookingId)
+                                      }
+                                      disabled={booking?.status == "complete"}
+                                    >
+                                      Update
+                                    </button>
+
+                                  </div>
+                                </td>
+                                <td>{item?.quantity}</td>
+                                <td>₹{(Number(item?.quantity) * Number(item?.unitPrice))}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )
+                }
 
                 {/* Totals */}
                 <div className="d-flex justify-content-end mt-3">
                   <div style={{ minWidth: "300px" }}>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>Total Amount:</span>
-                      <strong>₹{booking?.amount}</strong>
+                      <span>Amount:</span>
+                      <strong>₹{booking?.amount - booking?.additionalPartAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>GST ({booking?.gstPercent}%):</span>
+                      <span>Part Amount:</span>
+                      <strong>₹{booking?.additionalPartAmount}</strong>
+                    </div>
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Taxes and Fee: </span>
                       <strong>₹{booking?.gstAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
@@ -260,7 +331,7 @@ const BookingDetailPage = () => {
                       <strong>-₹{booking?.discountAmount}</strong>
                     </div>
                     <div className="d-flex justify-content-between border-top pt-2">
-                      <span>Total Payable:</span>
+                      <span>Total Payable Amount:</span>
                       <strong className="text-primary fs-5">₹{booking?.payableAmount?.toFixed(2)}</strong>
                     </div>
                   </div>
@@ -275,7 +346,7 @@ const BookingDetailPage = () => {
             {/* Latest Serviceman */}
             {booking?.latestServiceman?.serviceman && (
               <div className="mb-4">
-                <h6 className="fw-bold text-uppercase text-muted">Latest Provider</h6>
+                <h6 className="fw-bold text-uppercase text-muted">Provider</h6>
                 <div className="d-flex align-items-center gap-3 mt-3">
                   <img
                     src={`${BASE_URL}/${booking?.latestServiceman?.serviceman?.profileImage}`}
@@ -287,7 +358,6 @@ const BookingDetailPage = () => {
                     <p className="mb-0 text-muted"><strong>Name:</strong> {booking?.latestServiceman?.serviceman?.name}</p>
                     <p className="mb-0 text-muted"><strong>Email:</strong> {booking?.latestServiceman?.serviceman?.email}</p>
                     <p className="mb-0 text-muted"><strong>Mobile:</strong> {booking?.latestServiceman?.serviceman?.mobile}</p>
-                    <p className="mb-0 text-muted"><strong>Status:</strong> {booking?.latestServiceman?.status}</p>
                   </div>
                 </div>
               </div>
@@ -296,44 +366,45 @@ const BookingDetailPage = () => {
             <hr />
 
             {/* Serviceman History */}
-            <h6 className="fw-bold text-uppercase text-muted mb-3">
-              Provider Assignment History
-            </h6>
-            <div className="row">
-              {booking?.servicemanHistory?.map((h, i) => (
-                <div key={i} className="col-md-6 mb-3">
-                  <div className="border rounded-3 p-3 h-100">
-                    <div className="d-flex align-items-center gap-3">
-                      <img
-                        src={
-                          h?.serviceman?.profileImage
-                            ? `${BASE_URL}/${h?.serviceman?.profileImage}`
-                            : "https://via.placeholder.com/90"
-                        }
-                        className="rounded-circle border"
-                        style={{ width: 90, height: 90, objectFit: "cover" }}
-                        alt="profile"
-                      />
-                      <div>
-                        <p className="mb-1 text-muted">
-                          <strong>Name:</strong> {h?.serviceman?.name}
-                        </p>
-                        <p className="mb-1 text-muted">
-                          <strong>Email:</strong> {h?.serviceman?.email}
-                        </p>
-                        <p className="mb-1 text-muted">
-                          <strong>Mobile:</strong> {h?.serviceman?.mobile}
-                        </p>
-                        <p className="mb-0 text-muted">
-                          <strong>Status:</strong>{" "}
-                          <span className="text-capitalize">{h?.status}</span>
-                        </p>
+            {
+              (booking?.servicemanHistory?.length > 0) && (
+                <>
+                  <h6 className="fw-bold text-uppercase text-muted mb-3">
+                    Provider History
+                  </h6>
+                  <div className="row">
+                    {booking?.servicemanHistory?.map((h, i) => (
+                      <div key={i} className="col-md-6 mb-3">
+                        <div className="border rounded-3 p-3 h-100">
+                          <div className="d-flex align-items-center gap-3">
+                            <img
+                              src={
+                                h?.serviceman?.profileImage
+                                  ? `${BASE_URL}/${h?.serviceman?.profileImage}`
+                                  : "https://via.placeholder.com/90"
+                              }
+                              className="rounded-circle border"
+                              style={{ width: 90, height: 90, objectFit: "cover" }}
+                              alt="profile"
+                            />
+                            <div>
+                              <p className="mb-1 text-muted">
+                                <strong>Name:</strong> {h?.serviceman?.name}
+                              </p>
+                              <p className="mb-1 text-muted">
+                                <strong>Email:</strong> {h?.serviceman?.email}
+                              </p>
+                              <p className="mb-1 text-muted">
+                                <strong>Mobile:</strong> {h?.serviceman?.mobile}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
+                </>
+              )}
           </>
         )}
 
@@ -341,7 +412,7 @@ const BookingDetailPage = () => {
           <>
             {/* ================= LATEST SERVICEMAN ================= */}
             <h6 className="fw-bold text-uppercase text-muted mb-3">
-              Latest Provider Media
+              Provider Media
             </h6>
 
             {booking?.latestServiceman && (
@@ -358,7 +429,6 @@ const BookingDetailPage = () => {
                     <p className="mb-0"><strong>Name:</strong> {booking?.latestServiceman?.serviceman?.name}</p>
                     <p className="mb-0"><strong>Email:</strong> {booking?.latestServiceman?.serviceman?.email}</p>
                     <p className="mb-0"><strong>Mobile:</strong> {booking?.latestServiceman?.serviceman?.mobile}</p>
-                    <p className="mb-0"><strong>Status:</strong> {booking?.latestServiceman?.status}</p>
                   </div>
                 </div>
 
@@ -432,94 +502,98 @@ const BookingDetailPage = () => {
             )}
 
             {/* ================= SERVICEMAN HISTORY ================= */}
-            <h6 className="fw-bold text-uppercase text-muted mb-3">
-              Provider History Media
-            </h6>
 
-            {booking?.servicemanHistory?.map((h, i) => (
-              <div key={i} className="border rounded-3 p-3 mb-4">
-                {/* Serviceman Info */}
-                <div className="d-flex align-items-center gap-3 mb-3">
-                  <img
-                    src={`${BASE_URL}/${h?.serviceman?.profileImage}`}
-                    className="rounded-circle border"
-                    style={{ width: 80, height: 80, objectFit: "cover" }}
-                    alt="serviceman"
-                  />
-                  <div>
-                    <p className="mb-0"><strong>Name:</strong> {h?.serviceman?.name}</p>
-                    <p className="mb-0"><strong>Email:</strong> {h?.serviceman?.email}</p>
-                    <p className="mb-0"><strong>Mobile:</strong> {h?.serviceman?.mobile}</p>
-                    <p className="mb-0"><strong>Status:</strong> {h?.status}</p>
+            {(booking?.servicemanHistory?.length > 0) && (
+              <>
+                <h6 className="fw-bold text-uppercase text-muted mb-3">
+                  Provider Media History
+                </h6>
+
+                {booking?.servicemanHistory?.map((h, i) => (
+                  <div key={i} className="border rounded-3 p-3 mb-4">
+                    {/* Serviceman Info */}
+                    <div className="d-flex align-items-center gap-3 mb-3">
+                      <img
+                        src={`${BASE_URL}/${h?.serviceman?.profileImage}`}
+                        className="rounded-circle border"
+                        style={{ width: 80, height: 80, objectFit: "cover" }}
+                        alt="serviceman"
+                      />
+                      <div>
+                        <p className="mb-0"><strong>Name:</strong> {h?.serviceman?.name}</p>
+                        <p className="mb-0"><strong>Email:</strong> {h?.serviceman?.email}</p>
+                        <p className="mb-0"><strong>Mobile:</strong> {h?.serviceman?.mobile}</p>
+                      </div>
+                    </div>
+
+                    {/* Selfie */}
+                    {h?.selfie && (
+                      <>
+                        <p className="fw-semibold mb-1">Selfie</p>
+                        <img
+                          src={`${BASE_URL}/${h?.selfie}`}
+                          className="img-thumbnail mb-3"
+                          style={{ width: 160 }}
+                          alt="selfie"
+                        />
+                      </>
+                    )}
+
+                    {/* Before Start */}
+                    {(h?.beforeStartImages?.length > 0 || h?.beforeStartVideos?.length > 0) && (
+                      <>
+                        <p className="fw-semibold">Before Start</p>
+                        <div className="d-flex flex-wrap gap-2">
+                          {h?.beforeStartImages?.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={`${BASE_URL}/${img}`}
+                              className="img-thumbnail"
+                              style={{ width: 140 }}
+                              alt="before"
+                            />
+                          ))}
+                          {h?.beforeStartVideos?.map((vid, idx) => (
+                            <video
+                              key={idx}
+                              src={`${BASE_URL}/${vid}`}
+                              controls
+                              style={{ width: 200 }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {/* After Complete */}
+                    {(h?.afterCompleteImages?.length > 0 || h?.afterCompleteVideos?.length > 0) && (
+                      <>
+                        <p className="fw-semibold mt-3">After Complete</p>
+                        <div className="d-flex flex-wrap gap-2">
+                          {h.afterCompleteImages.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={`${BASE_URL}/${img}`}
+                              className="img-thumbnail"
+                              style={{ width: 140 }}
+                              alt="after"
+                            />
+                          ))}
+                          {h?.afterCompleteVideos?.map((vid, idx) => (
+                            <video
+                              key={idx}
+                              src={`${BASE_URL}/${vid}`}
+                              controls
+                              style={{ width: 200 }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
-                </div>
-
-                {/* Selfie */}
-                {h?.selfie && (
-                  <>
-                    <p className="fw-semibold mb-1">Selfie</p>
-                    <img
-                      src={`${BASE_URL}/${h?.selfie}`}
-                      className="img-thumbnail mb-3"
-                      style={{ width: 160 }}
-                      alt="selfie"
-                    />
-                  </>
-                )}
-
-                {/* Before Start */}
-                {(h?.beforeStartImages?.length > 0 || h?.beforeStartVideos?.length > 0) && (
-                  <>
-                    <p className="fw-semibold">Before Start</p>
-                    <div className="d-flex flex-wrap gap-2">
-                      {h?.beforeStartImages?.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={`${BASE_URL}/${img}`}
-                          className="img-thumbnail"
-                          style={{ width: 140 }}
-                          alt="before"
-                        />
-                      ))}
-                      {h?.beforeStartVideos?.map((vid, idx) => (
-                        <video
-                          key={idx}
-                          src={`${BASE_URL}/${vid}`}
-                          controls
-                          style={{ width: 200 }}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {/* After Complete */}
-                {(h?.afterCompleteImages?.length > 0 || h?.afterCompleteVideos?.length > 0) && (
-                  <>
-                    <p className="fw-semibold mt-3">After Complete</p>
-                    <div className="d-flex flex-wrap gap-2">
-                      {h.afterCompleteImages.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={`${BASE_URL}/${img}`}
-                          className="img-thumbnail"
-                          style={{ width: 140 }}
-                          alt="after"
-                        />
-                      ))}
-                      {h?.afterCompleteVideos?.map((vid, idx) => (
-                        <video
-                          key={idx}
-                          src={`${BASE_URL}/${vid}`}
-                          controls
-                          style={{ width: 200 }}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+                ))}
+              </>
+            )}
           </>
         )}
       </div>

@@ -22,8 +22,11 @@ const notificationSchema = new mongoose.Schema({
     default: false,
   },
   date: {
-    type: String,
-    default: Date.now,
+    type: Date,
+    default: () => new Date(),
+  },
+  payload: {
+    type: mongoose.Schema.Types.Mixed,
   },
 }, { timestamps: true });
 

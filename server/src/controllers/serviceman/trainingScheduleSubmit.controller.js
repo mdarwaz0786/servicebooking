@@ -5,6 +5,7 @@ import Training from "../../models/training.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
+import moment from "moment";
 
 // submit training schedule
 export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
@@ -27,6 +28,23 @@ export const createTrainingScheduleSubmit = asyncHandler(async (req, res) => {
 
   const training = await Training.findById(trainingId);
   if (!training) throw new ApiError(404, "Training not found");
+
+  const startOfDay = moment(scheduleDate).startOf("day").toDate();
+  const endOfDay = moment(scheduleDate).endOf("day").toDate();
+
+  const alreadyScheduled = await TrainingScheduleSubmitModel.findOne({
+    providerId: userId,
+    trainingId,
+    scheduleDate: { $gte: startOfDay, $lte: endOfDay },
+    trainingScheduleStatus: { $ne: "Reject" },
+  });
+
+  if (alreadyScheduled) {
+    throw new ApiError(
+      409,
+      "Training already scheduled for this date"
+    );
+  };
 
   const submit = await TrainingScheduleSubmitModel.create({
     providerId: userId,

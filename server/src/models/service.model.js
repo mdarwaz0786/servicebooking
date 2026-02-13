@@ -17,6 +17,11 @@ const serviceSchema = new mongoose.Schema({
     min: 1,
     max: 5,
   },
+  isMediaUpload: {
+    type: Number,
+    enum: [0, 1],
+    default: 0,
+  },
   review: {
     type: Number,
   },

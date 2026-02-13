@@ -1,5 +1,6 @@
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
+import BookingMediaModel from "../../models/bookingMedia.model.js";
 import compressImage from "../../helpers/compressImage.js";
 import compressVideo from "../../helpers/compressVideo.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -18,19 +19,34 @@ const getServicemanId = async (servicemanId, userId) => {
 
 // Upload images and videos before start
 export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
-  let { servicemanId, servicemanBookingId } = req.params;
+  let { servicemanBookingId } = req.params;
+  let { bookingItemId } = req.body;
   const userId = req.user?._id;
 
   if (!servicemanBookingId) {
-    throw new ApiError(400, "servicemanBookingId is required");
+    throw new ApiError(400, "serviceman booking id is required");
   };
 
-  servicemanId = await getServicemanId(servicemanId, userId);
+  if (!bookingItemId) {
+    throw new ApiError(400, "booking item id is required");
+  };
+
+  const profile = await ServiceManProfileModel.findOne({ userId }).select("_id");
+
+  let servicemanId = profile?._id;
 
   let uploadedImages = [];
   let uploadedVideos = [];
 
   try {
+    const smbooking = await ServiceManBookingModel.findById(servicemanBookingId).select("bookingId");
+
+    if (!smbooking) {
+      throw new ApiError(404, "Serviceman booking not found");
+    };
+
+    const bookingId = smbooking?.bookingId;
+
     uploadedImages = req.files?.images
       ? await Promise.all(req.files.images.map((file) => compressImage(file.buffer, "servicemanBookingImages")))
       : [];
@@ -39,24 +55,35 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
       ? await Promise.all(req.files.videos.map((file) => compressVideo(file.buffer, "servicemanBookingVideos")))
       : [];
 
-    const booking = await ServiceManBookingModel.findOneAndUpdate(
-      { _id: servicemanBookingId, servicemanId },
-      {
-        $push: {
-          beforeStartImages: { $each: uploadedImages },
-          beforeStartVideos: { $each: uploadedVideos },
-        },
-        updatedBy: userId || null,
-      },
-      { new: true }
-    );
+    for (let i = 0; i < uploadedImages.length; i++) {
+      await BookingMediaModel.create({
+        servicemanBookingId,
+        bookingId,
+        bookingItemId,
+        servicemanId,
+        mediaTimeline: 1,
+        mediaType: "image",
+        media: uploadedImages[i],
+        createdBy: userId,
+      });
+    };
 
-    if (!booking) throw new ApiError(404, "Booking not found");
+    for (let j = 0; j < uploadedVideos.length; j++) {
+      await BookingMediaModel.create({
+        servicemanBookingId,
+        bookingId,
+        bookingItemId,
+        servicemanId,
+        mediaTimeline: 1,
+        mediaType: "video",
+        media: uploadedVideos[j],
+        createdBy: userId,
+      });
+    };
 
     return res.status(201).json({
       success: true,
       message: "Before start media uploaded successfully",
-      data: booking,
     });
   } catch (error) {
     [...uploadedImages, ...uploadedVideos].forEach((filePath) => {
@@ -73,19 +100,33 @@ export const uploadBeforeStartMedia = asyncHandler(async (req, res) => {
 
 // Upload images and videos after complete
 export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
-  let { servicemanId, servicemanBookingId } = req.params;
+  let { servicemanBookingId } = req.params;
+  let { bookingItemId } = req.body;
+
   const userId = req.user?._id;
 
   if (!servicemanBookingId) {
-    throw new ApiError(400, "servicemanBookingId is required");
+    throw new ApiError(400, "serviceman booking id is required");
   };
 
-  servicemanId = await getServicemanId(servicemanId, userId);
+  if (!bookingItemId) {
+    throw new ApiError(400, "booking item id is required");
+  };
+
+  const profile = await ServiceManProfileModel.findOne({ userId }).select("_id");
+
+  let servicemanId = profile?._id;
 
   let uploadedImages = [];
   let uploadedVideos = [];
 
   try {
+    const smbooking = await ServiceManBookingModel.findById(servicemanBookingId).select("bookingId");
+
+    if (!smbooking) {
+      throw new ApiError(404, "Serviceman booking not found");
+    };
+
     uploadedImages = req.files?.images
       ? await Promise.all(req.files.images.map((file) => compressImage(file.buffer, "servicemanBookingImages")))
       : [];
@@ -94,24 +135,37 @@ export const uploadAfterCompleteMedia = asyncHandler(async (req, res) => {
       ? await Promise.all(req.files.videos.map((file) => compressVideo(file.buffer, "servicemanBookingVideos")))
       : [];
 
-    const booking = await ServiceManBookingModel.findOneAndUpdate(
-      { _id: servicemanBookingId, servicemanId },
-      {
-        $push: {
-          afterCompleteImages: { $each: uploadedImages },
-          afterCompleteVideos: { $each: uploadedVideos },
-        },
-        updatedBy: userId || null,
-      },
-      { new: true },
-    );
+    const bookingId = smbooking?.bookingId;
 
-    if (!booking) throw new ApiError(404, "Booking not found");
+    for (let i = 0; i < uploadedImages.length; i++) {
+      await BookingMediaModel.create({
+        servicemanBookingId,
+        bookingId,
+        bookingItemId,
+        servicemanId,
+        mediaTimeline: 2,
+        mediaType: "image",
+        media: uploadedImages[i],
+        createdBy: userId,
+      });
+    };
+
+    for (let j = 0; j < uploadedVideos.length; j++) {
+      await BookingMediaModel.create({
+        servicemanBookingId,
+        bookingId,
+        bookingItemId,
+        servicemanId,
+        mediaTimeline: 2,
+        mediaType: "video",
+        media: uploadedVideos[j],
+        createdBy: userId,
+      });
+    };
 
     return res.status(201).json({
       success: true,
       message: "After complete media uploaded successfully",
-      data: booking,
     });
   } catch (error) {
     [...uploadedImages, ...uploadedVideos].forEach((filePath) => {

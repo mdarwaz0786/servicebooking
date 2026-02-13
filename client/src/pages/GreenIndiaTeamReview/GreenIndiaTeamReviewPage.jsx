@@ -20,7 +20,7 @@ const GreenIndiaTeamReviewPage = () => {
   const fetchReviews = async () => {
       try {    
         let userId = generateUniqueId();  
-        const response = await postData({userId:userId}, Urls.myReview, "GET", 0, 1);
+        const response = await postData({userId:userId}, Urls.allReview, "GET", 0, 1);
         
           setreviews(response.data);          
         

@@ -117,7 +117,7 @@ const AddImpactPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <Editor
-                  id="description"
+                  id="impactDescription"
                   name="description"
                   value={formData.description}
                   onChange={handleDescriptionChange}

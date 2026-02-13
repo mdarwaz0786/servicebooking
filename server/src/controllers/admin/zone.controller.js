@@ -3,7 +3,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 export const createZone = async (req, res) => {
   try {
-    const { name, coordinates } = req.body;
+    const { name, search, coordinates } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: "Zone name is required" });
@@ -15,9 +15,10 @@ export const createZone = async (req, res) => {
 
     const zone = await Zone.create({
       name,
+      search,
       geometry: {
         type: "Polygon",
-        coordinates: [coordinates]
+        coordinates: [coordinates],
       },
     });
 
@@ -30,8 +31,8 @@ export const createZone = async (req, res) => {
 export const getZones = async (req, res) => {
   try {
     const {
-      page = 1,
-      limit = 10,
+      page,
+      limit,
       search = "",
       sortBy = "createdAt",
       sortOrder = "desc",
@@ -42,11 +43,11 @@ export const getZones = async (req, res) => {
 
     if (search) {
       query.name = { $regex: search, $options: "i" };
-    }
+    };
 
     if (status !== undefined) {
       query.status = status === "true";
-    }
+    };
 
     const skip = (page - 1) * limit;
 
@@ -93,11 +94,12 @@ export const getZoneById = async (req, res) => {
 
 export const updateZone = async (req, res) => {
   try {
-    const { name, coordinates, status } = req.body;
+    const { name, search, coordinates, status } = req.body;
 
     const updateData = {};
 
     if (name) updateData.name = name;
+    if (search) updateData.search = search;
     if (typeof status === "boolean") updateData.status = status;
 
     if (coordinates?.length) {
@@ -105,7 +107,7 @@ export const updateZone = async (req, res) => {
         type: "Polygon",
         coordinates: [coordinates]
       };
-    }
+    };
 
     const zone = await Zone.findByIdAndUpdate(
       req.params.id,
@@ -115,7 +117,7 @@ export const updateZone = async (req, res) => {
 
     if (!zone) {
       return res.status(404).json({ success: false, message: "Zone not found" });
-    }
+    };
 
     res.json({
       success: true,

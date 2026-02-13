@@ -9,14 +9,15 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import compressImage from '../../helpers/compressImage.js';
-import { adjustWalletCredit, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
+import { adjustWalletCredit, calculateAdminInvoiceAmount, calculateProviderEarningAmount, calculateProviderInvoiceAmount, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 import generateOtp from "../../utils/generateOpt.js";
 import InvoiceModel from "../../models/invoice.model.js";
 import { createInvoice } from "../../utils/invoice.js";
+import { generateInvoice } from "../../utils/generateInvoice.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10 } = req.query;
+  let { search, dateRange, status, sort = "desc", page = 1, limit = 10 } = req.query;
 
   const userId = req.user?._id;
 
@@ -32,6 +33,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   const filters = {};
 
   filters.servicemanId = serviceman?._id;
+  filters.status = { $ne: "taken" };
 
   if (search) {
     filters.$or = [
@@ -40,7 +42,78 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
   };
 
   if (status) {
-    filters.status = status;
+
+    if (status == "all") {
+      filters.status = {
+        $nin: ["complete", "cancel", "reject", "taken"],
+      };
+    }
+
+    else if (status == "cancel") {
+      filters.status = {
+        $in: ["cancel", "reject"],
+      };
+    }
+    else if (status == "new") {
+      filters.status = {
+        $in: ["new", "accept"],
+      };
+    }
+    else if (status == "hold") {
+      filters.status = {
+        $in: [
+          "partstatusnew",
+          "partstatusconfirm",
+        ],
+      };
+    }
+
+    else if (status == "ongoing") {
+      filters.status = {
+        $in: [
+          "assign",
+          "accept",
+          "partstatusapprove",
+          "partstatusreject",
+          "ongoing",
+        ],
+      };
+    }
+
+    else {
+      filters.status = {
+        $eq: status,
+      };
+    }
+  };
+
+  if (dateRange) {
+    let startDate;
+    let endDate = new Date();
+
+    if (dateRange == "today") {
+      startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    else if (dateRange == "week") {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 6);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    else if (dateRange == "month") {
+      startDate = new Date();
+      startDate.setDate(1);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    if (startDate) {
+      filters.createdAt = {
+        $gte: startDate,
+        $lte: endDate,
+      };
+    };
   };
 
   let sortOption = {};
@@ -66,12 +139,20 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
         {
           path: "bookingItems",
           strictPopulate: false,
-          populate: {
-            path: "service",
-            model: "Service",
-            select: "name image",
-            strictPopulate: false,
-          },
+          populate: [
+            {
+              path: "service",
+              model: "Service",
+              select: "name image isMediaUpload categoryId subCategoryId",
+              strictPopulate: false,
+            },
+            {
+              path: "bookingMedia",
+              model: "BookingMedia",
+              select: "mediaTimeline mediaType media",
+              strictPopulate: false,
+            }
+          ]
         },
       ],
     })
@@ -187,6 +268,9 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
       _id: req.params.id,
       servicemanId: serviceman?._id,
     })
+    .select(
+      "-afterCompleteImages -afterCompleteVideos -beforeStartImages -beforeStartVideos"
+    )
     .populate("serviceman user")
     .populate({
       path: "booking",
@@ -200,12 +284,20 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
         {
           path: "bookingItems",
           strictPopulate: false,
-          populate: {
-            path: "service",
-            model: "Service",
-            select: "name image categoryId subCategoryId",
-            strictPopulate: false,
-          },
+          populate: [
+            {
+              path: "service",
+              model: "Service",
+              select: "name image isMediaUpload categoryId subCategoryId",
+              strictPopulate: false,
+            },
+            {
+              path: "bookingMedia",
+              model: "BookingMedia",
+              select: "mediaTimeline mediaType media",
+              strictPopulate: false,
+            }
+          ]
         },
       ],
     })
@@ -379,7 +471,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   if (alreadyAccepted) {
     return res.status(400).json({
       success: false,
-      message: "Booking has already been accepted by another serviceman",
+      message: "Booking has been taken by another provider",
     });
   };
 
@@ -407,7 +499,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
       _id: { $ne: servicemanBooking?._id },
       status: "new",
     },
-    { $set: { status: "cancel" } },
+    { $set: { status: "taken" } },
   );
 
   await booking.save();
@@ -531,10 +623,16 @@ export const serviceManBookingStartVerifyOtp = asyncHandler(async (req, res) => 
     //   servicemanBooking.selfie = selfiePath;
     // };
 
+
+
+
+
     if (req.files?.selfie?.[0]) {
       selfiePath = await compressImage(req.files.selfie[0].buffer, "servicemanSelfies");
       servicemanBooking.selfie = selfiePath;
     };
+
+
 
     booking.status = status || booking?.status;
     servicemanBooking.status = status || servicemanBooking?.status;
@@ -575,133 +673,33 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     bookingId,
     servicemanBookingId,
     paymentMode,
-    type,
   } = req.body;
 
   const userId = req.user?._id;
 
-  const serviceman = await ServiceManProfileModel.findOne({ userId });
-  if (!serviceman) throw new ApiError(404, "Service man profile not found");
-
-  const servicemanId = serviceman?._id;
-
-  const updatedBooking = await BookingModel.findByIdAndUpdate(
+  await BookingModel.findByIdAndUpdate(
     bookingId,
-    { status: "complete" },
+    {
+      status: "complete",
+      paymentStatus: 1,
+    },
     { new: true }
   );
 
   await ServiceManBookingModel.findByIdAndUpdate(
     servicemanBookingId,
-    { status: "complete" },
+    {
+      status: "complete",
+    },
     { new: true }
   );
 
-  await createServicemanEarning(servicemanId, servicemanBookingId, userId)
-
-  const {
-    booking: bookingDetail,
-    bookingItems,
-    serviceman: provider,
-    customer,
-    address,
-    company,
-  } = await createInvoice(bookingId);
-
-  await InvoiceModel.create({
-    type: "Customer",
-    bookingId,
-    servicemanBookingId,
-    providerId: provider?._id,
-    servicemanUserId: provider?.userId,
-    customerId: customer?._id,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
-  });
-
-  await InvoiceModel.create({
-    type: "Provider",
-    bookingId,
-    servicemanBookingId,
-    providerId: provider?._id,
-    servicemanUserId: provider?.userId,
-    customerId: customer?._id,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
-  });
-
-  await InvoiceModel.create({
-    type: "Admin",
-    bookingId,
-    servicemanBookingId,
-    providerId: provider?._id,
-    servicemanUserId: provider?.userId,
-    customerId: customer?._id,
-    customerName: customer?.name || "",
-    customerEmail: customer?.email || "",
-    customerMobile: customer?.mobile || "",
-    customerProfileImage: customer?.profileImage || "",
-    deliveryAddress: address?.houseNumber || "",
-    landmark: address?.landmark || "",
-    customerStateName: address?.stateName || "",
-    custmerStateCode: address?.stateCode || "",
-    bookingDetail: bookingDetail || {},
-    bookingItemDetail: bookingItems || [],
-    latestServicemanDetail: provider || {},
-    companyDetail: company || {},
-    customerDetail: customer || {},
-    addressDetail: address || {},
-  });
-
-  if (paymentMode?.toLowerCase() == "cod") {
-    await CashCollectedLoggerModel.create({
-      type,
-      bookingId,
-      providerId: userId,
-      amount: updatedBooking?.payableAmount,
-      createdBy: userId,
-      createdAt: new Date(),
-    });
-
-    await BookingModel.findByIdAndUpdate(
-      bookingId,
-      {
-        paymentStatus: 1,
-        cashColletedSubmitAmount: updatedBooking?.payableAmount,
-        cashColletedAmount: updatedBooking?.payableAmount,
-        cashColletedPendingAmount: 0,
-      },
-      { new: true },
-    );
-  };
+  await calculateProviderEarningAmount(bookingId, paymentMode, userId, servicemanBookingId);
+  await generateInvoice(userId, bookingId, servicemanBookingId);
 
   return res.status(201).json({
     success: true,
-    message: "Completed successfully",
+    message: "Booking completed successfully",
     data: {},
   });
 });

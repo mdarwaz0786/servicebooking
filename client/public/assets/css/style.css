@@ -36568,6 +36568,10 @@ p span {
     margin: 0;
     border: 0;
 }
+.editor-text ul {
+    list-style: disc;
+    margin-left: 20px;
+}
 
 @media(max-width: 767px)
 {
