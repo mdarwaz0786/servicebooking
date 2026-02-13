@@ -147,7 +147,7 @@ const AddJobPostingPage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <Editor
-                  id="fullDescription"
+                  id="jobPostingDescription"
                   name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleDescriptionChange}

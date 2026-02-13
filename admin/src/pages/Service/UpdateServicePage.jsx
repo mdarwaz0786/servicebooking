@@ -575,7 +575,7 @@ const UpdateServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Short Description</label>
                 <Editor
-                  id="shortDescription"
+                  id="updateServiceShortDescription"
                   name="sortDescription"
                   value={formData.shortDescription}
                   onChange={handleShortDescriptionChange}
@@ -587,7 +587,7 @@ const UpdateServicePage = () => {
               <div className="mb-3">
                 <label className="form-label">Full Description</label>
                 <Editor
-                  id="fullDescription"
+                  id="updateServiceFullDescription"
                   name="fullDescription"
                   value={formData.fullDescription}
                   onChange={handleFullDescriptionChange}

@@ -137,7 +137,7 @@ const AddPrivacyPolicyPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <Editor
-                  id="description"
+                  id="privacyPolicyDescription"
                   name="description"
                   value={formData.description}
                   onChange={handleDescriptionChange}

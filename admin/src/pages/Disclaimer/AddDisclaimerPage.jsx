@@ -144,7 +144,7 @@ const AddDisclaimerPage = () => {
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <Editor
-                  id="description"
+                  id="disclaimerDescription"
                   name="description"
                   value={formData.description}
                   onChange={handleDescriptionChange}
