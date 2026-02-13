@@ -8,25 +8,23 @@ const Meta = () => {
   const location = useLocation();
   const paths = location.pathname.split('/');
   const pSlug1 = paths[0];
-  const pSlug2 = paths[1];  
-  const pSlug3 = paths[2];  
-  if(!pSlug2)
-  {
-    if(!pSlug1) slug = 'home';
+  const pSlug2 = paths[1];
+  const pSlug3 = paths[2];
+  if (!pSlug2) {
+    if (!pSlug1) slug = 'home';
   }
-  else
-  {
-    if(pSlug3) slug = pSlug3;
+  else {
+    if (pSlug3) slug = pSlug3;
     else slug = pSlug2;
   }
-  
+
   const { Urls, postData, imageCheck } = useContext(AppContext);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   const fetchDetail = async () => {
     try {
-      const response = await postData({}, Urls.metaDetail+'/'+slug, "GET", 1, 1);
+      const response = await postData({}, Urls.metaDetail + '/' + slug, "GET", 1, 1);
       if (response.data) {
         setData(response.data);
       }
@@ -36,16 +34,15 @@ const Meta = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchDetail();
   }, [location]);
 
-  if(loading || !data)
-  {
-    return(<></>);
+  if (loading || !data) {
+    return (<></>);
   }
-  
+
   // LOCATION BASED SETTINGS
   const currentUrl = window.location.href;
   const siteUrl = window.location.origin;
@@ -92,15 +89,15 @@ const Meta = () => {
           <>
             {/* ICBM - Interactive Content Behaving Model (Google format) */}
             <meta name="ICBM" content={`${data.latitude}, ${data.longitude}`} />
-            
+
             {/* Geo Tags */}
             <meta name="geo.position" content={`${data.latitude};${data.longitude}`} />
             <meta name="geo.region" content={data.geo_region || data.country_code || "IN"} />
             <meta name="geo.placename" content={data.geo_placename || data.location_name || "India"} />
-            
+
             {/* Dublin Core Location */}
             <meta name="DC.coverage" content={data.location_name || "India"} />
-            
+
             {/* Business Hours & Contact */}
             {data.work_hours && <meta name="business:hours" content={data.work_hours} />}
             {data.contact_number && <meta name="contact:phone" content={data.contact_number} />}
@@ -125,7 +122,7 @@ const Meta = () => {
         <meta property="og:url" content={currentUrl} />
         <meta property="og:site_name" content={data.site_name} />
         <meta property="og:locale" content={data.og_locale || "en_US"} />
-        
+
         {/* OG Location Tags - Newly Added */}
         {data.latitude && data.longitude && (
           <>
@@ -157,7 +154,7 @@ const Meta = () => {
 
         {/* CHARSET */}
         <meta charSet="UTF-8" />
-        
+
         {/* Apple Touch Icons - All Sizes */}
         <link rel="apple-touch-icon" sizes="57x57" href={ogImage} />
         <link rel="apple-touch-icon" sizes="60x60" href={ogImage} />
@@ -168,7 +165,7 @@ const Meta = () => {
         <link rel="apple-touch-icon" sizes="144x144" href={ogImage} />
         <link rel="apple-touch-icon" sizes="152x152" href={ogImage} />
         <link rel="apple-touch-icon" sizes="180x180" href={ogImage} />
-        
+
         {/* Icon - Various Sizes */}
         <link rel="icon" type="image/png" sizes="192x192" href={ogImage} />
         <link rel="icon" type="image/png" sizes="32x32" href={ogImage} />
