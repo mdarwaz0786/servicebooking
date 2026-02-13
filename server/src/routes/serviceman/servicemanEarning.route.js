@@ -5,5 +5,6 @@ import { getServicemanEarnings, getTotalEarnings } from "../../controllers/servi
 const router = express.Router();
 
 router.get("/", isLoggedIn, getTotalEarnings);
+router.get("/history", isLoggedIn, getServicemanEarnings);
 
 export default router;
