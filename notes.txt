@@ -45,6 +45,8 @@ service man
 // brand logo: title(main), icon (multiple), description
 // GI promise (service excluded): title(main), title(multiple)
 
+// backup database
+mongodump --uri="mongodb://admin:Shaurya1819@145.223.18.56:27017/greenindiateam?authSource=admin&directConnection=true&replicaSet=rs0" --out=/backup/greenindiateam
 
 // Backup uploads
 // scp -r root@145.223.18.56:/var/www/servicebooking/server/uploads C:/Users/CODE-ADITYA/Desktop/greenindia
