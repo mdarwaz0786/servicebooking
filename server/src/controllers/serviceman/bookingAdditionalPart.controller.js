@@ -9,7 +9,7 @@ import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
-  const { bookingId, servicemanBookingId, parts } = req.body;
+  const { bookingId, brandId, servicemanBookingId, parts } = req.body;
 
   if (!bookingId) throw new ApiError(400, "Booking ID is required");
   if (!servicemanBookingId) throw new ApiError(400, "Serviceman Booking ID is required");
@@ -33,6 +33,7 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
     return {
       bookingId,
       rateId: item?.rateId,
+      brandId: item?.brandId || brandId,
       description: item?.description,
       unitPrice,
       quantity,

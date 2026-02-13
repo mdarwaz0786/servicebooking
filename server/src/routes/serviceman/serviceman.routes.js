@@ -19,6 +19,7 @@ import servicemanTimeSlotRoute from "./servicemanTimeSlot.route.js";
 import weeklyWinnerRoute from "./weeklyWinner.route.js";
 import targetRoute from "./target.routes.js";
 import bankTransferRoute from "./bankTransfer.routes.js";
+import brandRoutes from "./brand.routes.js";
 
 const router = express.Router();
 
@@ -42,5 +43,6 @@ router.use("/serviceman-time-slot", servicemanTimeSlotRoute);
 router.use("/weekly-winner", weeklyWinnerRoute);
 router.use("/target", targetRoute);
 router.use("/bank-transfer", bankTransferRoute);
+router.use("/brand", brandRoutes);
 
 export default router;

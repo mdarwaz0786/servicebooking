@@ -14,6 +14,10 @@ const bookingAdditionalPartSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "RateCard",
   },
+  brandId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Brand",
+  },
   unitPrice: {
     type: String,
   },
