@@ -30,6 +30,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
     referenceMobile1,
     referenceName2,
     referenceMobile2,
+    gender,
   } = req.body;
 
   if (categoryIds && !categoryIds.length) {
@@ -90,6 +91,7 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
       referenceMobile2,
       profileImage: newImagePath,
       createdBy: userId,
+      gender,
     });
 
     return res.status(201).json({

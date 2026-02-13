@@ -125,6 +125,10 @@ const serviceManProfileSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other"],
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
