@@ -36,7 +36,7 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: Date,
   },
   holdTime: {
-    type: Date,
+    type: String,
   },
   holdReason: {
     type: String,
