@@ -397,6 +397,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   }).lean();
 
   booking.isWarranty = warranty ? 1 : 0;
+  booking.servicemanBooking = latestAssignment;
 
   const items = await BookingItemModel
     .find({ bookingId: booking._id })
