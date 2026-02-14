@@ -108,7 +108,7 @@ export const dashboard = asyncHandler(async (req, res) => {
     {
       $match: {
         servicemanId: serviceman?._id,
-        status: { $nin: ["taken", "complete", "cancel"] },
+        status: { $nin: ["taken", "complete", "cancel", "hold"] },
       }
     },
 
