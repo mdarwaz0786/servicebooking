@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Update Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+        .booking-id-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+            text-align: center;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Booking Update Tester</h1>
+        
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="status disconnected">🔴 Disconnected</div>
+        
+        <!-- Server URL -->
+        <div class="form-group">
+            <label>Server URL:</label>
+            <input type="text" id="serverUrl" value="http://localhost:3000" placeholder="http://your-server-ip:3000">
+            <button onclick="connect()" style="background: #2196F3;">Connect</button>
+        </div>
+
+        <!-- Current Booking Info -->
+        <div class="info">
+            <strong>Current Booking ID:</strong>
+            <div class="booking-id-display" id="currentBookingId">BOOK123</div>
+            <p style="color: #666; font-size: 14px;">Yehi booking ID React Native app mein use ho rahi hai</p>
+        </div>
+
+        <!-- Update Form -->
+        <div class="form-group">
+            <label>Booking ID:</label>
+            <input type="text" id="bookingId" value="BOOK123" placeholder="Enter booking ID">
+        </div>
+
+        <div class="form-group">
+            <label>Status:</label>
+            <select id="status">
+                <option value="confirmed">✅ Confirmed</option>
+                <option value="preparing">👨‍🍳 Preparing</option>
+                <option value="ready">🍽️ Ready</option>
+                <option value="out-for-delivery">🚚 Out for Delivery</option>
+                <option value="delivered">✅ Delivered</option>
+                <option value="cancelled">❌ Cancelled</option>
+                <option value="pending">⏳ Pending</option>
+                <option value="partstatusnew">🔧 Parts Submitted</option>
+                <option value="partstatusapprove">✅ Parts Approved</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Message (optional):</label>
+            <textarea id="message" rows="3" placeholder="Enter message..."></textarea>
+        </div>
+
+        <!-- Send Update Button -->
+        <button onclick="sendUpdate()">📤 Send Update to React Native App</button>
+
+        <!-- Quick Test Buttons -->
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="quickUpdate('confirmed')" style="background: #4CAF50; font-size: 14px;">✅ Confirmed</button>
+            <button onclick="quickUpdate('preparing')" style="background: #ff9800; font-size: 14px;">👨‍🍳 Preparing</button>
+            <button onclick="quickUpdate('delivered')" style="background: #2196F3; font-size: 14px;">🚚 Delivered</button>
+        </div>
+
+        <!-- Logs -->
+        <div style="margin-top: 30px;">
+            <h3>📋 Log:</h3>
+            <div id="log" style="background: #333; color: #fff; padding: 10px; border-radius: 5px; height: 150px; overflow-y: scroll; font-family: monospace;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        let socket = null;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML = `<div>[${timestamp}] ${message}</div>` + logDiv.innerHTML;
+        }
+
+        function connect() {
+            const url = document.getElementById('serverUrl').value;
+            
+            if (socket) socket.disconnect();
+
+            socket = io(url, {
+                transports: ['websocket'],
+                reconnection: true
+            });
+
+            socket.on('connect', () => {
+                document.getElementById('connectionStatus').className = 'status connected';
+                document.getElementById('connectionStatus').innerHTML = '🟢 Connected to server';
+                log('✅ Connected to server');
+            });
+
+            socket.on('disconnect', () => {
+                document.getElementById('connectionStatus').className = 'status disconnected';
+                document.getElementById('connectionStatus').innerHTML = '🔴 Disconnected';
+                log('❌ Disconnected');
+            });
+
+            socket.on('connect_error', (error) => {
+                log('⚠️ Connection error: ' + error.message);
+            });
+        }
+
+        function sendUpdate() {
+            if (!socket || !socket.connected) {
+                alert('Please connect to server first!');
+                return;
+            }
+
+            const bookingId = document.getElementById('bookingId').value.trim();
+            const status = document.getElementById('status').value;
+            const message = document.getElementById('message').value.trim();
+
+            if (!bookingId) {
+                alert('Please enter booking ID');
+                return;
+            }
+
+            // Ye event React Native app sunega
+            socket.emit('updateBooking', {
+                bookingId: bookingId,
+                status: status,
+                message: message || `${status} update`
+            });
+
+            log(`📤 Update sent for ${bookingId}: ${status}`);
+            
+            // Update current booking ID display
+            document.getElementById('currentBookingId').innerText = bookingId;
+        }
+
+        function quickUpdate(status) {
+            document.getElementById('status').value = status;
+            sendUpdate();
+        }
+
+        // Auto-connect on page load
+        window.onload = () => {
+            setTimeout(connect, 500);
+        };
+    </script>
+</body>
+</html>
