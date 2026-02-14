@@ -38,6 +38,9 @@ const serviceManBookingSchema = new mongoose.Schema({
   holdTime: {
     type: Date,
   },
+  holdReason: {
+    type: String,
+  },
   actionById: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

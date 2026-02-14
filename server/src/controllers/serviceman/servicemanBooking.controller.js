@@ -66,6 +66,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
         $in: [
           "partstatusnew",
           "partstatusconfirm",
+          "hold",
         ],
       };
     }
@@ -739,6 +740,7 @@ export const servicemanBookingHold = asyncHandler(async (req, res) => {
     servicemanBookingId,
     holdDate,
     holdTime,
+    holdReason,
   } = req.body;
 
   await BookingModel.findByIdAndUpdate(
@@ -747,6 +749,7 @@ export const servicemanBookingHold = asyncHandler(async (req, res) => {
       status: "hold",
       holdDate: holdDate,
       holdTime: holdTime,
+      holdReason: holdReason,
     },
     { new: true }
   );
@@ -757,6 +760,7 @@ export const servicemanBookingHold = asyncHandler(async (req, res) => {
       status: "hold",
       holdDate: holdDate,
       holdTime: holdTime,
+      holdReason: holdReason,
     },
     { new: true }
   );
