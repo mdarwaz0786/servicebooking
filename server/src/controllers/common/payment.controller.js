@@ -18,6 +18,7 @@ import sendNotification from "../../utils/sendNotification.js";
 import { generateInvoice } from "../../utils/generateInvoice.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/autoAssignBooking.js";
+import { createBookingWarranty } from "../../utils/createBookingWarrnty.js";
 
 // STEP 1: Create Razorpay Order
 export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
@@ -313,15 +314,17 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       servicemanId: servicemanId,
     }).sort({ createdAt: -1 });
 
+    const servicemanBookingId = latestServicemanBooking?._id;
+
     await ServiceManBookingModel.findByIdAndUpdate(
-      latestServicemanBooking?._id,
+      servicemanBookingId,
       { status: "complete" },
       { new: true }
     );
 
     const paymentMode = "online";
-    const servicemanBookingId = latestServicemanBooking?._id;
 
+    await createBookingWarranty(bookingId, servicemanBookingId, userId, servicemanId);
     await calculateProviderEarningAmount(bookingId, paymentMode, userId, servicemanBookingId);
     await generateInvoice(userId, bookingId, servicemanBookingId);
   };

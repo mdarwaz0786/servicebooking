@@ -21,6 +21,8 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Booking not found");
   };
 
+  await rejectAdditionalParts(bookingId);
+
   let additionalPartTotalAmount = 0;
 
   const documents = parts?.map((item) => {

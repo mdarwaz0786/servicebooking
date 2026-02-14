@@ -12,7 +12,7 @@ const serviceManBookingSchema = new mongoose.Schema({
     ref: "ServiceManProfile",
     required: true,
   },
-  userId: {
+  userId: {          // customer
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,

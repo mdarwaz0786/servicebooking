@@ -5,6 +5,7 @@ export const createBookingWarranty = async (
   bookingId,
   servicemanBookingId,
   userId,
+  servicemanId,
 ) => {
   const items = await BookingItemModel
     .find({ bookingId })
@@ -25,6 +26,7 @@ export const createBookingWarranty = async (
         bookingId,
         bookingItemId: item?._id,
         servicemanBookingId,
+        servicemanId,
         isWarranty: 1,
         expiryDate,
         createdBy: userId,

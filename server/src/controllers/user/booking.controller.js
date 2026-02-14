@@ -16,6 +16,7 @@ import { autoAssignBooking, autoAssignMultipleServicemen } from "../../utils/aut
 import ServiceManProfile from "../../models/servicemanProfile.model.js";
 import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 import sendNotification from "../../utils/sendNotification.js";
+import BookingWarrantyModel from "../../models/bookingWarranty.model.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -215,11 +216,18 @@ export const getBookings = asyncHandler(async (req, res) => {
     .populate({
       path: "bookingItems",
       strictPopulate: false,
-      populate: {
-        path: "service",
-        select: "name image",
-        strictPopulate: false,
-      },
+      populate: [
+        {
+          path: "service",
+          select: "name image",
+          strictPopulate: false,
+        },
+        {
+          path: "warranty",
+          select: "isWarranty expiryDate",
+          strictPopulate: false,
+        }
+      ]
     })
     .sort(sortOption)
     .skip(skip)
@@ -227,6 +235,16 @@ export const getBookings = asyncHandler(async (req, res) => {
     .lean();
 
   for (let booking of bookings) {
+    const today = new Date();
+
+    const warranty = await BookingWarrantyModel.findOne({
+      bookingId: booking?.booking?._id,
+      isWarranty: 1,
+      expiryDate: { $gte: today },
+    }).lean();
+
+    booking.isWarranty = warranty ? 1 : 0;
+
     const latestAssignment = await ServiceManBookingModel
       .findOne({ bookingId: booking?._id, status: { $nin: ["taken", "new"] }, })
       .sort({ createdAt: -1 })
@@ -373,6 +391,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   const items = await BookingItemModel
     .find({ bookingId: booking._id })
     .populate({ path: "service", select: "-shortDescription -fullDescription" })
+    .populate("warranty")
     .populate({
       path: "additionalParts",
       populate: [
