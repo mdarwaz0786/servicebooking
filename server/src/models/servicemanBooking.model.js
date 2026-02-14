@@ -103,6 +103,14 @@ const serviceManBookingSchema = new mongoose.Schema({
     type: String,
     enum: ["cash", "online"],
   },
+  isWarranty: {
+    type: Number,
+    enum: [0, 1],
+  },
+  warrantyOldId: {    // serviceman booking old id
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManBooking",
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
