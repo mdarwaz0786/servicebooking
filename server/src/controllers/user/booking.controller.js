@@ -375,6 +375,16 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .populate({ path: "service", select: "-shortDescription -fullDescription" })
     .populate({
       path: "additionalParts",
+      populate: [
+        {
+          path: "brandId",
+          model: "Brand",
+        },
+        {
+          path: "rateId",
+          model: "RateCard",
+        }
+      ]
     })
     .lean();
 

@@ -32,6 +32,7 @@ const AddServicePage = () => {
     subSubCategoryId: "",
     subSubSubCategoryId: "",
     name: "",
+    warrantyDays: "",
     rating: "",
     review: "",
     timeTaking: "",
@@ -244,6 +245,7 @@ const AddServicePage = () => {
         setFormData((prev) => ({
           ...prev,
           name: "",
+          warrantyDays: "",
           rating: "",
           review: "",
           mrpPrice: "",
@@ -430,11 +432,26 @@ const AddServicePage = () => {
                   <label className="form-label">Max Booking Quantity</label>
                   <input type="number" placeholder="0" name="maxBookingQuantity" value={formData.maxBookingQuantity} onChange={handleChange} className="form-control" />
                 </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Warranty (In Days)</label>
+                  <input type="number" placeholder="0" name="warrantyDays" value={formData.warrantyDays} onChange={handleChange} className="form-control" />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Service Duration</label>
+                  <input
+                    type="text"
+                    name="timeTaking"
+                    value={formData.timeTaking}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="30 mins"
+                  />
+                </div>
               </div>
 
               {/* Prices */}
               <div className="row">
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">MRP Price</label>
                   <input
                     type="number"
@@ -445,7 +462,7 @@ const AddServicePage = () => {
                     placeholder="0"
                   />
                 </div>
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">Sale Price <span className="text-danger">*</span></label>
                   <input
                     type="number"
@@ -455,17 +472,6 @@ const AddServicePage = () => {
                     className="form-control"
                     placeholder="0"
                     required
-                  />
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Service Duration</label>
-                  <input
-                    type="text"
-                    name="timeTaking"
-                    value={formData.timeTaking}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="30 mins"
                   />
                 </div>
               </div>

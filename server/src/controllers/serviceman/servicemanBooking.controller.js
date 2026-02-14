@@ -312,6 +312,7 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
     status: true,
   })
     .populate("rateId")
+    .populate("brandId", "name code image")
     .lean();
 
   // attach as `parts`

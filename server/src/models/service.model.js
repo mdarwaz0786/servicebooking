@@ -22,6 +22,9 @@ const serviceSchema = new mongoose.Schema({
     enum: [0, 1],
     default: 0,
   },
+  warrantyDays: {
+    type: Number,
+  },
   review: {
     type: Number,
   },

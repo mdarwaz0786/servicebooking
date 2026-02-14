@@ -252,6 +252,7 @@ const BookingDetailPage = () => {
                           <thead className="table-light">
                             <tr>
                               <th>Part Name</th>
+                              <th>Brand Name</th>
                               <th>Item Name</th>
                               <th>Old Price</th>
                               <th className="text-end">Labour Charge</th>
@@ -264,6 +265,7 @@ const BookingDetailPage = () => {
                             {additionalParts?.map((item) => (
                               <tr key={item?._id}>
                                 <td>{item?.description}</td>
+                                <td>{item?.brandId?.name || "-"}</td>
                                 <td>{item?.serviceItemId?.service?.name}</td>
                                 <td>
                                   <p className="mb-1">Price: ₹{item?.oldAmount?.price}</p>
