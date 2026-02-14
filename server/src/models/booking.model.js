@@ -112,6 +112,14 @@ const bookingSchema = new mongoose.Schema({
   timer: {
     type: Date,
   },
+  isWarranty: {
+    type: Number,
+    enum: [0, 1],
+  },
+  warrantyOldId: {    // serviceman booking old id
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManBooking",
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

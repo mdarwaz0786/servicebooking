@@ -388,6 +388,16 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   booking.isCancel = diffInMinutes > 30 ? 0 : 1;
 
+  const today = new Date();
+
+  const warranty = await BookingWarrantyModel.findOne({
+    bookingId: id,
+    isWarranty: 1,
+    expiryDate: { $gte: today },
+  }).lean();
+
+  booking.isWarranty = warranty ? 1 : 0;
+
   const items = await BookingItemModel
     .find({ bookingId: booking._id })
     .populate({ path: "service", select: "-shortDescription -fullDescription" })
@@ -409,6 +419,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "Data fetched successfully",
     data: {
       booking: booking,
       items: items,
