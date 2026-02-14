@@ -731,3 +731,39 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     data: {},
   });
 });
+
+// ================= Hold booking =================
+export const servicemanBookingHold = asyncHandler(async (req, res) => {
+  const {
+    bookingId,
+    servicemanBookingId,
+    holdDate,
+    holdTime,
+  } = req.body;
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    {
+      status: "hold",
+      holdDate: holdDate,
+      holdTime: holdTime,
+    },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    {
+      status: "hold",
+      holdDate: holdDate,
+      holdTime: holdTime,
+    },
+    { new: true }
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: "Booking updated successfully",
+    data: {},
+  });
+});

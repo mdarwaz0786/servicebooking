@@ -7,7 +7,8 @@ import {
   serviceManBookingAccept,
   serviceManBookingStartOtp,
   serviceManBookingStartVerifyOtp,
-  servicemanBookingComplete
+  servicemanBookingComplete,
+  servicemanBookingHold
 } from "../../controllers/serviceman/servicemanBooking.controller.js";
 import isLoggedIn from "../../middlewares/serviceman/auth.middleware.js";
 import upload from "../../middlewares/multer.middleware.js";
@@ -28,5 +29,6 @@ router.post(
 );
 
 router.post("/complete", isLoggedIn, servicemanBookingComplete);
+router.post("/hold", isLoggedIn, servicemanBookingHold);
 
 export default router;
