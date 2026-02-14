@@ -349,15 +349,15 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
     }
     : null;
 
-  const today = new Date();
+  // const today = new Date();
 
-  const warranty = await BookingWarrantyModel.findOne({
-    bookingId: booking?.booking?._id,
-    isWarranty: 1,
-    expiryDate: { $gte: today },
-  }).lean();
+  // const warranty = await BookingWarrantyModel.findOne({
+  //   bookingId: booking?.booking?._id,
+  //   isWarranty: 1,
+  //   expiryDate: { $gte: today },
+  // }).lean();
 
-  booking.isWarranty = warranty ? 1 : 0;
+  // booking.isWarranty = warranty ? 1 : 0;
 
   return res.status(200).json({
     success: true,
