@@ -230,13 +230,19 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .populate({ path: "address", select: "" })
     .populate({
       path: "additionalParts",
-      populate: {
-        path: "serviceItemId",
-        populate: {
-          path: "service",
-          select: "name"
+      populate: [
+        {
+          path: "serviceItemId",
+          populate: {
+            path: "service",
+            select: "name"
+          }
+        },
+        {
+          path: "brandId",
+          select: "name code image"
         }
-      }
+      ]
     })
     .lean();
 
@@ -387,6 +393,16 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .populate({ path: "service", select: "-shortDescription -fullDescription" })
     .populate({
       path: "additionalParts",
+      populate: [
+        {
+          path: "brandId",
+          model: "Brand",
+        },
+        {
+          path: "rateId",
+          model: "RateCard",
+        }
+      ]
     })
     .lean();
 

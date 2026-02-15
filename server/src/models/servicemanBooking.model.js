@@ -12,7 +12,7 @@ const serviceManBookingSchema = new mongoose.Schema({
     ref: "ServiceManProfile",
     required: true,
   },
-  userId: {
+  userId: {          // customer
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -29,8 +29,17 @@ const serviceManBookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["new", "assign", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
+    enum: ["new", "assign", "hold", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
+  },
+  holdDate: {
+    type: Date,
+  },
+  holdTime: {
+    type: String,
+  },
+  holdReason: {
+    type: String,
   },
   actionById: {
     type: mongoose.Schema.Types.ObjectId,
@@ -102,6 +111,14 @@ const serviceManBookingSchema = new mongoose.Schema({
   paymentMode: {
     type: String,
     enum: ["cash", "online"],
+  },
+  isWarranty: {
+    type: Number,
+    enum: [0, 1],
+  },
+  warrantyOldId: {    // serviceman booking old id
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManBooking",
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

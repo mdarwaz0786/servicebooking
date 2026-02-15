@@ -212,7 +212,7 @@ export const getServicemanZone = asyncHandler(async (req, res) => {
       success: false,
       message: "Serviceman zones not found",
     });
-  }
+  };
 
   return res.status(200).json({
     success: true,

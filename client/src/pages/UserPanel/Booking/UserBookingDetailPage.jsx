@@ -3,15 +3,36 @@ import { AppContext } from "../../../context/AppContext";
 import { Link, useParams } from "react-router-dom";
 import BookignReviewModal from "../../../components/Modal/BookignReviewModal";
 import CompanyReviewModal from "../../../components/Modal/CompanyReviewModal";
+import socketService from "../../../components/Socket/SocketService";
 
 const UserBookingDetailPage = () => {
     const { bookingId } = useParams();
-    const { Urls, postData, formatDateTime, formatDate, PriceFormat, imageCheck, bookingStatus, toggleModal } = useContext(AppContext);
+    const { Urls, postData, formatDateTime, formatDate, socketUrl,  PriceFormat, imageCheck, bookingStatus, toggleModal } = useContext(AppContext);
     const [data, setdata] = useState([]);
     const [items, setitems] = useState([]);
     const [isCancel, setisCancel] = useState();
     const [additionalParts, setAdditionalParts] = useState([]);
     const [showApproveReject, setShowApproveReject] = useState(false);
+    const [warrantyInfo, setWarrantyInfo] = useState(null);
+    const [connected, setConnected] = useState('');
+
+
+
+    // ========== SOCKET SETUP - SIRF YEH PART ADD KARO ==========
+  useEffect(() => {
+    socketService.connect(socketUrl); // <-- Apna IP daalo
+    socketService.on('connectionStatus', (data) => {
+      setConnected(data.connected);
+      console.log('Socket:', data.connected ? 'Connected' : 'Disconnected');
+    });
+    socketService.on('bookingUpdate', (data) => {
+      fetchData();
+    });
+    return () => {
+      socketService.disconnect();
+    };
+  }, [data?.servicemanBooking?._id]);
+  // ========== SOCKET SETUP END ==========
 
     const fetchData = async () => {
         try {
@@ -35,10 +56,25 @@ const UserBookingDetailPage = () => {
             
             // Check if we need to show approve/reject buttons
             setShowApproveReject(response.data.booking?.status === 'partstatusnew');
+
+            // Check warranty information from items
+            const warrantyItems = response.data.items?.filter(item => item.warranty);
+            if (warrantyItems && warrantyItems.length > 0) {
+                setWarrantyInfo(warrantyItems[0].warranty);
+            }
         } catch (error) {
             console.error("Cart API Error:", error);
         }
     }
+
+    const formatDateCustom = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'short' });
+        const year = date.getFullYear();
+        return `${day}, ${month} ${year}`;
+    };
 
     const handleApproveAllParts = async () => {
         try {
@@ -88,6 +124,12 @@ const UserBookingDetailPage = () => {
         }
     };
 
+    const handleWarrantyClaim = () => {
+        // Warranty claim functionality
+        // You can implement this based on your requirements
+        alert("Warranty claim process started");
+    };
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -127,6 +169,43 @@ const UserBookingDetailPage = () => {
                                         </button>
                                     </>
                                 )}
+                                
+                                {/* Review Buttons */}
+                                {data.status === 'complete' && (
+                                    <>
+                                        {!data.review && (
+                                            <button
+                                                className="btn btn-info d-flex align-items-center justify-content-center"
+                                                onClick={() => toggleModal('BookignReviewModal', true)}
+                                            >
+                                                <i className="ti ti-star me-1" />
+                                                Booking Review
+                                            </button>
+                                        )}
+                                        
+                                        {!data.review && (
+                                            <button
+                                                className="btn btn-warning d-flex align-items-center justify-content-center"
+                                                onClick={() => toggleModal('CompanyReviewModal', true)}
+                                            >
+                                                <i className="ti ti-building me-1" />
+                                                Company Review
+                                            </button>
+                                        )}
+                                    </>
+                                )}
+
+                                {/* Warranty Button */}
+                                {/* {warrantyInfo && data.status === 'complete' && (
+                                    <button
+                                        className="btn btn-primary d-flex align-items-center justify-content-center"
+                                        onClick={handleWarrantyClaim}
+                                    >
+                                        <i className="ti ti-shield me-1" />
+                                        Claim Warranty
+                                    </button>
+                                )} */}
+
                                 <Link
                                     to={'/user/booking/invoice/' + data._id}
                                     className="btn btn-light d-flex align-items-center justify-content-center"
@@ -156,7 +235,7 @@ const UserBookingDetailPage = () => {
                                     <h6>Booked Slot</h6>
                                     <ul>
                                         <li className="fs-12 d-flex align-items-center mb-2">
-                                            <i className="feather-calendar me-1" /> {formatDate(data.scheduleDate)}
+                                            <i className="feather-calendar me-1" /> {formatDateCustom(data.scheduleDate)}
                                         </li>
                                         <li className="fs-12 d-flex align-items-center">
                                             <i className="feather-clock  me-1" /> {data.scheduleTime}
@@ -166,23 +245,23 @@ const UserBookingDetailPage = () => {
                             </div>
                             <div className="col-md-5">
                                 <div className="slot-user">
-                                    {(data?.serviceman && data.status === 'accept') ? (
+                                    {(data?.serviceman && data.status === 'accept' || 1==1) ? (
                                         <>
                                             <h6>Services Man</h6>
                                             <div className="slot-chat">
                                                 <div className="slot-user-img d-flex align-items-center">
                                                     <img
                                                         className="avatar rounded-circle  me-2"
-                                                        src={imageCheck(data.serviceman.profileImage)}
+                                                        src={imageCheck(data?.serviceman?.profileImage)}
                                                         alt="image"
                                                     />
                                                     <div className="slot-user-info">
-                                                        <p className="mb-1 fs-12">{data.serviceman.name}</p>
+                                                        <p className="mb-1 fs-12">{data?.serviceman?.name}</p>
                                                     </div>
                                                 </div>
                                                 <div className="chat-item d-flex align-items-center">
                                                     <div className="slot-user-info">
-                                                        <p className="mb-0 fs-12"><Link to={'tel:' + data.serviceman.mobile}>{data.serviceman.mobile}</Link></p>
+                                                        <p className="mb-0 fs-12"><Link to={'tel:' + data?.serviceman?.mobile}>{data?.serviceman?.mobile}</Link></p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -195,6 +274,15 @@ const UserBookingDetailPage = () => {
                                     <h6 className="text-end">Booking Status:
                                         {bookingStatus(data?.status)}
                                     </h6>
+                                    {/* Warranty Expiry Date - Show if warranty exists */}
+                                    {warrantyInfo && (
+                                        <div className="text-end mt-2">
+                                            <span className="badge bg-success fs-11">
+                                                <i className="ti ti-calendar me-1"></i>
+                                                Warranty till: {formatDateCustom(warrantyInfo.expiryDate)}
+                                            </span>
+                                        </div>
+                                    )}
                                     <div className="booking-otp" style={{ justifyContent: 'end' }}>
                                         {data?.otp?.split("").map((digit, index) => (
                                             <span key={index} className="otp-box">
@@ -257,6 +345,13 @@ const UserBookingDetailPage = () => {
                                                         <p className="text-muted fs-12 mb-0">
                                                             Quantity: {value.quantity}
                                                         </p>
+                                                        {/* Show warranty badge for this item if it has warranty */}
+                                                        {value.warranty && (
+                                                            <span className="badge bg-success-subtle text-success mt-1">
+                                                                <i className="ti ti-shield-check me-1"></i>
+                                                                Warranty valid till {formatDateCustom(value.warranty.expiryDate)}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <h5 style={{ fontSize: '15px' }}>{PriceFormat(value.salePrice * value.quantity)}</h5>
@@ -335,14 +430,72 @@ const UserBookingDetailPage = () => {
                                 </div>
                             </div>
                             {/* /Order Summary */}
-                           
+                           {/* Review Section - Show if review exists */}
+{data.review && (
+    <div className="col-md-12 mt-3">
+        <div className="card bg-light p-3">
+            <h6 className="order-title mb-3">Your Booking Review</h6>
+            <div className="d-flex align-items-center mb-2">
+                <div className="me-3">
+                    {[1,2,3,4,5].map((star) => (
+                        <i 
+                            key={star}
+                            className={`ti ti-star ${star <= data.review.rating ? 'text-warning' : 'text-muted'}`}
+                            style={{ fontSize: '18px' }}
+                        ></i>
+                    ))}
+                </div>
+                <span className="badge bg-warning text-dark">{data.review.rating}/5</span>
+            </div>
+            {data.review.description && (
+                <p className="mb-0 fs-14">{data.review.description}</p>
+            )}
+            {data.review.serviceman && (
+                <div className="mt-2 pt-2 border-top">
+                    <small className="text-muted">Service by: {data.review.serviceman.name}</small>
+                </div>
+            )}
+        </div>
+    </div>
+)}
+
+{/* Company Review Section - Show if company review exists */}
+{data.companyReview && (
+    <div className="col-md-12 mt-3">
+        <div className="card bg-light p-3">
+            <h6 className="order-title mb-3">Your Company Review</h6>
+            <div className="d-flex align-items-center mb-2">
+                <div className="me-3">
+                    {[1,2,3,4,5].map((star) => (
+                        <i 
+                            key={star}
+                            className={`ti ti-star ${star <= data.companyReview.rating ? 'text-warning' : 'text-muted'}`}
+                            style={{ fontSize: '18px' }}
+                        ></i>
+                    ))}
+                </div>
+                <span className="badge bg-warning text-dark">{data.companyReview.rating}/5</span>
+            </div>
+            {data.companyReview.description && (
+                <p className="mb-0 fs-14">{data.companyReview.description}</p>
+            )}
+        </div>
+    </div>
+)}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <BookignReviewModal bookingId={data._id} />
-            <CompanyReviewModal bookingId={data._id} />
+            {/* Review Modals */}
+            <BookignReviewModal 
+                modalId="bookingReviewModal"
+                bookingId={data._id} 
+            />
+            <CompanyReviewModal 
+                modalId="companyReviewModal"
+                bookingId={data._id} 
+            />
         </>
     );
 };

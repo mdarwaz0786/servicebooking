@@ -81,6 +81,7 @@ export const AppProvider = ({ children }) => {
   
   const SERVER_BASE_URL = import.meta.env.VITE_API_SERVER_BASE_URL;
   const VITE_APP_NAME = import.meta.env.VITE_APP_NAME;
+  const socketUrl = import.meta.env.VITE_socketUrl;
   
   // ✅ Base API URLs
   const apiUrl = () => {
@@ -442,6 +443,7 @@ const PriceFormat = (value = 0, afterDigit = 2) => {
     serviceManJoinModal: false,
     addressModal: false,
     BookignStartModal: false,
+    BookignReviewModal: false,
     CompanyReviewModal: false,
     ServiceDetailModal: false,
     RateCardModal: false,
@@ -693,6 +695,7 @@ const PriceFormat = (value = 0, afterDigit = 2) => {
     <AppContext.Provider value={{
       SERVER_BASE_URL,
       VITE_APP_NAME,
+      socketUrl,
       toggleModal,
       modals,
 

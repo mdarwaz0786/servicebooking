@@ -41,7 +41,7 @@ export const getSubCategories = asyncHandler(async (req, res) => {
 
   let subCategories = await SubCategoryModel
     .find(filters)
-    .populate("category")
+    .select("-fullDescription")
     .sort(sortOption)
     .skip(skip)
     .limit(limit)

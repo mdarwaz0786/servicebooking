@@ -13,6 +13,7 @@ import { buildPagination } from "../../utils/pagination.js";
 export const createService = asyncHandler(async (req, res) => {
   const {
     name,
+    warrantyDays,
     rating,
     review,
     mrpPrice,
@@ -66,12 +67,14 @@ export const createService = asyncHandler(async (req, res) => {
 
     const service = await ServiceModel.create({
       name,
+      warrantyDays,
       rating,
       review,
       mrpPrice,
       salePrice,
       taxablePrice,
       timeTaking,
+      isMediaUpload,
       shortDescription,
       fullDescription,
       categoryId,
@@ -213,6 +216,7 @@ export const getServiceById = asyncHandler(async (req, res) => {
 export const updateService = asyncHandler(async (req, res) => {
   const {
     name,
+    warrantyDays,
     rating,
     review,
     mrpPrice,
@@ -274,6 +278,7 @@ export const updateService = asyncHandler(async (req, res) => {
   };
 
   service.name = name || service.name;
+  service.warrantyDays = warrantyDays || service.warrantyDays;
   service.rating = rating || service.rating;
   service.review = review || service.review;
   service.isMediaUpload = isMediaUpload || service.isMediaUpload;

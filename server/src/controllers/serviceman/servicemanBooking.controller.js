@@ -14,6 +14,8 @@ import generateOtp from "../../utils/generateOpt.js";
 import InvoiceModel from "../../models/invoice.model.js";
 import { createInvoice } from "../../utils/invoice.js";
 import { generateInvoice } from "../../utils/generateInvoice.js";
+import { createBookingWarranty } from "../../utils/createBookingWarrnty.js";
+import BookingWarrantyModel from "../../models/bookingWarranty.model.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -64,6 +66,7 @@ export const getServiceManBookings = asyncHandler(async (req, res) => {
         $in: [
           "partstatusnew",
           "partstatusconfirm",
+          "hold",
         ],
       };
     }
@@ -296,6 +299,11 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
               model: "BookingMedia",
               select: "mediaTimeline mediaType media",
               strictPopulate: false,
+            },
+            {
+              path: "warranty",
+              select: "isWarranty expiryDate",
+              strictPopulate: false,
             }
           ]
         },
@@ -305,13 +313,14 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
-  }
+  };
 
   const additionalParts = await BookingAdditionalPartModel.find({
     bookingId: booking?.booking?._id,
     status: true,
   })
     .populate("rateId")
+    .populate("brandId", "name code image")
     .lean();
 
   // attach as `parts`
@@ -340,6 +349,16 @@ export const getServiceManBookingById = asyncHandler(async (req, res) => {
         : null,
     }
     : null;
+
+  // const today = new Date();
+
+  // const warranty = await BookingWarrantyModel.findOne({
+  //   bookingId: booking?.booking?._id,
+  //   isWarranty: 1,
+  //   expiryDate: { $gte: today },
+  // }).lean();
+
+  // booking.isWarranty = warranty ? 1 : 0;
 
   return res.status(200).json({
     success: true,
@@ -677,6 +696,9 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
 
   const userId = req.user?._id;
 
+  const serviceman = await ServiceManProfileModel.findOne({ userId: userId }).select("userId _id");
+  const servicemanId = serviceman?._id;
+
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
@@ -694,12 +716,58 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  await createBookingWarranty(
+    bookingId,
+    servicemanBookingId,
+    userId,
+    servicemanId,
+  );
+
   await calculateProviderEarningAmount(bookingId, paymentMode, userId, servicemanBookingId);
   await generateInvoice(userId, bookingId, servicemanBookingId);
 
   return res.status(201).json({
     success: true,
     message: "Booking completed successfully",
+    data: {},
+  });
+});
+
+// ================= Hold booking =================
+export const servicemanBookingHold = asyncHandler(async (req, res) => {
+  const {
+    bookingId,
+    servicemanBookingId,
+    holdDate,
+    holdTime,
+    holdReason,
+  } = req.body;
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    {
+      status: "hold",
+      holdDate: holdDate,
+      holdTime: holdTime,
+      holdReason: holdReason,
+    },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    {
+      status: "hold",
+      holdDate: holdDate,
+      holdTime: holdTime,
+      holdReason: holdReason,
+    },
+    { new: true }
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: "Booking updated successfully",
     data: {},
   });
 });

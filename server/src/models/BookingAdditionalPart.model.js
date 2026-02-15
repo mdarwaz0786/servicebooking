@@ -55,7 +55,21 @@ const bookingAdditionalPartSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+bookingAdditionalPartSchema.virtual("brand", {
+  ref: "Brand",
+  localField: "_id",
+  foreignField: "brandId",
+  justOne: true,
+});
+
+bookingAdditionalPartSchema.virtual("rateCard", {
+  ref: "RateCard",
+  localField: "_id",
+  foreignField: "rateId",
+  justOne: true,
+});
 
 const BookingAdditionalPartModel = mongoose.model("BookingAdditionalPart", bookingAdditionalPartSchema);
 

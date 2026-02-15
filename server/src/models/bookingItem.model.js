@@ -76,6 +76,13 @@ bookingItemSchema.virtual("additionalParts", {
   justOne: false,
 });
 
+bookingItemSchema.virtual("warranty", {
+  ref: "BookingWarranty",
+  localField: "_id",
+  foreignField: "bookingItemId",
+  justOne: true
+});
+
 const BookingItemModel = mongoose.model("BookingItem", bookingItemSchema);
 
 export default BookingItemModel;

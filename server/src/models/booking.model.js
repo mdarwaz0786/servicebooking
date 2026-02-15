@@ -56,9 +56,18 @@ const bookingSchema = new mongoose.Schema({
   },
   status: { // booking status 
     type: String,
-    enum: ["new", "assign", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
+    enum: ["new", "assign", "hold", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
     default: "new",
     index: true,
+  },
+  holdDate: {
+    type: Date,
+  },
+  holdTime: {
+    type: String,
+  },
+  holdReason: {
+    type: String,
   },
   actionById: {
     type: mongoose.Schema.Types.ObjectId,
@@ -111,6 +120,14 @@ const bookingSchema = new mongoose.Schema({
   },
   timer: {
     type: Date,
+  },
+  isWarranty: {
+    type: Number,
+    enum: [0, 1],
+  },
+  warrantyOldId: {    // serviceman booking old id
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ServiceManBooking",
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
