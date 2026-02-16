@@ -69,6 +69,10 @@ const bookingSchema = new mongoose.Schema({
   holdReason: {
     type: String,
   },
+  lastStatus: {
+    type: String,
+    enum: ["new", "assign", "hold", "accept", "reject", "ongoing", "complete", "cancel", "taken", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"],
+  },
   actionById: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

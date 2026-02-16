@@ -743,6 +743,9 @@ export const servicemanBookingHold = asyncHandler(async (req, res) => {
     holdReason,
   } = req.body;
 
+  const booking = await BookingModel.findById(bookingId);
+  const smBooking = await ServiceManBookingModel.findById(servicemanBookingId);
+
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
@@ -750,6 +753,7 @@ export const servicemanBookingHold = asyncHandler(async (req, res) => {
       holdDate: holdDate,
       holdTime: holdTime,
       holdReason: holdReason,
+      lastStatus: booking?.status,
     },
     { new: true }
   );
@@ -761,6 +765,40 @@ export const servicemanBookingHold = asyncHandler(async (req, res) => {
       holdDate: holdDate,
       holdTime: holdTime,
       holdReason: holdReason,
+      lastStatus: smBooking?.status,
+    },
+    { new: true }
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: "Booking updated successfully",
+    data: {},
+  });
+});
+
+// ================= Hold release booking =================
+export const servicemanBookingHoldRelease = asyncHandler(async (req, res) => {
+  const {
+    bookingId,
+    servicemanBookingId,
+  } = req.body;
+
+  const booking = await BookingModel.findById(bookingId);
+  const smBooking = await ServiceManBookingModel.findById(servicemanBookingId);
+
+  await BookingModel.findByIdAndUpdate(
+    bookingId,
+    {
+      status: booking?.lastStatus,
+    },
+    { new: true }
+  );
+
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    {
+      status: smBooking?.lastStatus,
     },
     { new: true }
   );

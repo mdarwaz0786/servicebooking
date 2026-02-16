@@ -8,7 +8,8 @@ import {
   serviceManBookingStartOtp,
   serviceManBookingStartVerifyOtp,
   servicemanBookingComplete,
-  servicemanBookingHold
+  servicemanBookingHold,
+  servicemanBookingHoldRelease
 } from "../../controllers/serviceman/servicemanBooking.controller.js";
 import isLoggedIn from "../../middlewares/serviceman/auth.middleware.js";
 import upload from "../../middlewares/multer.middleware.js";
@@ -30,5 +31,6 @@ router.post(
 
 router.post("/complete", isLoggedIn, servicemanBookingComplete);
 router.post("/hold", isLoggedIn, servicemanBookingHold);
+router.post("/hold-relase", isLoggedIn, servicemanBookingHoldRelease);
 
 export default router;
