@@ -140,9 +140,9 @@ const Navbar = () => {
                         <i className={`ti ti-user ${width > 767 ? 'me-2' : ''}`} />Account
                       </Link>
                     )}
-                    <Link className="btn btn-linear-primary  m-2" onClick={handleLogout}>
+                    {/* <Link className="btn btn-linear-primary  m-2" onClick={handleLogout}>
                       <i className={`ti ti-logout ${width > 767 ? 'me-2' : ''}`} />{width > 767 ? 'Logout' : null}
-                    </Link>
+                    </Link> */}
                   </>
                 ) : (
                   <>

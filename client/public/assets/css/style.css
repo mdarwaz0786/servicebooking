@@ -36785,6 +36785,7 @@ p span {
     background: rgba(0, 0, 0, 0.5);
     z-index: 99999;
     display: none;
+    overflow: scroll;
   }
 
   .mobile-cart-close-btn,

@@ -259,11 +259,7 @@ const UserBookingDetailPage = () => {
                                                         <p className="mb-1 fs-12">{data?.serviceman?.name}</p>
                                                     </div>
                                                 </div>
-                                                <div className="chat-item d-flex align-items-center">
-                                                    <div className="slot-user-info">
-                                                        <p className="mb-0 fs-12"><Link to={'tel:' + data?.serviceman?.mobile}>{data?.serviceman?.mobile}</Link></p>
-                                                    </div>
-                                                </div>
+                                                
                                             </div>
                                         </>
                                     ) : (null)}
