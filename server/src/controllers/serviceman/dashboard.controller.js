@@ -492,10 +492,20 @@ export const dashboard = asyncHandler(async (req, res) => {
   //   { $sort: { weekNumber: 1 } }
   // ]);
 
-  const nowIST = new Date().toLocaleTimeString("en-GB", {
-    timeZone: "Asia/Kolkata",
+  const now = new Date();
+
+  const nowISTDate = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
+
+  const currentHour = nowISTDate.getHours();
+
+  const isNightTime = currentHour >= 20 || currentHour < 8;
+
+  const nowIST = nowISTDate.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   });
 
   // TODAY TIME SLOTS COUNT
@@ -534,8 +544,8 @@ export const dashboard = asyncHandler(async (req, res) => {
     message: "Dashboard data fetched successfully",
     data: {
       wallet: summary,
-      todayTimeSlots: todayTimeSlots ? 1 : 0,
-      tomorrowTimeSlots: tomorrowTimeSlots ? 1 : 0,
+      todayTimeSlots: isNightTime ? 1 : (todayTimeSlots ? 1 : 0),
+      tomorrowTimeSlots: isNightTime ? 1 : (tomorrowTimeSlots ? 1 : 0),
       bookings: bookingAgg[0]?.bookings || {
         total: 0,
         new: 0,

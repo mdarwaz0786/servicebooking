@@ -3,6 +3,7 @@ import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ReviewModel from "../../models/review.model.js";
 import AppModel from "../../models/app.model.js";
 import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
+import UserModel from "../../models/user.model.js";
 import mongoose from "mongoose";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
@@ -139,6 +140,8 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     },
   ]);
 
+  const user = await UserModel.findOne({ _id: userId });
+
   const profile = await ServiceManProfileModel
     .findOne({ userId })
     .populate("categories")
@@ -186,6 +189,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    idStatus: user?.status == false || !user ? 0 : 1,
     message: "Data fetched successfully",
     data: {
       ...profileObj,
