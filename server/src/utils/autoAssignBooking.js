@@ -5,7 +5,7 @@ import { convert12To24 } from "./convert12To24.js";
 export const autoAssignBooking = async (
   lat,
   long,
-  categoryId,
+  subCategoryId,
   bookingDate,
   scheduleTime,
   acceptCreditPoints,
@@ -68,7 +68,7 @@ export const autoAssignBooking = async (
     {
       $match: {
         "serviceman.zones": zone?._id,
-        "serviceman.categoryIds": categoryId,
+        "serviceman.subCategoryIds": subCategoryId,
       },
     },
 
@@ -210,7 +210,7 @@ export const autoAssignBooking = async (
 
 
 export const autoAssignMultipleServicemen = async (
-  categoryId,
+  subCategoryId,
   bookingDate,
   scheduleTime,
   acceptCreditPoints
@@ -247,7 +247,7 @@ export const autoAssignMultipleServicemen = async (
 
     {
       $match: {
-        "serviceman.categoryIds": categoryId,
+        "serviceman.subCategoryIds": subCategoryId,
       },
     },
 

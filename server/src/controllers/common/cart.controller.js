@@ -12,11 +12,11 @@ export const addToCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Service ID is required");
   };
 
-  const service = await ServiceModel.findById(serviceId).select("categoryId");
+  const service = await ServiceModel.findById(serviceId).select("categoryId subCategoryId");
 
   if (!service) {
     throw new ApiError(404, "Service not found");
-  }
+  };
 
   const resolvedUserId = req.user?._id ? req.user._id : userId;
 
@@ -25,15 +25,15 @@ export const addToCart = asyncHandler(async (req, res) => {
   let message;
 
   if (cartItems.length > 0) {
-    const existingCategoryId = cartItems[0]?.categoryId?.toString();
+    const existingSubCategoryId = cartItems[0]?.subCategoryId?.toString();
 
-    if (existingCategoryId !== service?.categoryId?.toString()) {
+    if (existingSubCategoryId !== service?.subCategoryId?.toString()) {
       await CartModel.deleteMany({
         userId: resolvedUserId,
-        categoryId: existingCategoryId,
+        subCategoryId: existingSubCategoryId,
       });
     };
-    message = "Your previous category service is removed from cart";
+    message = "Your previous sub category service is removed from cart";
   };
 
   let cartItem = await CartModel.findOne({ serviceId, userId: resolvedUserId });
@@ -49,6 +49,7 @@ export const addToCart = asyncHandler(async (req, res) => {
     cartItem = await CartModel.create({
       serviceId,
       categoryId: service?.categoryId,
+      subCategoryId: service?.subCategoryId,
       userId: resolvedUserId,
       quantity,
     });

@@ -210,10 +210,10 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
     const long = address?.long;
 
     const { cartProducts } = await getCartData(transactionData?.userId);
-    const categoryId = cartProducts[0]?.categoryId;
+    const subCategoryId = cartProducts[0]?.subCategoryId;
 
     const { acceptCreditPoints } = await getSupportConfig(booking?._id);
-    const serviceman = await autoAssignBooking(lat, long, categoryId, booking?.scheduleDate, booking?.scheduleTime, acceptCreditPoints);
+    const serviceman = await autoAssignBooking(lat, long, subCategoryId, booking?.scheduleDate, booking?.scheduleTime, acceptCreditPoints);
 
     if (serviceman) {
       await ServiceManBookingModel.create({
@@ -238,7 +238,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
         await sendNotification(
           [serviceman?.userId],
           "Booking Accepted",
-          "One booking is accepted to you kindly proceed furthur",
+          "One booking is accepted to you kindly proceed further",
           "serviceman",
           {
             type: "bookingSameZone",
@@ -249,7 +249,7 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
 
     if (!serviceman) {
       const servicemen = await autoAssignMultipleServicemen(
-        categoryId,
+        subCategoryId,
         booking?.scheduleDate,
         booking?.scheduleTime,
         acceptCreditPoints
