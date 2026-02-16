@@ -49,9 +49,9 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       setlandmark(selectedAddress.landmark || "");
       setpincode(selectedAddress.pincode || "");
       setaddresstype(selectedAddress.type || "");
-      setLatLng({ 
-        lat: selectedAddress.lat || null, 
-        lng: selectedAddress.long || null 
+      setLatLng({
+        lat: selectedAddress.lat || null,
+        lng: selectedAddress.long || null
       });
       setSearchInput(selectedAddress.formattedAddress || "");
       setIsAutoFilled(false); // Edit mode में auto-fill disable
@@ -68,7 +68,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   // Fetch address details from coordinates
   const fetchAddressDetails = (coordinates) => {
     if (!window.google?.maps?.Geocoder) return;
-    
+
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ location: coordinates }, (results, status) => {
       if (status === 'OK' && results[0]) {
@@ -83,37 +83,37 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   const autoFillFormFields = (address) => {
     let houseNumberTemp = "";
     let landmarkTemp = "";
-    
+
     // Extract address components
     const addressComponents = address.address_components || [];
-    
+
     // Find house number (street_number)
-    const streetNumber = addressComponents.find(comp => 
+    const streetNumber = addressComponents.find(comp =>
       comp.types.includes('street_number')
     );
-    
+
     // Find route (street name)
-    const route = addressComponents.find(comp => 
+    const route = addressComponents.find(comp =>
       comp.types.includes('route')
     );
-    
+
     // Find locality
-    const locality = addressComponents.find(comp => 
+    const locality = addressComponents.find(comp =>
       comp.types.includes('locality') || comp.types.includes('sublocality')
     );
-    
+
     // Find landmark (premise, point_of_interest, establishment)
-    const landmarkComp = addressComponents.find(comp => 
-      comp.types.includes('premise') || 
-      comp.types.includes('point_of_interest') || 
+    const landmarkComp = addressComponents.find(comp =>
+      comp.types.includes('premise') ||
+      comp.types.includes('point_of_interest') ||
       comp.types.includes('establishment')
     );
-    
+
     // Find sublocality (for landmark)
-    const sublocality = addressComponents.find(comp => 
+    const sublocality = addressComponents.find(comp =>
       comp.types.includes('sublocality')
     );
-    
+
     // Build house number field - यहाँ हम complete formatted address लेते हैं
     if (address.formatted_address) {
       // Complete formatted address को house number field में डालें
@@ -125,7 +125,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     } else if (streetNumber) {
       houseNumberTemp = streetNumber.long_name;
     }
-    
+
     // Build landmark field
     if (landmarkComp) {
       landmarkTemp = landmarkComp.long_name;
@@ -134,17 +134,17 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     } else if (locality) {
       landmarkTemp = locality.long_name;
     }
-    
+
     // Always update house number with the formatted address from search
     if (houseNumberTemp) {
       sethouseNumber(houseNumberTemp);
     }
-    
+
     // Update landmark if available
     if (landmarkTemp) {
       setlandmark(landmarkTemp);
     }
-    
+
     // Mark as auto-filled
     if (!selectedAddress) {
       setIsAutoFilled(true);
@@ -182,9 +182,9 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     script.defer = true;
     script.onerror = (error) => {
       console.error("Failed to load Google Maps script:", error);
-      setErrors(prev => ({ 
-        ...prev, 
-        map: "Failed to load Google Maps. Please check your API key." 
+      setErrors(prev => ({
+        ...prev,
+        map: "Failed to load Google Maps. Please check your API key."
       }));
     };
 
@@ -210,12 +210,12 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     try {
       autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
       placesServiceRef.current = new window.google.maps.places.PlacesService(document.createElement('div'));
-      
+
       initMap();
       setIsAutocompleteReady(true);
-      
+
       setTimeout(fixAutocompleteDropdown, 500);
-      
+
     } catch (error) {
       console.error("Error initializing Google services:", error);
     }
@@ -268,7 +268,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
 
       autocompleteInstance.addListener('place_changed', () => {
         const place = autocompleteInstance.getPlace();
-        
+
         if (!place.geometry) {
           console.log("No geometry found for place:", place);
           if (place.place_id) {
@@ -282,9 +282,9 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
 
       setAutocomplete(autocompleteInstance);
       setIsAutocompleteReady(true);
-      
+
       fixAutocompleteDropdown();
-      
+
     } catch (error) {
       console.error("Error in initAutocomplete:", error);
       setIsAutocompleteReady(false);
@@ -294,7 +294,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   // Get place details using place_id
   const getPlaceDetails = (placeId) => {
     if (!placesServiceRef.current) return;
-    
+
     placesServiceRef.current.getDetails(
       {
         placeId: placeId,
@@ -315,7 +315,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     const lat = place.geometry.location.lat();
     const lng = place.geometry.location.lng();
     const newPosition = { lat, lng };
-    
+
     // Update UI
     if (marker) {
       marker.setPosition(newPosition);
@@ -326,7 +326,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     } else {
       initMapWithPosition(newPosition);
     }
-    
+
     // Update states
     setLatLng(newPosition);
     if (place.formatted_address) {
@@ -334,15 +334,15 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       // DIRECT: जो search में typed address है, उसे सीधे house number में fill करें
       sethouseNumber(place.formatted_address);
     }
-    
+
     // Auto-fill form fields from place details
     autoFillFormFields(place);
-    
+
     // Clear location error if any
     if (errors.location || errors.map) {
       setErrors(prev => ({ ...prev, location: null, map: null }));
     }
-    
+
     // Mark as auto-filled
     setIsAutoFilled(true);
   };
@@ -352,14 +352,14 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
     const newPosition = { lat, lng };
-    
+
     markerInstance.setPosition(newPosition);
     setLatLng(newPosition);
     setSearchInput("");
-    
+
     // Fetch address details for clicked location
     fetchAddressDetails(newPosition);
-    
+
     // Clear location error if any
     if (errors.location || errors.map) {
       setErrors(prev => ({ ...prev, location: null, map: null }));
@@ -371,13 +371,13 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
     const newPosition = { lat, lng };
-    
+
     setLatLng(newPosition);
     setSearchInput("");
-    
+
     // Fetch address details for dragged location
     fetchAddressDetails(newPosition);
-    
+
     // Clear location error if any
     if (errors.location || errors.map) {
       setErrors(prev => ({ ...prev, location: null, map: null }));
@@ -392,7 +392,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     }
 
     try {
-      const defaultCenter = latLng?.lat && latLng?.lng 
+      const defaultCenter = latLng?.lat && latLng?.lng
         ? { lat: latLng.lat, lng: latLng.lng }
         : center;
 
@@ -476,11 +476,11 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   // Handle search button click
   const handleSearchClick = () => {
     if (!searchInput.trim()) return;
-    
+
     // First, directly fill the house number with the search input
     sethouseNumber(searchInput);
     setIsAutoFilled(true);
-    
+
     // Then perform geocoding
     performGeocoding(searchInput);
   };
@@ -488,15 +488,15 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   // Perform geocoding
   const performGeocoding = (address) => {
     if (!window.google?.maps?.Geocoder) {
-      setErrors(prev => ({ 
-        ...prev, 
-        map: "Google Maps geocoding service not available. Please try again." 
+      setErrors(prev => ({
+        ...prev,
+        map: "Google Maps geocoding service not available. Please try again."
       }));
       return;
     }
-    
+
     const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ 
+    geocoder.geocode({
       address: address,
       region: 'in',
       bounds: new window.google.maps.LatLngBounds(
@@ -508,7 +508,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         const lat = results[0].geometry.location.lat();
         const lng = results[0].geometry.location.lng();
         const newPosition = { lat, lng };
-        
+
         if (marker) marker.setPosition(newPosition);
         if (map) {
           map.setCenter(newPosition);
@@ -516,24 +516,24 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         } else {
           initMapWithPosition(newPosition);
         }
-        
+
         setLatLng(newPosition);
         setSearchInput(results[0].formatted_address);
-        
+
         // DIRECT: जो search में typed address है, उसे सीधे house number में fill करें
         sethouseNumber(results[0].formatted_address);
-        
+
         // Auto-fill form fields from geocoding results
         autoFillFormFields(results[0]);
-        
+
         // Clear location error if any
         if (errors.location || errors.map) {
           setErrors(prev => ({ ...prev, location: null, map: null }));
         }
       } else {
-        setErrors(prev => ({ 
-          ...prev, 
-          map: "Could not find the address. Please try a different search term." 
+        setErrors(prev => ({
+          ...prev,
+          map: "Could not find the address. Please try a different search term."
         }));
       }
     });
@@ -562,12 +562,12 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const newLatLng = { 
-            lat: position.coords.latitude, 
-            lng: position.coords.longitude 
+          const newLatLng = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
           };
           setLatLng(newLatLng);
-          
+
           // Update map if exists
           if (marker) {
             marker.setPosition(newLatLng);
@@ -578,18 +578,18 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           } else {
             initMapWithPosition(newLatLng);
           }
-          
+
           // Clear location error if any
           setErrors(prev => ({ ...prev, location: null, map: null }));
-          
+
           // Reverse geocode to get address and auto-fill
           reverseGeocode(newLatLng);
         },
         (error) => {
           console.error("Error getting location:", error);
           let errorMessage = "Unable to fetch your location.";
-          
-          switch(error.code) {
+
+          switch (error.code) {
             case error.PERMISSION_DENIED:
               errorMessage = "Location access denied. Please enable GPS permission.";
               break;
@@ -603,10 +603,10 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
               errorMessage = "An unknown error occurred.";
               break;
           }
-          
-          setErrors(prev => ({ 
-            ...prev, 
-            location: errorMessage 
+
+          setErrors(prev => ({
+            ...prev,
+            location: errorMessage
           }));
         },
         {
@@ -616,9 +616,9 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         }
       );
     } else {
-      setErrors(prev => ({ 
-        ...prev, 
-        location: "Geolocation is not supported by this browser." 
+      setErrors(prev => ({
+        ...prev,
+        location: "Geolocation is not supported by this browser."
       }));
     }
   };
@@ -626,7 +626,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   // Reverse geocode to get address from coordinates
   const reverseGeocode = (latLng) => {
     if (!window.google?.maps?.Geocoder) return;
-    
+
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ location: latLng }, (results, status) => {
       if (status === 'OK' && results[0]) {
@@ -679,7 +679,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
           houseNumber: houseNumber.trim(),
           landmark: landmark.trim(),
           type: addresstype,
-          pincode:pincode,
+          pincode: pincode,
         },
         Urls.addAddress,
         "POST"
@@ -699,9 +699,9 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
       }
     } catch (error) {
       console.error("Address API Error:", error);
-      setErrors(prev => ({ 
-        ...prev, 
-        submit: error.message || "Failed to save address. Please try again." 
+      setErrors(prev => ({
+        ...prev,
+        submit: error.message || "Failed to save address. Please try again."
       }));
     } finally {
       setIsSubmitting(false);
@@ -730,7 +730,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
     setlandmark(e.target.value);
     setIsAutoFilled(false); // User manually edited, so remove auto-filled status
   };
- 
+
   // Handle pincode change
   const handlePincodeChange = (e) => {
     setpincode(e.target.value);
@@ -772,8 +772,8 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                 backgroundColor: "white"
               }}
             />
-            <button 
-              className="btn btn-primary google-map-search-button" 
+            <button
+              className="btn btn-primary google-map-search-button"
               type="button"
               onClick={handleSearchClick}
               style={{
@@ -786,7 +786,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
               Search
             </button>
           </div>
-                    
+
           {/* Status indicators */}
           <div className="mt-2 d-flex gap-3 align-items-center">
             {!isScriptLoaded && (
@@ -808,7 +808,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
               </small>
             )}
           </div>
-          
+
           {/* Helper text */}
           <div className="text-muted small mt-1">
             <i className="fa fa-lightbulb me-1"></i>
@@ -817,8 +817,8 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
         </div>
 
         {/* Map Container */}
-        <div 
-          ref={mapRef} 
+        <div
+          ref={mapRef}
           style={containerStyle}
           className="google-map-container border"
         />
@@ -848,18 +848,18 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
   };
 
   return (
-    <div 
-      className={`modal fade ${modals.addressModal ? "show" : ""}`} 
-      id="provider" 
-      style={{ 
+    <div
+      className={`modal fade ${modals.addressModal ? "show" : ""}`}
+      id="provider"
+      style={{
         display: modals.addressModal ? 'block' : 'none',
-        zIndex: 1050 
+        zIndex: 1050
       }}
     >
-      <div className="modal-dialog modal-xl modal-dialog-centered" style={{maxWidth: '75%'}}>
+      <div className="modal-dialog modal-xl modal-dialog-centered w-100" >
         <div className="modal-content" style={{ background: 'transparent', border: 0 }}>
           <div className="card shadow-lg border-0 m-0 p-4 rounded-4" style={{ width: "100%" }}>
-            
+
             <Link
               className="modal-close-btn position-absolute"
               style={{ top: '15px', right: '20px', zIndex: 10 }}
@@ -867,7 +867,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
             >
               <i className="fa fa-times"></i>
             </Link>
-            
+
             {/* Error messages */}
             {errors.submit && (
               <div className="alert alert-danger mb-3">
@@ -885,13 +885,13 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
 
             {/* Use Current Location */}
             <div className="mb-3">
-              <button 
-                className="btn btn-outline-primary d-flex align-items-center" 
+              <button
+                className="btn btn-outline-primary d-flex align-items-center"
                 onClick={handleUseCurrentLocation}
                 type="button"
                 disabled={!isScriptLoaded}
               >
-                <i className="fa fa-location-arrow me-2"></i> 
+                <i className="fa fa-location-arrow me-2"></i>
                 <span>Use Current Location</span>
               </button>
               {errors.location && (
@@ -905,8 +905,8 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
             <form ref={formRef} onSubmit={handleSubmit} onKeyPress={handleKeyPress}>
               <div className="row g-4">
                 {/* Map Picker */}
-                <div className="col-lg-6">                  
-                  {renderMapPicker()}                  
+                <div className="col-lg-6">
+                  {renderMapPicker()}
                   {/* Map loading/error message */}
                   {errors.map && (
                     <div className="alert alert-danger mt-3">
@@ -926,7 +926,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                         Editing Address
                       </h6>
                       <p className="mb-0 text-dark">
-                        {selectedAddress.houseNumber} {selectedAddress.landmark} 
+                        {selectedAddress.houseNumber} {selectedAddress.landmark}
                         <span className="badge bg-secondary ms-2">{selectedAddress.type}</span>
                       </p>
                     </div>
@@ -981,7 +981,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                     </small>
                   </div>
 
-                  
+
                   <div className="mb-3">
                     <label className="form-label fw-semibold">
                       Pincode
@@ -1057,8 +1057,8 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                   </div>
 
                   <div className="d-grid gap-2">
-                    <button 
-                      className="btn btn-success btn-lg" 
+                    <button
+                      className="btn btn-success btn-lg"
                       type="submit"
                       disabled={isSubmitting || !latLng.lat || !latLng.lng}
                     >
@@ -1074,7 +1074,7 @@ const AddressModal = ({ fetchAddresses, selectedAddress }) => {
                         </>
                       )}
                     </button>
-                    
+
                     {/* Disabled button explanation */}
                     {(!latLng.lat || !latLng.lng) && (
                       <div className="text-center small text-warning mt-2">

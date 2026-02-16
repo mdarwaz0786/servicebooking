@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
   // Jab HTML se update aaye
   socket.on('updateBooking', (data) => {
     console.log('📦 Update received:', data);
-    
+
     // Sabhi connected clients ko bhejo (including React Native app)
     io.emit('bookingUpdated', {
       bookingId: data.bookingId,
@@ -31,11 +31,11 @@ io.on('connection', (socket) => {
       timestamp: new Date().toISOString()
     });
   });
-  
+
   // Jab HTML se List update aaye
   socket.on('updateBookingList', (data) => {
     console.log('📦 Update received:', data);
-    
+
     // Sabhi connected clients ko bhejo (including React Native app)
     io.emit('bookingUpdatedList', {
       bookingId: data.bookingId,
@@ -53,21 +53,21 @@ io.on('connection', (socket) => {
 // API endpoint for testing
 app.post('/api/update', (req, res) => {
   const { bookingId, status, message } = req.body;
-  
+
   io.emit('bookingUpdated', {
     bookingId,
     status,
     message: message || 'Updated via API',
     timestamp: new Date().toISOString()
   });
-  
+
   io.emit('bookingUpdatedList', {
     bookingId,
     status,
     message: message || 'Updated via API',
     timestamp: new Date().toISOString()
   });
-  
+
   res.json({ success: true });
 });
 
