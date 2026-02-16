@@ -29,6 +29,9 @@ const Services = ({ search, slug, handleSubCategory }) => {
 
   const { postData, categoryListData, generateUniqueId, Urls, setserviceDetailData, setserviceDetailDataItem, serviceDetailDataItem, toggleModal, servicePageCategoryData, serviceListData, pageLoading, servicePageName, cartAmount, cartItems, servicePageCartShow, PriceFormat, setCartOpen } = useContext(AppContext);
 
+  // console.log('servicePageCategoryData', servicePageCategoryData)
+  // console.log('cartItems', cartItems)
+
   const handleServiceDetail2 = async (id) => {
     try {
       const response = await postData({ userId: generateUniqueId() }, Urls.serviceDetail + '/' + id, "GET", 0, 1);
