@@ -139,6 +139,8 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     },
   ]);
 
+  const user = await UserModel.findOne({ _id: userId });
+
   const profile = await ServiceManProfileModel
     .findOne({ userId })
     .populate("categories")
@@ -186,6 +188,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    idStatus: user?.status == false || !user ? 0 : 1,
     message: "Data fetched successfully",
     data: {
       ...profileObj,
