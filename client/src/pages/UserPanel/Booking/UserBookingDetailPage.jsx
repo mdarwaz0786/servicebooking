@@ -206,13 +206,13 @@ const UserBookingDetailPage = () => {
                                     </button>
                                 )} */}
 
-                                <Link
+                                {/* <Link
                                     to={'/user/booking/invoice/' + data._id}
                                     className="btn btn-light d-flex align-items-center justify-content-center"
                                 >
                                     <i className="ti ti-file-text me-1" />
                                     Invoice
-                                </Link>
+                                </Link> */}
                                 {isCancel && data.status!='cancel'?
                                 <button
                                     className="btn btn-danger d-flex align-items-center justify-content-center"
