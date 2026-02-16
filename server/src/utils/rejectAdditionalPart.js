@@ -11,6 +11,10 @@ const rejectAdditionalParts = async (bookingId) => {
     .find({ bookingId })
     .lean();
 
+  if (!additionalParts.length) {
+    return true;
+  };
+
   const totalAdditionalPartAmount = additionalParts?.reduce((sum, item) => {
     const unitPrice = Number(item?.unitPrice) || 0;
     const quantity = Number(item?.quantity) || 1;
@@ -19,8 +23,15 @@ const rejectAdditionalParts = async (bookingId) => {
 
   const booking = await BookingModel.findById(bookingId);
 
-  const newAmount = Number(booking?.amount) - totalAdditionalPartAmount;
-  const newPayable = Number(booking?.payableAmount) - totalAdditionalPartAmount;
+  if (!booking) {
+    throw new Error("Booking not found while rejecting additional parts");
+  };
+
+  const currentAmount = Number(booking?.amount) || 0;
+  const currentPayable = Number(booking?.payableAmount) || 0;
+
+  const newAmount = Math.max(0, currentAmount - totalAdditionalPartAmount);
+  const newPayable = Math.max(0, currentPayable - totalAdditionalPartAmount);
 
   await BookingModel.findByIdAndUpdate(
     bookingId,

@@ -13,15 +13,14 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
 
   if (!bookingId) throw new ApiError(400, "Booking ID is required");
   if (!servicemanBookingId) throw new ApiError(400, "Serviceman Booking ID is required");
-  if (!Array.isArray(parts) || parts.length === 0) throw new ApiError(400, "Additional Parts must be a non-empty array");
+  if (!Array.isArray(parts) || parts?.length == 0) throw new ApiError(400, "Additional Parts must be a non-empty array");
 
-  const booking = await BookingModel.findById(bookingId);
-
-  if (!booking) {
-    throw new ApiError(404, "Booking not found");
-  };
+  const existingBooking = await BookingModel.findById(bookingId);
+  if (!existingBooking) throw new ApiError(404, "Booking not found");
 
   await rejectAdditionalParts(bookingId);
+
+  const booking = await BookingModel.findById(bookingId);
 
   let additionalPartTotalAmount = 0;
 
@@ -78,22 +77,20 @@ export const createBookingAdditionalParts = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  if (servicemanBookingId) {
-    await ServiceManBookingModel.findByIdAndUpdate(
-      servicemanBookingId,
-      {
-        status: "partstatusnew",
-        updatedBy: userId,
-        updatedAt: new Date(),
-      }
-    );
-  };
+  await ServiceManBookingModel.findByIdAndUpdate(
+    servicemanBookingId,
+    {
+      status: "partstatusnew",
+      updatedBy: userId,
+      updatedAt: new Date(),
+    }
+  );
 
   await BookingAdditionalPartModel.insertMany(documents);
 
   return res.status(201).json({
     success: true,
-    message: "Additional parts created successfully",
+    message: "Additional parts added successfully",
   });
 });
 
