@@ -3,6 +3,7 @@ import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import ReviewModel from "../../models/review.model.js";
 import AppModel from "../../models/app.model.js";
 import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
+import UserModel from "../../models/user.model.js";
 import mongoose from "mongoose";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";

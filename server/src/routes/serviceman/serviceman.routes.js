@@ -21,6 +21,7 @@ import targetRoute from "./target.routes.js";
 import bankTransferRoute from "./bankTransfer.routes.js";
 import brandRoutes from "./brand.routes.js";
 import subCategoryRoutes from "./subCategory.routes.js";
+import customerDetailRoutes from "./customerDetail.routes.js";
 
 const router = express.Router();
 
@@ -46,5 +47,6 @@ router.use("/target", targetRoute);
 router.use("/bank-transfer", bankTransferRoute);
 router.use("/brand", brandRoutes);
 router.use("/sub-category", subCategoryRoutes);
+router.use("/customer-detail", customerDetailRoutes);
 
 export default router;
