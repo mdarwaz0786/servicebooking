@@ -44,7 +44,7 @@ export const createBooking = asyncHandler(async (req, res) => {
   const lat = address?.lat;
   const long = address?.long;
   const pin = address?.pincode || pincode;
-  const categoryId = cartProducts[0]?.categoryId;
+  const subCategoryId = cartProducts[0]?.subCategoryId;
 
   const verifyPincode = await PincodeModel.findOne({ pincoode: pin });
 
@@ -74,7 +74,7 @@ export const createBooking = asyncHandler(async (req, res) => {
   });
 
   const { acceptCreditPoints } = await getSupportConfig(booking?._id);
-  const serviceman = await autoAssignBooking(lat, long, categoryId, scheduleDate, scheduleTime, acceptCreditPoints);
+  const serviceman = await autoAssignBooking(lat, long, subCategoryId, scheduleDate, scheduleTime, acceptCreditPoints);
 
   // Prepare Booking Items from cartProducts
   const bookingItems = cartProducts.map((item) => ({
@@ -113,7 +113,7 @@ export const createBooking = asyncHandler(async (req, res) => {
       await sendNotification(
         [serviceman?.userId],
         "Booking Accepted",
-        "One booking is accepted to you kindly proceed furthur",
+        "One booking is accepted to you kindly proceed further",
         "serviceman",
         {
           type: "bookingSameZone",
@@ -124,7 +124,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   if (!serviceman && paymentMode === "cod") {
     const servicemen = await autoAssignMultipleServicemen(
-      categoryId,
+      subCategoryId,
       scheduleDate,
       scheduleTime,
       acceptCreditPoints

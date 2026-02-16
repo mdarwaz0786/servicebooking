@@ -6,6 +6,11 @@ const cartSchema = new mongoose.Schema({
     ref: "Category",
     index: true,
   },
+  subCategoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubCategory",
+    index: true,
+  },
   serviceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Service",
