@@ -50,6 +50,15 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   await OtpModel.deleteOne({ mobile });
 
   let user = await UserModel.findOne({ mobile: mobile, role: "serviceman" }).populate("kyc profile");
+
+  if (user?.status == false) {
+    return res.status(403).json({
+      success: false,
+      message: "Your account is blocked",
+      user: {}
+    });
+  };
+
   let isNew = 1;
 
   if (user) {
