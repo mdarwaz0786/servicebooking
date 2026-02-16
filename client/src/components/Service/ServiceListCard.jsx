@@ -97,7 +97,7 @@ const ServiceListCard = ({ slug }) => {
                                                 -
                                             </button>
 
-                                            <span className="mx-3 item-qty">
+                                            <span className="mx-2 item-qty">
                                                 {value?.quantity || 0}
                                             </span>
 
@@ -221,7 +221,7 @@ const ServiceListCard = ({ slug }) => {
                                                                 -
                                                             </button>
 
-                                                            <span className="mx-3 item-qty">
+                                                            <span className="mx-1 item-qty">
                                                                 {value?.quantity || 0}
                                                             </span>
 

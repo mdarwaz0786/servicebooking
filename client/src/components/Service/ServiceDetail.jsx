@@ -8,7 +8,7 @@ const ServiceDetail = () => {
   const rating = data.ratings;
   // const ratingCount = rating?.ratingCount;
   const ratingCount = data?.rating || 0;
- 
+
 
   let ratingArray = [1, 2, 3, 4, 5];
 
@@ -50,20 +50,20 @@ const ServiceDetail = () => {
 
     <div className="row">
       <div className="col-xl-12">
-            {/* Slider */}
-            <div className="service-wrap mb-4">
-              <div
-                className="service-img position-relative overflow-hidden rounded mb-3"
-                style={{ height: "220px" }}
-              >
-                <img
-                  src={imageCheck(data.popupImage)}
-                  className="w-100"
-                  alt="Service"
-                />
-              </div>
-            </div>
-            {/* /Slider */}
+        {/* Slider */}
+        <div className="service-wrap mb-4">
+          <div
+            className="service-img position-relative overflow-hidden rounded mb-3"
+            style={{ height: "220px" }}
+          >
+            <img
+              src={imageCheck(data.popupImage)}
+              className="w-100"
+              alt="Service"
+            />
+          </div>
+        </div>
+        {/* /Slider */}
         <div className="card border-0 shadow-none">
           <div className="card-body">
 
@@ -86,70 +86,70 @@ const ServiceDetail = () => {
               </div>
             </div>
 
-            
 
-            <div style={{    marginTop: '-30px'}}> 
+
+            <div style={{ marginTop: '-30px' }}>
               <div className="mb-5 mt-5">
                 <h4 className="fw-bold mb-2">Service Overview</h4>
                 <div className="service-cont-info">
                   <div
-                  className="mt-1"
-                  dangerouslySetInnerHTML={{ __html: data?.shortDescription }}
+                    className="mt-1"
+                    dangerouslySetInnerHTML={{ __html: data?.shortDescription }}
                   ></div>
-                  
+
                   <div className="col-md-3">
                     <div className=" mt-1 justify-content-around align-items-center service-item-add-btn-section mb-0 mt-0">
-                        {(serviceDetailDataItem?.quantity) ? (
-                            <>
-                              <button
-                                className="btn btn-light border cart-item-btn"
-                                onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)}
-                                disabled={serviceDetailDataItem?.quantity <= 0}
-                              >
-                                -
-                              </button>
+                      {(serviceDetailDataItem?.quantity) ? (
+                        <>
+                          <button
+                            className="btn btn-light border cart-item-btn"
+                            onClick={() => handleCartAddRemove(serviceDetailDataItem, 2)}
+                            disabled={serviceDetailDataItem?.quantity <= 0}
+                          >
+                            -
+                          </button>
 
-                              <span className="mx-3 item-qty">
-                                {serviceDetailDataItem?.quantity || 0}
-                              </span>
+                          <span className="mx-1 item-qty">
+                            {serviceDetailDataItem?.quantity || 0}
+                          </span>
 
-                              <button
-                                className="btn btn-light border cart-item-btn"
-                                onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
-                                disabled={serviceDetailDataItem?.quantity >= serviceDetailDataItem?.maxBookingQuantity}
-                              >
-                                +
-                              </button>
-                            </>
-                        ) : (
-                            <button
-                              className="btn btn-light border cart-item-btn"
-                              onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
-                            >
-                              <i className="fa fa-shopping-cart"></i>&nbsp;Add
-                            </button>
-                        )}
+                          <button
+                            className="btn btn-light border cart-item-btn"
+                            onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
+                            disabled={serviceDetailDataItem?.quantity >= serviceDetailDataItem?.maxBookingQuantity}
+                          >
+                            +
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="btn btn-light border cart-item-btn"
+                          onClick={() => handleCartAddRemove(serviceDetailDataItem, 1)}
+                        >
+                          <i className="fa fa-shopping-cart"></i>&nbsp;Add
+                        </button>
+                      )}
                     </div>
                   </div>
 
                   <br />
 
                   {data?.rateCard ? (
-                      <button
-                          className="btn btn-primary-ghost d-flex align-items-center w-100 justify-content-sm-center"
-                          onClick={() =>
-                              handleRateCardDetail(data._id, data)
-                          }
-                      >
-                        <img src="/assets/img/favicon.jpg" style={{width: '25px',marginRight: '5px'}} />
-                          Standard Transparent Rate List
-                          <i className="fa fa-angle-right" style={{marginLeft: '5px'}}></i>
-                      </button>
+                    <button
+                      className="btn btn-primary-ghost d-flex align-items-center w-100 justify-content-sm-center"
+                      onClick={() =>
+                        handleRateCardDetail(data._id, data)
+                      }
+                    >
+                      <img src="/assets/img/favicon.jpg" style={{ width: '25px', marginRight: '5px' }} />
+                      Standard Transparent Rate List
+                      <i className="fa fa-angle-right" style={{ marginLeft: '5px' }}></i>
+                    </button>
                   ) : null}
-                  
+
                   <div
-                  className="mt-1"
-                  dangerouslySetInnerHTML={{ __html: data?.fullDescription }}
+                    className="mt-1"
+                    dangerouslySetInnerHTML={{ __html: data?.fullDescription }}
                   ></div>
                 </div>
               </div>
@@ -196,7 +196,7 @@ const ServiceDetail = () => {
                         fontWeight: "600",
                         color: "#00522c",
                         marginBottom: "30px",
-                        textAlign:'center'
+                        textAlign: 'center'
                       }}
                     >
                       {data.requirementFromCustomer.mainTitle}
@@ -255,7 +255,7 @@ const ServiceDetail = () => {
                           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                           display: "inline-block",
                           marginTop: "16px",
-                          textAlign:'center'
+                          textAlign: 'center'
                         }}
                       >
                         {data?.whyChooseUs?.mainTitle}
@@ -288,17 +288,17 @@ const ServiceDetail = () => {
                   <div className="bg-light-500 p-3 pb-5 br-10 service-detail-section">
                     <div className="row align-items-stretch">
                       {/* Left Section*/}
-                        <h3
-                          style={{
-                            fontSize: "40px",
-                            fontWeight: "700",
-                            color: "#00522c",
-                            marginBottom: "20px",
-                            textAlign:'center'
-                          }}
-                        >
-                          {data?.expertTechnician?.mainTitle}
-                        </h3>
+                      <h3
+                        style={{
+                          fontSize: "40px",
+                          fontWeight: "700",
+                          color: "#00522c",
+                          marginBottom: "20px",
+                          textAlign: 'center'
+                        }}
+                      >
+                        {data?.expertTechnician?.mainTitle}
+                      </h3>
                       <div className="col-md-7 d-flex flex-column justify-content-center">
 
                         {data?.expertTechnician?.points?.map((item, index) => (

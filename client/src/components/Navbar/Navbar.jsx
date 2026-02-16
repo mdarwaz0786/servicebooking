@@ -16,7 +16,7 @@ const Navbar = () => {
 
     // Remove class from HTML element
     document.documentElement.classList.remove("menu-opened");
-    
+
 
     // .sidebar-overlay element से class हटाना
     const overlay = document.querySelector(".sidebar-overlay");
@@ -34,8 +34,8 @@ const Navbar = () => {
 
     // Remove class from HTML element
     document.documentElement.classList.remove("menu-opened");
-    
-    
+
+
     // .sidebar-overlay element से class हटाना
     const overlay = document.querySelector(".sidebar-overlay");
     overlay?.classList.remove("opened");
@@ -99,50 +99,49 @@ const Navbar = () => {
               </li>
               <li className="nav-item d-sm-none">
                 {/* <Link to="/login" className="nav-link" onClick={handleLinkClick}>Sign In</Link> */}
-                <Link className="nav-link" 
-                onClick={() => {
-                  toggleModal("serviceManJoinModal", true);
-                   // Remove class from HTML element
-                    document.documentElement.classList.remove("menu-opened");                      
+                <Link className="nav-link"
+                  onClick={() => {
+                    toggleModal("serviceManJoinModal", true);
+                    // Remove class from HTML element
+                    document.documentElement.classList.remove("menu-opened");
                     // .sidebar-overlay element से class हटाना
                     const overlay = document.querySelector(".sidebar-overlay");
                     overlay?.classList.remove("opened");
-                }}
+                  }}
                 >
                   Join As Team
                 </Link>
               </li>
-              
+
             </ul>
           </div>
 
           <ul className="nav header-navbar-rht">
             <li className="nav-item pe-1">
               <>
-              {/* <Link to={'/cart'} className="btn btn-linear-primary me-1" 
+                {/* <Link to={'/cart'} className="btn btn-linear-primary me-1" 
               // onClick={handleLinkClick}
                >
                 <i className="ti ti-shopping-bag me-0" />
               </Link> */}
-                {(user?.role=='user' || user?.role=='serviceman' || user?.role=='provider') ? (
+                {(user?.role == 'user' || user?.role == 'serviceman' || user?.role == 'provider') ? (
                   <>
                     {(user?.role == 'user') ? (
-                      <Link to={'/user'} className="btn btn-linear-primary" onClick={()=> {
-                        if(width<=767)
-                        {
+                      <Link to={'/user'} className="btn btn-linear-primary" onClick={() => {
+                        if (width <= 767) {
                           setUserSidebaOpen(true);
                         }
                       }
                       } >
-                        <i className={`ti ti-user ${width>767?'me-2':''}`} />{width>767?'Account':null}
+                        <i className={`ti ti-user ${width > 767 ? 'me-2' : ''}`} />{width > 767 ? 'Account' : null}
                       </Link>
                     ) : (
                       <Link to={'/serviceman/dashboard'} className="btn btn-linear-primary" onClick={handleLinkClick} >
-                        <i className={`ti ti-user ${width>767?'me-2':''}`} />Account
+                        <i className={`ti ti-user ${width > 767 ? 'me-2' : ''}`} />Account
                       </Link>
                     )}
                     <Link className="btn btn-linear-primary  m-2" onClick={handleLogout}>
-                      <i className={`ti ti-logout ${width>767?'me-2':''}`} / >{width>767?'Logout':null}
+                      <i className={`ti ti-logout ${width > 767 ? 'me-2' : ''}`} />{width > 767 ? 'Logout' : null}
                     </Link>
                   </>
                 ) : (
