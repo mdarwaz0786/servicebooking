@@ -35,6 +35,11 @@ export const createNotification = async (req, res) => {
               title: title || "GI TEAM",
               body: message,
             },
+            "android": {
+              "notification": {
+                "channel_id": "booking_other_zone"
+              }
+            }
           })
         )
       );
@@ -44,10 +49,16 @@ export const createNotification = async (req, res) => {
     else {
       await firebase.messaging().send({
         topic: role, // "user" OR "serviceman"
+
         notification: {
           title: title || "GI TEAM",
           body: message,
         },
+        "android": {
+          "notification": {
+            "channel_id": "booking_other_zone"
+          }
+        }
       });
     };
 

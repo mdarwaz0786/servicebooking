@@ -31,6 +31,19 @@ io.on('connection', (socket) => {
       timestamp: new Date().toISOString()
     });
   });
+  
+  // Jab HTML se List update aaye
+  socket.on('updateBookingList', (data) => {
+    console.log('📦 Update received:', data);
+    
+    // Sabhi connected clients ko bhejo (including React Native app)
+    io.emit('bookingUpdatedList', {
+      bookingId: data.bookingId,
+      status: data.status,
+      message: data.message || 'Status updated',
+      timestamp: new Date().toISOString()
+    });
+  });
 
   socket.on('disconnect', () => {
     console.log('❌ Client disconnected:', socket.id);
@@ -42,6 +55,13 @@ app.post('/api/update', (req, res) => {
   const { bookingId, status, message } = req.body;
   
   io.emit('bookingUpdated', {
+    bookingId,
+    status,
+    message: message || 'Updated via API',
+    timestamp: new Date().toISOString()
+  });
+  
+  io.emit('bookingUpdatedList', {
     bookingId,
     status,
     message: message || 'Updated via API',

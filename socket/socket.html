@@ -85,6 +85,16 @@
             border-radius: 8px;
             margin: 10px 0;
         }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .button-group button {
+            flex: 1;
+            font-size: 14px;
+            padding: 12px;
+        }
     </style>
 </head>
 <body>
@@ -94,11 +104,11 @@
         <!-- Connection Status -->
         <div id="connectionStatus" class="status disconnected">🔴 Disconnected</div>
         
-        <!-- Server URL -->
-        <div class="form-group">
-            <label>Server URL:</label>
-            <input type="text" id="serverUrl" value="http://localhost:3000" placeholder="http://your-server-ip:3000">
-            <button onclick="connect()" style="background: #2196F3;">Connect</button>
+        <!-- Server Info -->
+        <div class="info">
+            <strong>Server Status:</strong>
+            <p style="margin: 5px 0;">Port: 3000</p>
+            <p style="margin: 5px 0;">URL: <span id="serverUrlDisplay">http://localhost:3000</span></p>
         </div>
 
         <!-- Current Booking Info -->
@@ -124,8 +134,6 @@
                 <option value="delivered">✅ Delivered</option>
                 <option value="cancelled">❌ Cancelled</option>
                 <option value="pending">⏳ Pending</option>
-                <option value="partstatusnew">🔧 Parts Submitted</option>
-                <option value="partstatusapprove">✅ Parts Approved</option>
             </select>
         </div>
 
@@ -134,63 +142,91 @@
             <textarea id="message" rows="3" placeholder="Enter message..."></textarea>
         </div>
 
-        <!-- Send Update Button -->
-        <button onclick="sendUpdate()">📤 Send Update to React Native App</button>
+        <!-- Send Update Buttons -->
+        <button onclick="sendUpdate()" style="background: #4CAF50;">📤 Send Update to React Native App</button>
+        
+        <!-- API Update Button -->
+        <button onclick="sendApiUpdate()" style="background: #9C27B0;">🌐 Send via API Endpoint</button>
 
         <!-- Quick Test Buttons -->
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button onclick="quickUpdate('confirmed')" style="background: #4CAF50; font-size: 14px;">✅ Confirmed</button>
-            <button onclick="quickUpdate('preparing')" style="background: #ff9800; font-size: 14px;">👨‍🍳 Preparing</button>
-            <button onclick="quickUpdate('delivered')" style="background: #2196F3; font-size: 14px;">🚚 Delivered</button>
+        <div class="button-group">
+            <button onclick="quickUpdate('confirmed')" style="background: #4CAF50;">✅ Confirmed</button>
+            <button onclick="quickUpdate('preparing')" style="background: #ff9800;">👨‍🍳 Preparing</button>
+            <button onclick="quickUpdate('ready')" style="background: #2196F3;">🍽️ Ready</button>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="quickUpdate('out-for-delivery')" style="background: #FF5722;">🚚 Out for Delivery</button>
+            <button onclick="quickUpdate('delivered')" style="background: #4CAF50;">✅ Delivered</button>
+            <button onclick="quickUpdate('cancelled')" style="background: #f44336;">❌ Cancelled</button>
         </div>
 
         <!-- Logs -->
         <div style="margin-top: 30px;">
             <h3>📋 Log:</h3>
-            <div id="log" style="background: #333; color: #fff; padding: 10px; border-radius: 5px; height: 150px; overflow-y: scroll; font-family: monospace;"></div>
+            <div id="log" style="background: #333; color: #fff; padding: 10px; border-radius: 5px; height: 200px; overflow-y: scroll; font-family: monospace;"></div>
+            <button onclick="clearLog()" style="background: #666; font-size: 14px; padding: 8px; margin-top: 5px;">Clear Log</button>
         </div>
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
         let socket = null;
+        const SERVER_URL = 'http://localhost:3000';
 
         function log(message, type = 'info') {
             const logDiv = document.getElementById('log');
             const timestamp = new Date().toLocaleTimeString();
-            logDiv.innerHTML = `<div>[${timestamp}] ${message}</div>` + logDiv.innerHTML;
+            const color = type === 'error' ? '#ff6b6b' : (type === 'success' ? '#69db7e' : '#fff');
+            logDiv.innerHTML = `<div style="color: ${color}">[${timestamp}] ${message}</div>` + logDiv.innerHTML;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
         }
 
         function connect() {
-            const url = document.getElementById('serverUrl').value;
-            
-            if (socket) socket.disconnect();
+            if (socket) {
+                socket.disconnect();
+            }
 
-            socket = io(url, {
-                transports: ['websocket'],
-                reconnection: true
+            log(`Connecting to ${SERVER_URL}...`);
+            
+            socket = io(SERVER_URL, {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000
             });
 
             socket.on('connect', () => {
                 document.getElementById('connectionStatus').className = 'status connected';
                 document.getElementById('connectionStatus').innerHTML = '🟢 Connected to server';
-                log('✅ Connected to server');
+                log('✅ Connected to server successfully!', 'success');
+                console.log('Socket ID:', socket.id);
             });
 
-            socket.on('disconnect', () => {
+            socket.on('disconnect', (reason) => {
                 document.getElementById('connectionStatus').className = 'status disconnected';
                 document.getElementById('connectionStatus').innerHTML = '🔴 Disconnected';
-                log('❌ Disconnected');
+                log(`❌ Disconnected: ${reason}`, 'error');
             });
 
             socket.on('connect_error', (error) => {
-                log('⚠️ Connection error: ' + error.message);
+                log(`⚠️ Connection error: ${error.message}`, 'error');
+                document.getElementById('connectionStatus').className = 'status disconnected';
+                document.getElementById('connectionStatus').innerHTML = '🔴 Connection Failed';
+            });
+
+            socket.on('bookingUpdated', (data) => {
+                log(`📥 Received update: ${data.bookingId} - ${data.status} - ${data.message}`, 'success');
             });
         }
 
         function sendUpdate() {
             if (!socket || !socket.connected) {
-                alert('Please connect to server first!');
+                log('⚠️ Please connect to server first!', 'error');
+                alert('Server se connect nahi hai! Connect button dabayein.');
                 return;
             }
 
@@ -203,17 +239,52 @@
                 return;
             }
 
-            // Ye event React Native app sunega
-            socket.emit('updateBooking', {
+            const updateData = {
                 bookingId: bookingId,
                 status: status,
-                message: message || `${status} update`
-            });
+                message: message || `Booking ${status}`
+            };
 
-            log(`📤 Update sent for ${bookingId}: ${status}`);
+            // Dono events emit karte hain to be safe
+            socket.emit('updateBooking', updateData);
+            socket.emit('updateBookingList', updateData);
+
+            log(`📤 Update sent for ${bookingId}: ${status}`, 'success');
             
             // Update current booking ID display
             document.getElementById('currentBookingId').innerText = bookingId;
+        }
+
+        function sendApiUpdate() {
+            const bookingId = document.getElementById('bookingId').value.trim();
+            const status = document.getElementById('status').value;
+            const message = document.getElementById('message').value.trim();
+
+            if (!bookingId) {
+                alert('Please enter booking ID');
+                return;
+            }
+
+            fetch(`${SERVER_URL}/api/update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    bookingId: bookingId,
+                    status: status,
+                    message: message || `Booking ${status} via API`
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                log(`📤 API update sent for ${bookingId}: ${status}`, 'success');
+                document.getElementById('currentBookingId').innerText = bookingId;
+            })
+            .catch(error => {
+                log(`❌ API error: ${error.message}`, 'error');
+                alert('API update failed: ' + error.message);
+            });
         }
 
         function quickUpdate(status) {
@@ -224,7 +295,21 @@
         // Auto-connect on page load
         window.onload = () => {
             setTimeout(connect, 500);
+            
+            // Add server URL display
+            document.getElementById('serverUrlDisplay').innerText = SERVER_URL;
+            
+            // Log server info
+            log('🚀 Server URL: ' + SERVER_URL);
+            log('📱 Ready to send updates...');
         };
+
+        // Auto-reconnect on page visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && (!socket || !socket.connected)) {
+                connect();
+            }
+        });
     </script>
 </body>
 </html>
