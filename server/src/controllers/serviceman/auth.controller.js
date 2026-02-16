@@ -50,9 +50,6 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   await OtpModel.deleteOne({ mobile });
 
   let user = await UserModel.findOne({ mobile: mobile, role: "serviceman" }).populate("kyc profile");
-<<<<<<< HEAD
-  let isNew = 0;
-=======
 
   if (user?.status == false) {
     return res.status(403).json({
@@ -63,7 +60,6 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   };
 
   let isNew = 1;
->>>>>>> b2ee1ada73ac0b985ed02038c5cc7d5ca0672bb3
 
   if (user) {
     user.fcmToken = fcmToken;
