@@ -14,12 +14,12 @@ const serviceManProfileSchema = new mongoose.Schema({
   categoryIds: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Category",
-    required: true,
+    required: [true, "Category is required"]
   },
   subCategoryIds: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "SubCategory",
-    required: true,
+    required: [true, "Sub category is required"]
   },
   city: {
     type: mongoose.Schema.Types.ObjectId,

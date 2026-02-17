@@ -155,15 +155,14 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
       match: { providerId: userId },
     });
 
-  if (!profile)
-    {
-      return res.status(404).json({
-        success: false,
-        idStatus: user?.status == false || !user ? 0 : 1,
-        message: "Profile not",
-        data: {},
-      });
-    } 
+  if (!profile) {
+    return res.status(404).json({
+      success: false,
+      idStatus: user?.status == false || !user ? 0 : 1,
+      message: "Profile not",
+      data: {},
+    });
+  }
 
   const servicemanId = profile?._id;
 

@@ -15,11 +15,11 @@ export const createBlog = asyncHandler(async (req, res) => {
 
   if (!title) {
     throw new ApiError(400, "Blog title is required");
-  }
+  };
 
   if (!category) {
     throw new ApiError(400, "Blog category is required");
-  }
+  };
 
   let frontImagePath = null;
   let detailImagePath = null;
@@ -28,11 +28,11 @@ export const createBlog = asyncHandler(async (req, res) => {
   try {
     if (req.files?.frontImage?.[0]) {
       frontImagePath = await compressImage(req.files.frontImage[0].buffer, "blog");
-    }
+    };
 
     if (req.files?.detailImage?.[0]) {
       detailImagePath = await compressImage(req.files.detailImage[0].buffer, "blog");
-    }
+    };
 
     if (req.files?.metaImage?.[0]) {
       metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
@@ -56,8 +56,8 @@ export const createBlog = asyncHandler(async (req, res) => {
     await blog.save();
 
     const metaTag = await MetaTagModel.create({
-      pageName,
-      metaTitle,
+      pageName: pageName || "blog",
+      metaTitle: metaTitle || title,
       metaDescription,
       metaKeywords,
       metaAuthor,
@@ -80,7 +80,7 @@ export const createBlog = asyncHandler(async (req, res) => {
       fs.unlinkSync(path.join(process.cwd(), metaImagePath));
     };
     throw new ApiError(500, error.message || "Something went wrong while creating blog");
-  }
+  };
 });
 
 // --------------------- GET ALL BLOGS ---------------------
@@ -219,8 +219,8 @@ export const updateBlog = asyncHandler(async (req, res) => {
     }
 
     await MetaTagModel.create({
-      pageName,
-      metaTitle,
+      pageName: pageName || "blog",
+      metaTitle: metaTitle || title || blog.title,
       metaDescription,
       metaKeywords,
       metaAuthor,
@@ -228,7 +228,7 @@ export const updateBlog = asyncHandler(async (req, res) => {
       slug: newSlug || blog?.slug,
       createdBy: req.user?._id,
     });
-  }
+  };
 
   return res.status(200).json({ success: true, message: "Updated Successfully", data: blog });
 });

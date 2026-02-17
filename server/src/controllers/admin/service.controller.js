@@ -98,8 +98,8 @@ export const createService = asyncHandler(async (req, res) => {
     await service.save();
 
     const metaTag = await MetaTagModel.create({
-      pageName,
-      metaTitle,
+      pageName: pageName || "service",
+      metaTitle: metaTitle || name,
       metaDescription,
       metaKeywords,
       metaAuthor,
@@ -325,11 +325,11 @@ export const updateService = asyncHandler(async (req, res) => {
     let metaImagePath = null;
     if (req.files?.metaImage?.[0]) {
       metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
-    }
+    };
 
     await MetaTagModel.create({
-      pageName,
-      metaTitle,
+      pageName: pageName || "service",
+      metaTitle: metaTitle || name || service.name,
       metaDescription,
       metaKeywords,
       metaAuthor,
@@ -337,7 +337,7 @@ export const updateService = asyncHandler(async (req, res) => {
       slug: newSlug || service?.slug,
       createdBy: req.user?._id,
     });
-  }
+  };
 
   return res.status(200).json({ success: true, message: "Updated successfully", data: service });
 });
