@@ -285,6 +285,7 @@ const ServicemanProfileListPage = () => {
                   <tr>
                     <th>#</th>
                     <th>Product</th>
+                    <th>Variant</th>
                     <th>Name</th>
                     <th>Mobile</th>
                     <th>Experience</th>
@@ -299,6 +300,7 @@ const ServicemanProfileListPage = () => {
                       <tr key={d?._id}>
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.categories?.map((value) => <p className="mb-1" key={value?._id}>{value?.name}</p>)}</td>
+                        <td>{d?.subCategories?.map((value) => <p className="mb-1" key={value?._id}>{value?.name || "-"}</p>)}</td>
                         <td>{d?.name || "-"}</td>
                         <td>{d?.user?.mobile || "-"}</td>
                         <td>{d?.experienceLevel || "-"}</td>

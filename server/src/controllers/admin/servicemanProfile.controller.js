@@ -101,6 +101,7 @@ export const getServiceManProfiles = asyncHandler(async (req, res) => {
     ServiceManProfileModel
       .find(filters)
       .populate("categories")
+      .populate("subCategories")
       .populate("user")
       .populate("kyc")
       .populate("zones")
@@ -132,6 +133,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel
     .findById(req.params.id)
     .populate("categories")
+    .populate("subCategories")
     .populate("user")
     .populate("kyc")
     .populate("zones");

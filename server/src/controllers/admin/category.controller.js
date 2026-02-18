@@ -49,8 +49,8 @@ export const createCategory = asyncHandler(async (req, res) => {
     await category.save();
 
     const metaTag = await MetaTagModel.create({
-      pageName,
-      metaTitle,
+      pageName: pageName || "product",
+      metaTitle: metaTitle || name,
       metaDescription,
       metaKeywords,
       metaAuthor,
@@ -276,11 +276,11 @@ export const updateCategory = asyncHandler(async (req, res) => {
     let metaImagePath = null;
     if (req.files?.metaImage?.[0]) {
       metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
-    }
+    };
 
     await MetaTagModel.create({
-      pageName,
-      metaTitle,
+      pageName: pageName || "product",
+      metaTitle: metaTitle || name || category.name,
       metaDescription,
       metaKeywords,
       metaAuthor,
@@ -288,7 +288,7 @@ export const updateCategory = asyncHandler(async (req, res) => {
       slug: newSlug || category?.slug,
       createdBy: req.user?._id,
     });
-  }
+  };
 
   return res.status(200).json({ success: true, message: "Updated successfully", data: { category, metaTag } });
 });

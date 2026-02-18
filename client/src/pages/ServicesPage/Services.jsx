@@ -120,7 +120,7 @@ const Services = ({ search, slug, handleSubCategory }) => {
     if (detail) {
       handleServiceDetail2(detail);
     }
-  }, [detail, handleServiceDetail2]);
+  }, [detail]);
 
   // Handle window resize
   useEffect(() => {
