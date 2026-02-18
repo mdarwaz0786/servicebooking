@@ -84,7 +84,7 @@ const Footer = () => {
                   <li><Link to="https://x.com/greenindiateam_" target="_blank"><img src="/assets/img/icons/twitter.svg" alt="twitter" /></Link></li>
                   <li><Link to="https://web.whatsapp.com/" target="_blank"><img src="/assets/img/icons/whatsapp.svg" alt="whatsapp" /></Link></li>
                   <li><Link to="https://www.youtube.com/@GREENINDIATEAM" target="_blank"><img src="/assets/img/icons/youtube.svg" alt="youtube" /></Link></li>
-                  <li><Link to="https://www.linkedin.com/company/green-india-team/?viewAsMember=true" target="_blank"><img src="/assets/img/icons/linkedin.svg" alt="linkedin" /></Link></li>
+                  <li><Link to="https://www.linkedin.com/company/green-india-team" target="_blank"><img src="/assets/img/icons/linkedin.svg" alt="linkedin" /></Link></li>
                 </ul>
                 <h5 className="mb-1 fs-14 mb-3 footer-sm footer-sm-mt">Experience GI Team app on mobile</h5>
                 <div className="d-flex align-items-center flex-wrap footer-sm">

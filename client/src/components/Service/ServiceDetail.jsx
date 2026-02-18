@@ -141,7 +141,7 @@ const ServiceDetail = () => {
                         handleRateCardDetail(data._id, data)
                       }
                     >
-                      <img src="/assets/img/favicon.jpg" style={{ width: '25px', marginRight: '5px' }} />
+                      <img src="/assets/img/favicon.png" style={{ width: '25px', marginRight: '5px' }} />
                       Standard Transparent Rate List
                       <i className="fa fa-angle-right" style={{ marginLeft: '5px' }}></i>
                     </button>

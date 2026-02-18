@@ -3,6 +3,7 @@ import { FaLinkedin, FaInstagram } from "react-icons/fa";
 import image from "../../assets/sarvesh_mishra.jpg";
 import { Link } from "react-router-dom";
 import BreadCrumb from "../BreadCrumb/BreadCrumb";
+import { useState } from "react";
 
 const AboutUsPage = () => {
 
@@ -19,6 +20,40 @@ I have always believed that business is not just about growth, but about respons
 Green India Team is my promise to customers and my commitment to technicians. I want our professionals to feel proud of their skills and our customers to feel relaxed the moment we arrive. We are not here to claim perfection—we are here to show up, do the right work, and stand by it.
 “When service is driven by intention, trust follows naturally.”
 This company is not just about repairs, cleaning, or installations. It is about creating a culture where work has dignity, homes feel safer, and service feels human. That is the future I am building—one home, one job, one honest effort at a time.`,
+    }
+  ];
+
+
+  const [openIndex, setOpenIndex] = useState(0);
+
+  const toggleAccordion = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  const accordionData = [
+    {
+      title: "Wide Range of Services",
+      content: "From home cleaning to appliance repair, we offer multiple categories under one platform. You can book any service without switching to different providers."
+    },
+    {
+      title: "Quality Assurance",
+      content: "We follow strict quality standards to ensure consistent service delivery. Our team monitors every job to maintain high customer satisfaction."
+    },
+    {
+      title: "Transparent Pricing",
+      content: "We provide clear pricing without unexpected charges. Customers always know what they are paying for before the service begins."
+    },
+    {
+      title: "Fast Response and Support",
+      content: "Our customer support team responds quickly to queries. We ensure complete guidance throughout the service process."
+    },
+    {
+      title: "Convenient and Reliable",
+      content: "You can book any service at your convenience. We deliver on time and complete every task with professionalism and care."
+    },
+    {
+      title: "Secure and Safe Services",
+      content: "We prioritize safety in all our services. Our professionals follow hygiene protocols and use safe methods while working."
     }
   ];
 
@@ -205,168 +240,27 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
               
 
               <div className="accordion" id="faq_accordion">
-                {/* Accordion Item 1 */}
-                <div className="accordion-item">
+                
+              {accordionData.map((item, index) => (
+                <div className="accordion-item" key={index}>
+
                   <h2 className="accordion-header">
                     <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseOne"
-                      aria-expanded="true"
-                      aria-controls="panelsStayOpen-collapseOne"
+                      className={`accordion-button ${openIndex !== index ? "collapsed" : ""}`}
+                      onClick={() => toggleAccordion(index)}
                     >
-                      Wide Range of Services
+                      {item.title}
                     </button>
                   </h2>
-                  <div
-                    id="panelsStayOpen-collapseOne"
-                    className="accordion-collapse collapse "
-                    data-bs-parent="#faq_accordion"
-                  >
+
+                  <div className={`accordion-collapse collapse ${openIndex === index ? "show" : ""}`}>
                     <div className="accordion-body">
-                      <p>
-                        From home cleaning to appliance repair, we offer multiple categories under one platform. You can book any service without switching to different providers.
-                      </p>
+                      <p>{item.content}</p>
                     </div>
                   </div>
-                </div>
 
-                {/* Accordion Item 2 */}
-                <div className="accordion-item">
-                  <h2 className="accordion-header">
-                    <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseTwo"
-                    >
-                      Quality Assurance
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseTwo"
-                    className="accordion-collapse collapse"
-                    data-bs-parent="#faq_accordion"
-                  >
-                    <div className="accordion-body">
-                      <p>
-                        We follow strict quality standards to ensure consistent service delivery. Our team monitors every job to maintain high customer satisfaction.
-                      </p>
-                    </div>
-                  </div>
                 </div>
-
-                {/* Accordion Item 3 */}
-                <div className="accordion-item">
-                  <h2 className="accordion-header">
-                    <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseThree"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseThree"
-                    >
-                      Transparent Pricing
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapseThree"
-                    className="accordion-collapse collapse"
-                    data-bs-parent="#faq_accordion"
-                  >
-                    <div className="accordion-body">
-                      <p>
-                        We provide clear pricing without unexpected charges. Customers always know what they are paying for before the service begins.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Accordion Item 4 */}
-                <div className="accordion-item">
-                  <h2 className="accordion-header">
-                    <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapse4"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapse4"
-                    >
-                      Fast Response and Support
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapse4"
-                    className="accordion-collapse collapse"
-                    data-bs-parent="#faq_accordion"
-                  >
-                    <div className="accordion-body">
-                      <p>
-                        Our customer support team responds quickly to queries. We ensure complete guidance throughout the service process.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-
-                {/* Accordion Item 5 */}
-                <div className="accordion-item">
-                  <h2 className="accordion-header">
-                    <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapse4"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapse4"
-                    >
-                      Convenient and Reliable
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapse4"
-                    className="accordion-collapse collapse"
-                    data-bs-parent="#faq_accordion"
-                  >
-                    <div className="accordion-body">
-                      <p>
-                        You can book any service at your convenience. We deliver on time and complete every task with professionalism and care.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Accordion Item 6 */}
-                <div className="accordion-item">
-                  <h2 className="accordion-header">
-                    <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapse4"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapse4"
-                    >
-                      Secure and Safe Services
-                    </button>
-                  </h2>
-                  <div
-                    id="panelsStayOpen-collapse4"
-                    className="accordion-collapse collapse"
-                    data-bs-parent="#faq_accordion"
-                  >
-                    <div className="accordion-body">
-                      <p>
-                        We prioritize safety in all our services. Our professionals follow hygiene protocols and use safe methods while working.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              ))}
 
 
 
@@ -464,13 +358,13 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
             <div className="col-lg-12 col-md-12 m-auto" key={index}>
               <div className="card providerset p-0 flex-fill">
                 <div className="card-body row">
-                  <div className="providerset-img col-4 col-sm-6">
+                  <div className="providerset-img col-md-4">
                     <a >
                       <img src={provider.img} alt={provider.name} />
                     </a>
                   </div>
 
-                  <div className="providerset-content col-8 col-sm-6">
+                  <div className="providerset-content col-md-8">
                     <div className="providerset-price">
                       <div className="d-flex justify-content-between align-items-center flex-fill">
                         <div className="providerset-name">

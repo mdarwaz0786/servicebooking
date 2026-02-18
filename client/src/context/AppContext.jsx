@@ -622,6 +622,7 @@ const PriceFormat = (value = 0, afterDigit = 2) => {
       if (response.success) {
         if (response?.success) {
           setserviceDetailData(response.data);
+          setserviceDetailDataItem(response.data);
           toggleModal("ServiceDetailModal", true)
 
         }

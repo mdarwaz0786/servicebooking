@@ -48,7 +48,7 @@ const CartItem = () => {
                                     <div className="cart-item-price text-end fw-bold text-dark w-50">
                                         <button 
                                             className="badge btn bg-danger w-100"
-                                            onClick={() => handleCartAddRemove(value, 2)}
+                                            onClick={() => handleCartAddRemove(value, 2, true)}
                                         ><i className="fa fa-trash"></i> Remove</button>            
                                     </div>                    
                                 </div>                        
