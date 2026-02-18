@@ -1,3 +1,4 @@
+import http from "http";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -11,6 +12,7 @@ import commonRoutes from "./src/routes/common/common.routes.js";
 import adminRoutes from "./src/routes/admin/admin.routes.js";
 import userRoutes from "./src/routes/user/user.routes.js";
 import servicemanRoutes from "./src/routes/serviceman/serviceman.routes.js";
+import { initSocket } from "./src/socket/socket.js";
 
 // Get the current file 
 const __filename = fileURLToPath(import.meta.url);
@@ -60,5 +62,11 @@ app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "../client", "dist
 // Global error handling middleware
 app.use(errorHandler);
 
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize socket
+initSocket(server);
+
 // Start the server
-app.listen(port, () => console.log(`✅ Server is running in ${mode} mode at http://localhost:${port}`));
+server.listen(port, () => console.log(`✅ Server is running in ${mode} mode at http://localhost:${port}`));

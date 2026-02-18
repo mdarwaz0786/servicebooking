@@ -12,6 +12,7 @@ import { adjustWalletCredit } from "../../utils/wallet.utils.js";
 import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 import BookingMediaModel from "../../models/bookingMedia.model.js";
 import mongoose from "mongoose";
+import { getIO } from "../../socket/socket.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -460,6 +461,20 @@ export const updateBooking = asyncHandler(async (req, res) => {
   if (req.body.status == "partstatusreject") {
     await rejectAdditionalParts(booking?._id);
   };
+
+  const io = getIO();
+
+  io.emit("updateBooking", {
+    bookingId: booking?._id,
+    status: req.body.status,
+    message: "Booking status updated"
+  });
+
+  io.emit("updateBookingList", {
+    bookingId: booking?._id,
+    status: req.body.status,
+    message: "Booking list updated"
+  });
 
   return res.status(200).json({
     success: true,

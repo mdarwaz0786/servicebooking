@@ -39,6 +39,7 @@ const PERMISSION_KEYS = [
   "providerTrainingScheduleSubmit",
   "providerWallet",
   "providerCashcollected",
+  "providerCashSubmit",
   "providerInsurance",
   "providerCertificate",
   "providerNotification",

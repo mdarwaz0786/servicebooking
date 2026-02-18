@@ -158,6 +158,10 @@ const roleSchema = new mongoose.Schema({
       type: PermissionSchema,
       default: () => ({}),
     },
+    providerCashSubmit: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
     providerInsurance: {
       type: PermissionSchema,
       default: () => ({}),
