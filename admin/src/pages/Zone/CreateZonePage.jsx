@@ -210,6 +210,8 @@
 // export default CreateZonePage;
 
 
+
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useRef, useEffect } from "react";
 import {
@@ -237,19 +239,12 @@ const defaultCenter = { lat: 28.6139, lng: 77.2090 };
 const CreateZonePage = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
-
   const [oldZones, setOldZones] = useState([]);
-
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState(null);
-
-  // backend format => [[lng, lat], ...]
   const [coordinates, setCoordinates] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
-
   const autocompleteRef = useRef(null);
 
   /* ------------------ MANUAL DRAW (OPTIONAL) ------------------ */
@@ -264,46 +259,43 @@ const CreateZonePage = () => {
     setCoordinates(path);
     polygon.setMap(null);
 
-    toast.success("Zone area selected manually");
+    toast.success("Zone area selected");
   }, []);
 
   /* ------------------ AUTO BOUNDARY FROM OSM ------------------ */
   const fetchBoundaryFromOSM = async (placeName) => {
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        placeName
-      )}&polygon_geojson=1`;
-
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&polygon_geojson=1`;
       const res = await axios.get(url);
 
       if (!res.data?.length || !res.data[0]?.geojson) {
-        toast.error("Boundary not found for this place");
+        toast.error("Boundary not available for this place");
         return;
-      }
+      };
 
-      const geo = res.data[0].geojson;
+      const geo = res?.data[0]?.geojson;
 
       let points = [];
 
-      if (geo.type === "Polygon") {
-        points = geo.coordinates[0];
-      } else if (geo.type === "MultiPolygon") {
-        points = geo.coordinates[0][0];
-      }
+      if (geo?.type === "Polygon") {
+        points = geo?.coordinates[0];
+      } else if (geo?.type === "MultiPolygon") {
+        points = geo?.coordinates[0][0];
+      };
 
       if (!points.length) {
-        toast.error("Invalid boundary data");
+        toast.error("Boundary not available for this place");
         return;
-      }
+      };
 
       setCoordinates(points);
       setCenter({ lat: points[0][1], lng: points[0][0] });
-
-      toast.success("Zone boundary loaded automatically");
+      setSearch(placeName);
+      toast.success("Zone boundary created");
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch boundary");
-    }
+    };
   };
 
   /* ------------------ PLACE SELECT ------------------ */
@@ -321,7 +313,6 @@ const CreateZonePage = () => {
     };
 
     setCenter(latLng);
-    setSelectedLocation(latLng);
 
     // AUTO BOUNDARY DRAW
     fetchBoundaryFromOSM(place.name);
@@ -330,8 +321,7 @@ const CreateZonePage = () => {
   /* ------------------ SAVE ZONE ------------------ */
   const handleSubmit = async () => {
     if (!name) return toast.error("Zone name is required");
-    if (!coordinates.length)
-      return toast.error("Please select or draw zone area");
+    if (!coordinates.length) return toast.error("Please select or draw zone area");
 
     try {
       setLoading(true);
@@ -356,7 +346,7 @@ const CreateZonePage = () => {
       toast.error(err.response?.data?.message || "Error");
     } finally {
       setLoading(false);
-    }
+    };
   };
 
   /* ------------------ LOAD OLD ZONES ------------------ */
@@ -367,34 +357,29 @@ const CreateZonePage = () => {
       });
 
       if (res?.data?.success) {
-        const zones = res.data.data.map((zone) => {
-          const coords =
-            zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({
-              lat,
-              lng,
-            })) || [];
+        const zones = res?.data?.data?.map((zone) => {
+          const coords = zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({
+            lat,
+            lng,
+          })) || [];
 
           return {
-            id: zone._id,
-            name: zone.name,
+            id: zone?._id,
+            name: zone?.name,
             paths: coords,
           };
         });
 
         setOldZones(zones);
-      }
+      };
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load zones");
-    }
+    };
   };
 
   useEffect(() => {
     fetchOldZone();
   }, []);
-
-
-  console.log(selectedLocation);
 
   return (
     <div className="page-wrapper">
@@ -405,14 +390,12 @@ const CreateZonePage = () => {
             Back
           </button>
         </div>
-
         <input
           className="form-control mb-3"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Zone name"
         />
-
         <LoadScript
           googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
           libraries={libraries}
@@ -424,12 +407,10 @@ const CreateZonePage = () => {
             <input
               type="text"
               className="form-control mb-3"
-              placeholder="Search city / area"
-              value={search}
+              placeholder="Search city/area"
               onChange={(e) => setSearch(e.target.value)}
             />
           </Autocomplete>
-
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
@@ -455,7 +436,6 @@ const CreateZonePage = () => {
                 }}
               />
             ))}
-
             {/* AUTO / MANUAL SELECTED ZONE */}
             {coordinates.length > 0 && (
               <Polygon
@@ -469,7 +449,6 @@ const CreateZonePage = () => {
                 }}
               />
             )}
-
             {/* OPTIONAL MANUAL DRAW */}
             <DrawingManager
               onPolygonComplete={onPolygonComplete}
@@ -482,7 +461,6 @@ const CreateZonePage = () => {
             />
           </GoogleMap>
         </LoadScript>
-
         <div className="text-center">
           <button
             className="btn btn-primary mt-3 mb-3"

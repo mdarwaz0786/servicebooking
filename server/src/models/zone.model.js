@@ -2,17 +2,18 @@ import mongoose from "mongoose";
 
 const zoneSchema = new mongoose.Schema({
   name: String,
+  placeName: [String],
   search: String,
   geometry: {
     type: {
       type: String,
-      enum: ["Polygon"],
+      enum: ["Polygon", "MultiPolygon"],
       required: true
     },
     coordinates: {
       type: [[[Number]]],
       required: true
-    }
+    },
   },
   status: {
     type: Boolean,
