@@ -74,8 +74,8 @@ const Services = ({ search, slug, handleSubCategory }) => {
       return false;
     }
     
-    const firstServiceSubCategory = serviceListData[0]?.subCategoryId;
-    const firstCartSubCategory = cartItems[0]?.subCategoryId;
+    const firstServiceSubCategory = serviceListData[0]?.categoryId;
+    const firstCartSubCategory = cartItems[0]?.categoryId;
     
     // Only show cart if both values exist and match
     return !!(firstServiceSubCategory && firstCartSubCategory && firstServiceSubCategory === firstCartSubCategory);
