@@ -39,7 +39,7 @@ const UserBookingDetailPage = () => {
             const response = await postData({}, Urls.myBookingDetail + '/' + bookingId, "GET", 0, 1);
             setdata(response.data.booking ? response.data.booking : []);
             setitems(response.data.items ? response.data.items : []);
-            setisCancel(response.data.items ? response.data.isCancel : null);
+            setisCancel(response.data.items ? response.data?.booking?.isCancel : null);
             
             // Extract all additional parts from all items
             const allParts = [];
