@@ -364,14 +364,53 @@ const PriceFormat = (value = 0, afterDigit = 2) => {
 
   const bookingStatus = (value) => {
     let status = '';
-    if(value=='new')
-        status = <span className="badge badge-soft-info ms-2">Confirm</span>
-    else if(value=='assign')
-        status = <span className="badge badge-soft-info ms-2">Process</span>
-    else    
-        status = <span className="badge badge-soft-info ms-2">{value}</span>
+    
+    switch(value) {
+        case 'new':
+            status = <span className="badge badge-soft-info ms-2">Confirm</span>;
+            break;
+        case 'assign':
+            status = <span className="badge badge-soft-info ms-2">Assigned</span>;
+            break;
+        case 'hold':
+            status = <span className="badge badge-soft-warning ms-2">On Hold</span>;
+            break;
+        case 'accept':
+            status = <span className="badge badge-soft-success ms-2">Accepted</span>;
+            break;
+        case 'reject':
+            status = <span className="badge badge-soft-danger ms-2">Rejected</span>;
+            break;
+        case 'ongoing':
+            status = <span className="badge badge-soft-primary ms-2">In Progress</span>;
+            break;
+        case 'complete':
+            status = <span className="badge badge-soft-success ms-2">Completed</span>;
+            break;
+        case 'cancel':
+            status = <span className="badge badge-soft-danger ms-2">Cancelled</span>;
+            break;
+        case 'taken':
+            status = <span className="badge badge-soft-info ms-2">Service Taken</span>;
+            break;
+        case 'partstatusnew':
+            status = <span className="badge badge-soft-primary ms-2">Partial - New</span>;
+            break;
+        case 'partstatusconfirm':
+            status = <span className="badge badge-soft-success ms-2">Partial - Confirmed</span>;
+            break;
+        case 'partstatusapprove':
+            status = <span className="badge badge-soft-success ms-2">Partial - Approved</span>;
+            break;
+        case 'partstatusreject':
+            status = <span className="badge badge-soft-danger ms-2">Partial - Rejected</span>;
+            break;
+        default:
+            status = <span className="badge badge-soft-secondary ms-2">{value}</span>;
+    }
+    
     return status;
-  };
+};
 
 
 
