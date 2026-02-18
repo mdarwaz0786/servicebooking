@@ -210,6 +210,8 @@
 // export default CreateZonePage;
 
 
+
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useRef, useEffect } from "react";
 import {
@@ -237,17 +239,12 @@ const defaultCenter = { lat: 28.6139, lng: 77.2090 };
 const CreateZonePage = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
-
   const [oldZones, setOldZones] = useState([]);
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
-
-  // backend format => [[lng, lat], ...]
   const [coordinates, setCoordinates] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
-
   const autocompleteRef = useRef(null);
 
   /* ------------------ MANUAL DRAW (OPTIONAL) ------------------ */
@@ -262,7 +259,7 @@ const CreateZonePage = () => {
     setCoordinates(path);
     polygon.setMap(null);
 
-    toast.success("Zone area selected manually");
+    toast.success("Zone area selected");
   }, []);
 
   /* ------------------ AUTO BOUNDARY FROM OSM ------------------ */
@@ -272,7 +269,7 @@ const CreateZonePage = () => {
       const res = await axios.get(url);
 
       if (!res.data?.length || !res.data[0]?.geojson) {
-        toast.error("Boundary not found for this place");
+        toast.error("Boundary not available for this place");
         return;
       };
 
@@ -287,14 +284,14 @@ const CreateZonePage = () => {
       };
 
       if (!points.length) {
-        toast.error("Invalid boundary data");
+        toast.error("Boundary not available for this place");
         return;
       };
 
       setCoordinates(points);
       setCenter({ lat: points[0][1], lng: points[0][0] });
-
-      toast.success("Zone boundary loaded automatically");
+      setSearch(placeName);
+      toast.success("Zone boundary created");
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch boundary");
@@ -360,16 +357,15 @@ const CreateZonePage = () => {
       });
 
       if (res?.data?.success) {
-        const zones = res.data.data.map((zone) => {
-          const coords =
-            zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({
-              lat,
-              lng,
-            })) || [];
+        const zones = res?.data?.data?.map((zone) => {
+          const coords = zone?.geometry?.coordinates[0]?.map(([lng, lat]) => ({
+            lat,
+            lng,
+          })) || [];
 
           return {
-            id: zone._id,
-            name: zone.name,
+            id: zone?._id,
+            name: zone?.name,
             paths: coords,
           };
         });
@@ -378,7 +374,6 @@ const CreateZonePage = () => {
       };
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load zones");
     };
   };
 
