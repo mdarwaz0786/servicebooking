@@ -14,8 +14,6 @@ const ServicemanProfileDetailPage = () => {
 
   const { record } = location.state || {};
 
-  console.log(record)
-
   const [currentStatus, setCurrentStatus] = useState("Pending");
   const [remarks, setRemarks] = useState("");
   const [zones, setZones] = useState([]);
@@ -23,7 +21,6 @@ const ServicemanProfileDetailPage = () => {
 
   useEffect(() => {
     if (!record) return;
-
     setCurrentStatus(record.profileStatus || "Pending");
     setRemarks(record.remarks || "");
     setSelectedZones(record?.zones?.map((z) => z?._id) || []);
@@ -55,13 +52,14 @@ const ServicemanProfileDetailPage = () => {
         </div>
       </div>
     );
-  }
+  };
 
   const {
     profileImage,
     name,
     email,
     dob,
+    gender,
     experienceLevel,
     companyName,
     yearOfExperience,
@@ -74,7 +72,8 @@ const ServicemanProfileDetailPage = () => {
     referenceMobile2,
     profileStatus,
     user,
-    categories
+    categories,
+    subCategories,
   } = record;
 
   const handleStatusUpdate = async () => {
@@ -88,16 +87,16 @@ const ServicemanProfileDetailPage = () => {
       if (res?.data?.success) {
         toast.success("Status updated successfully");
         navigate(-1);
-      }
+      };
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to update status");
-    }
+    };
   };
 
   const handleZoneUpdate = async () => {
     try {
       const res = await axios.patch(
-        `${apis.servicemanProfile.update}/${record._id}`,
+        `${apis.servicemanProfile.update}/${record?._id}`,
         { zones: selectedZones },
         { headers: { Authorization: validToken } }
       );
@@ -105,10 +104,10 @@ const ServicemanProfileDetailPage = () => {
       if (res?.data?.success) {
         toast.success("Zones assigned successfully");
         navigate(-1);
-      }
+      };
     } catch {
       toast.error("Failed to assign zones");
-    }
+    };
   };
 
   return (
@@ -161,6 +160,7 @@ const ServicemanProfileDetailPage = () => {
                   <h6 className="border-bottom pb-2">Profile Info</h6>
                   <ul className="list-unstyled mt-3">
                     <li><strong>DOB:</strong> {dob ? new Date(dob).toLocaleDateString() : "-"}</li>
+                    <li><strong>Gender:</strong> {gender}</li>
                     <li><strong>Experience Level:</strong> {experienceLevel}</li>
                     <li><strong>Company:</strong> {companyName || "N/A"}</li>
                     <li><strong>Total Experience:</strong> {yearOfExperience || 0} Year {monthOfExperience || 0} </li>
@@ -172,7 +172,7 @@ const ServicemanProfileDetailPage = () => {
 
                 {/* CONTACT */}
                 <div className="col-md-6">
-                  <h6 className="border-bottom pb-2">Contact</h6>
+                  <h6 className="border-bottom pb-2">Contact Info</h6>
                   <ul className="list-unstyled mt-3">
                     <li><strong>Mobile:</strong> {user?.mobile}</li>
                     <li><strong>Reference 1:</strong> {referenceName1} ({referenceMobile1})</li>
@@ -182,18 +182,38 @@ const ServicemanProfileDetailPage = () => {
 
                 {/* CATEGORIES */}
                 <div className="col-md-6">
-                  <h6 className="border-bottom pb-2">Categories</h6>
-                  <div className="d-flex flex-wrap gap-3 mt-3">
-                    {categories?.map(cat => (
-                      <div key={cat._id} className="text-center">
+                  <h6 className="border-bottom pb-2">Product</h6>
+                  <div className="d-flex flex-wrap gap-3">
+                    {categories?.map((cat) => (
+                      <div key={cat?._id} className="text-center">
                         <img
-                          src={`${BASE_URL}/${cat.image}`}
-                          alt={cat.name}
+                          src={`${BASE_URL}/${cat?.icon}`}
+                          alt={cat?.name}
                           className="img-thumbnail"
-                          style={{ width: 90, height: 90 }}
+                          style={{ width: 50, height: 50, objectFit: "contain" }}
                         />
-                        <small className="fw-bold d-block mt-1">
-                          {cat.name}
+                        <small className="fw-bold d-block">
+                          {cat?.name}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* SUBCATEGORIES */}
+                <div className="col-md-6">
+                  <h6 className="border-bottom pb-2">Variant</h6>
+                  <div className="d-flex flex-wrap gap-3">
+                    {subCategories?.map((cat) => (
+                      <div key={cat?._id} className="text-center">
+                        <img
+                          src={`${BASE_URL}/${cat?.icon}`}
+                          alt={cat?.name}
+                          className="img-thumbnail"
+                          style={{ width: 50, height: 50, objectFit: "contain" }}
+                        />
+                        <small className="fw-bold d-block">
+                          {cat?.name}
                         </small>
                       </div>
                     ))}

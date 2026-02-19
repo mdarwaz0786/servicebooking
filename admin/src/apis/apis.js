@@ -58,6 +58,7 @@ const apis = {
   subCategory: {
     create: `${BASE_URL}/api/v1/admin/sub-category/create-sub-category`,
     get: `${BASE_URL}/api/v1/admin/sub-category`,
+    byCategory: `${BASE_URL}/api/v1/admin/sub-category/by-category`,
     update: `${BASE_URL}/api/v1/admin/sub-category/update-sub-category`,
     delete: `${BASE_URL}/api/v1/admin/sub-category/delete-sub-category`,
   },

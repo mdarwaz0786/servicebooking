@@ -182,7 +182,7 @@ const CityListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
-                            <Link to={`/update-city/${d._id}`}>
+                            <Link to={`/update-city/${d?._id}`}>
                               <button className="btn delete-table me-2">
                                 <i className="fe fe-edit" />
                               </button>

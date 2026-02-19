@@ -170,6 +170,67 @@ export const getSubCategoryById = asyncHandler(async (req, res) => {
   return res.status(200).json({ success: true, message: "Data fetched successfully", data: subCategory });
 });
 
+// Get all sub category by categoryId
+export const getSubCategoriesByCategoryId = asyncHandler(async (req, res) => {
+  let { search, status, sort = "desc", page, limit, categoryId } = req.query;
+
+  page = parseInt(page, 10);
+  limit = parseInt(limit, 10);
+  const skip = (page - 1) * limit;
+  const filters = {};
+
+  if (categoryId) {
+    const categoryIds = Array.isArray(categoryId)
+      ? categoryId
+      : typeof categoryId == "string" && categoryId.includes(",")
+        ? categoryId.split(",")
+        : [categoryId];
+
+    filters.categoryId = { $in: categoryIds };
+  };
+
+  if (search) {
+    filters.$or = [{ name: { $regex: search, $options: "i" } }];
+  };
+
+  if (status !== undefined) {
+    filters.status = status === "true";
+  };
+
+  let sortOption = {};
+  if (sort === "asc") {
+    sortOption = { createdAt: 1 };
+  } else if (sort === "desc") {
+    sortOption = { createdAt: -1 };
+  } else {
+    sortOption = sort;
+  };
+
+  let subCategories = await SubCategoryModel
+    .find(filters)
+    .select("-fullDescription")
+    .sort(sortOption)
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const total = await SubCategoryModel.countDocuments(filters);
+  const totalPages = Math.ceil(total / limit);
+
+  return res.status(200).json({
+    success: true,
+    message: "Data fetched successfully",
+    total,
+    page,
+    limit,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
+    data: subCategories,
+    pagination: buildPagination({ page, limit, total }),
+  });
+});
+
 // Update sub category
 export const updateSubCategory = asyncHandler(async (req, res) => {
   const { name, shortDescription, fullDescription, status, categoryId } = req.body;

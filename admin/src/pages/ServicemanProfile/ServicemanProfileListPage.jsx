@@ -348,6 +348,11 @@ const ServicemanProfileListPage = () => {
                         </td>
                         <td>
                           <div className="d-flex">
+                            <Link to={`/service-man-profile-update/${d?._id}`}>
+                              <button className="btn delete-table me-2" type="button">
+                                <i className="fe fe-edit" />
+                              </button>
+                            </Link>
                             <Link to="/service-man-profile-detail" state={{ record: d }}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />

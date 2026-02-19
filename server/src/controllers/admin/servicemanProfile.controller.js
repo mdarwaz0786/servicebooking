@@ -11,8 +11,11 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
   const {
     userId,
     categoryIds,
+    subCategoryIds,
     name,
     email,
+    mobile,
+    gender,
     dob,
     experienceLevel,
     companyName,
@@ -39,8 +42,11 @@ export const createServiceManProfile = asyncHandler(async (req, res) => {
     const profile = await ServiceManProfileModel.create({
       userId: userId,
       categoryIds,
+      subCategoryIds,
       name,
       email,
+      mobile,
+      gender,
       dob,
       experienceLevel,
       companyName,
@@ -105,6 +111,7 @@ export const getServiceManProfiles = asyncHandler(async (req, res) => {
       .populate("user")
       .populate("kyc")
       .populate("zones")
+      .populate("city")
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
@@ -136,6 +143,7 @@ export const getServiceManProfileById = asyncHandler(async (req, res) => {
     .populate("subCategories")
     .populate("user")
     .populate("kyc")
+    .populate("city")
     .populate("zones");
 
   if (!profile) throw new ApiError(404, "Profile not found");
@@ -166,6 +174,8 @@ export const updateServiceManProfile = asyncHandler(async (req, res) => {
       "servicemanProfile"
     );
   };
+
+  console.log(req.body)
 
   profile.set({
     ...req.body,

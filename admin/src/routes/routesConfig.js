@@ -133,6 +133,7 @@ import NotificationForm from "../pages/Notification/NotificationForm";
 import AddBankTransferPage from "../pages/ServicemanEarning/AddBankTransferPage";
 import CashCollectedSubmitPage from "../pages/CashCollectedSubmit/CashCollectedSubmitPage";
 import CreateCashCollectedSubmitPage from "../pages/CashCollectedSubmit/CreateCashCollectedSubmitPage";
+import ServicemanProfileUpdatePage from "../pages/ServicemanProfile/ServicemanProfileUpdatePage";
 
 const routesConfig = {
   private: [
@@ -196,7 +197,8 @@ const routesConfig = {
     { path: "/serviceman-earning", element: ServicemanEarningListPage, module: "providerTrainingScheduleSubmit", action: "view" },
 
     { path: "/service-man-profile", element: ServicemanProfileListPage, module: "providerProfile", action: "view" },
-    { path: "/service-man-profile-detail", element: ServicemanProfileDetailPage, module: "providerTrainingProfile", action: "update" },
+    { path: "/service-man-profile-detail", element: ServicemanProfileDetailPage, module: "providerProfile", action: "update" },
+    { path: "/service-man-profile-update/:id", element: ServicemanProfileUpdatePage, module: "providerProfile", action: "update" },
 
     { path: "/home-banner", element: HomeBannerListPage, module: "wideBanner", action: "view" },
     { path: "/add-home-banner", element: AddHomeBannerPage, module: "wideBanner", action: "add" },

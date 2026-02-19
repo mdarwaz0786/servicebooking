@@ -3,6 +3,7 @@ import {
   createSubCategory,
   deleteSubCategory,
   getSubCategories,
+  getSubCategoriesByCategoryId,
   getSubCategoryById,
   updateSubCategory
 } from "../../controllers/admin/subCategory.controller.js";
@@ -23,6 +24,9 @@ router.post(
   validateFileSize,
   createSubCategory
 );
+
+// Get all sub categories by categoryid
+router.get("/by-category", getSubCategoriesByCategoryId);
 
 // Get all sub categories
 router.get("/", getSubCategories);

@@ -42,6 +42,11 @@ const sendNotification = async (
             title,
             body: message,
           },
+          "android": {
+            "notification": {
+              "channel_id": "booking_other_zone"
+            }
+          },
           data: payloadData,
         })
       )
@@ -55,6 +60,11 @@ const sendNotification = async (
       notification: {
         title,
         body: message,
+      },
+      "android": {
+        "notification": {
+          "channel_id": "booking_other_zone"
+        }
       },
       data: payloadData,
     });
