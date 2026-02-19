@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import MultiSelect from "../../components/Form/MultiSelect";
+import { formatDate } from "../../helpers/formatDate";
 
 const ServicemanProfileDetailPage = () => {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ const ServicemanProfileDetailPage = () => {
 
   const {
     profileImage,
+    servicemanId,
     name,
     email,
     dob,
@@ -141,10 +143,11 @@ const ServicemanProfileDetailPage = () => {
                 style={{ width: 100, height: 100, objectFit: "cover" }}
               />
               <div>
-                <h5 className="mb-0">{name}</h5>
+                <h5 className="mb-0" style={{ color: "#fff" }}>{name}</h5>
+                <small>{servicemanId}</small><br />
                 <small>{email}</small>
                 <div>
-                  <span className="badge bg-light text-dark mt-1">
+                  <span className="badge bg-light text-dark mt-1 p-2">
                     {user?.role?.toUpperCase()}
                   </span>
                 </div>
@@ -159,11 +162,11 @@ const ServicemanProfileDetailPage = () => {
                 <div className="col-md-6">
                   <h6 className="border-bottom pb-2">Profile Info</h6>
                   <ul className="list-unstyled mt-3">
-                    <li><strong>DOB:</strong> {dob ? new Date(dob).toLocaleDateString() : "-"}</li>
+                    <li><strong>DOB:</strong> {formatDate(dob)}</li>
                     <li><strong>Gender:</strong> {gender}</li>
                     <li><strong>Experience Level:</strong> {experienceLevel}</li>
                     <li><strong>Company:</strong> {companyName || "N/A"}</li>
-                    <li><strong>Total Experience:</strong> {yearOfExperience || 0} Year {monthOfExperience || 0} </li>
+                    <li><strong>Total Experience:</strong> {yearOfExperience || 0} Years {monthOfExperience || 0} Months </li>
                     <li><strong>Permanent Address:</strong> {permanentAddress}</li>
                     <li><strong>Current Address:</strong> {currentAddress}</li>
                     <li><strong>Status:</strong> {profileStatus}</li>

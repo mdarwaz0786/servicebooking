@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-
 import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import MultiSelect from "../../components/Form/MultiSelect";
@@ -10,7 +9,7 @@ import MultiSelect from "../../components/Form/MultiSelect";
 const ServicemanProfileUpdatePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { validToken, user } = useAuth();
+  const { validToken, } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -28,7 +27,7 @@ const ServicemanProfileUpdatePage = () => {
     email: "",
     mobile: "",
     dob: "",
-    gender: "",
+    gender: "Male",
     city: "",
     experienceLevel: "Fresher",
     companyName: "",
@@ -46,7 +45,6 @@ const ServicemanProfileUpdatePage = () => {
 
   const [profileImage, setProfileImage] = useState(null);
 
-  // ================= FETCH BY ID =================
   useEffect(() => {
     if (!id || !validToken) return;
 
@@ -78,13 +76,12 @@ const ServicemanProfileUpdatePage = () => {
         toast.error("Failed to load profile");
       } finally {
         setLoading(false);
-      }
+      };
     };
 
     fetchData();
   }, [id, validToken]);
 
-  // ================= FETCH MASTER DATA =================
   useEffect(() => {
     if (!validToken) return;
 
@@ -99,15 +96,14 @@ const ServicemanProfileUpdatePage = () => {
         setCategories(catRes?.data?.data || []);
         setZones(zoneRes?.data?.data || []);
         setCities(cityRes?.data?.data || []);
-      } catch {
-        toast.error("Failed to load master data");
+      } catch (error) {
+        console.log(error);
       };
     };
 
     fetchMasters();
   }, [validToken]);
 
-  // ============= SUBCATEGORY FILTER (MULTI CATEGORY) ============
   useEffect(() => {
     if (!validToken || !selectedCategories?.length) {
       setSubCategories([]);
@@ -132,13 +128,11 @@ const ServicemanProfileUpdatePage = () => {
         setSelectedSubCategories((prev) => prev?.filter((id) => list?.some((sc) => sc?._id === id)));
       } catch (error) {
         console.log(error);
-        toast.error("Failed to load sub categories");
       };
     };
 
     fetchSubCategories();
   }, [selectedCategories, validToken]);
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -156,23 +150,33 @@ const ServicemanProfileUpdatePage = () => {
     setImagePreview(URL.createObjectURL(file));
   };
 
-  // ================= UPDATE =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const form = new FormData();
 
-      Object.keys(formData).forEach((key) => {
-        form.append(key, formData[key]);
-      });
+      form.append("name", formData.name || "");
+      form.append("email", formData.email || "");
+      form.append("mobile", formData.mobile || "");
+      form.append("dob", formData.dob || "");
+      form.append("city", formData.city || "");
+      form.append("experienceLevel", formData.experienceLevel || "");
+      form.append("companyName", formData.companyName || "");
+      form.append("yearOfExperience", formData.yearOfExperience || "");
+      form.append("monthOfExperience", formData.monthOfExperience || "");
+      form.append("permanentAddress", formData.permanentAddress || "");
+      form.append("currentAddress", formData.currentAddress || "");
+      form.append("referenceName1", formData.referenceName1 || "");
+      form.append("referenceMobile1", formData.referenceMobile1 || "");
+      form.append("referenceName2", formData.referenceName2 || "");
+      form.append("referenceMobile2", formData.referenceMobile2 || "");
+      form.append("gender", formData.gender || "Male");
+      form.append("remarks", formData.remarks || "");
 
-      console.log(selectedCategories);
-
-      form.append("categoryIds", JSON.stringify(selectedCategories));
-      form.append("subCategoryIds", JSON.stringify(selectedSubCategories));
-      form.append("zones", JSON.stringify(selectedZones));
-      form.append("updatedBy", user?._id);
+      form.append("categoryIds", JSON.stringify(selectedCategories || []));
+      form.append("subCategoryIds", JSON.stringify(selectedSubCategories || []));
+      form.append("zones", JSON.stringify(selectedZones || []));
 
       if (profileImage) {
         form.append("profileImage", profileImage);
@@ -184,9 +188,8 @@ const ServicemanProfileUpdatePage = () => {
         {
           headers: {
             Authorization: validToken,
-            "Content-Type": "multipart/form-data"
-          }
-        },
+          },
+        }
       );
 
       if (res?.data?.success) {

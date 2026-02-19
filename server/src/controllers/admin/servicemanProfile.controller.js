@@ -175,12 +175,28 @@ export const updateServiceManProfile = asyncHandler(async (req, res) => {
     );
   };
 
-  console.log(req.body)
+  const parseArray = (value) => {
+    if (!value) return [];
 
-  profile.set({
-    ...req.body,
-    updatedBy: req.user?._id,
-  });
+    if (typeof value === "string") {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [];
+      };
+    };
+
+    return value;
+  };
+
+  const updateData = { ...req.body };
+
+  updateData.categoryIds = parseArray(req.body.categoryIds);
+  updateData.subCategoryIds = parseArray(req.body.subCategoryIds);
+  updateData.zones = parseArray(req.body.zones);
+
+  updateData.updatedBy = req.user?._id;
+  profile.set(updateData);
 
   await profile.save();
 
