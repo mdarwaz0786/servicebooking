@@ -60,7 +60,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   if (userId) {
     await CartModel.updateMany(
       { userId: userId },
-      { $set: { userId: user._id } }
+      { $set: { userId: user?._id } }
     );
   };
 
@@ -68,7 +68,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     success: true,
     message: "Login successful",
     user,
-    token: generateToken(user._id),
+    token: generateToken(user?._id),
   });
 });
 

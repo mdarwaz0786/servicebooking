@@ -30,8 +30,6 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     trim: true,
-    index: true,
-    unique: [true, "Username must be unique."],
   },
   password: {
     type: String,
