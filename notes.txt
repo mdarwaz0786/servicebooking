@@ -49,7 +49,7 @@ service man
 mongodump --uri="mongodb://admin:Shaurya1819@145.223.18.56:27017/greenindiateam?authSource=admin&directConnection=true&replicaSet=rs0" --out=/backup/greenindiateam
 
 // Backup uploads
-// scp -r root@145.223.18.56:/var/www/servicebooking/server/uploads C:/Users/CODE-ADITYA/Desktop/greenindia
+// scp -r root@145.223.18.56:/var/www/servicebooking/server/uploads C:/Users/CODE-ADITYA/Desktop/greenindiateam
 
 // Admim ENV: 
 VITE_API_BASE_URL=https://oyekabadwale.com
