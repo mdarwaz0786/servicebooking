@@ -63,7 +63,7 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
   if (permission) {
     const allowed = user?.permissions?.permissions?.[permission.module]?.[permission.action];
     if (!allowed) {
-      throw new ApiError(403, "You don't have permission.");
+      throw new ApiError(403, "You don't have permission to perform this action.");
     };
   };
 
