@@ -1,5 +1,6 @@
 import CashCollectedSubmitModel from "../../models/cashCollectedSubmit.model.js";
 import BookingModel from "../../models/booking.model.js";
+import SericeManProfileModel from "../../models/servicemanProfile.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
@@ -22,6 +23,12 @@ export const createCashCollectedSubmit = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Booking amount already collected");
   }
 
+  const serviman = await SericeManProfileModel.findById(providerId);
+
+  if (!serviman) {
+    throw new ApiError(400, "Provider not found");
+  }
+
   const booking = await BookingModel.findById(bookingId).select("_id");
   if (!booking) {
     throw new ApiError(404, "Booking not found");
@@ -29,7 +36,7 @@ export const createCashCollectedSubmit = asyncHandler(async (req, res) => {
 
   const cashSubmit = await CashCollectedSubmitModel.create({
     bookingId,
-    providerId,
+    providerId: serviman?.userId,
     amount,
     createdBy: req.user?._id,
   });

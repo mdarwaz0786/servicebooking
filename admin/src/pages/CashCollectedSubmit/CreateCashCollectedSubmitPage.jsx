@@ -97,7 +97,7 @@ const CreateCashCollectedSubmitPage = () => {
   }, [formData.bookingId, validToken]);
 
   const providerOptions = providers?.map((p) => ({
-    value: p?.userId,
+    value: p?._id,
     label: `${p?.name} - ${p?.servicemanId}`,
   }));
 
