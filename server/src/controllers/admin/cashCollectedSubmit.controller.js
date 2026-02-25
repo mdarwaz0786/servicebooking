@@ -44,8 +44,8 @@ export const createCashCollectedSubmit = asyncHandler(async (req, res) => {
   await BookingModel.findByIdAndUpdate(
     bookingId,
     {
-      cashCollectedSubmitAmount: amount,
-      cashCollectedPendingAmount: 0,
+      cashColletedSubmitAmount: amount,
+      cashColletedPendingAmount: 0,
     },
     { new: true }
   );

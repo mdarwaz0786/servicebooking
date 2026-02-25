@@ -83,7 +83,6 @@ const CreateCashCollectedSubmitPage = () => {
         if (res?.data?.success) {
           const data = res?.data?.data;
 
-          console.log("booking", data)
           setFormData((prev) => ({
             ...prev, amount: data?.booking?.cashColletedPendingAmount,
           }));
