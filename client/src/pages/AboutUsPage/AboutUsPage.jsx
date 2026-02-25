@@ -11,7 +11,7 @@ const AboutUsPage = () => {
   const providers = [
     {
       name: "SARVESH KUMAR MISHRA",
-      role: "(Director & Founder))",
+      role: "(Director & Founder)",
       img: "assets/img/home/sarvesh-mishra.svg",
       description: `
 I started Sarv Laxmi Green India Pvt. Ltd. with one simple belief: every home deserves honest service and respectful professionals. Before systems, before apps, before expansion plans—there was a thought that kept me awake at night: “If my own family needed help at home, who would I trust?”
@@ -60,8 +60,8 @@ This company is not just about repairs, cleaning, or installations. It is about 
 
   return (
     <>
-      <BreadCrumb data={{title:'About us'}} />
-  
+      <BreadCrumb data={{ title: 'About us' }} />
+
 
 
       <div className="about-sec">
@@ -88,18 +88,18 @@ This company is not just about repairs, cleaning, or installations. It is about 
               <div className="about-content">
                 {/* <h6>ABOUT OUR COMPANY</h6> */}
                 <h6>Sarv Laxmi Green India Private Limited – Delivering Trusted Home Services in Delhi NCR</h6>
-                <p 
+                <p
                 // style={{textAlign: 'justify'}}
                 >
-                  Sarv Laxmi Green India Private Limited is committed to offering reliable, affordable, and expert home services across Delhi NCR. Our mission is to make everyday life easier by bringing skilled professionals straight to your doorstep. With a focus on quality and customer satisfaction, we ensure smooth and stress-free service experiences for every household. 
+                  Sarv Laxmi Green India Private Limited is committed to offering reliable, affordable, and expert home services across Delhi NCR. Our mission is to make everyday life easier by bringing skilled professionals straight to your doorstep. With a focus on quality and customer satisfaction, we ensure smooth and stress-free service experiences for every household.
 
-Green India Team has specialized in the repair and maintenance of home appliances, providing efficient services to households. Our products are quite diverse. We offer Doorstep services like Home Appliance repair services, Cleaning services, Unisex Salon Services, electrician plumber and carpenter, Refrigerators, washing machines, microwaves, etc.
-
-
-We have a series of skilled technicians in our team with wide experience and know-how to deliver appliances at their optimum performance. We are customer-centric, transparent, and timely with solutions and offer high-quality repairs at reasonable and competitive prices.
+                  Green India Team has specialized in the repair and maintenance of home appliances, providing efficient services to households. Our products are quite diverse. We offer Doorstep services like Home Appliance repair services, Cleaning services, Unisex Salon Services, electrician plumber and carpenter, Refrigerators, washing machines, microwaves, etc.
 
 
-In the Green India Team, we have the mission of ensuring that the maintenance of the home appliances is made easy, reliable, and stress-free for all customers.
+                  We have a series of skilled technicians in our team with wide experience and know-how to deliver appliances at their optimum performance. We are customer-centric, transparent, and timely with solutions and offer high-quality repairs at reasonable and competitive prices.
+
+
+                  In the Green India Team, we have the mission of ensuring that the maintenance of the home appliances is made easy, reliable, and stress-free for all customers.
 
                 </p>
 
@@ -132,275 +132,275 @@ In the Green India Team, we have the mission of ensuring that the maintenance of
               </div>
             </div>
           </div>
-          </div>
-       
+        </div>
+
       </div>
 
 
 
 
       <section className="work-section px-0 my-0 work-bg">
-      {/* Background Images */}
-      
-
-      <div className="container">
-        {/* Section Heading */}
-        <div className="row">
-          <div className="col-md-12 text-center">
-            <div className="section-heading">
-              <h2>How It Works</h2>
-              
-            </div>
-          </div>
-        </div>
-
-        {/* Work Steps */}
-        <div className="row">
-          {/* Step 1 */}
-          <div className="col-md-4 d-flex">
-            <div className="card work-box flex-fill">
-              <div className="card-body">
-                <div className="work-icon">
-                  <span>
-                    <img
-                      src="assets/img/icons/about-hands.svg"
-                      alt="img"
-                    />
-                  </span>
-                </div>
-                <h5>1. Book Your Service </h5>
-                <p>
-                  Choose the service you need, select your preferred time slot, and confirm your booking. The process is quick and requires only a few clicks.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="col-md-4 d-flex">
-            <div className="card work-box flex-fill">
-              <div className="card-body">
-                <div className="work-icon">
-                  <span>
-                    <img
-                      src="assets/img/icons/about-documents.svg"
-                      alt="img"
-                    />
-                  </span>
-                </div>
-                <h5>2. Get a Verified Professional</h5>
-                <p>
-                  We assign experienced and background-checked professionals for every job. They arrive on time and carry the tools required for the service.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="col-md-4 d-flex">
-            <div className="card work-box flex-fill">
-              <div className="card-body">
-                <div className="work-icon">
-                  <span>
-                    <img
-                      src="assets/img/icons/about-book.svg"
-                      alt="img"
-                    />
-                  </span>
-                </div>
-                <h5>3. Transparent Payment</h5>
-                <p>
-                  Once the service is complete, you can pay securely using any preferred payment method. We maintain clear pricing without hidden charges.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        {/* Background Images */}
 
 
-    <div className="chooseus-sec">
-      <div className="container">
-        <div className="row align-items-center">
-          {/* Left Content */}
-
-
-          <div className="col-md-12">
-            <div className="choose-content m-0">
-                <h2 style={{lineHeight: '1',marginBottom: '13px'}}>Why Choose Us - <br/>The Smart Choice for Home Services</h2>
-              </div>
-          </div>
-
-
-          <div className="col-md-6">
-            <div className="choose-content">
-              <h6>Skilled and Verified Professionals</h6>
-                <p className="mb-3">We work with trained specialists who have expertise in their specific categories. Every professional goes through background verification for customer safety.</p>
-              
-
-              <div className="accordion" id="faq_accordion">
-                
-              {accordionData.map((item, index) => (
-                <div className="accordion-item" key={index}>
-
-                  <h2 className="accordion-header">
-                    <button
-                      className={`accordion-button ${openIndex !== index ? "collapsed" : ""}`}
-                      onClick={() => toggleAccordion(index)}
-                    >
-                      {item.title}
-                    </button>
-                  </h2>
-
-                  <div className={`accordion-collapse collapse ${openIndex === index ? "show" : ""}`}>
-                    <div className="accordion-body">
-                      <p>{item.content}</p>
-                    </div>
-                  </div>
-
-                </div>
-              ))}
-
-
-
-              </div>
-            </div>
-          </div>
-
-          {/* Right Image */}
-          <div className="col-md-6">
-            <div className="chooseus-img">
-              <img
-                src="assets/img/home/why-choose-us.svg"
-                className="img-fluid"
-                alt="img"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Row */}
-        <div className="row justify-content-center">
-          <div className="col-xl-3 col-lg-4 col-sm-6">
-            <div className="choose-icon">
-              <img
-                src="assets/img/icons/group-stars.svg"
-                className="img-fluid"
-                alt="img"
-              />
-              <div className="choose-info">
-                <h3>500+</h3>
-                <p>Trained Professionals</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-xl-3 col-lg-4 col-sm-6">
-            <div className="choose-icon">
-              <img
-                src="assets/img/icons/expert-team.svg"
-                className="img-fluid"
-                alt="img"
-              />
-              <div className="choose-info">
-                <h3>5000+</h3>
-                <p>Happy Customers</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-xl-3 col-lg-4 col-sm-6">
-            <div className="choose-icon">
-              <img
-                src="assets/img/icons/about-documents.svg"
-                className="img-fluid"
-                alt="img"
-              />
-              <div className="choose-info">
-                <h3>2</h3>
-                <p>Cities</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-xl-3 col-lg-4 col-sm-6">
-            <div className="choose-icon border-0">
-              <img
-                src="assets/img/icons/expereience.svg"
-                className="img-fluid"
-                alt="img"
-              />
-              <div className="choose-info">
-                <h3>1</h3>
-                <p>Country</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-                    
-    
-    
-    <section className="providers-section abt-provider">
-      <div className="container">
-        <div className="section-heading">
+        <div className="container">
+          {/* Section Heading */}
           <div className="row">
-            <div className="col-md-6">
-              {/* <h2 className="fs-32">Our Leadership Team</h2> */}
+            <div className="col-md-12 text-center">
+              <div className="section-heading">
+                <h2>How It Works</h2>
+
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="row">
-          {providers.map((provider, index) => (
-            <div className="col-lg-12 col-md-12 m-auto" key={index}>
-              <div className="card providerset p-0 flex-fill">
-                <div className="card-body row">
-                  <div className="providerset-img col-md-4">
-                    <a >
-                      <img src={provider.img} alt={provider.name} />
-                    </a>
+          {/* Work Steps */}
+          <div className="row">
+            {/* Step 1 */}
+            <div className="col-md-4 d-flex">
+              <div className="card work-box flex-fill">
+                <div className="card-body">
+                  <div className="work-icon">
+                    <span>
+                      <img
+                        src="assets/img/icons/about-hands.svg"
+                        alt="img"
+                      />
+                    </span>
                   </div>
-
-                  <div className="providerset-content col-md-8">
-                    <div className="providerset-price">
-                      <div className="d-flex justify-content-between align-items-center flex-fill">
-                        <div className="providerset-name">
-                          <h4 className="d-flex align-items-center">
-                            <a
-                              className="me-1 text-truncate"
-                            >
-                              {provider.name}
-                            </a>
-                            <i className="ti ti-circle-check-filled text-success"></i>
-                          </h4>
-                          <span>{provider.role}</span>
-                          <p>{provider.description}</p>
-                        </div>
-                        
-                      </div>
-                    </div>
-
-                  
-                  </div>
+                  <h5>1. Book Your Service </h5>
+                  <p>
+                    Choose the service you need, select your preferred time slot, and confirm your booking. The process is quick and requires only a few clicks.
+                  </p>
                 </div>
               </div>
             </div>
-          ))}
+
+            {/* Step 2 */}
+            <div className="col-md-4 d-flex">
+              <div className="card work-box flex-fill">
+                <div className="card-body">
+                  <div className="work-icon">
+                    <span>
+                      <img
+                        src="assets/img/icons/about-documents.svg"
+                        alt="img"
+                      />
+                    </span>
+                  </div>
+                  <h5>2. Get a Verified Professional</h5>
+                  <p>
+                    We assign experienced and background-checked professionals for every job. They arrive on time and carry the tools required for the service.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="col-md-4 d-flex">
+              <div className="card work-box flex-fill">
+                <div className="card-body">
+                  <div className="work-icon">
+                    <span>
+                      <img
+                        src="assets/img/icons/about-book.svg"
+                        alt="img"
+                      />
+                    </span>
+                  </div>
+                  <h5>3. Transparent Payment</h5>
+                  <p>
+                    Once the service is complete, you can pay securely using any preferred payment method. We maintain clear pricing without hidden charges.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <div className="chooseus-sec">
+        <div className="container">
+          <div className="row align-items-center">
+            {/* Left Content */}
+
+
+            <div className="col-md-12">
+              <div className="choose-content m-0">
+                <h2 style={{ lineHeight: '1', marginBottom: '13px' }}>Why Choose Us - <br />The Smart Choice for Home Services</h2>
+              </div>
+            </div>
+
+
+            <div className="col-md-6">
+              <div className="choose-content">
+                <h6>Skilled and Verified Professionals</h6>
+                <p className="mb-3">We work with trained specialists who have expertise in their specific categories. Every professional goes through background verification for customer safety.</p>
+
+
+                <div className="accordion" id="faq_accordion">
+
+                  {accordionData.map((item, index) => (
+                    <div className="accordion-item" key={index}>
+
+                      <h2 className="accordion-header">
+                        <button
+                          className={`accordion-button ${openIndex !== index ? "collapsed" : ""}`}
+                          onClick={() => toggleAccordion(index)}
+                        >
+                          {item.title}
+                        </button>
+                      </h2>
+
+                      <div className={`accordion-collapse collapse ${openIndex === index ? "show" : ""}`}>
+                        <div className="accordion-body">
+                          <p>{item.content}</p>
+                        </div>
+                      </div>
+
+                    </div>
+                  ))}
+
+
+
+                </div>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="col-md-6">
+              <div className="chooseus-img">
+                <img
+                  src="assets/img/home/why-choose-us.svg"
+                  className="img-fluid"
+                  alt="img"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Row */}
+          <div className="row justify-content-center">
+            <div className="col-xl-3 col-lg-4 col-sm-6">
+              <div className="choose-icon">
+                <img
+                  src="assets/img/icons/group-stars.svg"
+                  className="img-fluid"
+                  alt="img"
+                />
+                <div className="choose-info">
+                  <h3>500+</h3>
+                  <p>Trained Professionals</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xl-3 col-lg-4 col-sm-6">
+              <div className="choose-icon">
+                <img
+                  src="assets/img/icons/expert-team.svg"
+                  className="img-fluid"
+                  alt="img"
+                />
+                <div className="choose-info">
+                  <h3>5000+</h3>
+                  <p>Happy Customers</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xl-3 col-lg-4 col-sm-6">
+              <div className="choose-icon">
+                <img
+                  src="assets/img/icons/about-documents.svg"
+                  className="img-fluid"
+                  alt="img"
+                />
+                <div className="choose-info">
+                  <h3>2</h3>
+                  <p>Cities</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xl-3 col-lg-4 col-sm-6">
+              <div className="choose-icon border-0">
+                <img
+                  src="assets/img/icons/expereience.svg"
+                  className="img-fluid"
+                  alt="img"
+                />
+                <div className="choose-info">
+                  <h3>1</h3>
+                  <p>Country</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-
-      
 
 
 
-      
+      <section className="providers-section abt-provider">
+        <div className="container">
+          <div className="section-heading">
+            <div className="row">
+              <div className="col-md-6">
+                {/* <h2 className="fs-32">Our Leadership Team</h2> */}
+              </div>
+            </div>
+          </div>
 
-   
-   
+          <div className="row">
+            {providers.map((provider, index) => (
+              <div className="col-lg-12 col-md-12 m-auto" key={index}>
+                <div className="card providerset p-0 flex-fill">
+                  <div className="card-body row">
+                    <div className="providerset-img col-md-4">
+                      <a >
+                        <img src={provider.img} alt={provider.name} />
+                      </a>
+                    </div>
+
+                    <div className="providerset-content col-md-8">
+                      <div className="providerset-price">
+                        <div className="d-flex justify-content-between align-items-center flex-fill">
+                          <div className="providerset-name">
+                            <h4 className="d-flex align-items-center">
+                              <a
+                                className="me-1 text-truncate"
+                              >
+                                {provider.name}
+                              </a>
+                              <i className="ti ti-circle-check-filled text-success"></i>
+                            </h4>
+                            <span>{provider.role}</span>
+                            <p>{provider.description}</p>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+
     </>
   );
 };

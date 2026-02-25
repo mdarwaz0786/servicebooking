@@ -82,7 +82,7 @@ const Footer = () => {
                   <li><Link to="https://www.facebook.com/greenindiateams/" target="_blank"><img src="/assets/img/icons/fb.svg" alt="facebook" /></Link></li>
                   <li><Link to="https://www.instagram.com/greenindiateams/#" target="_blank"><img src="/assets/img/icons/instagram.svg" alt="instagram" /></Link></li>
                   <li><Link to="https://x.com/greenindiateam_" target="_blank"><img src="/assets/img/icons/twitter.svg" alt="twitter" /></Link></li>
-                  <li><Link to="https://web.whatsapp.com/" target="_blank"><img src="/assets/img/icons/whatsapp.svg" alt="whatsapp" /></Link></li>
+                  {/* <li><Link to="https://web.whatsapp.com/" target="_blank"><img src="/assets/img/icons/whatsapp.svg" alt="whatsapp" /></Link></li> */}
                   <li><Link to="https://www.youtube.com/@GREENINDIATEAM" target="_blank"><img src="/assets/img/icons/youtube.svg" alt="youtube" /></Link></li>
                   <li><Link to="https://www.linkedin.com/company/green-india-team" target="_blank"><img src="/assets/img/icons/linkedin.svg" alt="linkedin" /></Link></li>
                 </ul>

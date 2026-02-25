@@ -8,46 +8,46 @@ import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
 
 const ServiceManApp = () => {
-  
+
 
   const { Urls, postData } = useContext(AppContext);
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-  
-    const fetchDetail = async () => {
-      try {
-        const response = await postData({}, Urls.AppUrl, "GET", 0, 1);
-        if (response.data) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.error("Detail Error:", error); 
-      } finally {
-        setLoading(false);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDetail = async () => {
+    try {
+      const response = await postData({}, Urls.AppUrl, "GET", 0, 1);
+      if (response.data) {
+        setData(response.data);
       }
-    };
-  
-    useEffect(() => {
-      fetchDetail();
-    }, []);
-  
-    if (loading) {
-      return (
-        <div className="container py-5 text-center">
-          <div className="spinner-border text-dark" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      );
+    } catch (error) {
+      console.error("Detail Error:", error);
+    } finally {
+      setLoading(false);
     }
-  
+  };
+
+  useEffect(() => {
+    fetchDetail();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container py-5 text-center">
+        <div className="spinner-border text-dark" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <>
-      <BreadCrumb data={{title:'Download Partner App'}} />
-  
+      <BreadCrumb data={{ title: 'Download Partner App' }} />
+
       {/* Hero Section */}
-      <div className="app-hero-section py-5" style={{background: 'linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%)'}}>
+      <div className="app-hero-section py-5" style={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%)' }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-8 m-auto text-center">
@@ -58,9 +58,9 @@ const ServiceManApp = () => {
                 <p className="lead mb-4">
                   Join our network of skilled service professionals. Get access to service requests, manage appointments, and grow your business with Green India Team.
                 </p>
-                
+
                 {/* App Download Buttons */}
-                <div className="app-download-buttons mb-1">
+                {/* <div className="app-download-buttons mb-1">
                   <h5 className="mb-3">Download Now</h5>
                   <div className="d-flex flex-wrap gap-3 justify-content-center">
                     <a 
@@ -91,18 +91,18 @@ const ServiceManApp = () => {
                       </div>
                     </a>
                   </div>
-                </div>
-                
-                
+                </div> */}
+
+
               </div>
             </div>
-            
-           
+
+
           </div>
         </div>
       </div>
 
-      
+
     </>
   );
 };
