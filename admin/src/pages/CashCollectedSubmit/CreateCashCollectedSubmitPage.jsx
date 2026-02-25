@@ -97,8 +97,8 @@ const CreateCashCollectedSubmitPage = () => {
   }, [formData.bookingId, validToken]);
 
   const providerOptions = providers?.map((p) => ({
-    value: p?._id,
-    label: `${p?.name} ${p?.mobile}`,
+    value: p?.userId,
+    label: `${p?.name} - ${p?.servicemanId}`,
   }));
 
   const bookingOptions = bookings?.map((b) => ({

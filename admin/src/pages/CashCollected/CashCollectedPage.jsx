@@ -96,7 +96,7 @@ const CashCollectedPage = () => {
     { value: "", label: "All Provider" },
     ...servicemen.map((s) => ({
       value: s?.userId,
-      label: s?.name,
+      label: `${s?.name} - ${s?.servicemanId}`,
     })),
   ];
 
