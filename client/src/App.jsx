@@ -40,9 +40,11 @@ import ServiceManReviewPage from "./pages/ServiceManPanel/Review/ServiceManRevie
 
 import TermsConditionsPage from "./pages/TermsConditions/TermsConditionsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy/PrivacyPolicyPage";
+import GiPrivacyPolicyPage from "./pages/GiPrivacyPolicy/GiPrivacyPolicyPage";
 import DisclaimerPage from "./pages/Disclaimer/DisclaimerPage";
 import RefundPolicyPage from "./pages/RefundPolicy/RefundPolicyPage";
 import GreenIndiaTeamImpactPage from "./pages/GreenIndiaTeamImpact/GreenIndiaTeamImpactPage";
+import DeleteAccountPage from "./pages/DeleteAccount/DeleteAccountPage";
 import CareerPage from "./pages/Career/CareerPage";
 import CareerDetailPage from "./pages/Career/CareerDetailPage";
 import BlogPage from "./pages/Blog/BlogPage";
@@ -64,9 +66,11 @@ const App = () => {
           <Route path="/addresses" element={<AddressesPage />} />
           <Route path="/term-condition" element={<TermsConditionsPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/gi-team-privacy-policy" element={<GiPrivacyPolicyPage />} />
           <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/refund-policy" element={<RefundPolicyPage />} />
           <Route path="/green-india-team-impact" element={<GreenIndiaTeamImpactPage />} />
+          <Route path="/delete-account" element={<DeleteAccountPage />} />
           <Route path="/career" element={<CareerPage />} />
           <Route path="/career/:slug" element={<CareerDetailPage />} />
           <Route path="/blog" element={<BlogPage />} />
