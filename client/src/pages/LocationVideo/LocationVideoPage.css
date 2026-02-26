@@ -1,0 +1,42 @@
+/* LocationVideoPage.css */
+.video-wrapper {
+  padding: 20px 0;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+
+.video-description {
+  border-left: 4px solid #1f7a3e;
+  text-align: left;
+}
+
+.video-description h5 {
+  color: #1f7a3e;
+  margin-bottom: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .video-wrapper h2 {
+    font-size: 1.5rem;
+  }
+  
+  .video-description {
+    padding: 1rem !important;
+  }
+}
