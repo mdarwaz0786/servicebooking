@@ -4,7 +4,7 @@ import "./LocationVideoPage.css"; // Optional: for custom styling
 
 const LocationVideoPage = () => {
   // Video source path - make sure this is correct
-  const videoSource = "public/location-video.mp4"; // Public folder se access ke liye
+  const videoSource = "/location-video.mp4"; // Public folder se access ke liye
 
   return (
     <>
