@@ -154,14 +154,21 @@ const LoginForm = () => {
       <div className={`mb-3 ${otpField ? "" : "d-none"}`}>
         <label className="form-label fw-semibold">OTP</label>
         <input
-          type="password"
+          type="text"
           className="form-control form-control-lg rounded-3"
           placeholder="Enter OTP"
           value={otp}
           ref={otpInputRef}
-          onChange={(e) => setOtp(e.target.value)}
+          maxLength={4}                 // 👈 4 digit limit
+          autoComplete="off"            // 👈 autocomplete off
+          inputMode="numeric"           // 👈 mobile me numeric keyboard
+          pattern="[0-9]*"              // 👈 sirf number allow
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, ""); // 👈 sirf number
+            setOtp(value);
+          }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && otp.length === 4) {
               handleVerifyOtp();
             }
           }}

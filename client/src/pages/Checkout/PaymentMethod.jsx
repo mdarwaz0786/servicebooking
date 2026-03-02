@@ -8,7 +8,7 @@ import PaymentModeModal from "../../components/Modal/PaymentModeModal ";
 
 const PaymentMethod = () => {
   const navigate = useNavigate();
-  const { modals, toggleModal } = useContext(AppContext);
+  const { modals, toggleModal, user } = useContext(AppContext);
 
    const { Urls,
      postData,
@@ -32,7 +32,8 @@ const PaymentMethod = () => {
 
 
    const handleBooking = async () => {
-
+    let showMessage = 0;
+    if(paymentMode=='online') showMessage = 1;
    
 
       try {
@@ -44,12 +45,12 @@ const PaymentMethod = () => {
           paymentMode:paymentMode,
           paymentBy:'',
           isCouponUsed:0,
-        }, Urls.createBooking, "POST",0,0);
+        }, Urls.createBooking, "POST",0,showMessage);
         if (response.success) {
 
           
          
-          let success;
+          let success=false;
           if(paymentMode=='online')
           {
             success = await handlePayment({
@@ -57,7 +58,8 @@ const PaymentMethod = () => {
               type: "booking",
               createUrl: Urls.createTransaction,
               verifyUrl: Urls.verifyTransaction,
-              toast: toast
+              toast: toast,
+              user:user
             });
           }
           else{

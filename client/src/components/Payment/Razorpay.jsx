@@ -5,7 +5,9 @@ import { AppContext } from "../../context/AppContext";
 
 const VITE_APP_NAME = import.meta.env.VITE_APP_NAME;
 
-export const handlePayment = async ({ pId, type, createUrl, verifyUrl, toast }) => {
+export const handlePayment = async ({ pId, type, createUrl, verifyUrl, toast, user }) => {
+
+  
   try {
     const { data } = await axios.post(createUrl, { pId, type });
 
@@ -42,12 +44,12 @@ export const handlePayment = async ({ pId, type, createUrl, verifyUrl, toast }) 
           }
         },
         prefill: {
-          name: "Booking",
-          email: "abc@example.com",
-          contact: "1122334455",
+          name: user?.name?user?.name:'',
+          email: user?.email?user?.email:'',
+          contact: user?.mobile?user?.mobile:'',
         },
         theme: {
-          color: "#3399cc",
+          color: "#00522c",
         },
         modal: {
           ondismiss: function () {
