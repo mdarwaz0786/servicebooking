@@ -1,0 +1,48 @@
+/* GiPrivacyPolicy.css */
+.policy-content h2 {
+  color: #1f7a3e;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.policy-content h3 {
+  color: #2c3e50;
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.policy-content p {
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.policy-content ul {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.policy-content li {
+  margin-bottom: 0.25rem;
+}
+
+.policy-content .footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .policy-content h2 {
+    font-size: 1.25rem;
+  }
+  
+  .policy-content h3 {
+    font-size: 1.1rem;
+  }
+}
