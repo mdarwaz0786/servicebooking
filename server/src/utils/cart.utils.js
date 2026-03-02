@@ -8,8 +8,8 @@ export const getCartData = async (userId) => {
 
   cartItems = cartItems.map((item) => ({
     ...item,
-    serviceId: item.serviceId?._id,
-    ...item.serviceId,
+    serviceId: item?.serviceId?._id,
+    ...(item.serviceId || {}),
   }));
 
   let amount = 0;
@@ -23,12 +23,12 @@ export const getCartData = async (userId) => {
   let taxPercent = 0;
 
   cartItems.forEach((item) => {
-    amount += item.salePrice * item.quantity;
-    mrpAmount += item.mrpPrice * item.quantity;
+    amount += Number(item?.salePrice || 0) * Number(item?.quantity || 1);
+    mrpAmount += Number(item?.mrpPrice || 0) * Number(item?.quantity || 1);
 
-    taxablePrice += parseFloat(item.taxablePrice);
-    transactionCharge += parseFloat(item.transactionCharge);
-    taxPercent += parseFloat(item.taxPercent);
+    taxablePrice += Number(item?.taxablePrice || 0);
+    transactionCharge += Number(item?.transactionCharge || 0);
+    taxPercent += Number(item?.taxPercent || 0);
   });
 
   payableAmount = amount;
