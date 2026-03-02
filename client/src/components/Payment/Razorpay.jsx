@@ -20,7 +20,7 @@ export const handlePayment = async ({ pId, type, createUrl, verifyUrl, toast, us
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
-        name: "Service Booking",
+        name: VITE_APP_NAME,
         description: "Complete your payment",
         order_id: order.id,
         handler: async function (response) {
