@@ -53,6 +53,8 @@ const UpdateServicePage = () => {
     metaKeywords: "",
     metaDescription: "",
     isMediaUpload: 0,
+    canonicalTag: "",
+    slug: "",
   });
 
   useEffect(() => {
@@ -63,7 +65,7 @@ const UpdateServicePage = () => {
         });
         if (res?.data?.success) {
           const s = res?.data?.data;
-          const meta = res.data.meta;
+          const meta = res?.data?.meta;
           setFormData({
             categoryId: s?.categoryId || "",
             subCategoryId: s.subCategoryId || "",
@@ -90,6 +92,8 @@ const UpdateServicePage = () => {
             metaAuthor: meta?.metaAuthor || "",
             metaKeywords: meta?.metaKeywords || "",
             metaDescription: meta?.metaDescription || "",
+            canonicalTag: meta?.canonicalTag || "",
+            slug: meta?.slug || "",
           });
           if (s?.image) setPreview(`${BASE_URL}/${s?.image}`);
           if (s?.icon) setIconPreview(`${BASE_URL}/${s?.icon}`);
@@ -711,7 +715,7 @@ const UpdateServicePage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Title (max character 100)
+                    Meta Title (max character 80) {formData.metaTitle.length}/80
                   </label>
                   <input
                     type="text"
@@ -719,7 +723,35 @@ const UpdateServicePage = () => {
                     value={formData.metaTitle}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={100}
+                    maxLength={80}
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Slug
+                  </label>
+                  <input
+                    type="text"
+                    name="slug"
+                    value={formData.slug}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Canonical Tag
+                  </label>
+                  <input
+                    type="text"
+                    name="canonicalTag"
+                    value={formData.canonicalTag}
+                    onChange={handleChange}
+                    className="form-control"
                   />
                 </div>
               </div>
@@ -740,7 +772,7 @@ const UpdateServicePage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Keywords
+                    Meta Keywords (separated by comma)
                   </label>
                   <input
                     type="text"
@@ -755,15 +787,15 @@ const UpdateServicePage = () => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Description (max character 300)
+                    Meta Description (max character 180) {formData.metaDescription.length}/180
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     name="metaDescription"
                     value={formData.metaDescription}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={300}
+                    maxLength={180}
+                    rows={4}
                   />
                 </div>
 

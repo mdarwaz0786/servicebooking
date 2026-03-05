@@ -11,7 +11,7 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // Create Category
 export const createCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription } = req.body;
+  const { name, shortDescription, fullDescription, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription, canonicalTag, slug } = req.body;
 
   if (!name || !name.trim()) {
     throw new ApiError(400, "Category name is required");
@@ -43,9 +43,9 @@ export const createCategory = asyncHandler(async (req, res) => {
       icon: iconPath,
     });
 
-    const slug = await generateUniqueSlug(name, "Category", category._id, "categories");
+    const s = await generateUniqueSlug(name, "Category", category._id, "categories");
 
-    category.slug = slug;
+    category.slug = s;
     await category.save();
 
     const metaTag = await MetaTagModel.create({
@@ -55,7 +55,8 @@ export const createCategory = asyncHandler(async (req, res) => {
       metaKeywords,
       metaAuthor,
       image: metaImagePath,
-      slug,
+      slug: slug || category?.slug,
+      canonicalTag,
       createdBy: req.user?._id,
     });
 
@@ -212,7 +213,7 @@ export const getCategoryById = asyncHandler(async (req, res) => {
 
 //  Update Category
 export const updateCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription, status, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription } = req.body;
+  const { name, shortDescription, fullDescription, status, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription, canonicalTag, slug } = req.body;
 
   const category = await CategoryModel.findById(req.params.id);
   if (!category) {
@@ -251,6 +252,7 @@ export const updateCategory = asyncHandler(async (req, res) => {
   category.fullDescription = fullDescription || category.fullDescription;
   category.status = typeof status === "boolean" ? status : category.status;
   category.updatedBy = req.user?._id;
+  category.updatedAt = Date.now();
 
   await category.save();
 
@@ -267,8 +269,16 @@ export const updateCategory = asyncHandler(async (req, res) => {
     metaTag.metaDescription = metaDescription || metaTag.metaDescription;
     metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
     metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
-    newSlug ? metaTag.slug = newSlug : metaTag.slug = metaTag.slug;
+    metaTag.canonicalTag = canonicalTag || metaTag.canonicalTag;
+    if (slug) {
+      metaTag.slug = slug;
+    } else if (newSlug) {
+      metaTag.slug = newSlug;
+    } else {
+      metaTag.slug = metaTag.slug;
+    };
     metaTag.updatedBy = req.user?._id;
+    metaTag.updatedAt = Date.now();
 
     await metaTag.save();
 
@@ -284,8 +294,9 @@ export const updateCategory = asyncHandler(async (req, res) => {
       metaDescription,
       metaKeywords,
       metaAuthor,
+      canonicalTag,
       image: metaImagePath,
-      slug: newSlug || category?.slug,
+      slug: slug || newSlug || category?.slug,
       createdBy: req.user?._id,
     });
   };

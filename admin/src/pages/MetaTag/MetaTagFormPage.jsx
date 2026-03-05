@@ -18,6 +18,7 @@ const MetaTagFormPage = () => {
     metaAuthor: "",
     metaKeywords: "",
     metaDescription: "",
+    canonicalTag: "",
   });
 
   const [imageFile, setImageFile] = useState(null);
@@ -42,6 +43,7 @@ const MetaTagFormPage = () => {
               metaAuthor: d.metaAuthor || "",
               metaKeywords: d.metaKeywords || "",
               metaDescription: d.metaDescription || "",
+              canonicalTag: d.canonicalTag || "",
             });
             setPreviewImage(d?.image ? `${BASE_URL}/${d.image}` : null);
           }
@@ -139,36 +141,49 @@ const MetaTagFormPage = () => {
                   />
                 </div>
 
-                {/* SLUG */}
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">
-                    Slug <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="slug"
-                    value={formData.slug}
-                    onChange={handleChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
                 {/* META TITLE */}
                 <div className="col-md-6 mb-3">
-                  <label className="form-label">Meta Title (max character 100)</label>
+                  <label className="form-label">Meta Title (max character 80) {formData.metaTitle.length}/80</label>
                   <input
                     type="text"
                     name="metaTitle"
                     value={formData.metaTitle}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={100}
+                    maxLength={80}
                   />
                 </div>
 
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">
+                      Slug
+                    </label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">
+                      Canonical Tag
+                    </label>
+                    <input
+                      type="text"
+                      name="canonicalTag"
+                      value={formData.canonicalTag}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+
                 {/* META AUTHOR */}
-                <div className="col-md-6 mb-3">
+                <div className="col-md-12 mb-3">
                   <label className="form-label">Meta Author</label>
                   <input
                     type="text"
@@ -181,7 +196,7 @@ const MetaTagFormPage = () => {
 
                 {/* META KEYWORDS */}
                 <div className="col-md-12 mb-3">
-                  <label className="form-label">Meta Keywords</label>
+                  <label className="form-label">Meta Keywords (separated by comma)</label>
                   <textarea
                     name="metaKeywords"
                     value={formData.metaKeywords}
@@ -193,14 +208,14 @@ const MetaTagFormPage = () => {
 
                 {/* META DESCRIPTION */}
                 <div className="col-md-12 mb-3">
-                  <label className="form-label">Meta Description (max character 300)</label>
+                  <label className="form-label">Meta Description (max character 180) {formData.metaDescription.length}/180</label>
                   <textarea
                     name="metaDescription"
                     value={formData.metaDescription}
                     onChange={handleChange}
                     className="form-control"
-                    rows="3"
-                    maxLength={300}
+                    rows="4"
+                    maxLength={180}
                   ></textarea>
                 </div>
 

@@ -52,6 +52,8 @@ const AddServicePage = () => {
     metaKeywords: "",
     metaDescription: "",
     isMediaUpload: 0,
+    canonicalTag: "",
+    slug: "",
   });
 
   useEffect(() => {
@@ -688,7 +690,7 @@ const AddServicePage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Title (max character 100)
+                    Meta Title (max character 80) {formData.metaTitle.length}/80
                   </label>
                   <input
                     type="text"
@@ -696,7 +698,35 @@ const AddServicePage = () => {
                     value={formData.metaTitle}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={100}
+                    maxLength={80}
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Slug
+                  </label>
+                  <input
+                    type="text"
+                    name="slug"
+                    value={formData.slug}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Canonical Tag
+                  </label>
+                  <input
+                    type="text"
+                    name="canonicalTag"
+                    value={formData.canonicalTag}
+                    onChange={handleChange}
+                    className="form-control"
                   />
                 </div>
               </div>
@@ -717,7 +747,7 @@ const AddServicePage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Keywords
+                    Meta Keywords (separated by comma)
                   </label>
                   <input
                     type="text"
@@ -732,15 +762,15 @@ const AddServicePage = () => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Description (max character 300)
+                    Meta Description (max character 180) {formData.metaDescription.length}/180
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     name="metaDescription"
                     value={formData.metaDescription}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={300}
+                    maxLength={180}
+                    rows={4}
                   />
                 </div>
 

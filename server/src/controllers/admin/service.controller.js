@@ -33,6 +33,8 @@ export const createService = asyncHandler(async (req, res) => {
     taxPercent,
     creditPoint,
     transactionCharge,
+    canonicalTag,
+    slug,
     pageName,
     metaTitle,
     metaAuthor,
@@ -93,8 +95,8 @@ export const createService = asyncHandler(async (req, res) => {
       transactionCharge,
     });
 
-    const slug = await generateUniqueSlug(name, "Service", service._id, "services");
-    service.slug = slug;
+    const s = await generateUniqueSlug(name, "Service", service._id, "services");
+    service.slug = s;
     await service.save();
 
     const metaTag = await MetaTagModel.create({
@@ -104,7 +106,8 @@ export const createService = asyncHandler(async (req, res) => {
       metaKeywords,
       metaAuthor,
       image: metaImagePath,
-      slug,
+      slug: slug || service?.slug,
+      canonicalTag,
       createdBy: req.user?._id,
     });
 
@@ -242,6 +245,8 @@ export const updateService = asyncHandler(async (req, res) => {
     metaAuthor,
     metaKeywords,
     metaDescription,
+    canonicalTag,
+    slug,
   } = req.body;
 
   const service = await ServiceModel.findById(req.params.id);
@@ -300,6 +305,7 @@ export const updateService = asyncHandler(async (req, res) => {
   service.transactionCharge = transactionCharge !== undefined ? transactionCharge : service.transactionCharge;
   service.taxablePrice = taxablePrice !== undefined ? taxablePrice : service.taxablePrice;
   service.updatedBy = req.user?._id;
+  service.updatedAt = Date.now();
 
   await service.save();
 
@@ -316,8 +322,16 @@ export const updateService = asyncHandler(async (req, res) => {
     metaTag.metaDescription = metaDescription || metaTag.metaDescription;
     metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
     metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
-    newSlug ? metaTag.slug = newSlug : metaTag.slug = metaTag.slug;
+    metaTag.canonicalTag = canonicalTag || metaTag.canonicalTag;
+    if (slug) {
+      metaTag.slug = slug;
+    } else if (newSlug) {
+      metaTag.slug = newSlug;
+    } else {
+      metaTag.slug = metaTag.slug;
+    };
     metaTag.updatedBy = req.user?._id;
+    metaTag.updatedAt = Date.now();
 
     await metaTag.save();
 
@@ -329,12 +343,13 @@ export const updateService = asyncHandler(async (req, res) => {
 
     await MetaTagModel.create({
       pageName: pageName || "service",
-      metaTitle: metaTitle || name || service.name,
+      metaTitle: metaTitle || name || service?.name,
       metaDescription,
       metaKeywords,
       metaAuthor,
+      canonicalTag,
       image: metaImagePath,
-      slug: newSlug || service?.slug,
+      slug: slug || newSlug || service?.slug,
       createdBy: req.user?._id,
     });
   };

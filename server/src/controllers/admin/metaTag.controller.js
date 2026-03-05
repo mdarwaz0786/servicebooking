@@ -16,7 +16,7 @@ export const createMetaTag = asyncHandler(async (req, res) => {
     metaAuthor,
     metaKeywords,
     metaDescription,
-    status,
+    canonicalTag,
   } = req.body;
 
   if (!slug) {
@@ -37,7 +37,7 @@ export const createMetaTag = asyncHandler(async (req, res) => {
       metaKeywords,
       metaDescription,
       image: imagePath,
-      status,
+      canonicalTag,
       createdBy: req.user?._id,
     });
 
@@ -132,6 +132,7 @@ export const updateMetaTag = asyncHandler(async (req, res) => {
     metaKeywords,
     metaDescription,
     status,
+    canonicalTag,
   } = req.body;
 
   const metaTag = await MetaTagModel.findById(req.params.id);
@@ -154,12 +155,14 @@ export const updateMetaTag = asyncHandler(async (req, res) => {
 
   metaTag.pageName = pageName || metaTag.pageName;
   metaTag.metaTitle = metaTitle || metaTag.metaTitle;
+  metaTag.canonicalTag = canonicalTag || metaTag.canonicalTag;
   metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
   metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
   metaTag.metaDescription = metaDescription || metaTag.metaDescription;
   metaTag.status = typeof status === "boolean" ? status : metaTag.status;
 
   metaTag.updatedBy = req.user?._id;
+  metaTag.updatedAt = new Date();
 
   await metaTag.save();
 
