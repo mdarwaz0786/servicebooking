@@ -10,6 +10,7 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: [true, "Title is required"],
     trim: true,
+    maxLength: [80, "Title should be less than 80 characters"],
   },
   slug: {
     type: String,
@@ -43,11 +44,26 @@ const blogSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  isComment: {
+    type: String,
+    enum: ["enabled", "disabled"],
+    default: "enabled",
+  },
+  video: {
+    type: String,
+    default: null,
+  },
+  canonicalTag: {
+    type: String,
+    trim: true,
+    default: null
+  },
   meta: {
     title: {
       type: String,
       trim: true,
-      default: null
+      default: null,
+      maxLength: [80, "Meta title should be less than 80 characters"],
     },
     keywords: {
       type: String,
@@ -72,6 +88,7 @@ const blogSchema = new mongoose.Schema({
       type: String,
       trim: true,
       default: null,
+      maxLength: [180, "Meta description should be less than 180 characters"],
     },
     canonicalTag: {
       type: String,
@@ -84,10 +101,31 @@ const blogSchema = new mongoose.Schema({
     enum: ["draft", "published", "scheduled"],
     default: "draft",
   },
-  publishDateTime: {
+  publishDate: {
     type: Date,
   },
   author: {
+    type: String,
+  },
+  lat: {
+    type: String,
+  },
+  long: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  zipCode: {
+    type: String,
+  },
+  address: {
     type: String,
   },
   status: {
@@ -144,6 +182,3 @@ blogSchema.pre("findOneAndUpdate", function (next) {
 const BlogModel = mongoose.model("Blog", blogSchema);
 
 export default BlogModel;
-
-
-// tags input, 

@@ -14,7 +14,7 @@ const MetaTagSchema = new mongoose.Schema({
   metaTitle: {
     type: String,
     trim: true,
-    maxlength: [100, "Meta title cannot exceed 100 characters"],
+    maxlength: [80, "Meta title cannot exceed 80 characters"],
     default: null,
   },
   metaAuthor: {
@@ -30,7 +30,7 @@ const MetaTagSchema = new mongoose.Schema({
   metaDescription: {
     type: String,
     trim: true,
-    maxlength: [300, "Meta description cannot exceed 300 characters"],
+    maxlength: [180, "Meta description cannot exceed 180 characters"],
     default: null,
   },
   image: {
@@ -56,9 +56,7 @@ const MetaTagSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-},
-  { timestamps: true }
-);
+}, { timestamps: true });
 
 const MetaTagModel = mongoose.model("MetaTag", MetaTagSchema);
 

@@ -11,7 +11,33 @@ import { buildPagination } from "../../utils/pagination.js";
 
 // --------------------- CREATE BLOG ---------------------
 export const createBlog = asyncHandler(async (req, res) => {
-  const { category, title, shortDescription, fullDescription, status, frontImageAlt, detailImageAlt, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription } = req.body;
+  const {
+    category,
+    title,
+    tags,
+    shortDescription,
+    fullDescription,
+    frontImageAlt,
+    detailImageAlt,
+    isComment,
+    video,
+    canonicalTag,
+    publishDate,
+    publishStatus,
+    author,
+    lat,
+    long,
+    city,
+    state,
+    country,
+    zipCode,
+    address,
+    pageName,
+    metaTitle,
+    metaAuthor,
+    metaKeywords,
+    metaDescription
+  } = req.body;
 
   if (!title) {
     throw new ApiError(400, "Blog title is required");
@@ -38,6 +64,8 @@ export const createBlog = asyncHandler(async (req, res) => {
       metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
     };
 
+    console.log(isComment)
+
     const blog = await BlogModel.create({
       category,
       title,
@@ -45,14 +73,37 @@ export const createBlog = asyncHandler(async (req, res) => {
       fullDescription,
       frontImage: frontImagePath,
       detailImage: detailImagePath,
-      status,
+      isComment,
+      video,
+      canonicalTag,
       frontImageAlt,
       detailImageAlt,
+      publishStatus,
+      publishDate,
+      author,
+      lat,
+      long,
+      city,
+      state,
+      country,
+      zipCode,
+      address,
+      canonicalTag,
+      tags,
+      meta: {
+        title: metaTitle || title,
+        keywords: metaKeywords,
+        image: metaImagePath,
+        author: metaAuthor,
+        description: metaDescription,
+        canonicalTag,
+      },
       createdBy: req.user?._id,
     });
 
     const slug = await generateUniqueSlug(title, "Blog", blog?._id, "blogs");
     blog.slug = slug;
+    blog.meta.slug = slug;
     await blog.save();
 
     const metaTag = await MetaTagModel.create({
@@ -63,6 +114,7 @@ export const createBlog = asyncHandler(async (req, res) => {
       metaAuthor,
       image: metaImagePath,
       slug,
+      canonicalTag,
       createdBy: req.user?._id,
     });
 
@@ -150,7 +202,34 @@ export const getBlogById = asyncHandler(async (req, res) => {
 
 // --------------------- UPDATE BLOG ---------------------
 export const updateBlog = asyncHandler(async (req, res) => {
-  const { category, title, shortDescription, fullDescription, status, frontImageAlt, detailImageAlt, pageName, metaTitle, metaAuthor, metaKeywords, metaDescription } = req.body;
+  const {
+    category,
+    title,
+    slug,
+    shortDescription,
+    fullDescription,
+    frontImageAlt,
+    detailImageAlt,
+    isComment,
+    tags,
+    video,
+    canonicalTag,
+    publishDate,
+    publishStatus,
+    author,
+    lat,
+    long,
+    city,
+    state,
+    country,
+    zipCode,
+    address,
+    pageName,
+    metaTitle,
+    metaAuthor,
+    metaKeywords,
+    metaDescription
+  } = req.body;
 
   const blog = await BlogModel.findById(req.params.id);
   if (!blog) {
@@ -159,10 +238,12 @@ export const updateBlog = asyncHandler(async (req, res) => {
 
   const metaTag = await MetaTagModel.findOne({ slug: blog?.slug });
 
+  // ---------------- IMAGE UPDATE ----------------
   if (req.files?.frontImage?.[0]) {
     if (blog.frontImage && fs.existsSync(path.join(process.cwd(), blog.frontImage))) {
       fs.unlinkSync(path.join(process.cwd(), blog.frontImage));
     }
+
     blog.frontImage = await compressImage(req.files.frontImage[0].buffer, "blog");
   }
 
@@ -170,11 +251,14 @@ export const updateBlog = asyncHandler(async (req, res) => {
     if (blog.detailImage && fs.existsSync(path.join(process.cwd(), blog.detailImage))) {
       fs.unlinkSync(path.join(process.cwd(), blog.detailImage));
     }
+
     blog.detailImage = await compressImage(req.files.detailImage[0].buffer, "blog");
   }
 
+  // ---------------- SLUG UPDATE ----------------
   let newSlug = null;
-  if (title && title !== blog?.title) {
+
+  if (!slug && title && title !== blog.title) {
     await SlugModel.deleteOne({
       collectionName: "Blog",
       documentId: blog._id,
@@ -183,54 +267,104 @@ export const updateBlog = asyncHandler(async (req, res) => {
     newSlug = await generateUniqueSlug(title, "Blog", blog?._id, "blogs");
     blog.slug = newSlug;
   }
+  else if (slug && slug !== blog.slug) {
+    const existingSlug = await SlugModel.findOne({ slug, collectionName: "Blog" });
+    if (existingSlug) {
+      throw new ApiError(400, "Slug already exists. Please choose a different slug.");
+    } else {
+      await SlugModel.deleteOne({
+        collectionName: "Blog",
+        documentId: blog._id,
+      });
+      newSlug = slug;
+      blog.slug = newSlug;
+    }
+  }
 
+  // ---------------- BLOG UPDATE ----------------
   blog.title = title || blog.title;
-  blog.frontImageAlt = frontImageAlt || blog.frontImageAlt;
-  blog.detailImageAlt = detailImageAlt || blog.detailImageAlt;
   blog.category = category || blog.category;
+  blog.tags = tags || blog.tags;
   blog.shortDescription = shortDescription || blog.shortDescription;
   blog.fullDescription = fullDescription || blog.fullDescription;
-  blog.status = typeof status === "boolean" ? status : blog.status;
+  blog.frontImageAlt = frontImageAlt || blog.frontImageAlt;
+  blog.detailImageAlt = detailImageAlt || blog.detailImageAlt;
+
+  blog.isComment = isComment || blog.isComment;
+  blog.video = video || blog.video;
+  blog.canonicalTag = canonicalTag || blog.canonicalTag;
+  blog.publishDate = publishDate || blog.publishDate;
+  blog.publishStatus = publishStatus || blog.publishStatus;
+  blog.author = author || blog.author;
+
+  blog.lat = lat || blog.lat;
+  blog.long = long || blog.long;
+  blog.city = city || blog.city;
+  blog.state = state || blog.state;
+  blog.country = country || blog.country;
+  blog.zipCode = zipCode || blog.zipCode;
+  blog.address = address || blog.address;
+
+  // update meta inside blog
+  if (!blog.meta) blog.meta = {};
+  blog.meta.title = metaTitle || blog.meta.title || blog.title;
+  blog.meta.keywords = metaKeywords || blog.meta.keywords;
+  blog.meta.author = metaAuthor || blog.meta.author;
+  blog.meta.description = metaDescription || blog.meta.description;
+  blog.meta.canonicalTag = canonicalTag || blog.meta.canonicalTag;
+  blog.meta.slug = newSlug || blog.meta.slug;
   blog.updatedBy = req.user?._id;
+  blog.updatedAt = new Date();
 
   await blog.save();
 
+  // ---------------- META TAG UPDATE ----------------
   if (metaTag) {
     if (req.files?.metaImage?.[0]) {
       if (metaTag.image && fs.existsSync(path.join(process.cwd(), metaTag.image))) {
         fs.unlinkSync(path.join(process.cwd(), metaTag.image));
-      };
+      }
+
       metaTag.image = await compressImage(req.files.metaImage[0].buffer, "meta");
-    };
+    }
 
     metaTag.pageName = pageName || metaTag.pageName;
     metaTag.metaTitle = metaTitle || metaTag.metaTitle;
     metaTag.metaDescription = metaDescription || metaTag.metaDescription;
     metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
     metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
-    newSlug ? metaTag.slug = newSlug : metaTag.slug = metaTag.slug;
+    metaTag.canonicalTag = canonicalTag || metaTag.canonicalTag;
+    if (newSlug) metaTag.slug = newSlug;
     metaTag.updatedBy = req.user?._id;
+    metaTag.updatedAt = new Date();
 
     await metaTag.save();
   } else {
+
     let metaImagePath = null;
+
     if (req.files?.metaImage?.[0]) {
       metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
     }
 
     await MetaTagModel.create({
       pageName: pageName || "blog",
-      metaTitle: metaTitle || title || blog.title,
+      metaTitle: metaTitle || title || blog?.title,
       metaDescription,
       metaKeywords,
       metaAuthor,
       image: metaImagePath,
       slug: newSlug || blog?.slug,
+      canonicalTag,
       createdBy: req.user?._id,
     });
-  };
+  }
 
-  return res.status(200).json({ success: true, message: "Updated Successfully", data: blog });
+  return res.status(200).json({
+    success: true,
+    message: "Updated Successfully",
+    data: blog,
+  });
 });
 
 // --------------------- DELETE BLOG ---------------------

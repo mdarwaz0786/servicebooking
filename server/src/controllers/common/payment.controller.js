@@ -72,8 +72,8 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     };
 
     qr = await createScanAndPayQr(
-      // payableAmount,
-      1,
+      payableAmount,
+      // 1,
       `BOOKING_${bookingData?.bookingId}`,
       userDataForQR,
       "Booking Payment (Scan & Pay)",

@@ -7,6 +7,7 @@ import apis, { BASE_URL } from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate, useParams } from "react-router-dom";
 import Editor from "../../components/Form/Editor";
+import LocationPicker from "../../components/Map/LocationPicker";
 
 const UpdateBlogPage = () => {
   const { validToken } = useAuth();
@@ -14,27 +15,35 @@ const UpdateBlogPage = () => {
   const { id } = useParams();
 
   const [loading, setLoading] = useState(false);
-
   const [categories, setCategories] = useState([]);
-
   const [frontImage, setFrontImage] = useState(null);
   const [detailImage, setDetailImage] = useState(null);
-
   const [frontPreview, setFrontPreview] = useState(null);
   const [detailPreview, setDetailPreview] = useState(null);
-
   const [metaImage, setMetaImage] = useState(null);
   const [metaImagePreview, setMetaImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
     category: "",
     title: "",
+    slug: "",
     shortDescription: "",
     fullDescription: "",
-    frontImageUrl: "",
-    detailImageUrl: "",
     frontImageAlt: "",
     detailImageAlt: "",
+    tags: "",
+    isComment: "enabled",
+    publishStatus: "draft",
+    publishDate: "",
+    author: "",
+    lat: "",
+    long: "",
+    city: "",
+    state: "",
+    country: "",
+    zipCode: "",
+    address: "",
+    canonicalTag: "",
     pageName: "",
     metaTitle: "",
     metaAuthor: "",
@@ -74,6 +83,7 @@ const UpdateBlogPage = () => {
           setFormData({
             category: blog.category?._id || "",
             title: blog.title || "",
+            slug: blog.slug || "",
             shortDescription: blog.shortDescription || "",
             fullDescription: blog.fullDescription || "",
             frontImageUrl: blog.frontImage || "",
@@ -85,6 +95,19 @@ const UpdateBlogPage = () => {
             metaAuthor: meta?.metaAuthor || "",
             metaKeywords: meta?.metaKeywords || "",
             metaDescription: meta?.metaDescription || "",
+            tags: blog.tags || "",
+            author: blog.author || "",
+            canonicalTag: blog.canonicalTag || "",
+            isComment: blog.isComment || "enabled",
+            publishStatus: blog.publishStatus || "published",
+            publishDate: blog.publishDate ? blog.publishDate.split("T")[0] : "",
+            city: blog.city || "",
+            state: blog.state || "",
+            country: blog.country || "",
+            zipCode: blog.zipCode || "",
+            lat: blog.lat || "",
+            long: blog.long || "",
+            address: blog.address || "",
           });
 
           if (blog?.frontImage) setFrontPreview(`${BASE_URL}/${blog?.frontImage}`);
@@ -181,9 +204,22 @@ const UpdateBlogPage = () => {
       const data = new FormData();
       data.append("category", formData.category);
       data.append("title", formData.title);
+      data.append("slug", formData.slug);
+      data.append("tags", formData.tags);
+      data.append("isComment", formData.isComment);
+      data.append("publishStatus", formData.publishStatus);
+      data.append("publishDate", formData.publishDate);
+      data.append("author", formData.author);
+      data.append("lat", formData.lat);
+      data.append("long", formData.long);
+      data.append("city", formData.city);
+      data.append("state", formData.state);
+      data.append("country", formData.country);
+      data.append("zipCode", formData.zipCode);
+      data.append("canonicalTag", formData.canonicalTag);
+      data.append("address", formData.address);
       data.append("shortDescription", formData.shortDescription);
       data.append("fullDescription", formData.fullDescription);
-
       data.append("frontImageAlt", formData.frontImageAlt);
       data.append("detailImageAlt", formData.detailImageAlt);
 
@@ -192,7 +228,6 @@ const UpdateBlogPage = () => {
       if (formData.metaAuthor) data.append("metaAuthor", formData.metaAuthor);
       if (formData.metaKeywords) data.append("metaKeywords", formData.metaKeywords);
       if (formData.metaDescription) data.append("metaDescription", formData.metaDescription);
-
       if (frontImage) data.append("frontImage", frontImage);
       if (detailImage) data.append("detailImage", detailImage);
       if (metaImage) data.append("metaImage", metaImage);
@@ -269,6 +304,39 @@ const UpdateBlogPage = () => {
                       className="form-control"
                       maxLength="150"
                       required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6">
+                  {/* Tags */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Tags (comma separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="tags"
+                      value={formData.tags}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  {/* Slug*/}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Slug
+                    </label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      className="form-control"
                     />
                   </div>
                 </div>
@@ -391,6 +459,153 @@ const UpdateBlogPage = () => {
                 </div>
               </div>
 
+              {/* BLOG SETTINGS */}
+              <h4 className="mt-5 text-center mb-4">Blog Settings</h4>
+
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <label>Author</label>
+                  <input
+                    name="author"
+                    className="form-control"
+                    value={formData.author}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <label>Publish Date</label>
+                  <input
+                    type="date"
+                    name="publishDate"
+                    className="form-control"
+                    value={formData.publishDate}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <label>Publish Status</label>
+                  <select
+                    name="publishStatus"
+                    className="form-select"
+                    value={formData.publishStatus}
+                    onChange={handleChange}
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                    <option value="scheduled">Scheduled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label>Allow Comments</label>
+                  <select
+                    name="isComment"
+                    className="form-select"
+                    value={formData.isComment}
+                    onChange={handleChange}
+                  >
+                    <option value="enabled">Enable</option>
+                    <option value="disabled">Disable</option>
+                  </select>
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Canonical Tag</label>
+                  <input
+                    name="canonicalTag"
+                    className="form-control"
+                    value={formData.canonicalTag}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* LOCATION */}
+              <h4 className="mt-5 mb-4 text-center">Location</h4>
+
+              <div className="mb-4">
+                <LocationPicker setFormData={setFormData} />
+              </div>
+
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <label>City</label>
+                  <input
+                    name="city"
+                    className="form-control"
+                    value={formData.city}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <label>State</label>
+                  <input
+                    name="state"
+                    className="form-control"
+                    value={formData.state}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <label>Country</label>
+                  <input
+                    name="country"
+                    className="form-control"
+                    value={formData.country}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <label>Zip Code</label>
+                  <input
+                    name="zipCode"
+                    className="form-control"
+                    value={formData.zipCode}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <label>Latitude</label>
+                  <input
+                    name="lat"
+                    className="form-control"
+                    value={formData.lat}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <label>Longitude</label>
+                  <input
+                    name="long"
+                    className="form-control"
+                    value={formData.long}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-12 mb-3">
+                  <label>Address</label>
+                  <input
+                    name="address"
+                    className="form-control"
+                    value={formData.address}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* META INFORMATION */}
               <h4 className="mt-5 mb-4 text-center">Meta Information</h4>
 
               <div className="row">
@@ -409,7 +624,7 @@ const UpdateBlogPage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Title (max character 100)
+                    Meta Title (max character 80) {formData.metaTitle.length}/80
                   </label>
                   <input
                     type="text"
@@ -417,7 +632,7 @@ const UpdateBlogPage = () => {
                     value={formData.metaTitle}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={100}
+                    maxLength={80}
                   />
                 </div>
               </div>
@@ -438,7 +653,7 @@ const UpdateBlogPage = () => {
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Keywords
+                    Meta Keywords (comma separated)
                   </label>
                   <input
                     type="text"
@@ -453,15 +668,15 @@ const UpdateBlogPage = () => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Meta Description (max character 300)
+                    Meta Description (max character 180) {formData.metaDescription.length}/180
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     name="metaDescription"
                     value={formData.metaDescription}
                     onChange={handleChange}
                     className="form-control"
-                    maxLength={300}
+                    maxLength={180}
+                    rows={4}
                   />
                 </div>
 
