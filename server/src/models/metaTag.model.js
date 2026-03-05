@@ -38,9 +38,33 @@ const MetaTagSchema = new mongoose.Schema({
     trim: true,
     default: null,
   },
+  tags: {
+    type: String,
+  },
   canonicalTag: {
     type: String,
     trim: true,
+  },
+  lat: {
+    type: String,
+  },
+  long: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  zipCode: {
+    type: String,
+  },
+  address: {
+    type: String,
   },
   status: {
     type: Boolean,

@@ -6,29 +6,44 @@ import BlogCategoryModel from "../../models/blogCategory.model.js";
 
 // --------------------- GET ALL BLOGS ---------------------
 export const getBlogs = asyncHandler(async (req, res) => {
-  let { search, status, sort = "desc", page = 1, limit = 10, category } = req.query;
+  let { search, city, state, country, zipCode, sort = "desc", page = 1, limit = 10, category } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
 
-  const filters = {};
+  const now = new Date();
+
+  const filters = {
+    status: true,
+    publishDate: { $lte: now },
+  };
+
   if (search) {
     filters.$or = [{ title: { $regex: search, $options: "i" } }];
-  }
-
-  if (status !== undefined) {
-    filters.status = status === "true";
   }
 
   if (category) {
     filters.category = category;
   }
 
+  if (city) {
+    filters.city = city;
+  }
+
+  if (state) {
+    filters.state = state;
+  }
+
+  if (country) {
+    filters.country = country;
+  }
+
+  if (zipCode) {
+    filters.zipCode = zipCode;
+  }
+
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
-
-
-
 
   const blogs = await BlogModel
     .find(filters)

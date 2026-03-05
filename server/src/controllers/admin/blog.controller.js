@@ -88,7 +88,6 @@ export const createBlog = asyncHandler(async (req, res) => {
       country,
       zipCode,
       address,
-      canonicalTag,
       tags,
       meta: {
         title: metaTitle || title,
@@ -114,8 +113,16 @@ export const createBlog = asyncHandler(async (req, res) => {
       metaAuthor,
       image: metaImagePath,
       slug,
-      canonicalTag,
       createdBy: req.user?._id,
+      canonicalTag,
+      tags,
+      lat,
+      long,
+      city,
+      state,
+      country,
+      zipCode,
+      address,
     });
 
     await metaTag.save();
@@ -334,6 +341,14 @@ export const updateBlog = asyncHandler(async (req, res) => {
     metaTag.metaKeywords = metaKeywords || metaTag.metaKeywords;
     metaTag.metaAuthor = metaAuthor || metaTag.metaAuthor;
     metaTag.canonicalTag = canonicalTag || metaTag.canonicalTag;
+    metaTag.tags = tags || metaTag.tags;
+    metaTag.lat = lat || metaTag.lat;
+    metaTag.long = long || metaTag.long;
+    metaTag.city = city || metaTag.city;
+    metaTag.state = state || metaTag.state;
+    metaTag.country = country || metaTag.country;
+    metaTag.zipCode = zipCode || metaTag.zipCode;
+    metaTag.address = address || metaTag.address;
     if (newSlug) metaTag.slug = newSlug;
     metaTag.updatedBy = req.user?._id;
     metaTag.updatedAt = new Date();
@@ -356,6 +371,14 @@ export const updateBlog = asyncHandler(async (req, res) => {
       image: metaImagePath,
       slug: newSlug || blog?.slug,
       canonicalTag,
+      tags,
+      lat,
+      long,
+      city,
+      state,
+      country,
+      zipCode,
+      address,
       createdBy: req.user?._id,
     });
   }
