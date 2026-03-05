@@ -13,7 +13,7 @@ const BlogDetailPage = () => {
 
   const fetchBlogDetail = async () => {
     try {
-      const response = await postData({ slug:slug }, Urls.blogDetail, "GET", 0, 1);
+      const response = await postData({ slug: slug }, Urls.blogDetail, "GET", 0, 1);
       if (response.data) {
         setBlog(response.data);
         setcategories(response.categories);
@@ -53,8 +53,8 @@ const BlogDetailPage = () => {
 
   return (
     <>
-    <BreadCrumb data={{title:blog.title}} />
-    <div className="content pt-5">
+      <BreadCrumb data={{ title: blog.title }} />
+      <div className="content pt-5">
         <div className="container">
           <div className="row">
             {/* LEFT SECTION */}
@@ -71,8 +71,8 @@ const BlogDetailPage = () => {
                     <li>
                       <div className="post-author">
                         <Link to="#">
-                          <img src="/assets/img/favicon.jpg" alt="Post Author" />
-                          <span>Green India Team</span>
+                          <img src="/assets/img/favicon.png" alt="author" />
+                          <span>{blog?.author || ""}</span>
                         </Link>
                       </div>
                     </li>
@@ -92,25 +92,25 @@ const BlogDetailPage = () => {
                   </div>
 
                   <div className="blog-content">
-                    
-                     <div
-                        className="mt-3"
-                        dangerouslySetInnerHTML={{ __html: blog.shortDescription }}
-                      ></div>
-                      <div
-                        className="mt-3"
-                        dangerouslySetInnerHTML={{ __html: blog.fullDescription }}
-                      ></div>
 
-                    
+                    <div
+                      className="mt-3"
+                      dangerouslySetInnerHTML={{ __html: blog.shortDescription }}
+                    ></div>
+                    <div
+                      className="mt-3"
+                      dangerouslySetInnerHTML={{ __html: blog.fullDescription }}
+                    ></div>
+
+
                   </div>
                 </div>
               </div>
 
-             
 
 
-             
+
+
             </div>
 
             {/* RIGHT SIDEBAR */}
@@ -124,7 +124,7 @@ const BlogDetailPage = () => {
                   <h4 className="side-title">Categories</h4>
                   <ul className="categories">
                     {categories.map((value, index) => (
-                    
+
                       <li className="d-flex justify-content-between p-2 bg-white" key={index}>
                         <Link >{value.name}</Link>
                       </li>
@@ -139,36 +139,36 @@ const BlogDetailPage = () => {
                 <div className="card-body">
                   <h4 className="side-title">Latest News</h4>
                   <ul className="latest-posts">
-                    
+
                     {latestBlogs.map((value, index) => (
                       <li key={index}>
                         <div className="post-thumb">
-                          <Link to={'/blog/'+value.slug}>
-                            <img 
-                            src={imageCheck(value.frontImage)} 
-                            alt={value.title} className="img-fluid" />
+                          <Link to={'/blog/' + value.slug}>
+                            <img
+                              src={imageCheck(value.frontImage)}
+                              alt={value.title} className="img-fluid" />
                           </Link>
                         </div>
                         <div className="post-info">
                           <p>{formatDate(value.createdAt)}</p>
                           <h4>
-                            <Link to={'/blog/'+value.slug}>
+                            <Link to={'/blog/' + value.slug}>
                               {value.title}
                             </Link>
                           </h4>
                         </div>
                       </li>
                     ))}
-                    
+
                   </ul>
                 </div>
               </div>
 
-              
+
             </div>
           </div>
         </div>
-    </div>
+      </div>
 
     </>
   );
