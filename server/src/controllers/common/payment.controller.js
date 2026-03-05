@@ -54,7 +54,8 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     itemData = bookingItems;
     amount = bookingData?.amount;
     gstPercent = bookingData?.gstPercent;
-    payableAmount = bookingData?.payableAmount;
+    payableAmount = Number(bookingData?.payableAmount) || 0;
+    additionalPartAmount = Number(bookingData?.additionalPartAmount) || 0;
     from = "user";
 
     const bookingUser = {
@@ -72,7 +73,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     };
 
     qr = await createScanAndPayQr(
-      payableAmount,
+      bookingData?.paymentMode == "cod" ? payableAmount : additionalPartAmount,
       // 1,
       `BOOKING_${bookingData?.bookingId}`,
       userDataForQR,
