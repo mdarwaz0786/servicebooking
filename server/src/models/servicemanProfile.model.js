@@ -61,14 +61,14 @@ const serviceManProfileSchema = new mongoose.Schema({
     trim: true,
   },
   yearOfExperience: {
-    type: Number,
+    type: String,
     required: function () {
       return this.workingType === "Experience";
     },
     min: 0,
   },
   monthOfExperience: {
-    type: Number,
+    type: String,
     required: function () {
       return this.workingType === "Experience";
     },
