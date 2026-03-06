@@ -76,7 +76,7 @@ export const autoAssignBooking = async (
     // 5️⃣ Zone + category
     {
       $match: {
-        "serviceman.zones": zone?._id,
+        "serviceman.zones": combinedZone?._id,
         "serviceman.subCategoryIds": subCategoryId,
       },
     },
