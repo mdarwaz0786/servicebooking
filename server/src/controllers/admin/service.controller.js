@@ -304,6 +304,15 @@ export const updateService = asyncHandler(async (req, res) => {
   service.creditPoint = creditPoint !== undefined ? creditPoint : service.creditPoint;
   service.transactionCharge = transactionCharge !== undefined ? transactionCharge : service.transactionCharge;
   service.taxablePrice = taxablePrice !== undefined ? taxablePrice : service.taxablePrice;
+
+  if (slug) {
+    service.slug = slug;
+  } else if (newSlug) {
+    service.slug = newSlug;
+  } else {
+    service.slug = service?.slug;
+  };
+
   service.updatedBy = req.user?._id;
   service.updatedAt = Date.now();
 
@@ -328,7 +337,7 @@ export const updateService = asyncHandler(async (req, res) => {
     } else if (newSlug) {
       metaTag.slug = newSlug;
     } else {
-      metaTag.slug = metaTag.slug;
+      metaTag.slug = metaTag?.slug;
     };
     metaTag.updatedBy = req.user?._id;
     metaTag.updatedAt = Date.now();

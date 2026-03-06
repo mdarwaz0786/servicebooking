@@ -283,28 +283,28 @@ export const updateBlog = asyncHandler(async (req, res) => {
   // ---------------- SLUG UPDATE ----------------
   let newSlug = null;
 
-  if (!slug && title && title !== blog.title) {
+  if (!slug && title && title !== blog?.title) {
     await SlugModel.deleteOne({
       collectionName: "Blog",
-      documentId: blog._id,
+      documentId: blog?._id,
     });
 
     newSlug = await generateUniqueSlug(title, "Blog", blog?._id, "blogs");
     blog.slug = newSlug;
   }
-  else if (slug && slug !== blog.slug) {
+  else if (slug && slug !== blog?.slug) {
     const existingSlug = await SlugModel.findOne({ slug, collectionName: "Blog" });
     if (existingSlug) {
       throw new ApiError(400, "Slug already exists. Please choose a different slug.");
     } else {
       await SlugModel.deleteOne({
         collectionName: "Blog",
-        documentId: blog._id,
+        documentId: blog?._id,
       });
       newSlug = slug;
       blog.slug = newSlug;
     }
-  }
+  };
 
   // ---------------- BLOG UPDATE ----------------
   blog.title = title || blog.title;
@@ -322,6 +322,7 @@ export const updateBlog = asyncHandler(async (req, res) => {
   blog.publishTime = publishTime || blog.publishTime;
   blog.publishStatus = publishStatus || blog.publishStatus;
   blog.author = author || blog.author;
+  blog.slug = newSlug || blog?.slug;
 
   blog.lat = lat || blog.lat;
   blog.long = long || blog.long;
@@ -338,7 +339,7 @@ export const updateBlog = asyncHandler(async (req, res) => {
   blog.meta.author = metaAuthor || blog.meta.author;
   blog.meta.description = metaDescription || blog.meta.description;
   blog.meta.canonicalTag = canonicalTag || blog.meta.canonicalTag;
-  blog.meta.slug = newSlug || blog.meta.slug;
+  blog.meta.slug = newSlug || blog?.meta?.slug;
   blog.updatedBy = req.user?._id;
   blog.updatedAt = new Date();
 

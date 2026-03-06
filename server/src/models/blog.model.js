@@ -14,7 +14,7 @@ const blogSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
-    unique: true,
+    unique: [true, "This slug already exists. Please choose a different slug."],
   },
   tags: {
     type: String,

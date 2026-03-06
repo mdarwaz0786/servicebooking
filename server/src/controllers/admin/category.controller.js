@@ -251,6 +251,13 @@ export const updateCategory = asyncHandler(async (req, res) => {
   category.shortDescription = shortDescription || category.shortDescription;
   category.fullDescription = fullDescription || category.fullDescription;
   category.status = typeof status === "boolean" ? status : category.status;
+  if (slug) {
+    category.slug = slug;
+  } else if (newSlug) {
+    category.slug = newSlug;
+  } else {
+    category.slug = category?.slug;
+  };
   category.updatedBy = req.user?._id;
   category.updatedAt = Date.now();
 
@@ -275,7 +282,7 @@ export const updateCategory = asyncHandler(async (req, res) => {
     } else if (newSlug) {
       metaTag.slug = newSlug;
     } else {
-      metaTag.slug = metaTag.slug;
+      metaTag.slug = metaTag?.slug;
     };
     metaTag.updatedBy = req.user?._id;
     metaTag.updatedAt = Date.now();
