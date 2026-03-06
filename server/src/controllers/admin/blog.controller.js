@@ -8,6 +8,7 @@ import { generateUniqueSlug } from "../../helpers/generateUniqueSlug.js";
 import fs from "fs";
 import path from "path";
 import { buildPagination } from "../../utils/pagination.js";
+import compressVideo from "../../helpers/compressVideo.js";
 
 // --------------------- CREATE BLOG ---------------------
 export const createBlog = asyncHandler(async (req, res) => {
@@ -50,6 +51,7 @@ export const createBlog = asyncHandler(async (req, res) => {
   let frontImagePath = null;
   let detailImagePath = null;
   let metaImagePath = null;
+  let videoPath = null;
 
   try {
     if (req.files?.frontImage?.[0]) {
@@ -64,7 +66,9 @@ export const createBlog = asyncHandler(async (req, res) => {
       metaImagePath = await compressImage(req.files.metaImage[0].buffer, "meta");
     };
 
-    console.log(isComment)
+    if (req.files?.video?.[0]) {
+      videoPath = await compressVideo(req.files.video[0].buffer, "video");
+    };
 
     const blog = await BlogModel.create({
       category,
@@ -74,7 +78,7 @@ export const createBlog = asyncHandler(async (req, res) => {
       frontImage: frontImagePath,
       detailImage: detailImagePath,
       isComment,
-      video,
+      video: videoPath,
       canonicalTag,
       frontImageAlt,
       detailImageAlt,
@@ -137,6 +141,9 @@ export const createBlog = asyncHandler(async (req, res) => {
     }
     if (metaImagePath && fs.existsSync(path.join(process.cwd(), metaImagePath))) {
       fs.unlinkSync(path.join(process.cwd(), metaImagePath));
+    };
+    if (videoPath && fs.existsSync(path.join(process.cwd(), videoPath))) {
+      fs.unlinkSync(path.join(process.cwd(), videoPath));
     };
     throw new ApiError(500, error.message || "Something went wrong while creating blog");
   };
@@ -260,6 +267,15 @@ export const updateBlog = asyncHandler(async (req, res) => {
     }
 
     blog.detailImage = await compressImage(req.files.detailImage[0].buffer, "blog");
+  }
+
+  // ---------------- VIDEO UPDATE ----------------
+  if (req.files?.video?.[0]) {
+    if (blog.video && fs.existsSync(path.join(process.cwd(), blog.video))) {
+      fs.unlinkSync(path.join(process.cwd(), blog.video));
+    }
+
+    blog.video = await compressVideo(req.files.video[0].buffer, "video");
   }
 
   // ---------------- SLUG UPDATE ----------------
@@ -407,6 +423,10 @@ export const deleteBlog = asyncHandler(async (req, res) => {
     fs.unlinkSync(path.join(process.cwd(), blog.detailImage));
   }
 
+  if (blog.video && fs.existsSync(path.join(process.cwd(), blog.video))) {
+    fs.unlinkSync(path.join(process.cwd(), blog.video));
+  }
+
   await SlugModel.deleteOne({
     collectionName: "Blog",
     documentId: blog?._id,
@@ -420,6 +440,8 @@ export const deleteBlog = asyncHandler(async (req, res) => {
     };
     await metaTag.deleteOne();
   };
+
+  await metaTag.deleteOne();
 
   return res.status(200).json({ success: true, message: "Deleted successfully" });
 });

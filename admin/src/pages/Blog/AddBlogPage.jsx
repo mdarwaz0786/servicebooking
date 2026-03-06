@@ -13,6 +13,8 @@ const AddBlogPage = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
 
+  const [video, setVideo] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
   const [frontImage, setFrontImage] = useState(null);
   const [detailImage, setDetailImage] = useState(null);
   const [frontPreview, setFrontPreview] = useState(null);
@@ -131,6 +133,25 @@ const AddBlogPage = () => {
     multiple: false,
   });
 
+  const onDropVideo = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+
+    if (file) {
+      setVideo(file);
+      setVideoPreview(URL.createObjectURL(file));
+    }
+  }, []);
+
+  const {
+    getRootProps: getVideoRootProps,
+    getInputProps: getVideoInputProps,
+    isDragActive: isVideoActive
+  } = useDropzone({
+    onDrop: onDropVideo,
+    accept: { "video/*": [] },
+    multiple: false,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -175,6 +196,7 @@ const AddBlogPage = () => {
       if (frontImage) data.append("frontImage", frontImage);
       if (detailImage) data.append("detailImage", detailImage);
       if (metaImage) data.append("metaImage", metaImage);
+      if (video) data.append("video", video);
 
       const res = await axios.post(apis.blog.create, data, {
         headers: {
@@ -203,8 +225,9 @@ const AddBlogPage = () => {
       if (frontPreview) URL.revokeObjectURL(frontPreview);
       if (detailPreview) URL.revokeObjectURL(detailPreview);
       if (metaImagePreview) URL.revokeObjectURL(metaImagePreview);
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
     };
-  }, [frontPreview, detailPreview, metaImagePreview]);
+  }, [frontPreview, detailPreview, metaImagePreview, videoPreview]);
 
   return (
     <div className="page-wrapper">
@@ -277,7 +300,6 @@ const AddBlogPage = () => {
                       value={formData.tags}
                       onChange={handleChange}
                       className="form-control"
-                      required
                     />
                   </div>
                 </div>
@@ -395,6 +417,42 @@ const AddBlogPage = () => {
                       value={formData.detailImageAlt}
                       onChange={handleChange}
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* Blog Video */}
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <label className="form-label">Blog Video</label>
+
+                    <div
+                      {...getVideoRootProps()}
+                      className={`border text-center rounded ${isVideoActive ? "bg-light" : ""}`}
+                      style={{ cursor: "pointer", padding: "9px" }}
+                    >
+                      <input {...getVideoInputProps()} />
+
+                      {isVideoActive ? (
+                        <p style={{ marginBottom: "0px" }}>Drop the video here...</p>
+                      ) : (
+                        <p style={{ marginBottom: "0px" }}>
+                          Drag & drop video here, or{" "}
+                          <span className="text-primary">browse</span>
+                        </p>
+                      )}
+                    </div>
+
+                    {videoPreview && (
+                      <div className="mt-3 text-center">
+                        <video
+                          src={videoPreview}
+                          controls
+                          style={{ maxWidth: "300px", borderRadius: "8px" }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
