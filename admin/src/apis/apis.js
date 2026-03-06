@@ -343,6 +343,12 @@ const apis = {
     update: `${BASE_URL}/api/v1/admin/zone`,
     delete: `${BASE_URL}/api/v1/admin/zone`,
   },
+  combinedZone: {
+    create: `${BASE_URL}/api/v1/admin/combined-zone`,
+    get: `${BASE_URL}/api/v1/admin/combined-zone`,
+    update: `${BASE_URL}/api/v1/admin/combined-zone`,
+    delete: `${BASE_URL}/api/v1/admin/combined-zone`,
+  },
   supportContent: {
     upsert: `${BASE_URL}/api/v1/admin/support-content`,
     get: `${BASE_URL}/api/v1/admin/support-content`,

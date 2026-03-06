@@ -37,6 +37,7 @@ const UpdateBlogPage = () => {
     isComment: "enabled",
     publishStatus: "draft",
     publishDate: "",
+    publishTime: "",
     author: "",
     lat: "",
     long: "",
@@ -103,6 +104,7 @@ const UpdateBlogPage = () => {
             isComment: blog.isComment || "enabled",
             publishStatus: blog.publishStatus || "published",
             publishDate: blog.publishDate ? blog.publishDate.split("T")[0] : "",
+            publishTime: blog.publishTime || "",
             city: blog.city || "",
             state: blog.state || "",
             country: blog.country || "",
@@ -231,6 +233,7 @@ const UpdateBlogPage = () => {
       data.append("isComment", formData.isComment);
       data.append("publishStatus", formData.publishStatus);
       data.append("publishDate", formData.publishDate);
+      data.append("publishTime", formData.publishTime);
       data.append("author", formData.author);
       data.append("lat", formData.lat);
       data.append("long", formData.long);
@@ -522,7 +525,7 @@ const UpdateBlogPage = () => {
               <h4 className="mt-5 text-center mb-4">Blog Settings</h4>
 
               <div className="row">
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Author</label>
                   <input
                     name="author"
@@ -532,7 +535,7 @@ const UpdateBlogPage = () => {
                   />
                 </div>
 
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Publish Date</label>
                   <input
                     type="date"
@@ -543,7 +546,18 @@ const UpdateBlogPage = () => {
                   />
                 </div>
 
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
+                  <label>Publish Time</label>
+                  <input
+                    type="time"
+                    name="publishTime"
+                    className="form-control"
+                    value={formData.publishTime}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
                   <label>Publish Status</label>
                   <select
                     name="publishStatus"

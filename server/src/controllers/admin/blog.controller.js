@@ -21,9 +21,9 @@ export const createBlog = asyncHandler(async (req, res) => {
     frontImageAlt,
     detailImageAlt,
     isComment,
-    video,
     canonicalTag,
     publishDate,
+    publishTime,
     publishStatus,
     author,
     lat,
@@ -84,6 +84,7 @@ export const createBlog = asyncHandler(async (req, res) => {
       detailImageAlt,
       publishStatus,
       publishDate,
+      publishTime,
       author,
       lat,
       long,
@@ -229,6 +230,7 @@ export const updateBlog = asyncHandler(async (req, res) => {
     video,
     canonicalTag,
     publishDate,
+    publishTime,
     publishStatus,
     author,
     lat,
@@ -317,6 +319,7 @@ export const updateBlog = asyncHandler(async (req, res) => {
   blog.video = video || blog.video;
   blog.canonicalTag = canonicalTag || blog.canonicalTag;
   blog.publishDate = publishDate || blog.publishDate;
+  blog.publishTime = publishTime || blog.publishTime;
   blog.publishStatus = publishStatus || blog.publishStatus;
   blog.author = author || blog.author;
 

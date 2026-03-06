@@ -134,6 +134,8 @@ import AddBankTransferPage from "../pages/ServicemanEarning/AddBankTransferPage"
 import CashCollectedSubmitPage from "../pages/CashCollectedSubmit/CashCollectedSubmitPage";
 import CreateCashCollectedSubmitPage from "../pages/CashCollectedSubmit/CreateCashCollectedSubmitPage";
 import ServicemanProfileUpdatePage from "../pages/ServicemanProfile/ServicemanProfileUpdatePage";
+import CombinedZoneFormPage from "../pages/CombinedZone/CombinedZoneForm";
+import CombinedZoneListPage from "../pages/CombinedZone/combinedZoneListPage";
 
 const routesConfig = {
   private: [
@@ -326,6 +328,10 @@ const routesConfig = {
     { path: "/add-zone", element: CreateZonePage, module: "zone", action: "add" },
     { path: "/update-zone/:id", element: UpdateZonePage, module: "zone", action: "update" },
     { path: "/zone", element: ZoneListPage, module: "zone", action: "view" },
+
+    { path: "/add-combined-zone", element: CombinedZoneFormPage, module: "zone", action: "add" },
+    { path: "/update-combined-zone/:id", element: CombinedZoneFormPage, module: "zone", action: "update" },
+    { path: "/combined-zone", element: CombinedZoneListPage, module: "zone", action: "view" },
 
     { path: "/support-content", element: SupportContentFormPage, module: "providerAppSupport", action: "view" },
 

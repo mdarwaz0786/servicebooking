@@ -6,7 +6,17 @@ import BlogCategoryModel from "../../models/blogCategory.model.js";
 
 // --------------------- GET ALL BLOGS ---------------------
 export const getBlogs = asyncHandler(async (req, res) => {
-  let { search, city, state, country, zipCode, sort = "desc", page = 1, limit = 10, category } = req.query;
+  let {
+    search,
+    city,
+    state,
+    country,
+    zipCode,
+    sort = "desc",
+    page = 1,
+    limit = 10,
+    category,
+  } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -16,43 +26,95 @@ export const getBlogs = asyncHandler(async (req, res) => {
 
   const filters = {
     status: true,
-    publishDate: { $lte: now },
   };
 
   if (search) {
     filters.$or = [{ title: { $regex: search, $options: "i" } }];
-  }
+  };
 
-  if (category) {
-    filters.category = category;
-  }
-
-  if (city) {
-    filters.city = city;
-  }
-
-  if (state) {
-    filters.state = state;
-  }
-
-  if (country) {
-    filters.country = country;
-  }
-
-  if (zipCode) {
-    filters.zipCode = zipCode;
-  }
+  if (category) filters.category = category;
+  if (city) filters.city = city;
+  if (state) filters.state = state;
+  if (country) filters.country = country;
+  if (zipCode) filters.zipCode = zipCode;
 
   const sortOption = sort === "asc" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const blogs = await BlogModel
-    .find(filters)
-    .populate("category", "name")
-    .populate("createdBy updatedBy", "name")
-    .sort(sortOption)
-    .skip(skip)
-    .limit(limit)
-    .lean();
+  const blogs = await BlogModel.aggregate([
+    { $match: filters },
+
+    // combine publishDate + publishTime
+    {
+      $addFields: {
+        publishDateTime: {
+          $dateFromString: {
+            dateString: {
+              $concat: [
+                {
+                  $dateToString: {
+                    format: "%Y-%m-%d",
+                    date: "$publishDate",
+                  },
+                },
+                "T",
+                { $ifNull: ["$publishTime", "00:00"] },
+                ":00",
+              ],
+            },
+          },
+        },
+      },
+    },
+
+    // publish logic
+    {
+      $match: {
+        $or: [
+          { publishStatus: "published" },
+          {
+            $and: [
+              { publishStatus: "scheduled" },
+              { publishDateTime: { $lte: now } },
+            ],
+          },
+        ],
+      },
+    },
+
+    { $sort: sortOption },
+    { $skip: skip },
+    { $limit: limit },
+
+    {
+      $lookup: {
+        from: "blogcategories",
+        localField: "category",
+        foreignField: "_id",
+        as: "category",
+      },
+    },
+    { $unwind: "$category" },
+
+    {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "createdBy",
+      },
+    },
+    { $unwind: { path: "$createdBy", preserveNullAndEmptyArrays: true } },
+
+    {
+      $lookup: {
+        from: "users",
+        localField: "updatedBy",
+        foreignField: "_id",
+        as: "updatedBy",
+      },
+    },
+    { $unwind: { path: "$updatedBy", preserveNullAndEmptyArrays: true } },
+  ]);
 
   const total = await BlogModel.countDocuments(filters);
   const totalPages = Math.ceil(total / limit);

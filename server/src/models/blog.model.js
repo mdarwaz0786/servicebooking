@@ -104,6 +104,9 @@ const blogSchema = new mongoose.Schema({
   publishDate: {
     type: Date,
   },
+  publishTime: {
+    type: String,
+  },
   author: {
     type: String,
   },

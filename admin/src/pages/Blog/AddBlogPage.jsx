@@ -35,6 +35,7 @@ const AddBlogPage = () => {
     isComment: "enabled",
     publishStatus: "draft",
     publishDate: "",
+    publishTime: "",
     author: "",
     lat: "",
     long: "",
@@ -174,6 +175,7 @@ const AddBlogPage = () => {
       data.append("isComment", formData.isComment);
       data.append("publishStatus", formData.publishStatus);
       data.append("publishDate", formData.publishDate);
+      data.append("publishTime", formData.publishTime);
       data.append("author", formData.author);
       data.append("lat", formData.lat);
       data.append("long", formData.long);
@@ -461,7 +463,7 @@ const AddBlogPage = () => {
               <h4 className="mt-5 text-center mb-4">Blog Settings</h4>
 
               <div className="row">
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Author</label>
                   <input
                     name="author"
@@ -471,7 +473,7 @@ const AddBlogPage = () => {
                   />
                 </div>
 
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Publish Date</label>
                   <input
                     type="date"
@@ -482,7 +484,18 @@ const AddBlogPage = () => {
                   />
                 </div>
 
-                <div className="col-md-4 mb-3">
+                <div className="col-md-6 mb-3">
+                  <label>Publish Time</label>
+                  <input
+                    type="time"
+                    name="publishTime"
+                    className="form-control"
+                    value={formData.publishTime}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
                   <label>Publish Status</label>
                   <select
                     name="publishStatus"

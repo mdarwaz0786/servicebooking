@@ -2,10 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import BreadCrumb from "../BreadCrumb/BreadCrumb";
+import { formatDate } from "../../helper/formatDate";
+import { formatTime } from "../../helper/formatTime";
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
-  const { Urls, postData, imageCheck, formatDate } = useContext(AppContext);
+  const { Urls, postData, imageCheck } = useContext(AppContext);
   const [blog, setBlog] = useState(null);
   const [categories, setcategories] = useState([]);
   const [latestBlogs, setlatestBlogs] = useState([]);
@@ -67,7 +69,7 @@ const BlogDetailPage = () => {
                     <li>
                       <span className="badge badge-light text-dark">{blog?.category?.name}</span>
                     </li>
-                    <li><i className="feather-calendar me-1"></i>{blog.createdAt ? formatDate(blog.createdAt) : ""}</li>
+                    <li><i className="feather-calendar me-1"></i>{blog.publishDate ? formatDate(blog?.publishDate) : ""}, {blog?.publishTime ? formatTime(blog?.publishTime) : ""}</li>
                     <li>
                       <div className="post-author">
                         <Link to="#">
@@ -87,7 +89,7 @@ const BlogDetailPage = () => {
                 <div className="card-body">
                   <div className="blog-image">
                     <Link to="/blog-details">
-                      <img className="img-fluid" src={imageCheck(blog.detailImage)} alt={blog.title} />
+                      <img className="img-fluid" src={imageCheck(blog?.detailImage)} alt={blog?.title} />
                     </Link>
                   </div>
 
@@ -95,11 +97,11 @@ const BlogDetailPage = () => {
 
                     <div
                       className="mt-3"
-                      dangerouslySetInnerHTML={{ __html: blog.shortDescription }}
+                      dangerouslySetInnerHTML={{ __html: blog?.shortDescription }}
                     ></div>
                     <div
                       className="mt-3"
-                      dangerouslySetInnerHTML={{ __html: blog.fullDescription }}
+                      dangerouslySetInnerHTML={{ __html: blog?.fullDescription }}
                     ></div>
 
 
@@ -123,10 +125,10 @@ const BlogDetailPage = () => {
                 <div className="card-body">
                   <h4 className="side-title">Categories</h4>
                   <ul className="categories">
-                    {categories.map((value, index) => (
+                    {categories?.map((value, index) => (
 
                       <li className="d-flex justify-content-between p-2 bg-white" key={index}>
-                        <Link >{value.name}</Link>
+                        <Link >{value?.name}</Link>
                       </li>
                     ))}
 
@@ -140,20 +142,20 @@ const BlogDetailPage = () => {
                   <h4 className="side-title">Latest News</h4>
                   <ul className="latest-posts">
 
-                    {latestBlogs.map((value, index) => (
+                    {latestBlogs?.map((value, index) => (
                       <li key={index}>
                         <div className="post-thumb">
-                          <Link to={'/blog/' + value.slug}>
+                          <Link to={'/blog/' + value?.slug}>
                             <img
-                              src={imageCheck(value.frontImage)}
-                              alt={value.title} className="img-fluid" />
+                              src={imageCheck(value?.frontImage)}
+                              alt={value?.title} className="img-fluid" />
                           </Link>
                         </div>
                         <div className="post-info">
-                          <p>{formatDate(value.createdAt)}</p>
+                          <p>{formatDate(value?.createdAt)}</p>
                           <h4>
-                            <Link to={'/blog/' + value.slug}>
-                              {value.title}
+                            <Link to={'/blog/' + value?.slug}>
+                              {value?.title}
                             </Link>
                           </h4>
                         </div>

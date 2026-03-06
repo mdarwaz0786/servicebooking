@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Helmet } from "react-helmet";
 import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect, useState } from "react";
@@ -25,8 +26,8 @@ const Meta = () => {
   const fetchDetail = async () => {
     try {
       const response = await postData({}, Urls.metaDetail + '/' + slug, "GET", 1, 1);
-      if (response.data) {
-        setData(response.data);
+      if (response?.data) {
+        setData(response?.data);
       }
     } catch (error) {
       console.error("Detail Error:", error);
@@ -46,24 +47,24 @@ const Meta = () => {
   // LOCATION BASED SETTINGS
   const currentUrl = window.location.href;
   const siteUrl = window.location.origin;
-  const canonicalUrl = data.canonical_url || currentUrl;
+  const canonicalUrl = data?.canonicalTag || currentUrl;
   const defaultImage = 'favicon.png';
-  const ogImage = imageCheck(data.image, defaultImage);
+  const ogImage = imageCheck(data?.image, defaultImage);
   const appName = import.meta.env.VITE_APP_NAME;
 
   return (
     <>
       <Helmet>
         {/* BASIC SEO TAGS */}
-        <title>{data.metaTitle}</title>
-        <meta name="title" content={data.metaTitle} />
-        <meta name="description" content={data.metaDescription} />
-        <meta name="keywords" content={data.metaKeywords} />
-        <meta name="author" content={data.metaAuthor || data.metaTitle} />
+        <title>{data?.metaTitle}</title>
+        <meta name="title" content={data?.metaTitle} />
+        <meta name="description" content={data?.metaDescription} />
+        <meta name="keywords" content={data?.metaKeywords} />
+        <meta name="author" content={data?.metaAuthor || data?.metaTitle} />
 
         {/* Robots */}
-        <meta name="robots" content={data.robots || "index, follow, max-image-preview:large"} />
-        <meta name="googlebot" content={data.robots || "index, follow"} />
+        <meta name="robots" content={data?.robots || "index, follow, max-image-preview:large"} />
+        <meta name="googlebot" content={data?.robots || "index, follow"} />
 
         {/* VIEWPORT */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -77,7 +78,7 @@ const Meta = () => {
         <meta name="audience" content="All" />
         <meta name="distribution" content="Global" />
         <meta httpEquiv="expires" content="never" />
-        <meta name="language" content={data.lang || "English"} />
+        <meta name="language" content={data?.lang || "English"} />
         <meta name="organization" content={appName} />
         <meta name="rating" content="general" />
         <meta name="format-detection" content="telephone=no" />
@@ -85,64 +86,57 @@ const Meta = () => {
         <meta name="referrer" content="origin" />
 
         {/* GEO LOCATION TAGS - Newly Added */}
-        {data.latitude && data.longitude && (
-          <>
-            {/* ICBM - Interactive Content Behaving Model (Google format) */}
-            <meta name="ICBM" content={`${data.latitude}, ${data.longitude}`} />
 
-            {/* Geo Tags */}
-            <meta name="geo.position" content={`${data.latitude};${data.longitude}`} />
-            <meta name="geo.region" content={data.geo_region || data.country_code || "IN"} />
-            <meta name="geo.placename" content={data.geo_placename || data.location_name || "India"} />
+        {/* ICBM - Interactive Content Behaving Model (Google format) */}
+        <meta name="ICBM" content={`${data?.lat}, ${data?.long}`} />
 
-            {/* Dublin Core Location */}
-            <meta name="DC.coverage" content={data.location_name || "India"} />
+        {/* Geo Tags */}
+        <meta name="geo.position" content={`${data?.lat};${data?.long}`} />
+        <meta name="geo.region" content={data?.geo_region || data?.country_code || "IN"} />
+        <meta name="geo.placename" content={data?.geo_placename || data?.location_name || "India"} />
 
-            {/* Business Hours & Contact */}
-            {data.work_hours && <meta name="business:hours" content={data.work_hours} />}
-            {data.contact_number && <meta name="contact:phone" content={data.contact_number} />}
-            {data.contact_email && <meta name="contact:email" content={data.contact_email} />}
-            {data.street_address && <meta name="street-address" content={data.street_address} />}
-            {data.city && <meta name="city" content={data.city} />}
-            {data.state && <meta name="state" content={data.state} />}
-            {data.country && <meta name="country" content={data.country} />}
-            {data.postal_code && <meta name="postal-code" content={data.postal_code} />}
-          </>
-        )}
+        {/* Dublin Core Location */}
+        <meta name="DC.coverage" content={data?.location_name || "India"} />
+
+        {/* Business Hours & Contact */}
+        <meta name="business:hours" content={data?.work_hours || "8:00 AM - 8:00 PM"} />
+        <meta name="contact:phone" content={data?.contact_number || "+91-1234567890"} />
+        <meta name="contact:email" content={data?.contact_email || "greenindiateam2022@gmail.com"} />
+        {data?.address && <meta name="street-address" content={data?.address} />}
+        {data?.city && <meta name="city" content={data?.city || "Delhi"} />}
+        {data?.state && <meta name="state" content={data?.state || "Delhi"} />}
+        {data?.country && <meta name="country" content={data?.country || "India"} />}
+        {data?.zipCode && <meta name="postal-code" content={data?.zipCode || "110000"} />}
 
         {/* OPEN GRAPH (For Facebook, LinkedIn, WhatsApp etc.) */}
-        <meta property="og:type" content={data.og_type || "article"} />
-        <meta property="og:title" content={data.metaTitle} />
-        <meta property="og:description" content={data.metaDescription} />
+        <meta property="og:type" content={data?.og_type || "article"} />
+        <meta property="og:title" content={data?.metaTitle} />
+        <meta property="og:description" content={data?.metaDescription} />
         <meta property="og:image" content={ogImage} />
         <meta property="og:image:secure_url" content={ogImage} />
-        <meta property="og:image:width" content={data.og_image_width || "1200"} />
-        <meta property="og:image:height" content={data.og_image_height || "630"} />
-        <meta property="og:image:type" content={data.og_image_type || "image/jpg"} />
+        <meta property="og:image:width" content={data?.og_image_width || "1200"} />
+        <meta property="og:image:height" content={data?.og_image_height || "630"} />
+        <meta property="og:image:type" content={data?.og_image_type || "image/jpg"} />
         <meta property="og:url" content={currentUrl} />
-        <meta property="og:site_name" content={data.site_name} />
-        <meta property="og:locale" content={data.og_locale || "en_US"} />
+        <meta property="og:site_name" content={data?.site_name} />
+        <meta property="og:locale" content={data?.og_locale || "en_US"} />
 
         {/* OG Location Tags - Newly Added */}
-        {data.latitude && data.longitude && (
-          <>
-            <meta property="place:location:latitude" content={data.latitude} />
-            <meta property="place:location:longitude" content={data.longitude} />
-            {data.street_address && <meta property="og:street_address" content={data.street_address} />}
-            {data.city && <meta property="og:locality" content={data.city} />}
-            {data.state && <meta property="og:region" content={data.state} />}
-            {data.country && <meta property="og:country_name" content={data.country} />}
-            {data.postal_code && <meta property="og:postal_code" content={data.postal_code} />}
-          </>
-        )}
+        <meta property="place:location:latitude" content={data?.lat} />
+        <meta property="place:location:longitude" content={data?.long} />
+        {data?.address && <meta property="og:street_address" content={data?.address} />}
+        {data?.city && <meta property="og:locality" content={data?.city} />}
+        {data?.state && <meta property="og:region" content={data?.state} />}
+        {data?.country && <meta property="og:country_name" content={data?.country} />}
+        {data?.zipCode && <meta property="og:postal_code" content={data?.zipCode} />}
 
         {/* TWITTER CARD TAGS */}
-        <meta name="twitter:card" content={data.metaDescription || ""} />
-        <meta name="twitter:title" content={data.metaTitle} />
-        <meta name="twitter:description" content={data.metaDescription} />
+        <meta name="twitter:card" content={data?.metaDescription} />
+        <meta name="twitter:title" content={data?.metaTitle} />
+        <meta name="twitter:description" content={data?.metaDescription} />
         <meta name="twitter:image" content={ogImage} />
         <meta name="twitter:image:src" content={ogImage} />
-        <meta name="twitter:site" content={data.twitter_site || siteUrl} />
+        <meta name="twitter:site" content={data?.twitter_site || siteUrl} />
         <meta name="twitter:url" content={currentUrl} />
         <meta name="twitter:creator" content={appName} />
 
@@ -150,7 +144,7 @@ const Meta = () => {
         <meta name="theme-color" content={"#ffffff"} />
 
         {/* LANGUAGE */}
-        <meta httpEquiv="Content-Language" content={data.lang || "en"} />
+        <meta httpEquiv="Content-Language" content={data?.lang || "en"} />
 
         {/* CHARSET */}
         <meta charSet="UTF-8" />

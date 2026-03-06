@@ -1,6 +1,7 @@
 import ZoneModel from "../models/zone.model.js";
 import Wallet from "../models/wallet.model.js";
 import { convert12To24 } from "./convert12To24.js";
+import CombinedZoneModel from "../models/combinedZone.model.js";
 
 export const autoAssignBooking = async (
   lat,
@@ -10,7 +11,7 @@ export const autoAssignBooking = async (
   scheduleTime,
   acceptCreditPoints,
 ) => {
-  // ✅ Find zone
+  // Find zone
   const zone = await ZoneModel.findOne({
     status: true,
     geometry: {
@@ -24,6 +25,14 @@ export const autoAssignBooking = async (
   }).select("_id");
 
   if (!zone) return null;
+
+  // Find combined zone that contains this zone
+  // const combinedZone = await CombinedZoneModel.findOne({
+  //   status: true,
+  //   zones: zone._id,
+  // }).select("_id");
+
+  // if (!combinedZone) return null;
 
   const bookingTime24 = convert12To24(scheduleTime);
 
@@ -151,6 +160,67 @@ export const autoAssignBooking = async (
       },
     },
     { $match: { availableSlot: { $ne: [] } } },
+
+    // 9️⃣ Cash in hand calculation
+    {
+      $lookup: {
+        from: "cashcollectedloggers",
+        let: { providerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$providerId", "$$providerId"] }
+            }
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 }
+        ],
+        as: "cashCollected"
+      }
+    },
+
+    {
+      $lookup: {
+        from: "cashcollectedsubmits",
+        let: { providerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$providerId", "$$providerId"] }
+            }
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 }
+        ],
+        as: "cashSubmitted"
+      }
+    },
+
+    {
+      $addFields: {
+        totalCashCollected: {
+          $ifNull: [{ $arrayElemAt: ["$cashCollected.totalCashCollected", 0] }, 0]
+        },
+        totalSubmitAmount: {
+          $ifNull: [{ $arrayElemAt: ["$cashSubmitted.totalSubmitAmount", 0] }, 0]
+        }
+      }
+    },
+
+    {
+      $addFields: {
+        cashInHand: {
+          $subtract: ["$totalCashCollected", "$totalSubmitAmount"]
+        }
+      }
+    },
+
+    // ❌ Filter serviceman holding more than ₹1000
+    {
+      $match: {
+        cashInHand: { $lte: 1000 }
+      }
+    },
 
     // 9️⃣ Today booking count
     {
@@ -333,6 +403,72 @@ export const autoAssignMultipleServicemen = async (
     },
 
     { $match: { availableSlot: { $ne: [] } } },
+
+    // CASH COLLECTION CHECK
+    {
+      $lookup: {
+        from: "cashcollectedloggers",
+        let: { providerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$providerId", "$$providerId"] },
+            },
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 },
+        ],
+        as: "cashCollected",
+      },
+    },
+
+    {
+      $lookup: {
+        from: "cashcollectedsubmits",
+        let: { providerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$providerId", "$$providerId"] },
+            },
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 },
+        ],
+        as: "cashSubmitted",
+      },
+    },
+
+    {
+      $addFields: {
+        totalCashCollected: {
+          $ifNull: [
+            { $arrayElemAt: ["$cashCollected.totalCashCollected", 0] },
+            0,
+          ],
+        },
+        totalSubmitAmount: {
+          $ifNull: [
+            { $arrayElemAt: ["$cashSubmitted.totalSubmitAmount", 0] },
+            0,
+          ],
+        },
+      },
+    },
+
+    {
+      $addFields: {
+        cashInHand: {
+          $subtract: ["$totalCashCollected", "$totalSubmitAmount"],
+        },
+      },
+    },
+
+    {
+      $match: {
+        cashInHand: { $lte: 1000 },
+      },
+    },
 
     {
       $project: {
