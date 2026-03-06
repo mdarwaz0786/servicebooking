@@ -289,6 +289,7 @@ const ServicemanProfileListPage = () => {
                     <th>Name</th>
                     <th>Mobile</th>
                     <th>Experience</th>
+                    <th>Zone</th>
                     <th>Profile Status</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -304,6 +305,7 @@ const ServicemanProfileListPage = () => {
                         <td>{d?.name || "-"}</td>
                         <td>{d?.user?.mobile || "-"}</td>
                         <td>{d?.experienceLevel || "-"}</td>
+                        <td>{d?.zones?.map((z) => <p className="mb-1" key={z?._id}>{z?.name || "-"}</p>)}</td>
                         <td>
                           <div className="d-flex align-items-center gap-2">
                             <select

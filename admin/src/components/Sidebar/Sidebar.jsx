@@ -193,6 +193,17 @@ const Sidebar = () => {
                   </li>
                 )}
 
+                {hasPermission(user, "zone", "view") && (
+                  <li>
+                    <Link
+                      to="/combined-zone"
+                      className={currentPath === "/combined-zone" ? "active" : ""}
+                    >
+                      <span>Combined Zone</span>
+                    </Link>
+                  </li>
+                )}
+
                 {hasPermission(user, "pincode", "view") && (
                   <li>
                     <Link

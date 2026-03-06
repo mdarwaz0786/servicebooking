@@ -135,12 +135,42 @@ export const getBookings = asyncHandler(async (req, res) => {
     .lean();
 
   for (let booking of bookings) {
-    const latestAssignment = await ServiceManBookingModel
-      .findOne({ bookingId: booking?._id })
+    /* ---------------- LATEST ASSIGNMENT ---------------- */
+    let latestAssignments = await ServiceManBookingModel
+      .findOne({
+        bookingId: booking?._id,
+        status: { $nin: ["new", "cancel", "reject"] }
+      })
       .sort({ createdAt: -1 })
+      .populate({
+        path: "servicemanId",
+        populate: {
+          path: "user",
+          select: "-password -role"
+        }
+      })
+      .populate("actionById")
       .lean();
 
-    const servicemanId = latestAssignment?.servicemanId;
+    if (!latestAssignments) {
+      latestAssignments = await ServiceManBookingModel
+        .findOne({
+          bookingId: booking?._id
+        })
+        .sort({ createdAt: -1 })
+        .populate({
+          path: "servicemanId",
+          populate: {
+            path: "user",
+            select: "-password -role"
+          }
+        })
+        .populate("actionById")
+        .lean();
+    };
+
+    const servicemanId = latestAssignments?.servicemanId;
+
     const serviceman = await ServiceManProfile.findOne({ _id: servicemanId }).populate("user");
 
     const servicemanDetail = {
@@ -299,7 +329,44 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .lean();
 
   /* ---------------- LATEST ASSIGNMENT ---------------- */
-  const latestAssign = assignments[0] || null;
+  let latestAssignments = await ServiceManBookingModel
+    .findOne({
+      bookingId: booking?._id,
+      status: { $nin: ["new", "cancel", "reject"] }
+    })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "servicemanId",
+      populate: {
+        path: "user",
+        select: "-password -role"
+      }
+    })
+    .populate({
+      path: "actionById"
+    })
+    .lean();
+
+  if (!latestAssignments) {
+    latestAssignments = await ServiceManBookingModel
+      .findOne({
+        bookingId: booking?._id,
+      })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "servicemanId",
+        populate: {
+          path: "user",
+          select: "-password -role"
+        }
+      })
+      .populate({
+        path: "actionById"
+      })
+      .lean();
+  };
+
+  const latestAssign = latestAssignments;
 
   const latestMedia = latestAssign
     ? mediaMap[String(latestAssign?._id)] || {
@@ -309,6 +376,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
       afterCompleteVideos: [],
     }
     : null;
+
   booking.latestServiceman = latestAssign
     ? {
       assignmentId: latestAssign?._id,

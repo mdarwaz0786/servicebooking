@@ -120,7 +120,7 @@ const serviceManProfileSchema = new mongoose.Schema({
   },
   zones: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Zone"
+    ref: "CombinedZone"
   }],
   status: {
     type: Boolean,

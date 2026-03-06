@@ -32,7 +32,7 @@ const ServicemanProfileDetailPage = () => {
 
     const fetchZones = async () => {
       try {
-        const res = await axios.get(apis.zone.get, {
+        const res = await axios.get(apis.combinedZone.get, {
           headers: { Authorization: validToken }
         });
 

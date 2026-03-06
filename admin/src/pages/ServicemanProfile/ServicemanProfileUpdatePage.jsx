@@ -89,7 +89,7 @@ const ServicemanProfileUpdatePage = () => {
       try {
         const [catRes, zoneRes, cityRes] = await Promise.all([
           axios.get(apis.category.get, { headers: { Authorization: validToken } }),
-          axios.get(apis.zone.get, { headers: { Authorization: validToken } }),
+          axios.get(apis.combinedZone.get, { headers: { Authorization: validToken } }),
           axios.get(apis.city.get, { headers: { Authorization: validToken } }),
         ]);
 

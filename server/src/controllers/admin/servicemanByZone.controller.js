@@ -2,6 +2,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import ApiError from "../../helpers/apiError.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
 import ZoneModel from "../../models/zone.model.js";
+import CombinedZoneModel from "../../models/combinedZone.model.js";
 
 export const getServicemenByZone = asyncHandler(async (req, res) => {
   const { lat, long, all } = req.query;
@@ -48,7 +49,20 @@ export const getServicemenByZone = asyncHandler(async (req, res) => {
     });
   };
 
-  filter.zones = zone?._id;
+  const combinedZone = await CombinedZoneModel.findOne({
+    status: true,
+    zones: zone._id,
+  }).select("_id");
+
+  if (!combinedZone) {
+    return res.status(200).json({
+      success: true,
+      message: "No servicemen available in this zone",
+      data: [],
+    });
+  };
+
+  filter.zones = combinedZone?._id;
 
   const servicemen = await ServiceManProfileModel
     .find(filter)

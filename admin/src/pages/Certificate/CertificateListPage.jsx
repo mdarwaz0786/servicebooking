@@ -130,7 +130,7 @@ const CertificateListPage = () => {
     { value: "", label: "All Provider" },
     ...servicemen.map((s) => ({
       value: s?._id,
-      label: s?.name,
+      label: `${s?.name} - ${s?.servicemanId}`,
     })),
   ];
 

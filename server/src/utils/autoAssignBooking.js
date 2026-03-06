@@ -27,12 +27,12 @@ export const autoAssignBooking = async (
   if (!zone) return null;
 
   // Find combined zone that contains this zone
-  // const combinedZone = await CombinedZoneModel.findOne({
-  //   status: true,
-  //   zones: zone._id,
-  // }).select("_id");
+  const combinedZone = await CombinedZoneModel.findOne({
+    status: true,
+    zones: zone?._id,
+  }).select("_id");
 
-  // if (!combinedZone) return null;
+  if (!combinedZone) return null;
 
   const bookingTime24 = convert12To24(scheduleTime);
 
