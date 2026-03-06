@@ -88,8 +88,10 @@ const Footer = () => {
                 </ul>
                 <h5 className="mb-1 fs-14 mb-3 footer-sm footer-sm-mt">Experience GI Team app on mobile</h5>
                 <div className="d-flex align-items-center flex-wrap footer-sm">
+                  <Link to="https://play.google.com/store/apps/details?id=com.greenindiateams&pcampaignid=web_share" target="_blank">
+                    <img src="/assets/img/icons/goolge-play.svg" className="me-2" alt="google-play" />
+                  </Link>
                   <img src="/assets/img/icons/app-store.svg" className="me-2" alt="app-store" />
-                  <img src="/assets/img/icons/goolge-play.svg" className="me-2" alt="google-play" />
                 </div>
               </div>
             </div>

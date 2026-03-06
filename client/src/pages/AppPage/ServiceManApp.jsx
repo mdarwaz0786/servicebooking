@@ -60,15 +60,15 @@ const ServiceManApp = () => {
                 </p>
 
                 {/* App Download Buttons */}
-                {/* <div className="app-download-buttons mb-1">
+                <div className="app-download-buttons mb-1">
                   <h5 className="mb-3">Download Now</h5>
                   <div className="d-flex flex-wrap gap-3 justify-content-center">
-                    <a 
-                      href={data?.serviceman?.android} 
-                      target="_blank" 
+                    <a
+                      href={data?.serviceman?.android}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-dark btn-lg d-flex align-items-center gap-2 py-3 px-4 shadow"
-                      style={{borderRadius: '12px'}}
+                      style={{ borderRadius: '12px' }}
                     >
                       <FaGooglePlay size={28} />
                       <div className="d-flex flex-column text-start">
@@ -76,22 +76,22 @@ const ServiceManApp = () => {
                         <span className="fw-bold">Google Play</span>
                       </div>
                     </a>
-                    
-                    <a 
-                      href={data?.serviceman?.ios}  
-                      target="_blank" 
+
+                    {/* <a
+                      href={data?.serviceman?.ios}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-dark btn-lg d-flex align-items-center gap-2 py-3 px-4 shadow"
-                      style={{borderRadius: '12px'}}
+                      style={{ borderRadius: '12px' }}
                     >
                       <FaApple size={28} />
                       <div className="d-flex flex-column text-start">
                         <small className="opacity-75">Download on the</small>
                         <span className="fw-bold">App Store</span>
                       </div>
-                    </a>
+                    </a> */}
                   </div>
-                </div> */}
+                </div>
 
 
               </div>
