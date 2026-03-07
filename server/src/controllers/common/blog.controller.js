@@ -22,7 +22,9 @@ export const getBlogs = asyncHandler(async (req, res) => {
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
 
-  const now = new Date();
+  const now = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
 
   const filters = {
     status: true,
@@ -54,6 +56,7 @@ export const getBlogs = asyncHandler(async (req, res) => {
                   $dateToString: {
                     format: "%Y-%m-%d",
                     date: "$publishDate",
+                    timezone: "Asia/Kolkata",
                   },
                 },
                 "T",
@@ -61,6 +64,7 @@ export const getBlogs = asyncHandler(async (req, res) => {
                 ":00",
               ],
             },
+            timezone: "Asia/Kolkata",
           },
         },
       },

@@ -355,11 +355,11 @@ const ServicemanProfileListPage = () => {
                                 <i className="fe fe-edit" />
                               </button>
                             </Link>
-                            <Link to="/service-man-profile-detail" state={{ record: d }}>
+                            {/* <Link to="/service-man-profile-detail" state={{ record: d }}>
                               <button className="btn delete-table me-2" type="button">
                                 <i className="fe fe-eye" />
                               </button>
-                            </Link>
+                            </Link> */}
                             <button
                               className="btn delete-table"
                               type="button"
