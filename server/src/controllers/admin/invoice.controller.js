@@ -4,7 +4,7 @@ import asyncHandler from "../../helpers/asyncHandler.js";
 import ApiError from "../../helpers/apiError.js";
 
 export const getInvoices = asyncHandler(async (req, res) => {
-  let { type, customerId, serviceman, bookingId, search, sort = "desc", page, limit } = req.query;
+  let { type, customerId, serviceman, bookingId, search, sort = "desc", page, limit, startDate, endDate } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -16,6 +16,20 @@ export const getInvoices = asyncHandler(async (req, res) => {
   if (customerId) filter.customerId = customerId;
   if (serviceman) filter.providerId = serviceman;
   if (bookingId) filter.bookingId = bookingId;
+
+  if (startDate || endDate) {
+    filter.createdAt = {};
+
+    if (startDate) {
+      filter.createdAt.$gte = new Date(startDate);
+    };
+
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      filter.createdAt.$lte = end;
+    };
+  };
 
   if (search) {
     filter.$or = [

@@ -80,7 +80,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
 // Get All Bookings
 export const getBookings = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, userId, sort = "desc", search, status, bookingStatus } = req.query;
+  let { page = 1, limit = 10, userId, sort = "desc", search, status, bookingStatus, startDate, endDate } = req.query;
 
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -113,6 +113,20 @@ export const getBookings = asyncHandler(async (req, res) => {
     filters.$or = [
       { bookingId: { $regex: search, $options: "i" } },
     ];
+  };
+
+  if (startDate || endDate) {
+    filters.createdAt = {};
+
+    if (startDate) {
+      filters.createdAt.$gte = new Date(startDate);
+    };
+
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      filters.createdAt.$lte = end;
+    };
   };
 
   let sortOption = {};

@@ -25,6 +25,8 @@ const InvoiceListPage = () => {
   const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
+  const startDate = searchParams.get("startDate") || "";
+  const endDate = searchParams.get("endDate") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -68,6 +70,8 @@ const InvoiceListPage = () => {
           sort,
           serviceman: serviceman || undefined,
           type: type || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
         },
       });
 
@@ -94,19 +98,21 @@ const InvoiceListPage = () => {
       search: debouncedSearch,
       serviceman,
       type,
+      startDate,
+      endDate,
       ...newParams,
     });
   };
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, sort, search, serviceman, type]);
+  }, [page, limit, sort, search, serviceman, type, startDate, endDate]);
 
   const servicemanOptions = [
     { value: "", label: "All Provider" },
     ...servicemen.map((s) => ({
       value: s?._id,
-      label: s?.name,
+      label: `${s?.name} - ${s?.servicemanId}`,
     })),
   ];
 
@@ -135,6 +141,45 @@ const InvoiceListPage = () => {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
+
+            {/* Start Date */}
+            <input
+              type="date"
+              className="form-control form-control-sm"
+              value={startDate}
+              onChange={(e) =>
+                updateParams({
+                  startDate: e.target.value,
+                  page: 1
+                })
+              }
+            />
+
+            {/* End Date */}
+            <input
+              type="date"
+              className="form-control form-control-sm"
+              value={endDate}
+              onChange={(e) =>
+                updateParams({
+                  endDate: e.target.value,
+                  page: 1
+                })
+              }
+            />
+
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() =>
+                updateParams({
+                  startDate: "",
+                  endDate: "",
+                  page: 1
+                })
+              }
+            >
+              Clear Dates
+            </button>
             {/* Sort */}
             <select
               className="form-select form-select-sm w-auto"
