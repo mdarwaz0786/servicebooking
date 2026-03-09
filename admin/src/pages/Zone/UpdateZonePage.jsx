@@ -387,7 +387,7 @@ const UpdateZonePage = () => {
 
     setCenter(latLng);
 
-    fetchBoundaryFromOSM(place.name);
+    fetchBoundaryFromOSM(place?.formatted_address || place?.name);
   };
 
   /* ------------------ LOAD ZONE BY ID ------------------ */

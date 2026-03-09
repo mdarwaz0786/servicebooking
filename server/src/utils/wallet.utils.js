@@ -33,6 +33,9 @@ export const getSupportConfig = async (bookingId) => {
           from: "services",
           localField: "serviceId",
           foreignField: "_id",
+          pipeline: [
+            { $project: { creditPoint: 1 } }
+          ],
           as: "service",
         },
       },
@@ -41,11 +44,11 @@ export const getSupportConfig = async (bookingId) => {
         $addFields: {
           itemCreditPoints: {
             $multiply: [
-              { $toDouble: "$service.creditPoint" },
-              "$quantity",
-            ],
-          },
-        },
+              { $toDouble: { $ifNull: ["$service.creditPoint", 0] } },
+              { $ifNull: ["$quantity", 1] }
+            ]
+          }
+        }
       },
       {
         $group: {

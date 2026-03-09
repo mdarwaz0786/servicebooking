@@ -145,7 +145,7 @@ const blogSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 blogSchema.pre("save", function (next) {
   if (!this.meta) this.meta = {};

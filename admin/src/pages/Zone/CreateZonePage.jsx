@@ -315,7 +315,7 @@ const CreateZonePage = () => {
     setCenter(latLng);
 
     // AUTO BOUNDARY DRAW
-    fetchBoundaryFromOSM(place.name);
+    fetchBoundaryFromOSM(place?.formatted_address || place?.name);
   };
 
   /* ------------------ SAVE ZONE ------------------ */

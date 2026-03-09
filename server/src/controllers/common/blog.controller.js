@@ -3,6 +3,7 @@ import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import BlogCategoryModel from "../../models/blogCategory.model.js";
+import CommentModel from "../../models/comment.model.js";
 
 // --------------------- GET ALL BLOGS ---------------------
 export const getBlogs = asyncHandler(async (req, res) => {
@@ -148,6 +149,23 @@ export const getBlogById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Blog not found");
   }
 
+  const comments = await CommentModel
+    .find({
+      contentId: blog?._id,
+      contentType: "Blog",
+      parentId: null,
+      status: true,
+    })
+    .populate("user", "name profileImage")
+    .populate({
+      path: "replies",
+      populate: {
+        path: "user",
+        select: "name profileImage",
+      },
+    })
+    .lean();
+
   const categories = await BlogCategoryModel
     .find({ status: true })
     .sort({ createdAt: 1 })
@@ -162,8 +180,11 @@ export const getBlogById = asyncHandler(async (req, res) => {
     .lean();
 
   return res.status(200).json({
-    success: true, message: "Data fetched successfully", data: blog, categories,
-    blogs: blogs
+    success: true, message: "Data fetched successfully",
+    data: blog,
+    comments: comments,
+    categories: categories,
+    blogs: blogs,
   });
 });
 
