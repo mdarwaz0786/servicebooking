@@ -95,7 +95,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
 
   let transactionDetail = await TransactionModel.create({
     bookingId: pId,
-    userId,
+    userId: userId || req.user?._id,
     PID: pId,
     transactionId: '',
     productName: type == "wallet" ? "Wallet Recharge" : "Booking Services",
