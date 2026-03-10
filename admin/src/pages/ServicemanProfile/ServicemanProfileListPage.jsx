@@ -18,7 +18,7 @@ const ServicemanProfileListPage = () => {
   const [total, setTotal] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
-  const [statusMap, setStatusMap] = useState({});
+  // const [statusMap, setStatusMap] = useState({});
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
@@ -148,24 +148,24 @@ const ServicemanProfileListPage = () => {
     "Rejected"
   ];
 
-  const updateStatus = async (id) => {
-    try {
-      const response = await axios.patch(
-        `${apis.servicemanProfile.update}/${id}`,
-        { profileStatus: statusMap[id] },
-        {
-          headers: { Authorization: validToken },
-        }
-      );
+  // const updateStatus = async (id) => {
+  //   try {
+  //     const response = await axios.patch(
+  //       `${apis.servicemanProfile.update}/${id}`,
+  //       { profileStatus: statusMap[id] },
+  //       {
+  //         headers: { Authorization: validToken },
+  //       }
+  //     );
 
-      if (response?.data?.success) {
-        toast.success("Status updated successfully");
-        fetchServicemanProfile();
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to update status");
-    }
-  };
+  //     if (response?.data?.success) {
+  //       toast.success("Status updated successfully");
+  //       fetchServicemanProfile();
+  //     }
+  //   } catch (error) {
+  //     toast.error(error?.response?.data?.message || "Failed to update status");
+  //   }
+  // };
 
   const experienceOptions = [
     { value: "Fresher", label: "Fresher" },
@@ -290,7 +290,7 @@ const ServicemanProfileListPage = () => {
                     <th>Mobile</th>
                     <th>Experience</th>
                     <th>Zone</th>
-                    <th>Profile Status</th>
+                    {/* <th>Profile Status</th> */}
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -306,7 +306,7 @@ const ServicemanProfileListPage = () => {
                         <td>{d?.user?.mobile || "-"}</td>
                         <td>{d?.experienceLevel || "-"}</td>
                         <td>{d?.zones?.map((z) => <p className="mb-1" key={z?._id}>{z?.name || "-"}</p>)}</td>
-                        <td>
+                        {/* <td>
                           <div className="d-flex align-items-center gap-2">
                             <select
                               className="form-select form-select-sm"
@@ -335,7 +335,7 @@ const ServicemanProfileListPage = () => {
                               Update
                             </button>
                           </div>
-                        </td>
+                        </td> */}
                         <td>
                           <div className="active-switch">
                             <label className="switch">
