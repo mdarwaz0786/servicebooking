@@ -187,7 +187,7 @@ const TransactionListPage = () => {
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">This Week</h6>
-                  <h5 className="mb-1">₹{summary?.thisWeek?.amount}</h5>
+                  <h5 className="mb-1">₹{summary?.thisWeek?.amount?.toFixed(2)}</h5>
                   <small>{summary?.thisWeek?.count} Transactions</small>
                 </div>
               </div>
@@ -197,7 +197,7 @@ const TransactionListPage = () => {
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">This Month</h6>
-                  <h5 className="mb-1">₹{summary?.thisMonth?.amount}</h5>
+                  <h5 className="mb-1">₹{summary?.thisMonth?.amount?.toFixed(2)}</h5>
                   <small>{summary?.thisMonth?.count} Transactions</small>
                 </div>
               </div>
@@ -207,7 +207,7 @@ const TransactionListPage = () => {
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">Last Three Month</h6>
-                  <h5 className="mb-1">₹{summary?.lastThreeMonths?.amount}</h5>
+                  <h5 className="mb-1">₹{summary?.lastThreeMonths?.amount?.toFixed(2)}</h5>
                   <small>{summary?.lastThreeMonths?.count} Transactions</small>
                 </div>
               </div>
@@ -217,7 +217,7 @@ const TransactionListPage = () => {
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">This Year</h6>
-                  <h5 className="mb-1">₹{summary?.thisYear?.amount}</h5>
+                  <h5 className="mb-1">₹{summary?.thisYear?.amount?.toFixed(2)}</h5>
                   <small>{summary?.thisYear?.count} Transactions</small>
                 </div>
               </div>
@@ -227,7 +227,7 @@ const TransactionListPage = () => {
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h6 className="text-muted">Total</h6>
-                  <h5 className="mb-1">₹{summary?.overall?.amount}</h5>
+                  <h5 className="mb-1">₹{summary?.overall?.amount?.toFixed(2)}</h5>
                   <small>{summary?.overall?.count} Transactions</small>
                 </div>
               </div>
@@ -261,7 +261,7 @@ const TransactionListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.transactionId || "-"}</td>
                         <td>{d?.user?.name || "-"}</td>
-                        <td>{d?.user?.mobile}</td>
+                        <td>{d?.user?.mobile || "-"}</td>
                         <td>{d?.finalAmount?.toFixed(2)}</td>
                         <td>{d?.PID?.paymentMode}</td>
                         <td>Debit</td>
