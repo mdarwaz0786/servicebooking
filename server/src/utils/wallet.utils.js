@@ -195,9 +195,10 @@ export const calculateProviderEarningAmount = async (
   for (const item of bookingItems) {
     const qty = Number(item?.quantity || 1);
     const salePrice = Number(item?.service?.salePrice || 0) * qty;
-    totalTransactionCharge = Number(item?.service?.transactionCharge || 0) * qty;
+    const transactionCharge = Number(item?.service?.transactionCharge || 0) * qty;
 
     totalSalePrice += salePrice;
+    totalTransactionCharge += transactionCharge;
   };
 
   let totalProviderEarningAmount = 0;
@@ -244,7 +245,7 @@ export const calculateProviderEarningAmount = async (
       { new: true },
     );
   } else if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
-    totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
+    totalProviderEarningAmount = totalSalePrice - totalTransactionCharge - deductAdditionalPartAmount;
 
     await ServicemanEarningModel.create({
       booking: bookingId,
