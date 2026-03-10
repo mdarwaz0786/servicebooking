@@ -157,7 +157,7 @@ export const getSubSubSubCategoryById = asyncHandler(async (req, res) => {
 
 // Update sub sub sub category
 export const updateSubSubSubCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription, status, categoryId, subCategoryId, subSubCategoryId } = req.body;
+  const { name, shortDescription, fullDescription, status, categoryId, subCategoryId, subSubCategoryId, slug } = req.body;
 
   const subSubSubCategory = await SubSubSubCategoryModel.findById(req.params.id);
   if (!subSubSubCategory) {
@@ -178,9 +178,33 @@ export const updateSubSubSubCategory = asyncHandler(async (req, res) => {
     subSubSubCategory.icon = await compressImage(req.files.icon[0].buffer, "subSubSubCategory");
   };
 
-  if (name && name !== subSubSubCategory.name) {
-    await SlugModel.deleteOne({ collectionName: "SubSubSubCategory", documentId: subSubSubCategory._id });
-    const newSlug = await generateUniqueSlug(name, "SubSubSubCategory", subSubSubCategory._id, "sub-sub-sub-categories");
+  if (slug && slug !== subSubSubCategory?.slug) {
+    await SlugModel.deleteOne({
+      collectionName: "SubSubSubCategory",
+      documentId: subSubSubCategory?._id,
+    });
+
+    const newSlug = await generateUniqueSlug(
+      slug,
+      "SubSubSubCategory",
+      subSubSubCategory?._id,
+      "sub-sub-sub-categories"
+    );
+
+    subSubSubCategory.slug = newSlug;
+  } else if (name && name !== subSubSubCategory?.name) {
+    await SlugModel.deleteOne({
+      collectionName: "SubSubSubCategory",
+      documentId: subSubSubCategory?._id,
+    });
+
+    const newSlug = await generateUniqueSlug(
+      name,
+      "SubSubSubCategory",
+      subSubSubCategory?._id,
+      "sub-sub-sub-categories"
+    );
+
     subSubSubCategory.slug = newSlug;
   };
 
@@ -192,6 +216,7 @@ export const updateSubSubSubCategory = asyncHandler(async (req, res) => {
   subSubSubCategory.subCategoryId = subCategoryId || subSubSubCategory.subCategoryId;
   subSubSubCategory.subSubCategoryId = subSubCategoryId || subSubSubCategory.subSubCategoryId;
   subSubSubCategory.updatedBy = req.user?._id;
+  subSubSubCategory.updatedAt = new Date();
 
   await subSubSubCategory.save();
 

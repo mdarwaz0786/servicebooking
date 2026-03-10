@@ -22,6 +22,7 @@ const UpdateSubSubSubCategoryPage = () => {
 
   const [formData, setFormData] = useState({
     name: "",
+    slug: "",
     fullDescription: "",
     categoryId: "",
     subCategoryId: "",
@@ -87,6 +88,7 @@ const UpdateSubSubSubCategoryPage = () => {
           const data = res.data.data;
           setFormData({
             name: data.name || "",
+            slug: data.slug || "",
             fullDescription: data?.fullDescription || "",
             categoryId: data?.categoryId || "",
             subCategoryId: data?.subCategoryId || "",
@@ -152,6 +154,7 @@ const UpdateSubSubSubCategoryPage = () => {
     if (!formData.subCategoryId) return toast.error("Please select a sub category");
     if (!formData.subSubCategoryId) return toast.error("Please select a sub sub category");
     if (!formData.name.trim()) return toast.error("Name is required");
+    if (!formData.slug.trim()) return toast.error("Slug is required");
 
     try {
       setLoading(true);
@@ -304,7 +307,25 @@ const UpdateSubSubSubCategoryPage = () => {
                       required
                     />
                   </div>
+                </div>
+              </div>
 
+              <div className="row">
+                <div className="col-md-12">
+                  {/* Slug */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Slug <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 

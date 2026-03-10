@@ -5,6 +5,7 @@ import axios from "axios";
 import { useAuth } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
 import apis from "../../apis/apis";
+import Select from "react-select";
 
 const AddBankTransferPage = () => {
   const { validToken } = useAuth();
@@ -126,6 +127,12 @@ const AddBankTransferPage = () => {
     };
   };
 
+  const servicemanOptions =
+    servicemen?.map((item) => ({
+      value: item?.userId,
+      label: `${item?.name} - ${item?.servicemanId}`,
+    })) || [];
+
   return (
     <div className="page-wrapper">
       <div className="container mt-4 mb-5">
@@ -149,28 +156,24 @@ const AddBankTransferPage = () => {
                 {/* Serviceman */}
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
-                    Serviceman <span className="text-danger">*</span>
+                    Provider <span className="text-danger">*</span>
                   </label>
 
-                  <select
-                    className="form-select"
-                    value={formData.servicemanId}
-                    onChange={(e) => {
+                  <Select
+                    options={servicemanOptions}
+                    placeholder="Select Provider"
+                    isSearchable
+                    isClearable
+                    value={servicemanOptions.find((opt) => opt.value === formData.servicemanId)}
+                    onChange={(selected) => {
                       const updated = {
                         ...formData,
-                        servicemanId: e.target.value,
+                        servicemanId: selected?.value || "",
                       };
                       setFormData(updated);
                       fetchAmount(updated);
                     }}
-                  >
-                    <option value="">-- Select Provider --</option>
-                    {servicemen?.map((item) => (
-                      <option key={item?._id} value={item?.userId}>
-                        {`${item?.name} - ${item?.servicemanId}`}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 {/* Transaction Id */}

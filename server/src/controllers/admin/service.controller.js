@@ -95,7 +95,7 @@ export const createService = asyncHandler(async (req, res) => {
       transactionCharge,
     });
 
-    const s = await generateUniqueSlug(name, "Service", service._id, "services");
+    const s = await generateUniqueSlug(name, "Service", service?._id, "services");
     service.slug = s;
     await service.save();
 
@@ -106,7 +106,7 @@ export const createService = asyncHandler(async (req, res) => {
       metaKeywords,
       metaAuthor,
       image: metaImagePath,
-      slug: slug || service?.slug,
+      slug: s,
       canonicalTag,
       createdBy: req.user?._id,
     });
@@ -277,9 +277,8 @@ export const updateService = asyncHandler(async (req, res) => {
 
   let newSlug = null;
   if (name && name !== service.name) {
-    await SlugModel.deleteOne({ collectionName: "Service", documentId: service._id });
+    await SlugModel.deleteOne({ collectionName: "Service", documentId: service?._id });
     newSlug = await generateUniqueSlug(name, "Service", service._id, "services");
-    service.slug = newSlug;
   };
 
   service.name = name || service.name;

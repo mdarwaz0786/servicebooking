@@ -116,16 +116,15 @@ export const getBookings = asyncHandler(async (req, res) => {
   };
 
   if (startDate || endDate) {
-    filters.createdAt = {};
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
-    if (startDate) {
-      filters.createdAt.$gte = new Date(startDate);
-    };
+    if (start) start.setUTCHours(0, 0, 0, 0);
+    if (end) end.setUTCHours(23, 59, 59, 999);
 
-    if (endDate) {
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
-      filters.createdAt.$lte = end;
+    filters.scheduleDate = {
+      ...(start && { $gte: start }),
+      ...(end && { $lte: end }),
     };
   };
 

@@ -53,8 +53,8 @@ const WalletFormPage = () => {
             headers: { Authorization: validToken },
           });
 
-          if (res.data.success) {
-            const d = res.data.data;
+          if (res?.data?.success) {
+            const d = res?.data?.data;
 
             setFormData({
               providerId: d.provider?.userId || "",

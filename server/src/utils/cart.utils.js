@@ -23,12 +23,15 @@ export const getCartData = async (userId) => {
   let taxPercent = 0;
 
   cartItems.forEach((item) => {
-    amount += Number(item?.salePrice || 0) * Number(item?.quantity || 1);
-    mrpAmount += Number(item?.mrpPrice || 0) * Number(item?.quantity || 1);
+    const qty = Number(item?.quantity || 1);
 
-    taxablePrice += Number(item?.taxablePrice || 0);
-    transactionCharge += Number(item?.transactionCharge || 0);
-    taxPercent += Number(item?.taxPercent || 0);
+    amount += Number(item?.salePrice || 0) * qty;
+    mrpAmount += Number(item?.mrpPrice || 0) * qty;
+
+    taxablePrice += Number(item?.taxablePrice || 0) * qty;
+    transactionCharge += Number(item?.transactionCharge || 0) * qty;
+
+    taxPercent = Number(item?.taxPercent || 18);
   });
 
   payableAmount = amount;

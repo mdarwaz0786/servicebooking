@@ -21,6 +21,7 @@ const UpdateSubSubCategoryPage = () => {
 
   const [formData, setFormData] = useState({
     name: "",
+    slug: "",
     fullDescription: "",
     categoryId: "",
     subCategoryId: "",
@@ -74,6 +75,7 @@ const UpdateSubSubCategoryPage = () => {
           const subSub = res?.data?.data;
           setFormData({
             name: subSub?.name || "",
+            slug: subSub?.slug || "",
             fullDescription: subSub?.fullDescription || "",
             categoryId: subSub?.categoryId || "",
             subCategoryId: subSub?.subCategoryId || "",
@@ -144,6 +146,11 @@ const UpdateSubSubCategoryPage = () => {
 
     if (!formData.name.trim()) {
       toast.error("Service Process name is required");
+      return;
+    };
+
+    if (!formData.slug.trim()) {
+      toast.error("Slug is required");
       return;
     };
 
@@ -255,6 +262,23 @@ const UpdateSubSubCategoryPage = () => {
                       onChange={handleChange}
                       className="form-control"
                       maxLength="100"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  {/* Slug */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Slug <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      className="form-control"
                       required
                     />
                   </div>

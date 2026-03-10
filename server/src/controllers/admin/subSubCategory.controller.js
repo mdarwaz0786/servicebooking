@@ -160,7 +160,7 @@ export const getSubSubCategoryById = asyncHandler(async (req, res) => {
 
 // Update sub sub category
 export const updateSubSubCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription, status, categoryId, subCategoryId } = req.body;
+  const { name, shortDescription, fullDescription, status, categoryId, subCategoryId, slug } = req.body;
 
   const subSubCategory = await SubSubCategoryModel.findById(req.params.id);
   if (!subSubCategory) throw new ApiError(404, "Sub sub category not found");
@@ -179,9 +179,33 @@ export const updateSubSubCategory = asyncHandler(async (req, res) => {
     subSubCategory.icon = await compressImage(req.files.icon[0].buffer, "subSubCategory");
   };
 
-  if (name && name !== subSubCategory.name) {
-    await SlugModel.deleteOne({ collectionName: "SubSubCategory", documentId: subSubCategory?._id });
-    const newSlug = await generateUniqueSlug(name, "SubSubCategory", subSubCategory?._id, "sub-sub-categories");
+  if (slug && slug !== subSubCategory.slug) {
+    await SlugModel.deleteOne({
+      collectionName: "SubSubCategory",
+      documentId: subSubCategory?._id,
+    });
+
+    const newSlug = await generateUniqueSlug(
+      slug,
+      "SubSubCategory",
+      subSubCategory?._id,
+      "sub-sub-categories"
+    );
+
+    subSubCategory.slug = newSlug;
+  } else if (name && name !== subSubCategory?.name) {
+    await SlugModel.deleteOne({
+      collectionName: "SubSubCategory",
+      documentId: subSubCategory?._id,
+    });
+
+    const newSlug = await generateUniqueSlug(
+      name,
+      "SubSubCategory",
+      subSubCategory?._id,
+      "sub-sub-categories"
+    );
+
     subSubCategory.slug = newSlug;
   };
 
@@ -192,6 +216,7 @@ export const updateSubSubCategory = asyncHandler(async (req, res) => {
   subSubCategory.categoryId = categoryId || subSubCategory.categoryId;
   subSubCategory.subCategoryId = subCategoryId || subSubCategory.subCategoryId;
   subSubCategory.updatedBy = req.user?._id;
+  subSubCategory.updatedAt = new Date();
 
   await subSubCategory.save();
 

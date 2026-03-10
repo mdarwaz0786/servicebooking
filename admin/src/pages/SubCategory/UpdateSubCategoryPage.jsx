@@ -19,6 +19,7 @@ const UpdateSubCategoryPage = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    slug: "",
     fullDescription: "",
     categoryId: "",
   });
@@ -53,6 +54,7 @@ const UpdateSubCategoryPage = () => {
             shortDescription: sub?.shortDescription || "",
             fullDescription: sub?.fullDescription || "",
             categoryId: sub?.categoryId || "",
+            slug: sub?.slug || "",
           });
           if (sub?.image) setPreview(`${BASE_URL}/${sub?.image}`);
           if (sub?.icon) setIconPreview(`${BASE_URL}/${sub?.icon}`);
@@ -116,6 +118,11 @@ const UpdateSubCategoryPage = () => {
 
     if (!formData.name.trim()) {
       toast.error("Sub Variant name is required");
+      return;
+    };
+
+    if (!formData.slug.trim()) {
+      toast.error("Slug is required");
       return;
     };
 
@@ -209,6 +216,25 @@ const UpdateSubCategoryPage = () => {
                       onChange={handleChange}
                       className="form-control"
                       maxLength="100"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-12">
+                  {/* Slug */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Slug <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      className="form-control"
                       required
                     />
                   </div>

@@ -4,6 +4,7 @@ import { useEffect, memo, useRef, useState } from "react";
 import apis from "../../apis/apis";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
+import Select from "react-select";
 
 const ServicemanBookingModal = ({ booking, fetchBookings }) => {
   const { validToken } = useAuth();
@@ -81,11 +82,6 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
     validToken,
   ]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -106,6 +102,12 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
       modalInstance.current?.hide();
     };
   };
+
+  const providerOptions =
+    serviceMen?.map((sm) => ({
+      value: sm?._id,
+      label: `${sm?.name} - ${sm?.servicemanId}`,
+    })) || [];
 
   return (
     <div
@@ -152,20 +154,20 @@ const ServicemanBookingModal = ({ booking, fetchBookings }) => {
               {/* Service Man */}
               <div className="col-md-6">
                 <label className="form-label">Provider</label>
-                <select
-                  name="servicemanId"
-                  value={formData.servicemanId}
-                  onChange={handleChange}
-                  className="form-select"
-                  required
-                >
-                  <option value="">-- Select Provider --</option>
-                  {serviceMen?.map((sm) => (
-                    <option key={sm?._id} value={sm?._id}>
-                      {sm?.name}
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  options={providerOptions}
+                  placeholder="Select Provider"
+                  value={providerOptions.find(
+                    (opt) => opt.value === formData.servicemanId
+                  )}
+                  onChange={(selected) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      servicemanId: selected?.value || "",
+                    }))
+                  }
+                  isClearable
+                />
               </div>
               <div className="text-end mt-4">
                 <button

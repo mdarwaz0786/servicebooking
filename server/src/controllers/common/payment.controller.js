@@ -27,6 +27,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
   let itemData, bookingData, bookingItems;
   let payableAmount = 0;
   let gstPercent = 0;
+  let additionalPartAmount = 0;
   let from = "";
   let qr;
 

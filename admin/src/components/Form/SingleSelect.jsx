@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 
@@ -15,9 +14,11 @@ const SingleSelect = ({
   const options = useMemo(() =>
     optionsList?.map((item) => ({
       value: item?.[valueKey],
-      label: item?.[labelKey],
+      label: item?.servicemanId
+        ? `${item?.[labelKey]} - ${item?.servicemanId}`
+        : item?.[labelKey],
     })) || [],
-    [optionsList]
+    [optionsList, labelKey, valueKey]
   );
 
   useEffect(() => {

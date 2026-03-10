@@ -55,7 +55,7 @@ export const createCategory = asyncHandler(async (req, res) => {
       metaKeywords,
       metaAuthor,
       image: metaImagePath,
-      slug: slug || category?.slug,
+      slug: s,
       canonicalTag,
       createdBy: req.user?._id,
     });

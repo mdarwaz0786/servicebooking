@@ -233,7 +233,7 @@ export const getSubCategoriesByCategoryId = asyncHandler(async (req, res) => {
 
 // Update sub category
 export const updateSubCategory = asyncHandler(async (req, res) => {
-  const { name, shortDescription, fullDescription, status, categoryId } = req.body;
+  const { name, shortDescription, fullDescription, status, slug, categoryId } = req.body;
 
   const subCategory = await SubCategoryModel.findById(req.params.id);
 
@@ -255,9 +255,21 @@ export const updateSubCategory = asyncHandler(async (req, res) => {
     subCategory.icon = await compressImage(req.files.icon[0].buffer, "subCategory");
   };
 
-  if (name && name !== subCategory.name) {
-    await SlugModel.deleteOne({ collectionName: "SubCategory", documentId: subCategory._id });
-    const newSlug = await generateUniqueSlug(name, "SubCategory", subCategory._id, "sub-categories");
+  if (slug && slug !== subCategory.slug) {
+    await SlugModel.deleteOne({
+      collectionName: "SubCategory",
+      documentId: subCategory?._id,
+    });
+
+    const newSlug = await generateUniqueSlug(slug, "SubCategory", subCategory?._id, "sub-categories");
+    subCategory.slug = newSlug;
+  } else if (name && name !== subCategory?.name) {
+    await SlugModel.deleteOne({
+      collectionName: "SubCategory",
+      documentId: subCategory?._id,
+    });
+
+    const newSlug = await generateUniqueSlug(name, "SubCategory", subCategory?._id, "sub-categories");
     subCategory.slug = newSlug;
   };
 
@@ -267,6 +279,7 @@ export const updateSubCategory = asyncHandler(async (req, res) => {
   subCategory.status = typeof status === "boolean" ? status : subCategory.status;
   subCategory.categoryId = categoryId || subCategory.categoryId;
   subCategory.updatedBy = req.user?._id;
+  subCategory.updatedAt = new Date();
 
   await subCategory.save();
   return res.status(200).json({ success: true, message: "Updated successfully", data: subCategory });

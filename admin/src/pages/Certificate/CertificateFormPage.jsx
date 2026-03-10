@@ -152,7 +152,7 @@ const CertificateFormPage = () => {
                     <option value="">-- Select Provider --</option>
                     {providers?.map((p) => (
                       <option key={p?._id} value={p?._id}>
-                        {p?.name}
+                        {p?.name} - {p?.servicemanId}
                       </option>
                     ))}
                   </select>
