@@ -45,10 +45,10 @@ export const generateInvoice = async (
     addressDetail: address || {},
   };
 
-  await InvoiceModel.insertMany([
-    { type: "Customer", ...commonPayload },
-    { type: "Provider", ...commonPayload },
-    { type: "Admin", ...commonPayload },
+  await Promise.all([
+    InvoiceModel.create({ type: "Customer", ...commonPayload }),
+    InvoiceModel.create({ type: "Provider", ...commonPayload }),
+    InvoiceModel.create({ type: "Admin", ...commonPayload }),
   ]);
 
   return {
