@@ -154,6 +154,11 @@ const ServicemanProfileUpdatePage = () => {
     e.preventDefault();
 
     try {
+
+      if (!formData?.city) {
+        return toast.error("City is required");
+      }
+
       const form = new FormData();
 
       form.append("name", formData.name || "");
