@@ -7,6 +7,11 @@ export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    const checkStatus = await UserModel.findOne({ username, status: false }).select("+password");
+    if (checkStatus) {
+      return res.status(400).json({ success: false, message: "Your profile is not active." });
+    };
+
     const user = await UserModel.findOne({ username }).select("+password");
     if (!user) {
       return res.status(400).json({ success: false, message: "Invalid username" });
