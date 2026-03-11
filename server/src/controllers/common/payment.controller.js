@@ -88,7 +88,7 @@ export const createRazorpayBookingOrder = asyncHandler(async (req, res) => {
     //   userDataForQR,
     //   "Booking Payment (Scan & Pay)",
     // );
-    console.log("qr", qr)
+    // console.log("qr", qr)
   };
 
   let razorpayOrder = await createRazorpayOrder(payableAmount);
@@ -326,9 +326,9 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
 
     const paymentMode = "online";
 
-    await createBookingWarranty(bookingId, servicemanBookingId, userId, servicemanId);
     await calculateProviderEarningAmount(bookingId, paymentMode, userId, servicemanBookingId);
     await generateInvoice(userId, bookingId, servicemanBookingId);
+    await createBookingWarranty(bookingId, servicemanBookingId, userId, servicemanId);
   };
 
   return res.status(201).json({

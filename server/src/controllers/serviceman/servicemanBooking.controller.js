@@ -3,19 +3,15 @@ import BookingAdditionalPartModel from "../../models/BookingAdditionalPart.model
 import BookingModel from "../../models/booking.model.js";
 import ReviewModel from "../../models/review.model.js";
 import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
-import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
 import { buildPagination } from "../../utils/pagination.js";
 import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 import compressImage from '../../helpers/compressImage.js';
-import { adjustWalletCredit, calculateAdminInvoiceAmount, calculateProviderEarningAmount, calculateProviderInvoiceAmount, createServicemanEarning, ensureSufficientCredit } from "../../utils/wallet.utils.js";
+import { adjustWalletCredit, calculateProviderEarningAmount, ensureSufficientCredit } from "../../utils/wallet.utils.js";
 import generateOtp from "../../utils/generateOpt.js";
-import InvoiceModel from "../../models/invoice.model.js";
-import { createInvoice } from "../../utils/invoice.js";
 import { generateInvoice } from "../../utils/generateInvoice.js";
 import { createBookingWarranty } from "../../utils/createBookingWarrnty.js";
-import BookingWarrantyModel from "../../models/bookingWarranty.model.js";
 
 // Get All Bookings
 export const getServiceManBookings = asyncHandler(async (req, res) => {
@@ -716,15 +712,9 @@ export const servicemanBookingComplete = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  await createBookingWarranty(
-    bookingId,
-    servicemanBookingId,
-    userId,
-    servicemanId,
-  );
-
   await calculateProviderEarningAmount(bookingId, paymentMode, userId, servicemanBookingId);
   await generateInvoice(userId, bookingId, servicemanBookingId);
+  await createBookingWarranty(bookingId, servicemanBookingId, userId, servicemanId);
 
   return res.status(201).json({
     success: true,
