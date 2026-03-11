@@ -207,6 +207,24 @@ export const updateServiceManProfile = asyncHandler(async (req, res) => {
   });
 });
 
+// Update Profile Status
+export const updateServiceManProfileStatus = asyncHandler(async (req, res) => {
+  let { status } = req.body;
+
+  const profile = await ServiceManProfileModel.findById(req.params.id);
+  if (!profile) throw new ApiError(404, "Profile not found");
+
+  profile.status = status;
+
+  await profile.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Updated successfully",
+    data: profile,
+  });
+});
+
 // Delete Profile
 export const deleteServiceManProfile = asyncHandler(async (req, res) => {
   const profile = await ServiceManProfileModel.findById(req.params.id);

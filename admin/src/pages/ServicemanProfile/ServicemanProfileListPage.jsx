@@ -120,7 +120,7 @@ const ServicemanProfileListPage = () => {
   const toggleStatus = async (id, currentStatus) => {
     try {
       const response = await axios.patch(
-        `${apis.servicemanProfile.update}/${id}`,
+        `${apis.servicemanProfile.updateStatus}/${id}`,
         { status: !currentStatus },
         { headers: { Authorization: validToken } }
       );

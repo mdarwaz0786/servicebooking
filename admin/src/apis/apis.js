@@ -99,6 +99,7 @@ const apis = {
   servicemanProfile: {
     get: `${BASE_URL}/api/v1/admin/serviceman-profile`,
     update: `${BASE_URL}/api/v1/admin/serviceman-profile`,
+    updateStatus: `${BASE_URL}/api/v1/admin/serviceman-profile/update-status`,
   },
   servicemanByZone: {
     get: `${BASE_URL}/api/v1/admin/serviceman-byzone`,
