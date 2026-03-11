@@ -73,11 +73,12 @@ export const autoAssignBooking = async (
     },
     { $unwind: "$serviceman" },
 
-    // 5️⃣ Zone + category
+    // 5️⃣ Zone + subcategory + status
     {
       $match: {
         "serviceman.zones": combinedZone?._id,
         "serviceman.subCategoryIds": subCategoryId,
+        "serviceman.status": true,
       },
     },
 
@@ -318,6 +319,7 @@ export const autoAssignMultipleServicemen = async (
     {
       $match: {
         "serviceman.subCategoryIds": subCategoryId,
+        "serviceman.status": true,
       },
     },
 

@@ -10,6 +10,16 @@ import { sendSMS } from "../../utils/sms.js";
 export const loginUser = asyncHandler(async (req, res) => {
   const { mobile } = req.body;
 
+  let user = await UserModel.findOne({ mobile: mobile, role: "serviceman" }).populate("profile");
+
+  if (user?.profile?.status == false) {
+    return res.status(403).json({
+      success: false,
+      message: "Your account is blocked",
+      user: {}
+    });
+  };
+
   // const otp = Math.floor(1000 + Math.random() * 9000).toString();
   const otp = generateOtp();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -51,7 +61,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
   let user = await UserModel.findOne({ mobile: mobile, role: "serviceman" }).populate("kyc profile");
 
-  if (user?.status == false) {
+  if (user?.profile?.status == false) {
     return res.status(403).json({
       success: false,
       message: "Your account is blocked",

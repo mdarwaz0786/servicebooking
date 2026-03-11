@@ -63,6 +63,7 @@ const ServicemanProfileUpdatePage = () => {
           ...data,
           dob: data?.dob ? data?.dob?.split("T")[0] : "",
           city: data?.city?._id || "",
+          mobile: data?.user?.mobile || "",
         });
 
         if (data?.profileImage) {
@@ -283,11 +284,11 @@ const ServicemanProfileUpdatePage = () => {
                     </div>
                     <div className="col-md-3">
                       <label>Years of Experience</label>
-                      <input type="number" className="form-control" name="yearOfExperience" value={formData.yearOfExperience} onChange={handleChange} />
+                      <input type="string" className="form-control" name="yearOfExperience" value={formData.yearOfExperience} onChange={handleChange} />
                     </div>
                     <div className="col-md-3">
                       <label>Months of Experience</label>
-                      <input type="number" className="form-control" name="monthOfExperience" value={formData.monthOfExperience} onChange={handleChange} />
+                      <input type="string" className="form-control" name="monthOfExperience" value={formData.monthOfExperience} onChange={handleChange} />
                     </div>
                   </>
                 )}

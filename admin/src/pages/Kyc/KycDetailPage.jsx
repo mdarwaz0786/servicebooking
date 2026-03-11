@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useState } from "react";
+import { formatDate } from "../../helpers/formatDate";
 
 const KycDetailsPage = () => {
   const navigate = useNavigate();
@@ -83,8 +84,12 @@ const KycDetailsPage = () => {
                   <div className="col-md-6">
                     <h5 className="border-bottom pb-2">Profile Info</h5>
                     <ul className="list-unstyled mt-3">
-                      <li><strong>DOB:</strong> {new Date(profile?.dob).toLocaleDateString()}</li>
-                      <li><strong>Experience:</strong> {profile?.experienceLevel}</li>
+                      <li><strong>Provider Id:</strong> {profile?.servicemanId}</li>
+                      <li><strong>Product:</strong> {profile?.categoryIds?.map((c) => <span>{c?.name}, </span>)}</li>
+                      <li><strong>Variant:</strong> {profile?.subCategoryIds?.map((sc) => <span>{sc?.name}, </span>)}</li>
+                      <li><strong>DOB:</strong> {formatDate(profile?.dob)}</li>
+                      <li><strong>Experience Level:</strong> {profile?.experienceLevel}</li>
+                      <li><strong>Total Experience:</strong> {profile?.yearOfExperience || 0} year {profile?.monthOfExperience || 0} month </li>
                       <li><strong>Company:</strong> {profile?.companyName || "-"}</li>
                       <li><strong>Permanent Address:</strong> {profile?.permanentAddress}</li>
                       <li><strong>Current Address:</strong> {profile?.currentAddress}</li>
@@ -122,7 +127,7 @@ const KycDetailsPage = () => {
                       <li><strong>IFSC:</strong> {record?.ifscCode}</li>
                       <li><strong>PAN:</strong> {record?.panCardNumber}</li>
                       <li><strong>Aadhar:</strong> {record?.aadharCardNumber}</li>
-                      <li><strong>GST:</strong> {record?.gstNumber}</li>
+                      <li><strong>GST:</strong> {record?.gstNumber || "-"}</li>
                       <li>
                         <strong>KYC Status:</strong>{" "}
                         <span className={`badge ${record?.status === "pending p-2" ? "bg-warning p-2" : "bg-success p-2"}`}>

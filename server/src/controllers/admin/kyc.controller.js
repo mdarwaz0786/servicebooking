@@ -123,7 +123,13 @@ export const getKycs = asyncHandler(async (req, res) => {
     KycModel
       .find(filters)
       .populate("user")
-      .populate("profile")
+      .populate({
+        path: "profile",
+        populate: [
+          { path: "categoryIds", model: "Category" },
+          { path: "subCategoryIds", model: "SubCategory" }
+        ]
+      })
       .sort(sortOption)
       .skip(skip)
       .limit(limit)

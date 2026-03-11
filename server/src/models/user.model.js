@@ -78,6 +78,10 @@ const userSchema = new mongoose.Schema({
     enum: [0, 1],
     default: 1,
   },
+  canUpdate: {
+    type: Boolean,
+    default: true,
+  },
   permissions: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",
