@@ -247,7 +247,7 @@ const TransactionListPage = () => {
                     <th>Name</th>
                     <th>Mobile</th>
                     <th>Amount</th>
-                    <th>Mode</th>
+                    {/* <th>Mode</th> */}
                     <th>Type</th>
                     <th>Date</th>
                     <th>Status</th>
@@ -263,7 +263,7 @@ const TransactionListPage = () => {
                         <td>{d?.user?.name || "-"}</td>
                         <td>{d?.user?.mobile || "-"}</td>
                         <td>{d?.finalAmount?.toFixed(2)}</td>
-                        <td>{d?.PID?.paymentMode}</td>
+                        {/* <td>{d?.PID?.paymentMode || "-"}</td> */}
                         <td>Debit</td>
                         <td>{formatDate(d?.createdAt)}</td>
                         <td>{d?.status}</td>

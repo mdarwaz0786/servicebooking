@@ -10,7 +10,7 @@ import AddressModel from "../../models/address.model.js";
 import ServiceManBookingModel from "../../models/servicemanBooking.model.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../../utils/payment.js";
 import generateOtp from "../../utils/generateOpt.js";
-import { createScanAndPayQr, createPaymentLink, razorpay } from "../../utils/scanAndPay.js";
+import { createScanAndPayQr, razorpay } from "../../utils/scanAndPay.js";
 import axios from "axios";
 import { getCartData } from "../../utils/cart.utils.js";
 import { adjustWalletCredit, calculateProviderEarningAmount, getSupportConfig } from "../../utils/wallet.utils.js";
