@@ -207,13 +207,16 @@ export const calculateProviderEarningAmount = async (
   const deductAdditionalPartAmount = additionalPartAmount * deductAddtionalPartPercent;
 
   if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "cod") {
+    totalProviderEarningAmount = Number(booking?.payableAmount) - Number(booking?.gstAmount) - deductAdditionalPartAmount;
+
     await ServicemanEarningModel.create({
       booking: bookingId,
       servicemanBooking: servicemanBookingId,
       servicemanId: userId,
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
-      earningAmount: Number(booking?.payableAmount) - Number(booking?.gstAmount) - deductAdditionalPartAmount,
+      earningAmount: totalProviderEarningAmount,
+      actualEarningAmount: totalProviderEarningAmount,
       payoutStatus: true,
       paymentMode: "cash",
       createdBy: userId,
@@ -245,7 +248,7 @@ export const calculateProviderEarningAmount = async (
       { new: true },
     );
   } else if (paymentMode?.toLowerCase() == "cash" && booking?.paymentMode == "online") {
-    totalProviderEarningAmount = totalSalePrice - totalTransactionCharge - deductAdditionalPartAmount;
+    totalProviderEarningAmount = totalSalePrice - totalTransactionCharge;
 
     await ServicemanEarningModel.create({
       booking: bookingId,
@@ -254,6 +257,7 @@ export const calculateProviderEarningAmount = async (
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
       earningAmount: totalProviderEarningAmount,
+      actualEarningAmount: totalProviderEarningAmount + additionalPartAmount - deductAdditionalPartAmount,
       paymentMode: "cash",
       createdBy: userId,
       createdAt: new Date(),
@@ -293,6 +297,7 @@ export const calculateProviderEarningAmount = async (
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
       earningAmount: totalProviderEarningAmount,
+      actualEarningAmount: totalProviderEarningAmount,
       paymentMode: "online",
       createdBy: userId,
       createdAt: new Date(),
@@ -323,6 +328,7 @@ export const calculateProviderEarningAmount = async (
       userId: booking?.userId,
       payableAmount: booking?.payableAmount,
       earningAmount: totalProviderEarningAmount,
+      actualEarningAmount: totalProviderEarningAmount,
       paymentMode: "online",
       createdBy: userId,
       createdAt: new Date(),

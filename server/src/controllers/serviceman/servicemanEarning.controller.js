@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import ServicemanEarningModel from "../../models/servicemanEarning.model.js";
 import ApiError from "../../helpers/apiError.js";
 import asyncHandler from "../../helpers/asyncHandler.js";
-import { buildPagination } from "../../utils/pagination.js";
 import BankTransferModel from "../../models/bankTransfer.model.js";
 import CashCollectedLoggerModel from "../../models/cashCollectedLogger.model.js";
 import CashCollectedSubmitModel from "../../models/cashCollectedSubmit.model.js";

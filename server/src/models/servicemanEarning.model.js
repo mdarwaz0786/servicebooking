@@ -37,6 +37,10 @@ const servicemanEarningSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  actualEarningAmount: {
+    type: Number,
+    default: 0,
+  },
   payoutStatus: {
     type: Boolean,
     default: false,
