@@ -3,33 +3,28 @@ import CommentModel from "../../models/comment.model.js";
 // Create comment
 export const createComment = async (req, res) => {
   try {
-    const { contentId, contentType, comment, parentId } = req.body;
+    const { contentId, contentType, comment, parentId, userId } = req.body;
 
     if (!contentId) {
       return res.status(400).json({ message: "Content id is required" });
-    }
+    };
 
     if (!comment) {
       return res.status(400).json({ message: "Comment is required" });
-    }
+    };
 
     const now = new Date();
-
-    const date = now.toLocaleDateString("en-IN", {
-      timeZone: "Asia/Kolkata",
-    });
 
     const time = now.toLocaleTimeString("en-IN", {
       timeZone: "Asia/Kolkata",
     });
 
     const newComment = await CommentModel.create({
-      userId: req.user?._id,
+      userId: userId || req.user?._id,
       contentId,
       contentType,
       parentId,
       comment,
-      date,
       time,
     });
 

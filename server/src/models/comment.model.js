@@ -5,7 +5,14 @@ const commentSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User ID is required"],
+    },
+    name: {
+      type: String,
+      trim: true,
+    },
+    email: {
+      type: String,
+      trim: true,
     },
     contentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -14,7 +21,7 @@ const commentSchema = new mongoose.Schema(
     contentType: {
       type: String,
       enum: ["Blog", "Service", "Post"],
-      required: [true, "Content type is required"],
+      default: "Blog",
     },
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -23,21 +30,17 @@ const commentSchema = new mongoose.Schema(
     },
     comment: {
       type: String,
-      required: [true, "Comment is required"],
       trim: true,
       maxlength: 1000,
+      required: [true, "Comment is required"],
     },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
-    ],
-    date: {
-      type: Date,
-    },
+    likes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }],
     time: {
       type: String,
+      trim: true,
     },
     edited: {
       type: Boolean,

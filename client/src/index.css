@@ -64,6 +64,18 @@
   padding-left: 3rem;
 }
 
+.blog-video-wrapper {
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.blog-video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .cart-wrapper {
     width: 100%;

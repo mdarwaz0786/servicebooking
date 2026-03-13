@@ -1,9 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import BreadCrumb from "../BreadCrumb/BreadCrumb";
 import { formatDate } from "../../helper/formatDate";
 import { formatTime } from "../../helper/formatTime";
+import { IoLocationSharp } from "react-icons/io5";
+import CommentModal from "../../components/Modal/CommentModal";
+import CommentList from "../../components/Comments/CommentList";
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
@@ -11,15 +15,21 @@ const BlogDetailPage = () => {
   const [blog, setBlog] = useState(null);
   const [categories, setcategories] = useState([]);
   const [latestBlogs, setlatestBlogs] = useState([]);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const handleOpenCommentModal = () => setShowCommentModal(true);
+  const handleCloseCommentModal = () => setShowCommentModal(false);
 
   const fetchBlogDetail = async () => {
     try {
       const response = await postData({ slug: slug }, Urls.blogDetail, "GET", 0, 1);
-      if (response.data) {
-        setBlog(response.data);
-        setcategories(response.categories);
-        setlatestBlogs(response.blogs);
+      if (response?.data) {
+        setBlog(response?.data);
+        setcategories(response?.categories);
+        setlatestBlogs(response?.blogs);
+        setComments(response?.comments);
       }
     } catch (error) {
       console.error("Blog Detail Error:", error);
@@ -55,7 +65,7 @@ const BlogDetailPage = () => {
 
   return (
     <>
-      <BreadCrumb data={{ title: blog.title }} />
+      <BreadCrumb data={{ title: blog?.title }} />
       <div className="content pt-5">
         <div className="container">
           <div className="row">
@@ -78,10 +88,18 @@ const BlogDetailPage = () => {
                         </Link>
                       </div>
                     </li>
+                    <li>
+                      <div className="post-author">
+                        <Link to="#">
+                          <IoLocationSharp style={{ marginRight: "5px" }} size={30} />
+                          <span>{blog?.city || ""}, {blog?.country || ""}</span>
+                        </Link>
+                      </div>
+                    </li>
                   </ul>
                 </div>
 
-                <h4 className="mb-3">{blog.title}</h4>
+                <h4 className="mb-3">{blog?.title}</h4>
               </div>
 
               {/* Blog Post */}
@@ -104,7 +122,31 @@ const BlogDetailPage = () => {
                       dangerouslySetInnerHTML={{ __html: blog?.fullDescription }}
                     ></div>
 
+                    {blog?.video && (
+                      <div className="blog-video-wrapper mt-5">
+                        <video controls>
+                          <source
+                            src={`${import.meta.env.VITE_API_SERVER_BASE_URL}${blog?.video}`}
+                            type="video/mp4"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    )}
 
+                    <div className="mt-4">
+                      <button
+                        className="btn btn-dark"
+                        onClick={handleOpenCommentModal}
+                      >
+                        Comment
+                      </button>
+                    </div>
+
+                    <div className="mt-4">
+                      <h5 className="mb-4">Comments ({comments?.length})</h5>
+                      <CommentList comments={comments} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -172,6 +214,13 @@ const BlogDetailPage = () => {
         </div>
       </div>
 
+      <CommentModal
+        show={showCommentModal}
+        handleClose={handleCloseCommentModal}
+        contentId={blog?._id}
+        contentType="Blog"
+        fetchBlog={fetchBlogDetail}
+      />
     </>
   );
 };
