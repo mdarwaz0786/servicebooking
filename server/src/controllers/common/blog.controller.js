@@ -156,6 +156,7 @@ export const getBlogById = asyncHandler(async (req, res) => {
       parentId: null,
       status: true,
     })
+    .sort({ createdAt: -1 })
     .populate("user", "name profileImage")
     .populate({
       path: "replies",
