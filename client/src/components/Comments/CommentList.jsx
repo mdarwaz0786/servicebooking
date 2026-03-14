@@ -16,14 +16,17 @@ const CommentList = ({ comments }) => {
         return (
           <li key={comment._id} className="d-flex mb-4 border-bottom pb-3">
             {/* Profile Image */}
-            <div className="me-3" style={{ flexShrink: 0, width: 60, height: 60 }}>
+            <div className="me-3" style={{ flexShrink: 0 }}>
               <img
                 src={profileImage}
-                alt={"user"}
+                alt="user"
                 className="rounded-circle"
-                width={100}
-                height={100}
-                style={{ objectFit: "cover" }}
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  objectFit: "cover",
+                  minWidth: "60px"
+                }}
               />
             </div>
 

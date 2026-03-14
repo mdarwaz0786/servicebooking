@@ -3,7 +3,7 @@ import CommentModel from "../../models/comment.model.js";
 // Create comment
 export const createComment = async (req, res) => {
   try {
-    const { contentId, contentType, comment, parentId, userId } = req.body;
+    const { contentId, contentType, comment, parentId, userId, name, email } = req.body;
 
     if (!contentId) {
       return res.status(400).json({ message: "Content id is required" });
@@ -26,6 +26,8 @@ export const createComment = async (req, res) => {
       parentId,
       comment,
       time,
+      name,
+      email,
     });
 
     return res.status(201).json({

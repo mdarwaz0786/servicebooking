@@ -48,6 +48,9 @@ const CommentModal = ({ fetchBlog, show, handleClose, contentId, contentType = "
         contentType
       };
 
+
+      console.log(payload)
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_SERVER_BASE_URL}api/v1/user/comment/create`,
         payload

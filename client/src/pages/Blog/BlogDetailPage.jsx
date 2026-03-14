@@ -104,7 +104,7 @@ const BlogDetailPage = () => {
 
               {/* Blog Post */}
               <div className="card blog-list shadow-none">
-                <div className="card-body">
+                <div className="card-body" style={{ padding: "30px" }}>
                   <div className="blog-image">
                     <Link to="/blog-details">
                       <img className="img-fluid" src={imageCheck(blog?.detailImage)} alt={blog?.title} />
@@ -123,7 +123,7 @@ const BlogDetailPage = () => {
                     ></div>
 
                     {blog?.video && (
-                      <div className="blog-video-wrapper mt-5">
+                      <div className="blog-video-wrapper mt-4">
                         <video controls>
                           <source
                             src={`${import.meta.env.VITE_API_SERVER_BASE_URL}${blog?.video}`}
