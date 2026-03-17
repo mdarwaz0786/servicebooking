@@ -13,6 +13,8 @@ import rejectAdditionalParts from "../../utils/rejectAdditionalPart.js";
 import BookingMediaModel from "../../models/bookingMedia.model.js";
 import mongoose from "mongoose";
 import { getIO } from "../../socket/socket.js";
+import ServiceManProfileModel from "../../models/servicemanProfile.model.js";
+import getCurrentIndianTime from "../../utils/getCurrentIndianTime.js";
 
 // Create Booking + Booking Items
 export const createBooking = asyncHandler(async (req, res) => {
@@ -147,12 +149,14 @@ export const getBookings = asyncHandler(async (req, res) => {
     .limit(limit)
     .lean();
 
+  let latestAssignments = null;
+
   for (let booking of bookings) {
     /* ---------------- LATEST ASSIGNMENT ---------------- */
-    let latestAssignments = await ServiceManBookingModel
+    latestAssignments = await ServiceManBookingModel
       .findOne({
         bookingId: booking?._id,
-        status: { $nin: ["new", "cancel", "reject"] }
+        status: { $nin: ["new", "taken"] }
       })
       .sort({ createdAt: -1 })
       .populate({
@@ -187,6 +191,8 @@ export const getBookings = asyncHandler(async (req, res) => {
     const serviceman = await ServiceManProfile.findOne({ _id: servicemanId }).populate("user");
 
     const servicemanDetail = {
+      _id: serviceman?._id,
+      userId: serviceman?.userId,
       name: serviceman?.name,
       email: serviceman?.email,
       mobile: serviceman?.user?.mobile,
@@ -194,6 +200,7 @@ export const getBookings = asyncHandler(async (req, res) => {
     };
 
     booking.serviceman = servicemanDetail;
+    booking.servicemanBooking = latestAssignments;
   };
 
   const total = await BookingModel.countDocuments(filters);
@@ -345,7 +352,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
   let latestAssignments = await ServiceManBookingModel
     .findOne({
       bookingId: booking?._id,
-      status: { $nin: ["new", "cancel", "reject"] }
+      status: { $nin: ["new", "taken"] }
     })
     .sort({ createdAt: -1 })
     .populate({
@@ -380,6 +387,8 @@ export const getBookingById = asyncHandler(async (req, res) => {
   };
 
   const latestAssign = latestAssignments;
+
+  booking.servicemanBooking = latestAssign;
 
   const latestMedia = latestAssign
     ? mediaMap[String(latestAssign?._id)] || {
@@ -420,6 +429,8 @@ export const getBookingById = asyncHandler(async (req, res) => {
           email: latestAssign?.servicemanId?.email,
           mobile: latestAssign?.servicemanId?.user?.mobile,
           profileImage: latestAssign?.servicemanId?.profileImage,
+          _id: latestAssign?.servicemanId?._id,
+          userId: latestAssign?.servicemanId?.userId,
         }
         : null,
     }
@@ -464,6 +475,8 @@ export const getBookingById = asyncHandler(async (req, res) => {
           email: assign?.servicemanId?.email,
           mobile: assign?.servicemanId?.user?.mobile,
           profileImage: assign?.servicemanId?.profileImage,
+          _id: assign?.servicemanId?._id,
+          userId: assign?.servicemanId?.userId,
         }
         : null,
     };
@@ -516,11 +529,19 @@ export const updateBooking = asyncHandler(async (req, res) => {
   if (!booking) throw new ApiError(404, "Booking not found");
 
   if (req.body.status) {
-    const lastServicemanBooking = await ServiceManBookingModel.findOne({
-      bookingId: booking?._id,
+    let lastServicemanBooking = await ServiceManBookingModel.findOne({
+      bookingId: booking?._id, status: { $nin: ["new", "taken"] }
     })
       .sort({ createdAt: -1 })
       .lean();
+
+    if (!lastServicemanBooking) {
+      lastServicemanBooking = await ServiceManBookingModel.findOne({
+        bookingId: booking?._id
+      })
+        .sort({ createdAt: -1 })
+        .lean();
+    };
 
     if (lastServicemanBooking) {
       await ServiceManBookingModel.findByIdAndUpdate(
@@ -638,3 +659,40 @@ export const getProviderBookings = async (req, res) => {
     });
   }
 };
+
+// Start booking
+export const servicemanBookingStart = asyncHandler(async (req, res) => {
+  let status = 'ongoing';
+
+  let { bookingId, servicemanBookingId, servicemanId } = req.body;
+
+  try {
+    const servicemanBooking = await ServiceManBookingModel.findOne({ _id: servicemanBookingId, servicemanId });
+    if (!servicemanBooking) throw new ApiError(404, "Serviceman booking not found");
+
+    const booking = await BookingModel.findById(bookingId);
+    if (!booking) throw new ApiError(404, "Booking not found");
+
+    booking.status = status || booking?.status;
+    booking.actionById = req.user?._id;
+
+    const nowDate = new Date();
+    const nowTime = getCurrentIndianTime();
+
+    servicemanBooking.status = status || servicemanBooking?.status;
+    servicemanBooking.startDate = nowDate;
+    servicemanBooking.startTime = nowTime;
+    servicemanBooking.updatedBy = req.user?._id;
+    servicemanBooking.actionById = req.user?._id;
+
+    await booking.save();
+    await servicemanBooking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Booking started successfully",
+    });
+  } catch (error) {
+    throw error;
+  };
+});

@@ -246,10 +246,17 @@ export const getBookings = asyncHandler(async (req, res) => {
 
     booking.isWarranty = warranty ? 1 : 0;
 
-    const latestAssignment = await ServiceManBookingModel
-      .findOne({ bookingId: booking?._id, status: { $nin: ["taken", "new"] }, })
+    let latestAssignment = await ServiceManBookingModel
+      .findOne({ bookingId: booking?._id, status: { $nin: ["taken", "new"] } })
       .sort({ createdAt: -1 })
       .lean();
+
+    if (!latestAssignment) {
+      latestAssignment = await ServiceManBookingModel
+        .findOne({ bookingId: booking?._id })
+        .sort({ createdAt: -1 })
+        .lean();
+    };
 
     if (latestAssignment) {
       const serviceman = await ServiceManProfileModel
@@ -259,6 +266,8 @@ export const getBookings = asyncHandler(async (req, res) => {
 
       booking.serviceman = serviceman
         ? {
+          _id: serviceman?._id,
+          userId: serviceman?.userId,
           name: serviceman?.name,
           email: serviceman?.email,
           mobile: serviceman?.user?.mobile || null,
@@ -337,10 +346,17 @@ export const getBookingById = asyncHandler(async (req, res) => {
   const now = new Date();
   const diffInMinutes = (now - createdAt) / (1000 * 60);
 
-  const latestAssignment = await ServiceManBookingModel
-    .findOne({ bookingId: booking?._id })
+  let latestAssignment = await ServiceManBookingModel
+    .findOne({ bookingId: booking?._id, status: { $nin: ["taken", "new"] } })
     .sort({ createdAt: -1 })
     .lean();
+
+  if (!latestAssignment) {
+    latestAssignment = await ServiceManBookingModel
+      .findOne({ bookingId: booking?._id })
+      .sort({ createdAt: -1 })
+      .lean();
+  };
 
   if (latestAssignment) {
     const servicemanId = latestAssignment?.servicemanId;
@@ -351,6 +367,8 @@ export const getBookingById = asyncHandler(async (req, res) => {
 
     booking.serviceman = serviceman
       ? {
+        _id: serviceman?._id,
+        userId: serviceman?.userId,
         name: serviceman?.name,
         email: serviceman?.email,
         mobile: serviceman?.user?.mobile,

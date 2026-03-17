@@ -145,6 +145,29 @@ const BookingListPage = () => {
     }
   };
 
+  const startBooking = async (bookingId, servicemanBookingId, servicemanId) => {
+    try {
+      const payload = {
+        bookingId,
+        servicemanBookingId,
+        servicemanId
+      };
+
+      const response = await axios.post(
+        apis.booking.startBooking,
+        payload,
+        { headers: { Authorization: validToken } }
+      );
+
+      if (response?.data?.success) {
+        toast.success("Booking started successfully");
+        fetchBookings();
+      };
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    };
+  };
+
   const BOOKING_STATUS_FILTERS = [
     { label: "All", value: "all" },
     { label: "New", value: "new" },
@@ -299,6 +322,7 @@ const BookingListPage = () => {
                       <th>Amount</th>
                       <th>Assign</th>
                       <th>Payment Status</th>
+                      <th>Start Booking</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -339,6 +363,9 @@ const BookingListPage = () => {
                               }
                             </td>
                             <td>
+                              <button className="btn btn-primary" disabled={d?.status != "accept"} onClick={() => startBooking(d?._id, d?.servicemanBooking?._id, d?.serviceman?._id)}>Start</button>
+                            </td>
+                            <td>
                               <div className="d-flex align-items-center gap-2">
                                 <select
                                   className="form-select form-select-sm"
@@ -350,6 +377,7 @@ const BookingListPage = () => {
                                     })
                                   }
                                   disabled={d?.status == "complete"}
+                                  style={{ width: "190px" }}
                                 >
                                   {BOOKING_STATUSES?.map((status) => (
                                     <option key={status} value={status}>

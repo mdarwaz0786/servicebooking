@@ -480,7 +480,7 @@ export const serviceManBookingAccept = asyncHandler(async (req, res) => {
   const alreadyAccepted = await ServiceManBookingModel.findOne({
     bookingId: servicemanBooking?.bookingId,
     _id: { $ne: servicemanBooking?._id },
-    status: { $nin: ["new", "cancel", "reject"] },
+    status: { $nin: ["new"] },
   });
 
   if (alreadyAccepted) {
