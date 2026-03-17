@@ -251,12 +251,12 @@ export const getBookings = asyncHandler(async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    if (!latestAssignment) {
-      latestAssignment = await ServiceManBookingModel
-        .findOne({ bookingId: booking?._id })
-        .sort({ createdAt: -1 })
-        .lean();
-    };
+    // if (!latestAssignment) {
+    //   latestAssignment = await ServiceManBookingModel
+    //     .findOne({ bookingId: booking?._id })
+    //     .sort({ createdAt: -1 })
+    //     .lean();
+    // };
 
     if (latestAssignment) {
       const serviceman = await ServiceManProfileModel
@@ -351,12 +351,12 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
-  if (!latestAssignment) {
-    latestAssignment = await ServiceManBookingModel
-      .findOne({ bookingId: booking?._id })
-      .sort({ createdAt: -1 })
-      .lean();
-  };
+  // if (!latestAssignment) {
+  //   latestAssignment = await ServiceManBookingModel
+  //     .findOne({ bookingId: booking?._id })
+  //     .sort({ createdAt: -1 })
+  //     .lean();
+  // };
 
   if (latestAssignment) {
     const servicemanId = latestAssignment?.servicemanId;
@@ -458,6 +458,16 @@ export const updateBooking = asyncHandler(async (req, res) => {
   const updateData = {
     ...req.body,
     updatedBy: req.user?._id,
+  };
+
+  const checkCancelEligiblity = await BookingModel.findByIdAndUpdate(id, updateData, { new: true });
+
+  const createdAt = new Date(checkCancelEligiblity?.createdAt);
+  const now = new Date();
+  const diffInMinutes = (now - createdAt) / (1000 * 60);
+
+  if (req.body.status == "cancel" && diffInMinutes > 30) {
+    throw new ApiError(404, "You can not cancel booking");
   };
 
   const booking = await BookingModel.findByIdAndUpdate(id, updateData, { new: true });
