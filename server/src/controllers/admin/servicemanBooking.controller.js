@@ -43,18 +43,23 @@ export const createServiceManBooking = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Insufficient credit points");
   }
 
-  const latestAssignment = await ServiceManBookingModel
-    .findOne({ bookingId: bookingId })
-    .sort({ createdAt: -1 });
+  const latestAssignment = await ServiceManBookingModel.find({
+    bookingId: bookingId,
+  });
 
-  if (latestAssignment) {
-    await ServiceManBookingModel.findByIdAndUpdate(latestAssignment?._id, {
-      status: "cancel",
-      actionById: req.user?._id,
-      updatedBy: req.user?._id,
-      cancelDate: new Date(),
-      cancelTime: getCurrentIndianTime(),
-    });
+  if (latestAssignment.length > 0) {
+    await ServiceManBookingModel.updateMany(
+      { bookingId: bookingId },
+      {
+        $set: {
+          status: "cancel",
+          actionById: req.user?._id,
+          updatedBy: req.user?._id,
+          cancelDate: new Date(),
+          cancelTime: getCurrentIndianTime(),
+        },
+      }
+    );
 
     await BookingModel.findByIdAndUpdate(bookingId, {
       $set: {
