@@ -271,8 +271,8 @@ const WalletListPage = () => {
                         <td>{(page - 1) * limit + index + 1}</td>
                         <td>{d?.transactionId || "-"}</td>
                         <td>{d?.provider?.name || "-"}</td>
-                        <td>{d?.creditPoints}</td>
-                        <td>{d?.currentCreditPoints || "-"}</td>
+                        <td>{d?.creditPoints?.toFixed(2) || "-"}</td>
+                        <td>{d?.currentCreditPoints?.toFixed(2) || "-"}</td>
                         <td>{d?.transactionType}</td>
                         <td>{d?.paymentMode}</td>
                         <td>

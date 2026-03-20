@@ -7,6 +7,7 @@ import { useAuth } from "../../context/auth.context";
 import ServicemanBookingModal from "./ServicemanBookingModal";
 import apis from "../../apis/apis";
 import Pagination from "../../components/Pagination/Pagination";
+import { formatDate } from "../../helpers/formatDate";
 
 const BookingListPage = () => {
   const { status } = useParams();
@@ -318,12 +319,14 @@ const BookingListPage = () => {
                     <tr>
                       <th>#</th>
                       <th>Booking ID</th>
-                      <th>Mode</th>
                       <th>Amount</th>
                       <th>Assign</th>
+                      <th>Start</th>
+                      <th>Mode</th>
                       <th>Payment Status</th>
-                      <th>Start Booking</th>
                       <th>Status</th>
+                      <th>Booking Date</th>
+                      <th>Schedule Date</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -342,7 +345,6 @@ const BookingListPage = () => {
                           <tr key={d?._id}>
                             <td>{(page - 1) * limit + index + 1}</td>
                             <td>{d?.bookingId}</td>
-                            <td>{d?.paymentMode}</td>
                             <td>₹{d?.payableAmount?.toFixed(2)}</td>
                             <td>
                               <button
@@ -357,13 +359,14 @@ const BookingListPage = () => {
                               </button>
                             </td>
                             <td>
+                              <button className="btn btn-primary" disabled={d?.status != "accept"} onClick={() => startBooking(d?._id, d?.servicemanBooking?._id, d?.serviceman?._id)}>Start</button>
+                            </td>
+                            <td>{d?.paymentMode}</td>
+                            <td>
                               {d?.paymentMode == "cod" ?
                                 d?.paymentStatus == 1 ? "Paid" : "Pending"
                                 : d?.paymentStatus == 1 ? "Paid" : "Failed"
                               }
-                            </td>
-                            <td>
-                              <button className="btn btn-primary" disabled={d?.status != "accept"} onClick={() => startBooking(d?._id, d?.servicemanBooking?._id, d?.serviceman?._id)}>Start</button>
                             </td>
                             <td>
                               <div className="d-flex align-items-center gap-2">
@@ -385,7 +388,6 @@ const BookingListPage = () => {
                                     </option>
                                   ))}
                                 </select>
-
                                 <button
                                   className="btn btn-sm btn-success"
                                   type="button"
@@ -396,6 +398,8 @@ const BookingListPage = () => {
                                 </button>
                               </div>
                             </td>
+                            <td>{formatDate(d?.createdAt)}</td>
+                            <td>{formatDate(d?.scheduleDate)}</td>
                             <td>
                               <div className="d-flex">
                                 {/* View Button */}
