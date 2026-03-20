@@ -490,12 +490,12 @@ export const updateBooking = asyncHandler(async (req, res) => {
           updatedBy: req.user?._id,
         },
       );
-    };
 
-    const latestServiceman = await ServiceManProfile.findById(lastServicemanBooking?.servicemanId);
+      const latestServiceman = await ServiceManProfile.findById(lastServicemanBooking?.servicemanId);
 
-    if (req.body.status == "cancel") {
-      await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
+      if (req.body.status == "cancel") {
+        await adjustWalletCredit(latestServiceman?.userId, req.body.status, lastServicemanBooking?.bookingId);
+      };
     };
   };
 
