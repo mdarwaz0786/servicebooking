@@ -270,12 +270,12 @@ export const getBookings = asyncHandler(async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    // if (!latestAssignment) {
-    //   latestAssignment = await ServiceManBookingModel
-    //     .findOne({ bookingId: booking?._id })
-    //     .sort({ createdAt: -1 })
-    //     .lean();
-    // };
+    if (!latestAssignment) {
+      latestAssignment = await ServiceManBookingModel
+        .findOne({ bookingId: booking?._id })
+        .sort({ createdAt: -1 })
+        .lean();
+    };
 
     if (latestAssignment) {
       const serviceman = await ServiceManProfileModel
@@ -370,12 +370,12 @@ export const getBookingById = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
-  // if (!latestAssignment) {
-  //   latestAssignment = await ServiceManBookingModel
-  //     .findOne({ bookingId: booking?._id })
-  //     .sort({ createdAt: -1 })
-  //     .lean();
-  // };
+  if (!latestAssignment) {
+    latestAssignment = await ServiceManBookingModel
+      .findOne({ bookingId: booking?._id })
+      .sort({ createdAt: -1 })
+      .lean();
+  };
 
   if (latestAssignment) {
     const servicemanId = latestAssignment?.servicemanId;
