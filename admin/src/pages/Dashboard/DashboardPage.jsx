@@ -11,22 +11,34 @@ const DashboardPage = () => {
   const { validToken } = useAuth();
   const [loding, setLoading] = useState();
   const [data, setData] = useState({});
+  const [statusData, setStatusData] = useState({});
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(apis.dashboard.get, {
-        headers: { Authorization: validToken },
-      });
+
+      const [response, res] = await Promise.all([
+        axios.get(apis.dashboard.get, {
+          headers: { Authorization: validToken },
+        }),
+        axios.get(apis.dashboard.status, {
+          headers: { Authorization: validToken },
+        })
+      ]);
 
       if (response?.data?.success) {
-        setData(response?.data?.data || {});
-      };
+        setData(response.data.data || {});
+      }
+
+      if (res?.data?.success) {
+        setStatusData(res.data.data || {});
+      }
+
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
-    };
+    }
   };
 
   useEffect(() => {
@@ -41,6 +53,62 @@ const DashboardPage = () => {
         ) : (
           <div className="page-wrapper">
             <div className="content">
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="card">
+                    <div className="card-body">
+                      <h6 className="mb-3">Booking Status</h6>
+
+                      <div className="row">
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center">
+                            <h6 className="text-muted mb-1">Total Bookings</h6>
+                            <h4>{statusData?.totalBookings || 0}</h4>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center">
+                            <h6 className="text-success mb-1">Completed</h6>
+                            <h4>{statusData?.completedBookings || 0}</h4>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center">
+                            <h6 className="text-warning mb-1">Pending</h6>
+                            <h4>{statusData?.pendingBookings || 0}</h4>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center">
+                            <h6 className="text-danger mb-1">Cancelled</h6>
+                            <h4>{statusData?.cancelledBookings || 0}</h4>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center">
+                            <h6 className="text-danger mb-1">Payment Failed</h6>
+                            <h4>{statusData?.paymentFailed || 0}</h4>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center bg-light">
+                            <h6 className="text-primary mb-1">Incomplete</h6>
+                            <h4>{statusData?.incompleteBookings || 0}</h4>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="row">
                 <div className="col-lg-3 col-sm-6 col-12 d-flex widget-path widget-service">
                   <div className="card">

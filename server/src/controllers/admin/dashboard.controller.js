@@ -277,3 +277,98 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
     },
   });
 });
+
+// booking status count
+export const getBookingStatusCount = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    let matchStage = {};
+    if (userId) {
+      matchStage.userId = userId;
+    }
+
+    // Define logic
+    const PENDING_STATUS = [
+      "new", "assign", "hold", "accept", "ongoing"
+    ];
+
+    const INCOMPLETE_STATUS = [
+      "assign", "hold", "accept", "ongoing",
+      "partstatusnew", "partstatusconfirm", "partstatusapprove"
+    ];
+
+    // 🔥 Single aggregation (best performance)
+    const result = await BookingModel.aggregate([
+      { $match: matchStage },
+
+      {
+        $group: {
+          _id: null,
+
+          totalBookings: { $sum: 1 },
+
+          completedBookings: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "complete"] }, 1, 0]
+            }
+          },
+
+          cancelledBookings: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "cancel"] }, 1, 0]
+            }
+          },
+
+          pendingBookings: {
+            $sum: {
+              $cond: [{ $in: ["$status", PENDING_STATUS] }, 1, 0]
+            }
+          },
+
+          incompleteBookings: {
+            $sum: {
+              $cond: [{ $in: ["$status", INCOMPLETE_STATUS] }, 1, 0]
+            }
+          },
+
+          paymentFailed: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$paymentStatus", 0] }, // unpaid
+                    { $eq: ["$paymentMode", "online"] }
+                  ]
+                },
+                1,
+                0
+              ]
+            }
+          }
+        }
+      }
+    ]);
+
+    const data = result[0] || {
+      totalBookings: 0,
+      completedBookings: 0,
+      pendingBookings: 0,
+      cancelledBookings: 0,
+      paymentFailed: 0,
+      incompleteBookings: 0
+    };
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};

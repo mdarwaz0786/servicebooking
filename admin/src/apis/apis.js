@@ -3,6 +3,7 @@ export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const apis = {
   dashboard: {
     get: `${BASE_URL}/api/v1/admin/dashboard`,
+    status: `${BASE_URL}/api/v1/admin/dashboard/status-count`,
   },
   bankTransfer: {
     create: `${BASE_URL}/api/v1/admin/bank-transfer`,
