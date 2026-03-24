@@ -52,7 +52,7 @@ export const checkServicemanNearby = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: isNearby ? "Serviceman is within 7000 meters" : "Serviceman is not nearby",
+    message: isNearby ? "Serviceman is within 7 KM" : "Serviceman is not nearby",
     data,
   });
 });

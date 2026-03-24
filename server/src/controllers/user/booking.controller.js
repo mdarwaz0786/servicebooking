@@ -35,6 +35,25 @@ export const createBooking = asyncHandler(async (req, res) => {
     isCouponUsed,
   } = req.body;
 
+  const lastBooking = await BookingModel
+    .findOne({ userId })
+    .sort({ createdAt: -1 });
+
+  if (lastBooking) {
+    const now = new Date();
+    const lastBookingTime = new Date(lastBooking?.createdAt);
+
+    const diffInMs = now - lastBookingTime;
+    const diffInMinutes = diffInMs / (1000 * 60);
+
+    if (diffInMinutes < 2) {
+      return res.status(400).json({
+        success: false,
+        message: "Please wait 2 minutes before creating another booking.",
+      });
+    }
+  };
+
   // Get cart data from utility
   const { cartProducts, amountData } = await getCartData(userId);
   if (!cartProducts.length) throw new ApiError(400, "Cart is empty");
