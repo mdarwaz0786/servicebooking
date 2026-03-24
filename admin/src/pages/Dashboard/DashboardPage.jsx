@@ -76,6 +76,13 @@ const DashboardPage = () => {
                         </div>
 
                         <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
+                          <div className="border rounded p-3 text-center bg-light">
+                            <h6 className="text-primary mb-1">Incomplete</h6>
+                            <h4>{statusData?.totalBookings - statusData?.completedBookings || 0}</h4>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
                           <div className="border rounded p-3 text-center">
                             <h6 className="text-warning mb-1">Pending</h6>
                             <h4>{statusData?.pendingBookings || 0}</h4>
@@ -95,14 +102,6 @@ const DashboardPage = () => {
                             <h4>{statusData?.paymentFailed || 0}</h4>
                           </div>
                         </div>
-
-                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
-                          <div className="border rounded p-3 text-center bg-light">
-                            <h6 className="text-primary mb-1">Incomplete</h6>
-                            <h4>{statusData?.incompleteBookings || 0}</h4>
-                          </div>
-                        </div>
-
                       </div>
                     </div>
                   </div>

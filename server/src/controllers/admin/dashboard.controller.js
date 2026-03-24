@@ -290,11 +290,11 @@ export const getBookingStatusCount = async (req, res) => {
 
     // Define logic
     const PENDING_STATUS = [
-      "new", "assign", "hold", "accept", "ongoing"
+      "accept", "new",
     ];
 
     const INCOMPLETE_STATUS = [
-      "assign", "hold", "accept", "ongoing",
+      "hold", "accept", "ongoing",
       "partstatusnew", "partstatusconfirm", "partstatusapprove"
     ];
 
