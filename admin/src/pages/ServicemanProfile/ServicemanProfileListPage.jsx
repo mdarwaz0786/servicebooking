@@ -27,6 +27,7 @@ const ServicemanProfileListPage = () => {
   const category = searchParams.get("category") || "";
   const experienceLevel = searchParams.get("experienceLevel") || "";
   const profileStatus = searchParams.get("profileStatus") || "";
+  const status = searchParams.get("status") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -69,6 +70,7 @@ const ServicemanProfileListPage = () => {
           category: category || undefined,
           experienceLevel: experienceLevel || undefined,
           profileStatus: profileStatus || undefined,
+          status: status || undefined
         },
       });
 
@@ -95,6 +97,7 @@ const ServicemanProfileListPage = () => {
       category,
       experienceLevel,
       profileStatus,
+      status,
       ...newParams,
     };
     setSearchParams(params);
@@ -135,18 +138,18 @@ const ServicemanProfileListPage = () => {
 
   useEffect(() => {
     fetchServicemanProfile();
-  }, [page, limit, debouncedSearch, sort, category, experienceLevel, profileStatus]);
+  }, [page, limit, debouncedSearch, sort, category, experienceLevel, profileStatus, status]);
 
   const categoryOptions = categories?.map((c) => ({
     value: c?._id,
     label: c?.name,
   }));
 
-  const STATUSES = [
-    "Pending",
-    "Approved",
-    "Rejected"
-  ];
+  // const STATUSES = [
+  //   "Pending",
+  //   "Approved",
+  //   "Rejected"
+  // ];
 
   // const updateStatus = async (id) => {
   //   try {
@@ -178,6 +181,12 @@ const ServicemanProfileListPage = () => {
     { value: "Rejected", label: "Rejected" },
   ];
 
+  const statusOptions = [
+    { value: "true", label: "Active" },
+    { value: "false", label: "Inactive" },
+  ];
+
+  const selectedStatus = statusOptions?.find((o) => o.value === status);
   const selectedCategory = categoryOptions?.find((o) => o?.value === category);
   const selectedExperience = experienceOptions?.find((o) => o?.value === experienceLevel);
   const selectedProfileStatus = profileStatusOptions?.find((o) => o?.value === profileStatus);
@@ -273,6 +282,21 @@ const ServicemanProfileListPage = () => {
             }
             isClearable
             placeholder="Profile Status"
+          />
+
+          <Select
+            className="w-auto"
+            classNamePrefix="react-select"
+            options={statusOptions}
+            value={selectedStatus || null}
+            onChange={(option) =>
+              updateParams({
+                status: option?.value || "",
+                page: 1,
+              })
+            }
+            isClearable
+            placeholder="Status"
           />
         </div>
 

@@ -81,165 +81,166 @@ export const createBooking = asyncHandler(async (req, res) => {
 });
 
 // Get All Bookings
-export const getBookings = asyncHandler(async (req, res) => {
-  let { page = 1, limit = 10, userId, sort = "desc", search, status, bookingStatus, paymentStatus, paymentMode, startDate, endDate, bookingStartDate, bookingEndDate } = req.query;
+// export const getBookings = asyncHandler(async (req, res) => {
+//   let { page = 1, limit = 10, userId, sort = "desc", search, status, bookingStatus, paymentStatus, paymentMode, startDate, endDate, bookingStartDate, bookingEndDate } = req.query;
 
-  page = parseInt(page, 10);
-  limit = parseInt(limit, 10);
-  const skip = (page - 1) * limit;
+//   page = parseInt(page, 10);
+//   limit = parseInt(limit, 10);
+//   const skip = (page - 1) * limit;
 
-  const filters = {};
+//   const filters = {};
 
-  if (userId) filters.userId = userId;
+//   if (userId) filters.userId = userId;
 
-  if (status) {
-    if (status === "active") {
-      filters.status = { $in: ["new", "assign", "accept", "ongoing", "reject", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"] };
-    }
-    else if (status === "completed") {
-      filters.status = "complete";
-    }
-    else if (status === "cancelled") {
-      filters.status = "cancel";
-    }
-    else {
-      filters.status = status;
-    }
-  };
+//   if (status) {
+//     if (status === "active") {
+//       filters.status = { $in: ["new", "assign", "accept", "ongoing", "reject", "partstatusnew", "partstatusconfirm", "partstatusapprove", "partstatusreject"] };
+//     }
+//     else if (status === "completed") {
+//       filters.status = "complete";
+//     }
+//     else if (status === "cancelled") {
+//       filters.status = "cancel";
+//     }
+//     else {
+//       filters.status = status;
+//     }
+//   };
 
-  if (bookingStatus) {
-    filters.status = bookingStatus;
-  };
+//   if (bookingStatus) {
+//     filters.status = bookingStatus;
+//   };
 
-  if (paymentStatus) {
-    filters.paymentStatus = paymentStatus;
-  };
+//   if (paymentStatus) {
+//     filters.paymentStatus = paymentStatus;
+//   };
 
-  if (paymentMode) {
-    filters.paymentMode = paymentMode;
-  };
+//   if (paymentMode) {
+//     filters.paymentMode = paymentMode;
+//   };
 
-  if (search) {
-    filters.$or = [
-      { bookingId: { $regex: search, $options: "i" } },
-    ];
-  };
+//   if (search) {
+//     filters.$or = [
+//       { bookingId: { $regex: search, $options: "i" } },
+//     ];
+//   };
 
-  if (startDate || endDate) {
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
+//   if (startDate || endDate) {
+//     const start = startDate ? new Date(startDate) : null;
+//     const end = endDate ? new Date(endDate) : null;
 
-    if (start) start.setUTCHours(0, 0, 0, 0);
-    if (end) end.setUTCHours(23, 59, 59, 999);
+//     if (start) start.setUTCHours(0, 0, 0, 0);
+//     if (end) end.setUTCHours(23, 59, 59, 999);
 
-    filters.scheduleDate = {
-      ...(start && { $gte: start }),
-      ...(end && { $lte: end }),
-    };
-  };
+//     filters.scheduleDate = {
+//       ...(start && { $gte: start }),
+//       ...(end && { $lte: end }),
+//     };
+//   };
 
-  if (bookingStartDate || bookingEndDate) {
-    const start = bookingStartDate ? new Date(bookingStartDate) : null;
-    const end = bookingEndDate ? new Date(bookingEndDate) : null;
+//   if (bookingStartDate || bookingEndDate) {
+//     const start = bookingStartDate ? new Date(bookingStartDate) : null;
+//     const end = bookingEndDate ? new Date(bookingEndDate) : null;
 
-    if (start) start.setUTCHours(0, 0, 0, 0);
-    if (end) end.setUTCHours(23, 59, 59, 999);
+//     if (start) start.setUTCHours(0, 0, 0, 0);
+//     if (end) end.setUTCHours(23, 59, 59, 999);
 
-    filters.createdAt = {
-      ...(start && { $gte: start }),
-      ...(end && { $lte: end }),
-    };
-  };
+//     filters.createdAt = {
+//       ...(start && { $gte: start }),
+//       ...(end && { $lte: end }),
+//     };
+//   };
 
-  let sortOption = {};
-  if (sort === "asc") {
-    sortOption = { createdAt: 1 };
-  } else if (sort === "desc") {
-    sortOption = { createdAt: -1 };
-  } else {
-    sortOption = sort;
-  };
+//   let sortOption = {};
+//   if (sort === "asc") {
+//     sortOption = { createdAt: 1 };
+//   } else if (sort === "desc") {
+//     sortOption = { createdAt: -1 };
+//   } else {
+//     sortOption = sort;
+//   };
 
-  const bookings = await BookingModel
-    .find(filters)
-    .populate({ path: "user", select: "-password" })
-    .populate("address")
-    .populate("additionalParts")
-    .sort(sortOption)
-    .skip(skip)
-    .limit(limit)
-    .lean();
+//   const bookings = await BookingModel
+//     .find(filters)
+//     .populate({ path: "user", select: "-password" })
+//     .populate("address")
+//     .populate("additionalParts")
+//     .sort(sortOption)
+//     .skip(skip)
+//     .limit(limit)
+//     .lean();
 
-  let latestAssignments = null;
+//   let latestAssignments = null;
 
-  for (let booking of bookings) {
-    /* ---------------- LATEST ASSIGNMENT ---------------- */
-    latestAssignments = await ServiceManBookingModel
-      .findOne({
-        bookingId: booking?._id,
-        status: { $nin: ["new", "taken"] }
-      })
-      .sort({ createdAt: -1 })
-      .populate({
-        path: "servicemanId",
-        populate: {
-          path: "user",
-          select: "-password -role"
-        }
-      })
-      .populate("actionById")
-      .lean();
+//   for (let booking of bookings) {
+//     /* ---------------- LATEST ASSIGNMENT ---------------- */
+//     latestAssignments = await ServiceManBookingModel
+//       .findOne({
+//         bookingId: booking?._id,
+//         status: { $nin: ["new", "taken"] }
+//       })
+//       .sort({ createdAt: -1 })
+//       .populate({
+//         path: "servicemanId",
+//         populate: {
+//           path: "user",
+//           select: "-password -role"
+//         }
+//       })
+//       .populate("actionById")
+//       .lean();
 
-    if (!latestAssignments) {
-      latestAssignments = await ServiceManBookingModel
-        .findOne({
-          bookingId: booking?._id
-        })
-        .sort({ createdAt: -1 })
-        .populate({
-          path: "servicemanId",
-          populate: {
-            path: "user",
-            select: "-password -role"
-          }
-        })
-        .populate("actionById")
-        .lean();
-    };
+//     if (!latestAssignments) {
+//       latestAssignments = await ServiceManBookingModel
+//         .findOne({
+//           bookingId: booking?._id
+//         })
+//         .sort({ createdAt: -1 })
+//         .populate({
+//           path: "servicemanId",
+//           populate: {
+//             path: "user",
+//             select: "-password -role"
+//           }
+//         })
+//         .populate("actionById")
+//         .lean();
+//     };
 
-    const servicemanId = latestAssignments?.servicemanId;
+//     const servicemanId = latestAssignments?.servicemanId;
 
-    const serviceman = await ServiceManProfile.findOne({ _id: servicemanId }).populate("user");
+//     const serviceman = await ServiceManProfile.findOne({ _id: servicemanId }).populate("user");
 
-    const servicemanDetail = {
-      _id: serviceman?._id,
-      userId: serviceman?.userId,
-      name: serviceman?.name,
-      email: serviceman?.email,
-      mobile: serviceman?.user?.mobile,
-      profileImage: serviceman?.profileImage,
-    };
+//     const servicemanDetail = {
+//       _id: serviceman?._id,
+//       userId: serviceman?.userId,
+//       servicemanId: serviceman?.servicemanId,
+//       name: serviceman?.name,
+//       email: serviceman?.email,
+//       mobile: serviceman?.user?.mobile,
+//       profileImage: serviceman?.profileImage,
+//     };
 
-    booking.serviceman = servicemanDetail;
-    booking.servicemanBooking = latestAssignments;
-  };
+//     booking.serviceman = servicemanDetail;
+//     booking.servicemanBooking = latestAssignments;
+//   };
 
-  const total = await BookingModel.countDocuments(filters);
-  const totalPages = Math.ceil(total / limit);
+//   const total = await BookingModel.countDocuments(filters);
+//   const totalPages = Math.ceil(total / limit);
 
-  return res.status(200).json({
-    success: true,
-    message: "Data fetched successfully",
-    total,
-    page,
-    limit,
-    totalPages,
-    hasPrevPage: page > 1,
-    hasNextPage: page < totalPages,
-    data: bookings,
-    pagination: buildPagination({ page, limit, total }),
-  });
-});
+//   return res.status(200).json({
+//     success: true,
+//     message: "Data fetched successfully",
+//     total,
+//     page,
+//     limit,
+//     totalPages,
+//     hasPrevPage: page > 1,
+//     hasNextPage: page < totalPages,
+//     data: bookings,
+//     pagination: buildPagination({ page, limit, total }),
+//   });
+// });
 
 // Get Booking by ID
 // export const getBookingById = asyncHandler(async (req, res) => {
@@ -718,182 +719,180 @@ export const servicemanBookingStart = asyncHandler(async (req, res) => {
   };
 });
 
-// export const getBookings = asyncHandler(async (req, res) => {
-//   let {
-//     page = 1,
-//     limit = 10,
-//     userId,
-//     sort = "desc",
-//     search,
-//     status,
-//     bookingStatus,
-//     paymentStatus,
-//     paymentMode,
-//     startDate,
-//     endDate,
-//     bookingStartDate,
-//     bookingEndDate
-//   } = req.query;
+// Get Bookings New Controller
+export const getBookings = asyncHandler(async (req, res) => {
+  let {
+    page = 1,
+    limit = 10,
+    userId,
+    sort = "desc",
+    search,
+    status,
+    bookingStatus,
+    paymentStatus,
+    paymentMode,
+    startDate,
+    endDate,
+    bookingStartDate,
+    bookingEndDate
+  } = req.query;
 
-//   page = parseInt(page);
-//   limit = parseInt(limit);
-//   const skip = (page - 1) * limit;
+  page = parseInt(page);
+  limit = parseInt(limit);
+  const skip = (page - 1) * limit;
 
-//   const matchStage = {};
+  const matchStage = {};
 
-//   /* ---------------- FILTERS ---------------- */
+  /* ---------------- FILTERS ---------------- */
+  if (userId) matchStage.userId = new mongoose.Types.ObjectId(userId);
 
-//   if (userId) matchStage.userId = new mongoose.Types.ObjectId(userId);
+  if (status) {
+    if (status === "active") {
+      matchStage.status = {
+        $in: [
+          "new", "assign", "accept", "ongoing",
+          "reject", "partstatusnew",
+          "partstatusconfirm", "partstatusapprove", "partstatusreject"
+        ]
+      };
+    } else if (status === "completed") {
+      matchStage.status = "complete";
+    } else if (status === "cancelled") {
+      matchStage.status = "cancel";
+    } else {
+      matchStage.status = status;
+    }
+  }
 
-//   if (status) {
-//     if (status === "active") {
-//       matchStage.status = {
-//         $in: [
-//           "new", "assign", "accept", "ongoing",
-//           "reject", "partstatusnew",
-//           "partstatusconfirm", "partstatusapprove", "partstatusreject"
-//         ]
-//       };
-//     } else if (status === "completed") {
-//       matchStage.status = "complete";
-//     } else if (status === "cancelled") {
-//       matchStage.status = "cancel";
-//     } else {
-//       matchStage.status = status;
-//     }
-//   }
+  if (bookingStatus) matchStage.status = bookingStatus;
 
-//   if (bookingStatus) matchStage.status = bookingStatus;
+  if (paymentStatus) matchStage.paymentStatus = Number(paymentStatus);
 
-//   if (paymentStatus) matchStage.paymentStatus = Number(paymentStatus);
+  if (paymentMode) matchStage.paymentMode = paymentMode;
 
-//   if (paymentMode) matchStage.paymentMode = paymentMode;
+  /* ---------------- DATE FILTERS ---------------- */
+  if (startDate || endDate) {
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
-//   /* ---------------- DATE FILTERS ---------------- */
+    if (start) start.setUTCHours(0, 0, 0, 0);
+    if (end) end.setUTCHours(23, 59, 59, 999);
 
-//   if (startDate || endDate) {
-//     const start = startDate ? new Date(startDate) : null;
-//     const end = endDate ? new Date(endDate) : null;
+    matchStage.scheduleDate = {
+      ...(start && { $gte: start }),
+      ...(end && { $lte: end }),
+    };
+  }
 
-//     if (start) start.setUTCHours(0, 0, 0, 0);
-//     if (end) end.setUTCHours(23, 59, 59, 999);
+  if (bookingStartDate || bookingEndDate) {
+    const start = bookingStartDate ? new Date(bookingStartDate) : null;
+    const end = bookingEndDate ? new Date(bookingEndDate) : null;
 
-//     matchStage.scheduleDate = {
-//       ...(start && { $gte: start }),
-//       ...(end && { $lte: end }),
-//     };
-//   }
+    if (start) start.setUTCHours(0, 0, 0, 0);
+    if (end) end.setUTCHours(23, 59, 59, 999);
 
-//   if (bookingStartDate || bookingEndDate) {
-//     const start = bookingStartDate ? new Date(bookingStartDate) : null;
-//     const end = bookingEndDate ? new Date(bookingEndDate) : null;
+    matchStage.createdAt = {
+      ...(start && { $gte: start }),
+      ...(end && { $lte: end }),
+    };
+  }
 
-//     if (start) start.setUTCHours(0, 0, 0, 0);
-//     if (end) end.setUTCHours(23, 59, 59, 999);
+  /* ---------------- SORT ---------------- */
+  let sortOption = { createdAt: -1 };
+  if (sort === "asc") sortOption = { createdAt: 1 };
 
-//     matchStage.createdAt = {
-//       ...(start && { $gte: start }),
-//       ...(end && { $lte: end }),
-//     };
-//   }
+  /* ---------------- AGGREGATION ---------------- */
+  const pipeline = [
+    { $match: matchStage },
 
-//   /* ---------------- SORT ---------------- */
+    // ✅ Address
+    {
+      $lookup: {
+        from: "addresses",
+        localField: "addressId",
+        foreignField: "_id",
+        as: "address"
+      }
+    },
+    { $unwind: { path: "$address", preserveNullAndEmptyArrays: true } },
 
-//   let sortOption = { createdAt: -1 };
-//   if (sort === "asc") sortOption = { createdAt: 1 };
+    // ✅ Latest ServiceManBooking
+    {
+      $lookup: {
+        from: "servicemanbookings",
+        let: { bookingId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$bookingId", "$$bookingId"] }
+            }
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 }
+        ],
+        as: "servicemanBooking"
+      }
+    },
+    { $unwind: { path: "$servicemanBooking", preserveNullAndEmptyArrays: true } },
 
-//   /* ---------------- AGGREGATION ---------------- */
+    // ✅ Serviceman Profile
+    {
+      $lookup: {
+        from: "servicemanprofiles",
+        localField: "servicemanBooking.servicemanId",
+        foreignField: "_id",
+        as: "serviceman"
+      }
+    },
+    { $unwind: { path: "$serviceman", preserveNullAndEmptyArrays: true } },
 
-//   const pipeline = [
-//     { $match: matchStage },
+    // ✅ SEARCH 🔥
+    ...(search ? [{
+      $match: {
+        $or: [
+          { bookingId: { $regex: search, $options: "i" } },
 
-//     // ✅ Address
-//     {
-//       $lookup: {
-//         from: "addresses",
-//         localField: "addressId",
-//         foreignField: "_id",
-//         as: "address"
-//       }
-//     },
-//     { $unwind: { path: "$address", preserveNullAndEmptyArrays: true } },
+          { "address.houseNumber": { $regex: search, $options: "i" } },
+          { "address.landmark": { $regex: search, $options: "i" } },
 
-//     // ✅ Latest ServiceManBooking
-//     {
-//       $lookup: {
-//         from: "servicemanbookings",
-//         let: { bookingId: "$_id" },
-//         pipeline: [
-//           {
-//             $match: {
-//               $expr: { $eq: ["$bookingId", "$$bookingId"] }
-//             }
-//           },
-//           { $sort: { createdAt: -1 } },
-//           { $limit: 1 }
-//         ],
-//         as: "servicemanBooking"
-//       }
-//     },
-//     { $unwind: { path: "$servicemanBooking", preserveNullAndEmptyArrays: true } },
+          { "serviceman.name": { $regex: search, $options: "i" } },
+          { "serviceman.servicemanId": { $regex: search, $options: "i" } }
+        ]
+      }
+    }] : []),
 
-//     // ✅ Serviceman Profile
-//     {
-//       $lookup: {
-//         from: "servicemanprofiles",
-//         localField: "servicemanBooking.servicemanId",
-//         foreignField: "_id",
-//         as: "serviceman"
-//       }
-//     },
-//     { $unwind: { path: "$serviceman", preserveNullAndEmptyArrays: true } },
+    { $sort: sortOption },
 
-//     // ✅ SEARCH 🔥
-//     ...(search ? [{
-//       $match: {
-//         $or: [
-//           { bookingId: { $regex: search, $options: "i" } },
+    {
+      $facet: {
+        data: [
+          { $skip: skip },
+          { $limit: limit }
+        ],
+        totalCount: [
+          { $count: "count" }
+        ]
+      }
+    }
+  ];
 
-//           { "address.houseNumber": { $regex: search, $options: "i" } },
-//           { "address.landmark": { $regex: search, $options: "i" } },
+  const result = await BookingModel.aggregate(pipeline);
 
-//           { "serviceman.name": { $regex: search, $options: "i" } },
-//           { "serviceman.servicemanId": { $regex: search, $options: "i" } }
-//         ]
-//       }
-//     }] : []),
+  const bookings = result[0]?.data || [];
+  const total = result[0]?.totalCount[0]?.count || 0;
 
-//     { $sort: sortOption },
+  const totalPages = Math.ceil(total / limit);
 
-//     {
-//       $facet: {
-//         data: [
-//           { $skip: skip },
-//           { $limit: limit }
-//         ],
-//         totalCount: [
-//           { $count: "count" }
-//         ]
-//       }
-//     }
-//   ];
-
-//   const result = await BookingModel.aggregate(pipeline);
-
-//   const bookings = result[0]?.data || [];
-//   const total = result[0]?.totalCount[0]?.count || 0;
-
-//   const totalPages = Math.ceil(total / limit);
-
-//   return res.status(200).json({
-//     success: true,
-//     message: "Data fetched successfully",
-//     total,
-//     page,
-//     limit,
-//     totalPages,
-//     hasPrevPage: page > 1,
-//     hasNextPage: page < totalPages,
-//     data: bookings,
-//   });
-// });
+  return res.status(200).json({
+    success: true,
+    message: "Data fetched successfully",
+    total,
+    page,
+    limit,
+    totalPages,
+    hasPrevPage: page > 1,
+    hasNextPage: page < totalPages,
+    data: bookings,
+    pagination: buildPagination({ page, limit, total }),
+  });
+});

@@ -27,8 +27,12 @@ const BookingListPage = () => {
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
   const bookingStatus = searchParams.get("bookingStatus") || "all";
+  const paymentStatus = searchParams.get("paymentStatus") || "all";
+  const paymentMode = searchParams.get("paymentMode") || "all";
   const startDate = searchParams.get("startDate") || "";
   const endDate = searchParams.get("endDate") || "";
+  const bookingStartDate = searchParams.get("bookingStartDate") || "";
+  const bookingEndDate = searchParams.get("bookingEndDate") || "";
 
   const [searchInput, setSearchInput] = useState(search);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -52,8 +56,12 @@ const BookingListPage = () => {
           sort,
           status: status || "active",
           bookingStatus: bookingStatus === "all" ? undefined : bookingStatus,
+          paymentStatus: paymentStatus === "all" ? undefined : paymentStatus,
+          paymentMode: paymentMode === "all" ? undefined : paymentMode,
           startDate,
           endDate,
+          bookingStartDate,
+          bookingEndDate,
         },
       });
 
@@ -84,8 +92,12 @@ const BookingListPage = () => {
       search: debouncedSearch,
       sort,
       bookingStatus,
+      paymentStatus,
+      paymentMode,
       startDate,
       endDate,
+      bookingStartDate,
+      bookingEndDate,
       ...newParams,
     };
     setSearchParams(params);
@@ -110,7 +122,7 @@ const BookingListPage = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [page, limit, debouncedSearch, sort, status, bookingStatus, startDate, endDate]);
+  }, [page, limit, debouncedSearch, sort, status, bookingStatus, startDate, endDate, bookingStartDate, bookingEndDate, paymentStatus, paymentMode]);
 
   const BOOKING_STATUSES = [
     "new",
@@ -217,45 +229,6 @@ const BookingListPage = () => {
                 }}
               />
 
-              {/* Start Date */}
-              <input
-                type="date"
-                className="form-control form-control-sm"
-                value={startDate}
-                onChange={(e) =>
-                  updateParams({
-                    startDate: e.target.value,
-                    page: 1
-                  })
-                }
-              />
-
-              {/* End Date */}
-              <input
-                type="date"
-                className="form-control form-control-sm"
-                value={endDate}
-                onChange={(e) =>
-                  updateParams({
-                    endDate: e.target.value,
-                    page: 1
-                  })
-                }
-              />
-
-              <button
-                className="btn btn-sm btn-outline-primary"
-                onClick={() =>
-                  updateParams({
-                    startDate: "",
-                    endDate: "",
-                    page: 1
-                  })
-                }
-              >
-                Clear Dates
-              </button>
-
               {/* Sort */}
               <select
                 className="form-select form-select-sm"
@@ -277,14 +250,14 @@ const BookingListPage = () => {
                 <option value="30">30</option>
                 <option value={total}>All</option>
               </select>
-              <div>
+              {/* <div>
                 <Link to="/add-booking">
                   <button className="btn btn-sm btn-primary d-flex align-items-center" type="button">
                     <i className="fa fa-plus me-2"></i>
                     <span>Add</span>
                   </button>
                 </Link>
-              </div>
+              </div> */}
             </div>
 
             {/* Booking Status Filters */}
@@ -310,6 +283,118 @@ const BookingListPage = () => {
             </div>
           </div>
 
+          <div className="mt-3">
+            <div className="row align-items-end">
+              {/* Schedule Start Date */}
+              <div className="col-md-3">
+                <label className="form-label mb-1">Schedule Start Date</label>
+                <input
+                  type="date"
+                  className="form-control form-control-sm"
+                  value={startDate}
+                  onChange={(e) =>
+                    updateParams({
+                      startDate: e.target.value,
+                      page: 1
+                    })
+                  }
+                />
+              </div>
+
+              {/* Schedule End Date */}
+              <div className="col-md-3">
+                <label className="form-label mb-1">Schedule End Date</label>
+                <input
+                  type="date"
+                  className="form-control form-control-sm"
+                  value={endDate}
+                  onChange={(e) =>
+                    updateParams({
+                      endDate: e.target.value,
+                      page: 1
+                    })
+                  }
+                />
+              </div>
+
+              {/* Booking Start Date */}
+              <div className="col-md-3">
+                <label className="form-label mb-1">Booking Start Date</label>
+                <input
+                  type="date"
+                  className="form-control form-control-sm"
+                  value={bookingStartDate}
+                  onChange={(e) =>
+                    updateParams({
+                      bookingStartDate: e.target.value,
+                      page: 1
+                    })
+                  }
+                />
+              </div>
+
+              {/* Booking End Date */}
+              <div className="col-md-3">
+                <label className="form-label mb-1">Booking End Date</label>
+                <input
+                  type="date"
+                  className="form-control form-control-sm"
+                  value={bookingEndDate}
+                  onChange={(e) =>
+                    updateParams({
+                      bookingEndDate: e.target.value,
+                      page: 1
+                    })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3">
+            <div className="row align-items-end g-2">
+
+              {/* Payment Mode */}
+              <div className="col-md-3">
+                <label className="form-label mb-1">Payment Mode</label>
+                <select
+                  className="form-select form-select-sm"
+                  value={paymentMode}
+                  onChange={(e) =>
+                    updateParams({
+                      paymentMode: e.target.value,
+                      page: 1
+                    })
+                  }
+                >
+                  <option value="all">All</option>
+                  <option value="cod">COD</option>
+                  <option value="online">Online</option>
+                </select>
+              </div>
+
+              {/* Payment Status */}
+              <div className="col-md-3">
+                <label className="form-label mb-1">Payment Status</label>
+                <select
+                  className="form-select form-select-sm"
+                  value={paymentStatus}
+                  onChange={(e) =>
+                    updateParams({
+                      paymentStatus: e.target.value,
+                      page: 1
+                    })
+                  }
+                >
+                  <option value="all">All</option>
+                  <option value="1">Paid</option>
+                  <option value="0">Unpaid</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
           {/* Table */}
           <div className="row">
             <div className="col-12">
@@ -320,6 +405,7 @@ const BookingListPage = () => {
                       <th>#</th>
                       <th>Booking ID</th>
                       <th>Amount</th>
+                      <th>Provider</th>
                       <th>Assign</th>
                       <th>Start</th>
                       <th>Mode</th>
@@ -346,6 +432,7 @@ const BookingListPage = () => {
                             <td>{(page - 1) * limit + index + 1}</td>
                             <td>{d?.bookingId}</td>
                             <td>₹{d?.payableAmount?.toFixed(2)}</td>
+                            <td>{d?.serviceman?.name || "-"} {d?.serviceman?.servicemanId}</td>
                             <td>
                               <button
                                 className="btn btn-primary"
@@ -363,9 +450,9 @@ const BookingListPage = () => {
                             </td>
                             <td>{d?.paymentMode}</td>
                             <td>
-                              {d?.paymentMode == "cod" ?
-                                d?.paymentStatus == 1 ? "Paid" : "Pending"
-                                : d?.paymentStatus == 1 ? "Paid" : "Failed"
+                              {d?.paymentMode == "cod"
+                                ? (d?.paymentStatus == 1 ? "Paid" : "Pending")
+                                : (d?.paymentStatus == 1 ? "Paid" : "Failed")
                               }
                             </td>
                             <td>

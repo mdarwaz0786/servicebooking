@@ -206,83 +206,83 @@ export const verifyRazorpayBookingPayment = asyncHandler(async (req, res) => {
       opt: generateOtp(),
     }, { new: true });
 
-    const booking = await BookingModel.findOne({ _id: transactionData?.PID });
-    const address = await AddressModel.findById(booking?.addressId);
-    const lat = address?.lat;
-    const long = address?.long;
+    // const booking = await BookingModel.findOne({ _id: transactionData?.PID });
+    // const address = await AddressModel.findById(booking?.addressId);
+    // const lat = address?.lat;
+    // const long = address?.long;
 
-    const { cartProducts } = await getCartData(transactionData?.userId);
-    const subCategoryId = cartProducts[0]?.subCategoryId;
+    // const { cartProducts } = await getCartData(transactionData?.userId);
+    // const subCategoryId = cartProducts[0]?.subCategoryId;
 
-    const { acceptCreditPoints } = await getSupportConfig(booking?._id);
-    const serviceman = await autoAssignBooking(lat, long, subCategoryId, booking?.scheduleDate, booking?.scheduleTime, acceptCreditPoints);
+    // const { acceptCreditPoints } = await getSupportConfig(booking?._id);
+    // const serviceman = await autoAssignBooking(lat, long, subCategoryId, booking?.scheduleDate, booking?.scheduleTime, acceptCreditPoints);
 
-    if (serviceman) {
-      await ServiceManBookingModel.create({
-        bookingId: booking?._id,
-        servicemanId: serviceman?._id,
-        userId,
-        status: "accept",
-        createdBy: userId,
-      });
+    // if (serviceman) {
+    //   await ServiceManBookingModel.create({
+    //     bookingId: booking?._id,
+    //     servicemanId: serviceman?._id,
+    //     userId,
+    //     status: "accept",
+    //     createdBy: userId,
+    //   });
 
-      await BookingModel.findByIdAndUpdate(booking?._id, {
-        $set: {
-          status: "accept",
-        },
-      });
+    //   await BookingModel.findByIdAndUpdate(booking?._id, {
+    //     $set: {
+    //       status: "accept",
+    //     },
+    //   });
 
-      const status = "accept";
+    //   const status = "accept";
 
-      await adjustWalletCredit(serviceman?.userId, status, booking?._id);
+    //   await adjustWalletCredit(serviceman?.userId, status, booking?._id);
 
-      if (serviceman?.userId) {
-        await sendNotification(
-          [serviceman?.userId],
-          "Booking Accepted",
-          "One booking is accepted to you kindly proceed further",
-          "serviceman",
-          {
-            type: "bookingSameZone",
-          }
-        );
-      }
-    };
+    //   if (serviceman?.userId) {
+    //     await sendNotification(
+    //       [serviceman?.userId],
+    //       "Booking Accepted",
+    //       "One booking is accepted to you kindly proceed further",
+    //       "serviceman",
+    //       {
+    //         type: "bookingSameZone",
+    //       }
+    //     );
+    //   }
+    // };
 
-    if (!serviceman) {
-      const servicemen = await autoAssignMultipleServicemen(
-        subCategoryId,
-        booking?.scheduleDate,
-        booking?.scheduleTime,
-        acceptCreditPoints
-      );
+    // if (!serviceman) {
+    //   const servicemen = await autoAssignMultipleServicemen(
+    //     subCategoryId,
+    //     booking?.scheduleDate,
+    //     booking?.scheduleTime,
+    //     acceptCreditPoints
+    //   );
 
-      if (servicemen?.length) {
-        const bookings = servicemen?.map((sm) => ({
-          bookingId: booking?._id,
-          servicemanId: sm?._id,
-          userId,
-          status: "new",
-          createdBy: userId,
-        }));
+    //   if (servicemen?.length) {
+    //     const bookings = servicemen?.map((sm) => ({
+    //       bookingId: booking?._id,
+    //       servicemanId: sm?._id,
+    //       userId,
+    //       status: "new",
+    //       createdBy: userId,
+    //     }));
 
-        await ServiceManBookingModel.insertMany(bookings);
+    //     await ServiceManBookingModel.insertMany(bookings);
 
-        const servicemanUserIds = servicemen
-          .map((sm) => sm?.userId)
-          .filter(Boolean);
+    //     const servicemanUserIds = servicemen
+    //       .map((sm) => sm?.userId)
+    //       .filter(Boolean);
 
-        await sendNotification(
-          servicemanUserIds,
-          "New Booking",
-          "You have received a new booking kindly accept it if you can serve it",
-          "serviceman",
-          {
-            type: "bookingOtherZone",
-          }
-        );
-      };
-    };
+    //     await sendNotification(
+    //       servicemanUserIds,
+    //       "New Booking",
+    //       "You have received a new booking kindly accept it if you can serve it",
+    //       "serviceman",
+    //       {
+    //         type: "bookingOtherZone",
+    //       }
+    //     );
+    //   };
+    // };
 
     await CartModel.deleteMany({ "userId": transactionData.userId });
   } else if (transactionData.productType == "wallet") {
